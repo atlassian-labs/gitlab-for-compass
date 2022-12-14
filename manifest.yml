@@ -1,0 +1,83 @@
+modules:
+  compass:componentImporter:
+    - key: import-page-ui
+      resolver:
+        function: import-resolver
+      resource: main
+      title: GitLab
+      icon: https://about.gitlab.com/images/press/logo/png/gitlab-icon-rgb.png
+  compass:adminPage:
+    - key: admin-page-ui
+      resolver:
+        function: admin-resolver
+      resource: main
+      title: GitLab
+      icon: https://about.gitlab.com/images/press/logo/png/gitlab-icon-rgb.png
+  compass:configValidator:
+    - key: config-validator
+      function: config-validator-fn
+  compass:dataProvider:
+    - key: data-provider
+      function: data-provider-fn
+      callback:
+        function: callback-fn
+      domains:
+        - 'gitlab.com'
+      linkTypes:
+        - repository
+  compass:preUninstall:
+    - key: pre-uninstall-ep
+      function: pre-uninstall
+  webtrigger:
+    - key: gitlab-event-webtrigger
+      function: process-gitlab-event
+  function:
+    - key: admin-resolver
+      handler: index.resolver
+    - key: import-resolver
+      handler: index.resolver
+    - key: process-gitlab-event
+      handler: index.processGitlabEvent
+    - key: import-projects
+      handler: import-queue-resolver.run
+    - key: pre-uninstall
+      handler: index.preUninstall
+    - key: data-provider-fn
+      handler: index.dataProvider
+    - key: callback-fn
+      handler: index.callback
+    - key: config-validator-fn
+      handler: index.configValidator
+  consumer:
+    - key: import-consumer
+      queue: import-queue
+      resolver:
+        function: import-projects
+        method: import
+app:
+  id: ari:cloud:ecosystem::app/883d6844-ebba-4a7a-b816-a4f5cc162ddb
+resources:
+  - key: main
+    path: ui/build
+    tunnel:
+      port: 3001
+permissions:
+  # For more info on manifest permissions, see https://developer.atlassian.com/platform/forge/manifest-reference/permissions/
+  scopes:
+    - storage:app
+    - read:component:compass
+    - write:component:compass
+    - read:event:compass
+    - write:event:compass
+    - read:scorecard:compass
+    - write:scorecard:compass
+    - write:metric:compass
+    - read:metric:compass
+  external:
+    fetch:
+      backend:
+        - '*.services.atlassian.com'
+        - 'https://gitlab.com'
+  content:
+    styles:
+      - 'unsafe-inline'
