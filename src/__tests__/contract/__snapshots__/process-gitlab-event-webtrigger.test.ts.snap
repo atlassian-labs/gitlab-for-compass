@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Process gitlab webtrigger successfully parse webhook event 1`] = `
+Object {
+  "body": "{\\"message\\":\\"Processed webhook event\\",\\"success\\":true}",
+  "headers": Object {
+    "Content-Type": Array [
+      "application/json",
+    ],
+  },
+  "statusCode": 200,
+}
+`;
+
+exports[`Process gitlab webtrigger successfully parse webhook pipeline event 1`] = `
+Object {
+  "body": "{\\"message\\":\\"Processed webhook event\\",\\"success\\":true}",
+  "headers": Object {
+    "Content-Type": Array [
+      "application/json",
+    ],
+  },
+  "statusCode": 200,
+}
+`;

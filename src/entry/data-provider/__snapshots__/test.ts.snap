@@ -1,0 +1,71 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`dataProvider module successfully returns events and metrics in the expected format 1`] = `
+Object {
+  "builtIn": Object {
+    "ari:cloud:compass::metric-definition/builtin/build-success-rate": Object {
+      "derived": true,
+      "initialValue": null,
+    },
+    "ari:cloud:compass::metric-definition/builtin/build-time-avg-last-10": Object {
+      "derived": true,
+      "initialValue": null,
+    },
+    "ari:cloud:compass::metric-definition/builtin/open-pull-requests": Object {
+      "initialValue": 3,
+    },
+    "ari:cloud:compass::metric-definition/builtin/pull-request-cycle-time-avg-last-10": Object {
+      "initialValue": 1,
+    },
+    "ari:cloud:compass::metric-definition/builtin/weekly-deployment-frequency-28d": Object {
+      "derived": true,
+      "initialValue": null,
+    },
+  },
+  "custom": undefined,
+}
+`;
+
+exports[`dataProvider module successfully returns events and metrics in the expected format 2`] = `
+Object {
+  "builds": Object {
+    "initialValues": Array [
+      Object {
+        "completedAt": "completed-at",
+        "description": "mock description",
+        "displayName": "mock display name",
+        "lastUpdated": "updated",
+        "pipeline": Object {
+          "pipelineId": "pipeline-id",
+        },
+        "startedAt": "started-at",
+        "state": "SUCCESSFUL",
+        "updateSequenceNumber": 1,
+        "url": "url",
+      },
+    ],
+  },
+  "deployments": Object {
+    "initialValues": Array [
+      Object {
+        "displayName": "name",
+        "environment": Object {
+          "category": "PRODUCTION",
+          "displayName": "prod",
+          "environmentId": "id",
+        },
+        "lastUpdated": "mock",
+        "pipeline": Object {
+          "displayName": "pipeline",
+          "pipelineId": "1",
+          "url": "url",
+        },
+        "sequenceNumber": 1,
+        "state": "SUCCESSFUL",
+        "updateSequenceNumber": "1",
+        "url": "url",
+      },
+    ],
+  },
+}
+`;

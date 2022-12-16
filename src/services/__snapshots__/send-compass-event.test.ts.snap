@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`send build event to compass method successfully maps gitlab pipeline event to compass build event and send it 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "cloudId": "0a44684d-52c3-4c0c-99f8-9d89ec294759",
+        "event": Object {
+          "build": Object {
+            "buildProperties": Object {
+              "completedAt": "2022-06-14T22:46:49.000Z",
+              "pipeline": Object {
+                "pipelineId": "563913989",
+              },
+              "startedAt": "2022-06-14T22:45:56.000Z",
+              "state": "SUCCESSFUL",
+            },
+            "description": "Pipeline run 563913989 for project stringray",
+            "displayName": "stringray pipeline 563913989",
+            "externalEventSourceId": "36867443",
+            "lastUpdated": "2022-06-14T22:46:49.000Z",
+            "updateSequenceNumber": 1655246809000,
+            "url": "https://gitlab.com/gitlab-com/test-group/stringray/-/pipelines/563913989",
+          },
+        },
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;
