@@ -1,0 +1,27 @@
+name: Run Lint and All Tests
+
+on:
+  push:
+  pull_request:
+    types: [assigned, opened, synchronize, reopened, edited]
+
+
+jobs:
+  lint_and_test:
+    runs-on: ubuntu-22.04
+    env:
+      CI: false
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+      - run: yarn install --frozen-lockfile
+      - run: yarn ui:install --frozen-lockfile
+      - run: yarn run lint
+      - run: yarn run ui:build
+      - name: Forge Tests
+        run:  yarn test
+      - name: UI Tests  
+        run:  yarn ui:test
