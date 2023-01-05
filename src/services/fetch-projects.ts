@@ -2,7 +2,7 @@ import { CreateLinkInput, Link } from '@atlassian/forge-graphql';
 import { storage } from '@forge/api';
 
 import { getComponentByExternalAlias } from '../client/compass';
-import { COMPASS_YML_BRANCH, STORAGE_SECRETS } from '../constants';
+import { COMPASS_YML_BRANCH, EXTERNAL_SOURCE, STORAGE_SECRETS } from '../constants';
 import { getMergeRequests, getProjects, GitLabHeaders } from '../client/gitlab';
 import { GroupProjectsResponse, MergeRequestState, Project, ProjectReadyForImport } from '../types';
 import { getProjectLabels } from './get-labels';
@@ -55,6 +55,7 @@ const compareProjectWithExistingComponent = async (cloudId: string, projectId: n
       getComponentByExternalAlias({
         cloudId,
         externalId: projectId.toString(),
+        externalSource: EXTERNAL_SOURCE,
         options: { includeLinks: true },
       }),
       getMergeRequests(1, 1, {
