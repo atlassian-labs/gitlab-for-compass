@@ -111,9 +111,7 @@ export async function unlinkCompassComponents(cloudId: string, ecosystemAppId: s
 }
 
 export async function getComponentByExternalAlias(input: GetComponentByExternalAliasInput): Promise<ComponentPayload> {
-  const { errors, data } = await graphqlGateway.compass
-    .asApp()
-    .getComponentByExternalAlias({ ...input, externalSource: EXTERNAL_SOURCE });
+  const { errors, data } = await graphqlGateway.compass.asApp().getComponentByExternalAlias({ ...input });
 
   if (errors[0]?.message === COMPASS_GATEWAY_MESSAGES.COMPONENT_NOT_FOUND) {
     return { component: null };
