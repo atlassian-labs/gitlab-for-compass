@@ -53,6 +53,12 @@ export const validFieldKeys = ['tier'];
 
 export const validTierValues = ['1', '2', '3', '4'];
 
-export const validLinkTypes = ['DOCUMENT', 'CHAT_CHANNEL', 'REPOSITORY', 'PROJECT', 'DASHBOARD', 'OTHER_LINK'];
-
-export const validServiceLinkTypes = validLinkTypes.concat('ON_CALL');
+export const validLinkTypes = [
+  'DOCUMENT',
+  'CHAT_CHANNEL',
+  'ON_CALL',
+  'REPOSITORY',
+  'PROJECT',
+  'DASHBOARD',
+  'OTHER_LINK',
+];
