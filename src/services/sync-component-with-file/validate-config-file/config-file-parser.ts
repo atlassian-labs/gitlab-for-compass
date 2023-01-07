@@ -21,7 +21,6 @@ import {
   serviceFieldKeyTypes,
   types,
   validLinkTypes,
-  validServiceLinkTypes,
   validTierValues,
 } from '../../../models/expected-compass-types';
 import { MAX_DESCRIPTION_LENGTH, MAX_NAME_LENGTH } from '../../../constants';
@@ -257,9 +256,8 @@ export default class ConfigFileParser {
     if (type == null) {
       return;
     }
-    const linkTypes = this.type === CompassComponentType.Service ? validServiceLinkTypes : validLinkTypes;
-    if (typeof type !== 'string' || !linkTypes.includes(type.toUpperCase())) {
-      this.addError(invalidLinkTypeErrorMessage(type, linkTypes));
+    if (typeof type !== 'string' || !validLinkTypes.includes(type.toUpperCase())) {
+      this.addError(invalidLinkTypeErrorMessage(type, validLinkTypes));
     }
   }
 

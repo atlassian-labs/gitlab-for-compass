@@ -321,7 +321,7 @@ describe('ConfigFileParser', () => {
         configFileParser.validateLinkProperties(links);
         expect(configFileParser.errors).toEqual([
           '"1" is not a valid link type. The accepted values are: ' +
-            'DOCUMENT, CHAT_CHANNEL, REPOSITORY, PROJECT, DASHBOARD, OTHER_LINK',
+            'DOCUMENT, CHAT_CHANNEL, ON_CALL, REPOSITORY, PROJECT, DASHBOARD, OTHER_LINK',
         ]);
       });
 
@@ -336,7 +336,7 @@ describe('ConfigFileParser', () => {
         configFileParser.validateLinkProperties(links);
         expect(configFileParser.errors).toEqual([
           '"UNKNOWN_TYPE" is not a valid link type. The accepted values are: ' +
-            'DOCUMENT, CHAT_CHANNEL, REPOSITORY, PROJECT, DASHBOARD, OTHER_LINK',
+            'DOCUMENT, CHAT_CHANNEL, ON_CALL, REPOSITORY, PROJECT, DASHBOARD, OTHER_LINK',
         ]);
       });
 
@@ -351,7 +351,7 @@ describe('ConfigFileParser', () => {
         configFileParser.validateLinkProperties(links);
         expect(configFileParser.errors).toEqual([
           '"Loremipsumdolorsitametcon" is not a valid link type. The accepted values are: ' +
-            'DOCUMENT, CHAT_CHANNEL, REPOSITORY, PROJECT, DASHBOARD, OTHER_LINK',
+            'DOCUMENT, CHAT_CHANNEL, ON_CALL, REPOSITORY, PROJECT, DASHBOARD, OTHER_LINK',
         ]);
       });
 
@@ -390,21 +390,6 @@ describe('ConfigFileParser', () => {
 
         serviceConfigFileParser.validateLinkProperties(links);
         expect(serviceConfigFileParser.errors).toEqual([]);
-      });
-
-      test('adds error when type is ON_CALL and component is not a service', () => {
-        const links = [
-          {
-            type: 'ON_CALL',
-            url: 'https://atlassian.com',
-          },
-        ];
-
-        configFileParser.validateLinkProperties(links);
-        expect(configFileParser.errors).toEqual([
-          '"ON_CALL" is not a valid link type. The accepted values are: ' +
-            'DOCUMENT, CHAT_CHANNEL, REPOSITORY, PROJECT, DASHBOARD, OTHER_LINK',
-        ]);
       });
     });
   });
