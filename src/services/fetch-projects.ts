@@ -56,7 +56,7 @@ const compareProjectWithExistingComponent = async (cloudId: string, projectId: n
         cloudId,
         externalId: projectId.toString(),
         externalSource: EXTERNAL_SOURCE,
-        options: { includeLinks: true },
+        options: { includeLinks: true, includeCustomFields: false },
       }),
       getMergeRequests(1, 1, {
         projectId,
