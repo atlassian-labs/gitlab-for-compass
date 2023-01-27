@@ -1,3 +1,5 @@
+import { DataProviderBuildEvent, DataProviderDeploymentEvent } from '@atlassian/forge-graphql';
+
 type DataProviderPayload = {
   url: string;
   ctx: {
@@ -12,4 +14,13 @@ type CallbackPayload = {
   errorMessage?: string;
 };
 
-export { DataProviderPayload, CallbackPayload };
+type BackfillData = {
+  builds: DataProviderBuildEvent[];
+  deployments: DataProviderDeploymentEvent[];
+  metrics: {
+    mrCycleTime: number;
+    openMergeRequestsCount: number;
+  };
+};
+
+export { DataProviderPayload, CallbackPayload, BackfillData };

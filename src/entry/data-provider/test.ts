@@ -9,12 +9,15 @@ import {
   CompassBuildEventState,
   CompassDeploymentEventEnvironmentCategory,
   CompassDeploymentEventState,
+  DataProviderResult,
+  InvocationStatusCode,
 } from '@atlassian/forge-graphql';
 import { dataProvider } from './index';
 import * as getBackfillEvents from '../../services/get-backfill-data';
 import * as getProjectDataFromUrl from '../../services/data-provider-link-parser';
 import * as getTrackingBranchName from '../../services/get-tracking-branch';
-import { GitlabAPIProject } from 'src/types';
+import { GitlabAPIProject } from '../../types';
+import { GitlabHttpMethodError } from '../../models/errors';
 
 const getEventsSpy = jest.spyOn(getBackfillEvents, 'getBackfillData');
 const projectDataSpy = jest.spyOn(getProjectDataFromUrl, 'getProjectDataFromUrl');
@@ -101,8 +104,36 @@ describe('dataProvider module', () => {
       },
     });
 
-    expect(result.externalSourceId).toEqual(MOCK_PROJECT.id.toString());
-    expect(result.metrics).toMatchSnapshot();
-    expect(result.events).toMatchSnapshot();
+    const dataProviderResult = result as DataProviderResult;
+
+    expect(dataProviderResult.externalSourceId).toEqual(MOCK_PROJECT.id.toString());
+    expect(dataProviderResult.metrics).toMatchSnapshot();
+    expect(dataProviderResult.events).toMatchSnapshot();
+  });
+
+  it('returns error from ForgeInvokationErrorResponse class in case of invocation error from getBackfillData', async () => {
+    const error = 'Internal server error';
+
+    getEventsSpy.mockRejectedValue(new GitlabHttpMethodError(InvocationStatusCode.INTERNAL_SERVER_ERROR, error));
+    projectDataSpy.mockResolvedValue({
+      project: MOCK_PROJECT,
+      groupToken: 'mock-group-token',
+    });
+
+    trackingBranchSpy.mockResolvedValue('branch');
+
+    const result = await dataProvider({
+      url: MOCK_PROJECT_URL,
+      ctx: {
+        cloudId: 'ari:cloud:compass:122345:component/12345/12345',
+        extensionId: 'mock-extension-id',
+      },
+    });
+
+    expect(result).toEqual({
+      error,
+      statusCode: InvocationStatusCode.INTERNAL_SERVER_ERROR,
+      options: { backoffTimeInSeconds: 0 },
+    });
   });
 });

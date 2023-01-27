@@ -3,15 +3,19 @@ import {
   DataProviderEventTypes,
   DataProviderResponse,
   DataProviderResult,
+  ForgeInvocationError,
+  ForgeInvocationErrorResponse,
 } from '@atlassian/forge-graphql';
 
-import { DataProviderPayload } from './types';
+import { BackfillData, DataProviderPayload } from './types';
 import { getProjectDataFromUrl } from '../../services/data-provider-link-parser';
 import { getTrackingBranchName } from '../../services/get-tracking-branch';
 import { getBackfillData } from '../../services/get-backfill-data';
 import { parse } from '../../utils/parse-ari';
 
-export const dataProvider = async (request: DataProviderPayload): Promise<DataProviderResult> => {
+export const dataProvider = async (
+  request: DataProviderPayload,
+): Promise<DataProviderResult | ForgeInvocationError> => {
   try {
     parse(request.ctx.cloudId);
   } catch {
@@ -30,6 +34,32 @@ export const dataProvider = async (request: DataProviderPayload): Promise<DataPr
   }
 
   const trackingBranch = await getTrackingBranchName(groupToken, projectId, defaultBranch);
+
+  const backfillData: BackfillData = {
+    builds: [],
+    deployments: [],
+    metrics: {
+      mrCycleTime: 0,
+      openMergeRequestsCount: 0,
+    },
+  };
+
+  try {
+    const {
+      builds,
+      deployments,
+      metrics: { mrCycleTime, openMergeRequestsCount },
+    } = await getBackfillData('groupToken', projectId, projectName, trackingBranch);
+
+    backfillData.builds = builds;
+    backfillData.deployments = deployments;
+    backfillData.metrics.mrCycleTime = mrCycleTime;
+    backfillData.metrics.openMergeRequestsCount = openMergeRequestsCount;
+  } catch (err) {
+    const invocationErrorOptions = { backoffTimeInSeconds: 0 };
+
+    return new ForgeInvocationErrorResponse(err.statusText, err.status, invocationErrorOptions).build();
+  }
 
   const {
     builds,
