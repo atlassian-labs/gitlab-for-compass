@@ -5,6 +5,7 @@ import {
   DataProviderResult,
   ForgeInvocationError,
   ForgeInvocationErrorResponse,
+  InvocationStatusCode,
 } from '@atlassian/forge-graphql';
 
 import { BackfillData, DataProviderPayload } from './types';
@@ -12,6 +13,7 @@ import { getProjectDataFromUrl } from '../../services/data-provider-link-parser'
 import { getTrackingBranchName } from '../../services/get-tracking-branch';
 import { getBackfillData } from '../../services/get-backfill-data';
 import { parse } from '../../utils/parse-ari';
+import { GitlabHttpMethodError } from '../../models/errors';
 
 export const dataProvider = async (
   request: DataProviderPayload,
@@ -49,23 +51,25 @@ export const dataProvider = async (
       builds,
       deployments,
       metrics: { mrCycleTime, openMergeRequestsCount },
-    } = await getBackfillData('groupToken', projectId, projectName, trackingBranch);
+    } = await getBackfillData(groupToken, projectId, projectName, trackingBranch);
 
     backfillData.builds = builds;
     backfillData.deployments = deployments;
     backfillData.metrics.mrCycleTime = mrCycleTime;
     backfillData.metrics.openMergeRequestsCount = openMergeRequestsCount;
   } catch (err) {
-    const invocationErrorOptions = { backoffTimeInSeconds: 0 };
+    const invocationErrorOptions = { backoffTimeInSeconds: 3600 };
 
-    return new ForgeInvocationErrorResponse(err.statusText, err.status, invocationErrorOptions).build();
+    if (err instanceof GitlabHttpMethodError) {
+      return new ForgeInvocationErrorResponse(err.statusText, err.status, invocationErrorOptions).build();
+    }
+
+    return new ForgeInvocationErrorResponse(
+      err.message,
+      InvocationStatusCode.INTERNAL_SERVER_ERROR,
+      invocationErrorOptions,
+    ).build();
   }
-
-  const {
-    builds,
-    deployments,
-    metrics: { mrCycleTime, openMergeRequestsCount },
-  } = await getBackfillData(groupToken, projectId, projectName, trackingBranch);
 
   const response = new DataProviderResponse(projectId.toString(), {
     eventTypes: [DataProviderEventTypes.BUILDS, DataProviderEventTypes.DEPLOYMENTS],
@@ -95,9 +99,12 @@ export const dataProvider = async (
   });
 
   return response
-    .addBuilds(builds)
-    .addDeployments(deployments)
-    .addBuiltInMetricValue(BuiltinMetricDefinitions.PULL_REQUEST_CYCLE_TIME_AVG_LAST_10, mrCycleTime)
-    .addBuiltInMetricValue(BuiltinMetricDefinitions.OPEN_PULL_REQUESTS, openMergeRequestsCount)
+    .addBuilds(backfillData.builds)
+    .addDeployments(backfillData.deployments)
+    .addBuiltInMetricValue(
+      BuiltinMetricDefinitions.PULL_REQUEST_CYCLE_TIME_AVG_LAST_10,
+      backfillData.metrics.mrCycleTime,
+    )
+    .addBuiltInMetricValue(BuiltinMetricDefinitions.OPEN_PULL_REQUESTS, backfillData.metrics.openMergeRequestsCount)
     .build();
 };
