@@ -1,6 +1,5 @@
 import { CompassComponentType } from '@atlassian/forge-graphql';
 import {
-  emptyStringErrorMessage,
   invalidFieldTypeErrorMessage,
   invalidKeyErrorMessage,
   invalidLinkTypeErrorMessage,
@@ -231,10 +230,6 @@ export default class ConfigFileParser {
       if ((value as string).length > MAX_NAME_LENGTH) {
         isValid = false;
         this.addError(maxValueLengthErrorMessage(key, MAX_NAME_LENGTH));
-      }
-      if ((value as string).trim().length === 0) {
-        isValid = false;
-        this.addError(emptyStringErrorMessage(key));
       }
     }
 

@@ -551,14 +551,14 @@ describe('ConfigFileParser', () => {
         ]);
       });
 
-      test('adds error if name value is blank', () => {
+      test('does not add error if name value is blank', () => {
         const config = {
           ...BASE_CONFIG,
           name: '     ',
         };
 
         configFileParser.validateConfig(config);
-        expect(configFileParser.errors).toEqual(['"name" cannot be empty string.']);
+        expect(configFileParser.errors).toEqual([]);
       });
 
       test('adds error if description value is not a string', () => {

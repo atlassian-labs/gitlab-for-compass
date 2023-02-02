@@ -21,8 +21,6 @@ export function invalidKeyErrorMessage(propertyName: string, validProperties?: s
     : `"${truncatedPropertyName}" is not a valid property`;
 }
 
-export const emptyStringErrorMessage = (key: string): string => `"${key}" cannot be empty string.`;
-
 export const invalidCharactersErrorMessage = (key: string): string =>
   `"${key}" contains invalid characters. Remove those characters and try again.`;
 
