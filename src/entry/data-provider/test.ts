@@ -133,7 +133,7 @@ describe('dataProvider module', () => {
     expect(result).toEqual({
       error,
       statusCode: InvocationStatusCode.INTERNAL_SERVER_ERROR,
-      options: { backoffTimeInSeconds: 0 },
+      options: { backoffTimeInSeconds: 3600 },
     });
   });
 });
