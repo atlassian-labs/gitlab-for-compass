@@ -6,13 +6,7 @@ export const getMRCycleTime = async (
   projectId: number,
   trackingBranch: string,
 ): Promise<number> => {
-  try {
-    const mergeRequests = await getLastMergedMergeRequests(groupToken, projectId, trackingBranch);
+  const mergeRequests = await getLastMergedMergeRequests(groupToken, projectId, trackingBranch);
 
-    return mergeRequestCycleTime(mergeRequests);
-  } catch (e) {
-    console.error('Cannot calculate merge requests cycle time metric: ', e.message);
-
-    return 0;
-  }
+  return mergeRequestCycleTime(mergeRequests);
 };

@@ -10,19 +10,12 @@ export const getProjectBuildsFor28Days = async (
   projectName: string,
   branchName: string,
 ): Promise<DataProviderBuildEvent[]> => {
-  try {
-    const allPipelines = await fetchPaginatedData(getProjectRecentPipelines, {
-      groupToken,
-      projectId,
-      dateAfter: getDateInThePast(),
-      branchName,
-    });
+  const allPipelines = await fetchPaginatedData(getProjectRecentPipelines, {
+    groupToken,
+    projectId,
+    dateAfter: getDateInThePast(),
+    branchName,
+  });
 
-    return allPipelines.map((pipeline) => gitlabApiPipelineToCompassDataProviderBuildEvent(pipeline, projectName));
-  } catch (err) {
-    const DESCRIPTIVE_ERROR_MESSAGE = 'Error while fetching project pipelines from Gitlab.';
-
-    console.error(DESCRIPTIVE_ERROR_MESSAGE, err);
-    return [];
-  }
+  return allPipelines.map((pipeline) => gitlabApiPipelineToCompassDataProviderBuildEvent(pipeline, projectName));
 };
