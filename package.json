@@ -34,10 +34,10 @@
   },
   "dependencies": {
     "@atlassian/forge-graphql": "^8.9.8",
-    "@forge/api": "^2.6.1",
+    "@forge/api": "^2.8.1",
     "@forge/bridge": "^2.3.0",
     "@forge/events": "^0.5.3",
-    "@forge/resolver": "^1.4.2",
+    "@forge/resolver": "^1.4.6",
     "@forge/ui": "^1.1.0",
     "exponential-backoff": "^3.1.0",
     "js-yaml": "^4.1.0",
