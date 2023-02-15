@@ -1,4 +1,4 @@
-import { startsWith, storage } from '@forge/api';
+import { Result, startsWith, storage } from '@forge/api';
 
 import { GitLabAccessLevels, GitlabAPIGroup, GroupAccessToken } from '../types';
 import { getGroupAccessTokens, getGroupsData } from '../client/gitlab';
@@ -59,14 +59,14 @@ const getGroups = async (owned?: string, minAccessLevel?: number): Promise<Gitla
   const { results: groups } = await response.getMany();
 
   const tokens = await Promise.all(
-    groups.map((group) =>
+    groups.map((group: Result) =>
       storage.getSecret(
         `${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${group.key.replace(STORAGE_KEYS.GROUP_KEY_PREFIX, '')}`,
       ),
     ),
   );
 
-  const groupPromises = tokens.map((token) => getGroupsData(token, owned, minAccessLevel));
+  const groupPromises = tokens.map((token: string) => getGroupsData(token, owned, minAccessLevel));
 
   // We need to remove revoked/invalid (on Gitlab side) tokens from storage
   const groupsResult = await Promise.allSettled(groupPromises);
@@ -75,7 +75,11 @@ const getGroups = async (owned?: string, minAccessLevel?: number): Promise<Gitla
     accessedGroups: GitlabAPIGroup[];
     invalidGroupIds: string[];
   }>(
-    (result, currentGroupResult, i) => {
+    (
+      result: { accessedGroups: GitlabAPIGroup[]; invalidGroupIds: string[] },
+      currentGroupResult: PromiseSettledResult<GitlabAPIGroup[]>,
+      i: number,
+    ) => {
       if (currentGroupResult.status === 'rejected' && currentGroupResult.reason.toString().includes('Unauthorized')) {
         result.invalidGroupIds.push(groups[i].key.replace(STORAGE_KEYS.GROUP_KEY_PREFIX, ''));
       }
@@ -92,7 +96,7 @@ const getGroups = async (owned?: string, minAccessLevel?: number): Promise<Gitla
     { accessedGroups: [], invalidGroupIds: [] },
   );
 
-  await Promise.all(reducedGroupsResult.invalidGroupIds.map((id) => deleteGroupDataFromStorage(id)));
+  await Promise.all(reducedGroupsResult.invalidGroupIds.map((id: string) => deleteGroupDataFromStorage(id)));
 
   return reducedGroupsResult.accessedGroups;
 };
