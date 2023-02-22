@@ -9,12 +9,11 @@ const defaultImpl = async (): Promise<ApiPayload<any>> => ({
 
 export const mockDeleteExternalAlias = jest.fn(defaultImpl);
 export const mockDetachDataManager = jest.fn(defaultImpl);
-export const mockGetComponent = jest.fn(defaultImpl);
-export const mockCreateExternalAlias = jest.fn(defaultImpl);
 export const mockUpdateComponent = jest.fn(defaultImpl);
 export const mockUpdateComponentDataManager = jest.fn(defaultImpl);
 export const mockCreateEvent = jest.fn(defaultImpl);
 export const mockInsertMetricValueByExternalId = jest.fn(defaultImpl);
+export const mockSyncComponentWithFile = jest.fn(defaultImpl);
 
 export function mockAgg() {
   mockForgeApi();
@@ -23,15 +22,18 @@ export function mockAgg() {
     ...(jest.requireActual('@atlassian/forge-graphql') as any),
     compass: {
       asApp: () => ({
-        getComponent: mockGetComponent,
         deleteExternalAlias: mockDeleteExternalAlias,
         detachDataManager: mockDetachDataManager,
-        createExternalAlias: mockCreateExternalAlias,
         updateComponent: mockUpdateComponent,
         updateDataManager: mockUpdateComponentDataManager,
         createEvent: mockCreateEvent,
         insertMetricValueByExternalId: mockInsertMetricValueByExternalId,
       }),
+      configAsCode: {
+        asApp: () => ({
+          syncComponentWithFile: mockSyncComponentWithFile,
+        }),
+      },
     },
   }));
 }
