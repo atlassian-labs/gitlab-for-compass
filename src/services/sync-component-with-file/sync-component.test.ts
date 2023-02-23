@@ -1,15 +1,11 @@
 /* eslint-disable import/first, import/order */
-import {
-  mockAgg,
-  mockGetComponent,
-  mockCreateExternalAlias,
-  mockUpdateComponent,
-} from '../../__tests__/helpers/mock-agg';
+import { mockAgg, mockSyncComponentWithFile, mockUpdateComponent } from '../../__tests__/helpers/mock-agg';
 
 mockAgg();
 
 import { Component, CompassComponentType, CompassLinkType } from '@atlassian/forge-graphql';
 import { mocked } from 'jest-mock';
+import yaml from 'js-yaml';
 
 import { generatePushEvent } from '../../__tests__/helpers/gitlab-helper';
 import { CompassYaml, YamlLink } from '../../types';
@@ -22,7 +18,6 @@ import { TEST_GET_PROJECT_BY_ID_RESPONSE, TEST_TOKEN } from '../../__tests__/fix
 
 jest.mock('../../client/gitlab');
 jest.mock('../../services/get-labels');
-jest.mock('./validate-config-file');
 jest.mock('./yaml-config-transforms');
 jest.mock('./report-sync-error');
 
@@ -66,36 +61,11 @@ describe('syncComponent', () => {
     mockGetProjectLabels.mockResolvedValue(MOCK_GET_PROJECT_LABELS);
   });
 
-  it('creates external alias for component in case data manager is not present and external alias was not created previously for the project', async () => {
-    const event = generatePushEvent();
-    const compassYaml = getMockedCompassYaml();
-    const component = getMockedComponent({
-      externalAliases: [{ externalAliasId: '000000', externalSource: EXTERNAL_SOURCE }],
-    });
-    mockGetComponent.mockResolvedValue({
-      success: true,
-      data: { component },
-      errors: [],
-    });
-
-    await syncComponent(TEST_TOKEN, compassYaml, TEST_FILE_NAME, event, event.project.default_branch);
-
-    const expectedParameter = {
-      componentId: compassYaml.id,
-      externalAlias: {
-        externalId: event.project.id.toString(),
-        externalSource: EXTERNAL_SOURCE,
-      },
-    };
-
-    expect(mockCreateExternalAlias).toBeCalledWith(expectedParameter);
-  });
-
-  it('should not create external alias for component in case data manager is present', async () => {
+  it('should call syncComponentByExternal Alias', async () => {
     const event = generatePushEvent();
     const compassYaml = getMockedCompassYaml();
     const component = getMockedComponent({ dataManager: { externalSourceURL: 'url' } });
-    mockGetComponent.mockResolvedValue({
+    mockSyncComponentWithFile.mockResolvedValue({
       success: true,
       data: { component },
       errors: [],
@@ -103,139 +73,13 @@ describe('syncComponent', () => {
 
     await syncComponent(TEST_TOKEN, compassYaml, TEST_FILE_NAME, event, event.project.default_branch);
 
-    expect(mockCreateExternalAlias).not.toBeCalled();
-  });
-
-  it('should not create external alias for component in case the same external alias was created previously', async () => {
-    const event = generatePushEvent();
-    const compassYaml = getMockedCompassYaml();
-    const component = getMockedComponent({
-      externalAliases: [{ externalAliasId: '1', externalSource: EXTERNAL_SOURCE }],
+    expect(mockSyncComponentWithFile).toBeCalledWith({
+      configFile: yaml.dump(compassYaml),
+      externalId: event.project.id.toString(),
+      externalSource: EXTERNAL_SOURCE,
+      externalSourceURL: `${event.project.web_url}/blob/${event.project.default_branch}/${TEST_FILE_NAME}`,
+      linkFromEvent: event.project.web_url,
     });
-    mockGetComponent.mockResolvedValue({
-      success: true,
-      data: { component },
-      errors: [],
-    });
-
-    await syncComponent(TEST_TOKEN, compassYaml, TEST_FILE_NAME, event, event.project.default_branch);
-
-    expect(mockCreateExternalAlias).not.toBeCalled();
-  });
-
-  it('should not create external alias if no component present', async () => {
-    const event = generatePushEvent();
-    const compassYaml = getMockedCompassYaml({ id: undefined });
-
-    await syncComponent(TEST_TOKEN, compassYaml, TEST_FILE_NAME, event, event.project.default_branch);
-
-    expect(mockCreateExternalAlias).not.toBeCalled();
-  });
-
-  it('should update component without changing yaml links', async () => {
-    const event = generatePushEvent();
-    const compassYaml = getMockedCompassYaml({
-      links: [
-        createCompassYamlLink(CompassLinkType.Repository),
-        createCompassYamlLink(CompassLinkType.Repository),
-        createCompassYamlLink(CompassLinkType.Repository),
-        createCompassYamlLink(CompassLinkType.Repository),
-        createCompassYamlLink(CompassLinkType.Repository),
-        createCompassYamlLink(CompassLinkType.Project),
-      ],
-    });
-    const component = getMockedComponent({ dataManager: { externalSourceURL: 'url' } });
-    mockGetComponent.mockResolvedValue({
-      success: true,
-      data: { component },
-      errors: [],
-    });
-
-    await syncComponent(TEST_TOKEN, compassYaml, TEST_FILE_NAME, event, event.project.default_branch);
-
-    expect(mockUpdateComponent).toBeCalledWith(
-      expect.objectContaining({
-        links: compassYaml.links,
-      }),
-    );
-  });
-
-  it('should update component without changing yaml links if required link already exists', async () => {
-    const event = generatePushEvent({
-      project: {
-        id: 1,
-        name: 'test',
-        default_branch: 'main',
-        web_url: 'https://url',
-      },
-    });
-    const compassYaml = getMockedCompassYaml({
-      links: [createCompassYamlLink(CompassLinkType.Project)],
-    });
-    const component = getMockedComponent({ dataManager: { externalSourceURL: 'url' } });
-    mockGetComponent.mockResolvedValue({
-      success: true,
-      data: { component },
-      errors: [],
-    });
-
-    await syncComponent(TEST_TOKEN, compassYaml, TEST_FILE_NAME, event, event.project.default_branch);
-
-    expect(mockUpdateComponent).toBeCalledWith(
-      expect.objectContaining({
-        links: compassYaml.links,
-      }),
-    );
-  });
-
-  it('should update component with adding required yaml link', async () => {
-    const event = generatePushEvent();
-    const compassYaml = getMockedCompassYaml({
-      links: [createCompassYamlLink(CompassLinkType.Project)],
-    });
-    const component = getMockedComponent({ dataManager: { externalSourceURL: 'url' } });
-    mockGetComponent.mockResolvedValue({
-      success: true,
-      data: { component },
-      errors: [],
-    });
-
-    await syncComponent(TEST_TOKEN, compassYaml, TEST_FILE_NAME, event, event.project.default_branch);
-
-    const expectedLinks = [
-      ...compassYaml.links,
-      {
-        type: CompassLinkType.Repository,
-        url: event.project.web_url,
-      },
-    ];
-
-    expect(mockUpdateComponent).toBeCalledWith(
-      expect.objectContaining({
-        links: expectedLinks,
-      }),
-    );
-  });
-
-  it('should update component with correct externalSourceURL', async () => {
-    const event = generatePushEvent();
-    const compassYaml = getMockedCompassYaml();
-    const component = getMockedComponent({ dataManager: { externalSourceURL: 'url' } });
-    mockGetComponent.mockResolvedValue({
-      success: true,
-      data: { component },
-      errors: [],
-    });
-
-    await syncComponent(TEST_TOKEN, compassYaml, TEST_FILE_NAME, event, event.project.default_branch);
-
-    expect(mockUpdateComponent).toBeCalledWith(
-      expect.objectContaining({
-        dataManager: {
-          externalSourceURL: `${event.project.web_url}/blob/${event.project.default_branch}/${TEST_FILE_NAME}`,
-        },
-      }),
-    );
   });
 
   it('should update component with adding labels', async () => {
@@ -244,7 +88,7 @@ describe('syncComponent', () => {
       links: [createCompassYamlLink(CompassLinkType.Project)],
     });
     const component = getMockedComponent({ dataManager: { externalSourceURL: 'url' } });
-    mockGetComponent.mockResolvedValue({
+    mockSyncComponentWithFile.mockResolvedValue({
       success: true,
       data: { component },
       errors: [],
@@ -266,7 +110,7 @@ describe('syncComponent', () => {
     const compassYaml = getMockedCompassYaml();
     const component = getMockedComponent();
     const error = new Error('test');
-    mockGetComponent.mockResolvedValue({
+    mockSyncComponentWithFile.mockResolvedValue({
       success: true,
       data: { component },
       errors: [],
@@ -275,6 +119,6 @@ describe('syncComponent', () => {
     mockUpdateComponent.mockRejectedValue(error);
     await syncComponent(TEST_TOKEN, compassYaml, TEST_FILE_NAME, event, event.project.default_branch);
 
-    expect(reportSyncError).toBeCalledWith(error, expect.anything(), expect.anything());
+    expect(reportSyncError).toBeCalledWith(error, component.id, expect.anything());
   });
 });

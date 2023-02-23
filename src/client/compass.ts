@@ -10,6 +10,8 @@ import graphqlGateway, {
   UpdateCompassComponentDataManagerMetadataInput,
   UpdateComponentInput,
   SdkError,
+  CompassSynchronizeLinkAssociationsInput,
+  SyncComponentWithFileInput,
 } from '@atlassian/forge-graphql';
 import { ImportableProject, COMPASS_GATEWAY_MESSAGES, Metric } from '../types';
 import { EXTERNAL_SOURCE, IMPORT_LABEL } from '../constants';
@@ -58,25 +60,11 @@ export const createComponent = async (cloudId: string, project: ImportableProjec
   return data.component;
 };
 
-export async function getComponent(componentId: string): Promise<Component | never> {
-  const { data, errors } = await graphqlGateway.compass
-    .asApp()
-    .getComponent({ componentId, options: { includeLinks: true } });
-
-  throwIfErrors('getComponent', errors);
-  return data.component;
-}
-
 export async function updateComponent(input: UpdateComponentInput): Promise<Component | never> {
   const { data, errors } = await graphqlGateway.compass.asApp().updateComponent(input);
 
   throwIfErrors('updateComponent', errors);
   return data.component;
-}
-
-export async function createExternalAlias(input: CreateCompassComponentExternalAliasInput): Promise<void | never> {
-  const { errors } = await graphqlGateway.compass.asApp().createExternalAlias(input);
-  throwIfErrors('createExternalAlias', errors);
 }
 
 export async function updateDataManager(input: UpdateCompassComponentDataManagerMetadataInput): Promise<void | never> {
@@ -142,6 +130,14 @@ export async function insertMetricValueByExternalId(cloudId: string, projectID: 
   });
 
   throwIfErrors('insertMetricValueByExternalId', errors);
+
+  return data;
+}
+
+export async function syncComponentWithFile(eventPayload: SyncComponentWithFileInput): Promise<ComponentPayload> {
+  const { errors, data } = await graphqlGateway.compass.configAsCode.asApp().syncComponentWithFile(eventPayload);
+
+  throwIfErrors('syncComponentWithFile', errors);
 
   return data;
 }

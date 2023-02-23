@@ -32,6 +32,9 @@ export const mockForgeApi = (): void => {
     asApp: () => ({
       requestGraph,
     }),
+    asUser: () => ({
+      requestGraph,
+    }),
   };
 
   jest.mock('@forge/api', () => ({
