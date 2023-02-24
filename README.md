@@ -42,6 +42,9 @@ Set up the Forge App
 
     # register the app (this will change the app ID in the manifest)
     forge register
+
+    # set an environment variable this app uses:
+    forge variables set FORGE_APP_ID <ID from manifest, the part after ari:cloud:ecosystem::app/>
     
     # deploy the app
     forge deploy [-f]
