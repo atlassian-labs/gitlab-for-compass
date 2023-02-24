@@ -6,7 +6,6 @@ import { COMMIT_MESSAGE, COMPASS_YML_BRANCH, MR_DESCRIPTION, MR_TITLE, STORAGE_S
 import { getTrackingBranchName } from './get-tracking-branch';
 import { createCompassYml, generateCompassYamlData } from '../utils/create-compass-yaml';
 import { createFileInProject, createMergeRequest } from '../client/gitlab';
-import validateConfigFile from './sync-component-with-file/validate-config-file';
 
 const FILE_PATH = 'compass.yml';
 const ENCODING = 'base64';
@@ -17,8 +16,6 @@ export const createMRWithCompassYML = async (project: ImportableProject, compone
   const groupToken = await storage.getSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`);
   const trackingBranch = await getTrackingBranchName(groupToken, id, defaultBranch);
   const compassYamlData = generateCompassYamlData(url, component);
-
-  validateConfigFile(compassYamlData, component);
 
   const content = createCompassYml(compassYamlData);
 
