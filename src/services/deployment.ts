@@ -9,6 +9,7 @@ import { getProjectDeploymentById, getProjectRecentDeployments } from '../client
 import { Deployment, DeploymentEvent, EnvironmentTier } from '../types';
 import { fetchPaginatedData } from '../utils/fetchPaginatedData';
 import { getProjectEnvironments } from './environment';
+import { isSendStagingEventsEnabled } from './feature-flags';
 
 export const gitLabStateToCompassFormat = (state: string): CompassDeploymentEventState => {
   switch (state) {
@@ -25,6 +26,22 @@ export const gitLabStateToCompassFormat = (state: string): CompassDeploymentEven
       return CompassDeploymentEventState.Cancelled;
     default:
       return CompassDeploymentEventState.Unknown;
+  }
+};
+
+export const mapEnvTierToCompassDeploymentEnv = (env: EnvironmentTier): CompassDeploymentEventEnvironmentCategory => {
+  switch (env) {
+    case EnvironmentTier.PRODUCTION:
+      return CompassDeploymentEventEnvironmentCategory.Production;
+    case EnvironmentTier.STAGING:
+      return CompassDeploymentEventEnvironmentCategory.Staging;
+    case EnvironmentTier.TESTING:
+      return CompassDeploymentEventEnvironmentCategory.Testing;
+    case EnvironmentTier.DEVELOPMENT:
+      return CompassDeploymentEventEnvironmentCategory.Development;
+    case EnvironmentTier.OTHER:
+    default:
+      return CompassDeploymentEventEnvironmentCategory.Unmapped;
   }
 };
 
@@ -54,7 +71,7 @@ export const gitlabApiDeploymentToCompassDeploymentEvent = (
           startedAt: new Date(deployment.created_at).toISOString(),
           completedAt: isCompletedDeployment(deploymentState) ? new Date(deployment.updated_at).toISOString() : null,
           environment: {
-            category: environmentTier.toUpperCase() as CompassDeploymentEventEnvironmentCategory,
+            category: mapEnvTierToCompassDeploymentEnv(environmentTier),
             displayName: deployment.environment.name,
             environmentId: deployment.environment.id.toString(),
           },
@@ -115,7 +132,10 @@ export const getDeploymentAfter28Days = async (
   const environments = await getProjectEnvironments(projectId, groupToken);
   const getDeploymentsPromises = environments.reduce<Promise<{ data: Deployment[]; headers: Headers }>[]>(
     (deploymentsPromises, currentEnvironment) => {
-      if (currentEnvironment.tier === EnvironmentTier.PRODUCTION) {
+      if (
+        currentEnvironment.tier === EnvironmentTier.PRODUCTION ||
+        (isSendStagingEventsEnabled() && currentEnvironment.tier === EnvironmentTier.STAGING)
+      ) {
         deploymentsPromises.push(
           getProjectRecentDeployments(PAGE, PER_PAGE, {
             groupToken,
@@ -140,12 +160,13 @@ export const getDeploymentAfter28Days = async (
 export const gitlabAPiDeploymentToCompassDataProviderDeploymentEvent = (
   deployment: Deployment,
   projectName: string,
+  environmentTier: EnvironmentTier,
 ): DataProviderDeploymentEvent => {
   const { environment, deployable } = deployment;
 
   return {
     environment: {
-      category: EnvironmentTier.PRODUCTION.toUpperCase() as CompassDeploymentEventEnvironmentCategory,
+      category: mapEnvTierToCompassDeploymentEnv(environmentTier),
       displayName: environment.name,
       environmentId: environment.id.toString(),
     },

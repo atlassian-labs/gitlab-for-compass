@@ -9,6 +9,7 @@ import {
 import { pipelineWebhookFixture } from '../fixtures/build-webhook-payload';
 import {
   CommitFileDiff,
+  Deployment,
   DeploymentEvent,
   Environment,
   EnvironmentTier,
@@ -66,6 +67,26 @@ export const generateMergeRequestEvent = (overrideEvent: Partial<MergeRequestEve
   };
 };
 
+export const generateDeployment = (overrideDeployment?: Partial<Deployment>): Deployment => ({
+  id: 12345,
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+  deployable: {
+    status: 'CREATED',
+    finished_at: 'finished_at',
+    pipeline: {
+      id: 123,
+      web_url: 'https://www.google.com/',
+    },
+  },
+  environment: {
+    name: 'name',
+    id: 123,
+  },
+  status: 'string',
+  ...overrideDeployment,
+});
+
 export const generateDeploymentEvent = (overrideEvent: Partial<DeploymentEvent> = {}): DeploymentEvent => {
   return {
     object_kind: 'deployment',
@@ -81,9 +102,9 @@ export const generateDeploymentEvent = (overrideEvent: Partial<DeploymentEvent> 
   };
 };
 
-export const generateEnvironmentEvent = (tier: Partial<EnvironmentTier> = EnvironmentTier.PRODUCTION): Environment => ({
+export const generateEnvironmentEvent = (tier = EnvironmentTier.PRODUCTION, name = 'production'): Environment => ({
   id: 1,
-  name: 'production',
+  name,
   tier,
 });
 
