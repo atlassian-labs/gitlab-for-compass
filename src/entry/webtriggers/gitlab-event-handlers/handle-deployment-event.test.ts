@@ -139,14 +139,11 @@ describe('GitLab deployment event', () => {
     it('ignores deployment events when environment is not production or staging', async () => {
       const MOCK_TESTING_ENVIRONMENTS_EVENT = generateEnvironmentEvent(EnvironmentTier.TESTING, 'testing');
       const MOCK_TESTING_DEPLOYMENT_EVENT = generateDeploymentEvent({ environment: 'testing' });
-      const MOCK_TESTING_DEPLOYMENT_EVENT_INPUT = generateMockDeploymentInput(
-        CompassDeploymentEventEnvironmentCategory.Testing,
-      );
       mockedGetEnvironments.mockResolvedValue([MOCK_TESTING_ENVIRONMENTS_EVENT]);
-      mockedGetDeployment.mockResolvedValue(MOCK_TESTING_DEPLOYMENT_EVENT_INPUT);
 
       await handleDeploymentEvent(MOCK_TESTING_DEPLOYMENT_EVENT, TEST_TOKEN, MOCK_CLOUD_ID);
 
+      expect(mockedGetDeployment).not.toHaveBeenCalled();
       expect(mockedSendEventsToCompass).not.toHaveBeenCalled();
     });
   });
