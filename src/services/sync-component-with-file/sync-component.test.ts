@@ -14,7 +14,7 @@ import { EXTERNAL_SOURCE, IMPORT_LABEL } from '../../constants';
 import { reportSyncError } from './report-sync-error';
 import { getProjectById } from '../../client/gitlab';
 import { getProjectLabels } from '../get-labels';
-import { TEST_GET_PROJECT_BY_ID_RESPONSE, TEST_TOKEN } from '../../__tests__/fixtures/gitlab-data';
+import { MOCK_CLOUD_ID, TEST_GET_PROJECT_BY_ID_RESPONSE, TEST_TOKEN } from '../../__tests__/fixtures/gitlab-data';
 
 jest.mock('../../client/gitlab');
 jest.mock('../../services/get-labels');
@@ -71,14 +71,20 @@ describe('syncComponent', () => {
       errors: [],
     });
 
-    await syncComponent(TEST_TOKEN, compassYaml, TEST_FILE_NAME, event, event.project.default_branch);
+    await syncComponent(TEST_TOKEN, compassYaml, TEST_FILE_NAME, event, event.project.default_branch, MOCK_CLOUD_ID);
 
     expect(mockSyncComponentWithFile).toBeCalledWith({
+      cloudId: MOCK_CLOUD_ID,
       configFile: yaml.dump(compassYaml),
       externalId: event.project.id.toString(),
       externalSource: EXTERNAL_SOURCE,
       externalSourceURL: `${event.project.web_url}/blob/${event.project.default_branch}/${TEST_FILE_NAME}`,
-      linkFromEvent: event.project.web_url,
+      additionalLinks: [
+        {
+          url: event.project.web_url,
+          type: CompassLinkType.Repository,
+        },
+      ],
     });
   });
 
@@ -94,7 +100,7 @@ describe('syncComponent', () => {
       errors: [],
     });
 
-    await syncComponent(TEST_TOKEN, compassYaml, TEST_FILE_NAME, event, event.project.default_branch);
+    await syncComponent(TEST_TOKEN, compassYaml, TEST_FILE_NAME, event, event.project.default_branch, MOCK_CLOUD_ID);
 
     const expectedLabels = [...MOCK_COMPONENT_LABELS, IMPORT_LABEL, ...MOCK_GET_PROJECT_LABELS];
 
@@ -117,7 +123,7 @@ describe('syncComponent', () => {
     });
 
     mockUpdateComponent.mockRejectedValue(error);
-    await syncComponent(TEST_TOKEN, compassYaml, TEST_FILE_NAME, event, event.project.default_branch);
+    await syncComponent(TEST_TOKEN, compassYaml, TEST_FILE_NAME, event, event.project.default_branch, MOCK_CLOUD_ID);
 
     expect(reportSyncError).toBeCalledWith(error, component.id, expect.anything());
   });
