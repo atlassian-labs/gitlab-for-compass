@@ -7,7 +7,7 @@ import { isEventForTrackingBranch } from '../../../utils/push-event-utils';
 import { PushEvent } from '../../../types';
 import { getTrackingBranchName } from '../../../services/get-tracking-branch';
 
-export const handlePushEvent = async (event: PushEvent, groupToken: string, cloudId: string): Promise<void> => {
+export const handlePushEvent = async (event: PushEvent, groupToken: string): Promise<void> => {
   const trackingBranch = await getTrackingBranchName(groupToken, event.project.id, event.project.default_branch);
 
   if (!isEventForTrackingBranch(event, trackingBranch)) {
@@ -35,7 +35,7 @@ export const handlePushEvent = async (event: PushEvent, groupToken: string, clou
   });
 
   const updates = componentsToSync.map((c) =>
-    syncComponent(groupToken, c.componentYaml, c.absoluteFilePath, event, trackingBranch, cloudId),
+    syncComponent(groupToken, c.componentYaml, c.absoluteFilePath, event, trackingBranch),
   );
   const removals = componentsToUnlink.map((componentYaml) =>
     unlinkComponent(componentYaml.id, event.project.id.toString()),

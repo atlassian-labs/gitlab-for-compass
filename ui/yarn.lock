@@ -379,15 +379,14 @@
     "@babel/runtime" "^7.0.0"
     "@emotion/core" "^10.0.9"
 
-"@atlassian/forge-graphql@^10.0.0":
-  version "10.0.0"
-  resolved "https://packages.atlassian.com/api/npm/atlassian-npm/@atlassian/forge-graphql/-/forge-graphql-10.0.0.tgz#93b8b73e0b3e498099bebb39281b08a93e224f77"
-  integrity sha512-jqmCJGGKtd0Vx8e+BpS0gi9gS+zZ4n48ylJ/h4ffOg33zha6SOdagxm7ICYW4oMGm/qIcqMjAWa1xsMwDkjCHQ==
+"@atlassian/forge-graphql@^5.9.3":
+  version "5.9.3"
+  resolved "https://packages.atlassian.com/api/npm/atlassian-npm/@atlassian/forge-graphql/-/forge-graphql-5.9.3.tgz#05a38ed81a0a6367a84027a5de6d7980c05b54fd"
+  integrity sha512-C2iZfSdtIavUmbCz5FlaY12iZFhHQN5F9iXcy6HZGoIwC+MfGb3pivTr9WWJ2qMPqrHTVpVbO7CS862HjRD81A==
   dependencies:
     "@forge/api" "^2.3.0"
     axios "^0.21.1"
     fs "^0.0.1-security"
-    js-yaml "^4.1.0"
     path "^0.12.7"
     url-parse "^1.5.10"
 

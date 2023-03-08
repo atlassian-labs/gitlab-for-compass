@@ -11,7 +11,7 @@ import {
   unlinkComponent,
 } from '../../../services/sync-component-with-file';
 import { getTrackingBranchName } from '../../../services/get-tracking-branch';
-import { MOCK_CLOUD_ID, TEST_TOKEN } from '../../../__tests__/fixtures/gitlab-data';
+import { TEST_TOKEN } from '../../../__tests__/fixtures/gitlab-data';
 
 jest.mock('../../../services/sync-component-with-file', () => {
   return {
@@ -40,7 +40,7 @@ describe('Gitlab push events', () => {
   it('ignores event if the branch is not tracking', async () => {
     getNonDefaultBranchNameMock.mockResolvedValue(eventWithIncorrectRef.project.default_branch);
 
-    await handlePushEvent(eventWithIncorrectRef, TEST_TOKEN, MOCK_CLOUD_ID);
+    await handlePushEvent(eventWithIncorrectRef, TEST_TOKEN);
 
     expect(updates).not.toBeCalled();
     expect(removals).not.toBeCalled();
@@ -49,7 +49,7 @@ describe('Gitlab push events', () => {
   it('ignores event if no config as code file updates present', async () => {
     getNonDefaultBranchNameMock.mockResolvedValue(event.project.default_branch);
     findConfigChanges.mockResolvedValue({ componentsToSync: [], componentsToUnlink: [] });
-    await handlePushEvent(event, TEST_TOKEN, MOCK_CLOUD_ID);
+    await handlePushEvent(event, TEST_TOKEN);
 
     expect(updates).not.toBeCalled();
     expect(removals).not.toBeCalled();
@@ -74,7 +74,7 @@ describe('Gitlab push events', () => {
       componentsToUnlink: mockComponentsToUnlink,
     });
 
-    await handlePushEvent(event, TEST_TOKEN, MOCK_CLOUD_ID);
+    await handlePushEvent(event, TEST_TOKEN);
 
     expect(updates).toBeCalledWith(
       TEST_TOKEN,
@@ -82,7 +82,6 @@ describe('Gitlab push events', () => {
       mockComponentsToSync[0].absoluteFilePath,
       expect.anything(),
       event.project.default_branch,
-      MOCK_CLOUD_ID,
     );
     expect(updates).toBeCalledWith(
       TEST_TOKEN,
@@ -90,7 +89,6 @@ describe('Gitlab push events', () => {
       mockComponentsToSync[1].absoluteFilePath,
       expect.anything(),
       event.project.default_branch,
-      MOCK_CLOUD_ID,
     );
     expect(removals).toBeCalledWith(mockComponentsToUnlink[0].id, expect.anything());
   });
@@ -116,7 +114,7 @@ describe('Gitlab push events', () => {
       componentsToUnlink: mockComponentsToUnlink,
     });
 
-    await handlePushEvent(pushEvent, TEST_TOKEN, MOCK_CLOUD_ID);
+    await handlePushEvent(pushEvent, TEST_TOKEN);
 
     expect(updates).toBeCalledWith(
       TEST_TOKEN,
@@ -124,7 +122,6 @@ describe('Gitlab push events', () => {
       mockComponentsToSync[0].absoluteFilePath,
       expect.anything(),
       BRANCH_NAME,
-      MOCK_CLOUD_ID,
     );
     expect(updates).toBeCalledWith(
       TEST_TOKEN,
@@ -132,7 +129,6 @@ describe('Gitlab push events', () => {
       mockComponentsToSync[1].absoluteFilePath,
       expect.anything(),
       BRANCH_NAME,
-      MOCK_CLOUD_ID,
     );
     expect(removals).toBeCalledWith(mockComponentsToUnlink[0].id, expect.anything());
   });

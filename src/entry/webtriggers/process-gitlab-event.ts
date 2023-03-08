@@ -58,7 +58,7 @@ export const processGitlabEvent = async (event: WebtriggerRequest, context: Cont
   }
 
   if (parsedEvent.object_kind === 'push') {
-    await handlePushEvent(parsedEvent as PushEvent, groupToken, cloudId);
+    await handlePushEvent(parsedEvent as PushEvent, groupToken);
   }
 
   if (parsedEvent.object_kind === 'merge_request') {
