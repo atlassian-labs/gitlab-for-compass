@@ -15,31 +15,18 @@ const newGetDeploymentsForEnvironments = async (
   // get all project environments
   const projectEnvironments = await getProjectEnvironments(projectId, groupToken);
 
-  const deploymentEventsByEnvironmentTier = environmentTiers.map(async (environmentTier) => {
-    // get a list of deployments for each project environment belonging to the environmentTier
-    const getDeploymentsPromises = projectEnvironments.reduce<Promise<Deployment[]>[]>(
-      (deploymentsPromises, projectEnvironment) => {
-        if (projectEnvironment.tier === environmentTier) {
-          deploymentsPromises.push(
-            getRecentDeployments(groupToken, projectId, getDateInThePast(), projectEnvironment.name),
-          );
-        }
+  // get deploymentEvents for each projectEnvironment that matches the requested environmentTiers
+  const deploymentEvents = projectEnvironments
+    .filter((projectEnv) => environmentTiers.includes(projectEnv.tier))
+    .map(async (projectEnv) => {
+      const recentDeployments = await getRecentDeployments(groupToken, projectId, getDateInThePast(), projectEnv.name);
+      return recentDeployments.map((deployment) =>
+        gitlabAPiDeploymentToCompassDataProviderDeploymentEvent(deployment, projectName, projectEnv.tier),
+      );
+    });
 
-        return deploymentsPromises;
-      },
-      [],
-    );
-
-    // flatten all deployments to a single array
-    const deployments = (await Promise.all(getDeploymentsPromises)).flat();
-
-    return deployments.map((deployment) =>
-      gitlabAPiDeploymentToCompassDataProviderDeploymentEvent(deployment, projectName, environmentTier),
-    );
-  });
-
-  // combine results for multiple environmentTiers into single array
-  return Promise.all(deploymentEventsByEnvironmentTier).then((results) => results.flat());
+  // combine results from multiple projectEnvironments into single array
+  return Promise.all(deploymentEvents).then((results) => results.flat());
 };
 
 export const getDeploymentsForEnvironmentTiers = async (

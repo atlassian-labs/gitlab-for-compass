@@ -50,7 +50,7 @@ describe('getDeploymentsForEnvironmentTiers', () => {
     const mockDeployment = getMockDeployment();
     mockedGetRecentDeployments.mockResolvedValue([mockDeployment]);
 
-    await getDeploymentsForEnvironmentTiers('groupToken', 1, 'projectName');
+    const deployments = await getDeploymentsForEnvironmentTiers('groupToken', 1, 'projectName');
 
     expect(mockedGitlabAPiDeploymentToCompassDataProviderDeploymentEvent).toHaveBeenCalledTimes(1);
     expect(mockedGitlabAPiDeploymentToCompassDataProviderDeploymentEvent).toHaveBeenCalledWith(
@@ -58,15 +58,17 @@ describe('getDeploymentsForEnvironmentTiers', () => {
       'projectName',
       EnvironmentTier.PRODUCTION,
     );
+    expect(deployments).toHaveLength(1);
   });
 
   it('ignores non-Production events', async () => {
     mockedGetProjectEnvironments.mockResolvedValue([generateEnvironmentEvent(EnvironmentTier.STAGING)]);
 
-    await getDeploymentsForEnvironmentTiers('groupToken', 1, 'projectName');
+    const deployments = await getDeploymentsForEnvironmentTiers('groupToken', 1, 'projectName');
 
     expect(mockedGetRecentDeployments).not.toHaveBeenCalled();
     expect(mockedGitlabAPiDeploymentToCompassDataProviderDeploymentEvent).not.toHaveBeenCalled();
+    expect(deployments).toHaveLength(0);
   });
 
   describe('when isSendStagingEventsEnabled', () => {
@@ -102,7 +104,7 @@ describe('getDeploymentsForEnvironmentTiers', () => {
         return null;
       });
 
-      await getDeploymentsForEnvironmentTiers('groupToken', 1, 'projectName', [
+      const deployments = await getDeploymentsForEnvironmentTiers('groupToken', 1, 'projectName', [
         EnvironmentTier.PRODUCTION,
         EnvironmentTier.STAGING,
       ]);
@@ -113,6 +115,7 @@ describe('getDeploymentsForEnvironmentTiers', () => {
         [mockDeployment2, 'projectName', EnvironmentTier.STAGING],
         [mockDeployment3, 'projectName', EnvironmentTier.STAGING],
       ]);
+      expect(deployments).toHaveLength(3);
     });
 
     it('ignores deployments from environments that are not provided', async () => {
@@ -122,13 +125,14 @@ describe('getDeploymentsForEnvironmentTiers', () => {
         generateEnvironmentEvent(EnvironmentTier.OTHER, 'otherEnvName'),
       ]);
 
-      await getDeploymentsForEnvironmentTiers('groupToken', 1, 'projectName', [
+      const deployments = await getDeploymentsForEnvironmentTiers('groupToken', 1, 'projectName', [
         EnvironmentTier.PRODUCTION,
         EnvironmentTier.STAGING,
       ]);
 
       expect(mockedGetRecentDeployments).not.toHaveBeenCalled();
       expect(mockedGitlabAPiDeploymentToCompassDataProviderDeploymentEvent).not.toHaveBeenCalled();
+      expect(deployments).toHaveLength(0);
     });
   });
 });
