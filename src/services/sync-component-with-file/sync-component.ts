@@ -1,4 +1,4 @@
-import { Component, CreateLinkInput } from '@atlassian/forge-graphql';
+import { CompassLinkType, Component, CreateLinkInput } from '@atlassian/forge-graphql';
 import yaml from 'js-yaml';
 import { CompassYaml, PushEvent } from '../../types';
 import { reportSyncError } from './report-sync-error';
@@ -17,6 +17,7 @@ export const syncComponent = async (
   filePath: string,
   event: PushEvent,
   trackingBranch: string,
+  cloudId: string,
 ): Promise<void> => {
   const startTime = Date.now();
   const externalSourceURL = getFileUrl(filePath, event, trackingBranch);
@@ -25,11 +26,17 @@ export const syncComponent = async (
 
   try {
     const data = await syncComponentWithFile({
+      cloudId,
       configFile: yaml.dump(componentYaml),
       externalId: event.project.id.toString(),
       externalSource: EXTERNAL_SOURCE,
       externalSourceURL,
-      linkFromEvent: event.project.web_url,
+      additionalLinks: [
+        {
+          url: event.project.web_url,
+          type: CompassLinkType.Repository,
+        },
+      ],
     });
     currentComponent = data.component;
     console.log({ message: `Main sync with file success for component ${currentComponent.id}` });
