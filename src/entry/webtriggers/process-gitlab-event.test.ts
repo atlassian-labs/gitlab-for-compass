@@ -65,7 +65,7 @@ describe('processGitlabEvent', () => {
 
     await processGitlabEvent(webtriggerRequest, MOCK_CONTEXT);
 
-    expect(mockHandlePushEvent).toHaveBeenCalledWith(MOCK_PUSH_EVENT, TEST_TOKEN, MOCK_CLOUD_ID);
+    expect(mockHandlePushEvent).toHaveBeenCalledWith(MOCK_PUSH_EVENT, TEST_TOKEN);
     expect(serverResponse).toHaveBeenCalledWith('Processed webhook event');
   });
 
