@@ -89,7 +89,7 @@ resolver.define('import', async (req) => {
       } else {
         internalMetrics.counter(`compass.gitlab.import.end.success`).incr();
         console.log(
-          `GitLab project ${name}:${id} was imported.
+          `GitLab project was imported.
         Compass component - ${updatedComponent.id} was updated.`,
         );
       }
