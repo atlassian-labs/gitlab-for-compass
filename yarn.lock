@@ -666,6 +666,11 @@
     node-fetch "2.6.1"
     typescript-json-schema "^0.45.1"
 
+"@forge/metrics@^0.1.1":
+  version "0.1.1"
+  resolved "https://packages.atlassian.com/api/npm/npm-remote/@forge/metrics/-/metrics-0.1.1.tgz#2ebb46326f2edc7b1878b48281cb5d5d69ea6311"
+  integrity sha512-m+qBqZYIzQgzbbOme4+V7bs5GKpA0I92RfmYSUvF3uMrGz6hr+8vbyHIqjtBkEeSibbiBqiVYYzZijHQXFnREQ==
+
 "@forge/resolver@^1.4.6":
   version "1.4.10"
   resolved "https://registry.yarnpkg.com/@forge/resolver/-/resolver-1.4.10.tgz#ad6173c23ca53f881c352d46d57ae615e62d4409"
