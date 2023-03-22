@@ -1,5 +1,6 @@
 import { fetch } from '@forge/api';
 import yaml from 'js-yaml';
+import { internalMetrics } from '@forge/metrics';
 
 import { BASE_URL } from '../constants';
 import {
@@ -72,6 +73,8 @@ export const callGitlab = async (
     },
     body,
   });
+
+  internalMetrics.counter(`compass.github.api_req.${resp.status}.count`);
 
   if (resp.status === 204) {
     // no content, we can just return here
