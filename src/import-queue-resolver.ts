@@ -66,7 +66,7 @@ resolver.define('import', async (req) => {
       console.log(`GitLab project ${name}:${id} was imported. Compass component was created - ${component.id}.`);
 
       if (shouldOpenMR) {
-        await createMRWithCompassYML(project, component, groupId);
+        await createMRWithCompassYML(project, component.id, groupId);
       }
     } else if (hasComponent && !(isCompassFilePrOpened && isManaged)) {
       const formattedLabels = labels.map((label: string) => label.split(' ').join('-').toLowerCase());
@@ -81,7 +81,7 @@ resolver.define('import', async (req) => {
       const updatedComponent = await backOff(() => updateComponent({ id: componentId, ...component }), backOffConfig);
 
       if (shouldOpenMR) {
-        await createMRWithCompassYML(project, updatedComponent, groupId);
+        await createMRWithCompassYML(project, updatedComponent.id, groupId);
       }
 
       if ('err' in updatedComponent) {

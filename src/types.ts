@@ -1,4 +1,4 @@
-import { CompassComponentType, CreateLinkInput } from '@atlassian/forge-graphql';
+import { CompassComponentType, CreateLinkInput, CustomFieldFromYAML } from '@atlassian/forge-graphql';
 
 // 2nd parameter passed into extension point & webtrigger functions
 type InvocationContext = {
@@ -114,6 +114,7 @@ type GitlabEvent = PushEvent | MergeRequestEvent | PipelineEvent | DeploymentEve
 // Config as code types
 type YamlFields = {
   tier?: number;
+  lifecycle?: string;
 };
 
 type YamlLink = {
@@ -135,6 +136,10 @@ type CompassYaml = {
   fields?: YamlFields;
   links?: Array<YamlLink>;
   relationships?: YamlRelationships;
+  labels?: Array<string>;
+  configVersion?: number;
+  typeId?: string;
+  customFields?: CustomFieldFromYAML[];
 };
 
 type ComponentSyncPayload = {
@@ -346,6 +351,10 @@ type GroupProjectsResponse = {
   projects: ProjectReadyForImport[];
 };
 
+type ComponentTierField = Array<string | null> | undefined;
+
+type ComponentLifecycleField = Array<string | null> | undefined;
+
 export type {
   WebtriggerRequest,
   WebtriggerResponse,
@@ -380,6 +389,8 @@ export type {
   Metric,
   Environment,
   GroupProjectsResponse,
+  ComponentTierField,
+  ComponentLifecycleField,
 };
 
 export {

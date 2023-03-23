@@ -1,32 +1,62 @@
 import yaml from 'js-yaml';
 import { Component } from '@atlassian/forge-graphql';
-import { CompassYaml } from '../types';
+import { CompassYaml, ComponentLifecycleField, ComponentTierField, YamlFields, YamlLink } from '../types';
+import { formatCustomFieldsToYamlFormat } from './format-custom-fields-to-yaml';
+import { DEFAULT_CONFIG_VERSION } from '../constants';
 
-export const generateCompassYamlData = (projectURL: string, component: Component): CompassYaml => {
-  const { fields, name, description, ownerId, id: componentId, relationships } = component;
+function getFields(fields?: Record<string, unknown>): YamlFields | null {
+  if (fields) {
+    const tierField = fields['compass:tier'] as ComponentTierField;
+    const lifecycleField = fields['compass:lifecycle'] as ComponentLifecycleField;
 
-  const compassYMLFields = fields
-    ? {
-        tier: Number((fields['compass:tier'] as string[])[0]),
-      }
-    : {};
+    const compassYMLFields = {
+      ...(tierField ? { tier: tierField[0] ? Number(tierField[0]) : null } : {}),
+      ...(lifecycleField ? { lifecycle: lifecycleField[0] || null } : {}),
+    };
+
+    return compassYMLFields;
+  }
+
+  return null;
+}
+
+function formatLink(link: YamlLink) {
+  return {
+    ...(link.name !== undefined ? { name: link.name } : {}),
+    type: link.type,
+    url: link.url,
+  };
+}
+
+export const generateCompassYamlData = (component: Component): CompassYaml => {
+  const {
+    fields,
+    name,
+    description,
+    ownerId,
+    id: componentId,
+    relationships,
+    typeId,
+    type,
+    links,
+    labels,
+    customFields,
+  } = component;
 
   return {
     name,
     id: componentId,
     description,
+    configVersion: DEFAULT_CONFIG_VERSION,
+    typeId: typeId || type,
     ownerId,
-    fields: compassYMLFields,
-    links: [
-      {
-        type: 'REPOSITORY',
-        name: null,
-        url: projectURL,
-      },
-    ],
+    fields: getFields(fields),
+    links: links?.map(formatLink) || null,
     relationships: {
       DEPENDS_ON: relationships ? relationships.map((relationship) => relationship.nodeId) : [],
     },
+    labels: labels || null,
+    customFields: formatCustomFieldsToYamlFormat(customFields),
   };
 };
 
