@@ -21,6 +21,7 @@ export const REQUIRED_SCOPES = ['api', 'write_repository'];
 export const MAX_NAME_LENGTH = 100;
 export const MAX_DESCRIPTION_LENGTH = 1000;
 export const EXTERNAL_SOURCE = 'gitlab-importer';
+export const EXTERNAL_ALIAS_SOURCE_IMMUTABLE_LOCAL_KEY = 'compass:immutableLocalKey';
 export const IMPORT_LABEL = 'source:gitlab';
 export const MAX_LINKS_OF_TYPE = 5;
 export const BACK_OFF: Partial<IBackOffOptions> = {

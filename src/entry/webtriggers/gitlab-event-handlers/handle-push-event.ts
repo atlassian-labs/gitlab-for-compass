@@ -38,7 +38,7 @@ export const handlePushEvent = async (event: PushEvent, groupToken: string, clou
     syncComponent(groupToken, c.componentYaml, c.absoluteFilePath, event, trackingBranch, cloudId),
   );
   const removals = componentsToUnlink.map((componentYaml) =>
-    unlinkComponent(componentYaml.id, event.project.id.toString()),
+    unlinkComponent(componentYaml, event.project.id.toString(), cloudId),
   );
   await Promise.all([...updates, ...removals]);
 };

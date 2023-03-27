@@ -1,3 +1,4 @@
+import { CompassComponent, CompassComponentType } from '@atlassian/forge-graphql';
 import { MergeRequest } from '../../types';
 
 export const TEST_COMPONENT_ID =
@@ -39,4 +40,17 @@ export const MOCK_GROUP_DATA = {
   id: 123,
   full_name: 'GitLab/koko',
   path: 'koko/momo',
+};
+
+export const mockComponent: CompassComponent = {
+  id: '1',
+  name: 'mock',
+  type: CompassComponentType.Service,
+  typeId: 'service',
+  description: null,
+  fields: [],
+  ownerId: null,
+  links: null,
+  relationships: null,
+  changeMetadata: null,
 };

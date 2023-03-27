@@ -14,6 +14,7 @@ export const mockUpdateComponentDataManager = jest.fn(defaultImpl);
 export const mockCreateEvent = jest.fn(defaultImpl);
 export const mockInsertMetricValueByExternalId = jest.fn(defaultImpl);
 export const mockSyncComponentWithFile = jest.fn(defaultImpl);
+export const mockGetComponentByExternalAlias = jest.fn(defaultImpl);
 
 export function mockAgg() {
   mockForgeApi();
@@ -28,6 +29,7 @@ export function mockAgg() {
         updateDataManager: mockUpdateComponentDataManager,
         createEvent: mockCreateEvent,
         insertMetricValueByExternalId: mockInsertMetricValueByExternalId,
+        getComponentByExternalAlias: mockGetComponentByExternalAlias,
       }),
       configAsCode: {
         asApp: () => ({
