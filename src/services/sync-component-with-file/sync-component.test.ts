@@ -76,6 +76,7 @@ describe('syncComponent', () => {
     expect(mockSyncComponentWithFile).toBeCalledWith({
       cloudId: MOCK_CLOUD_ID,
       configFile: yaml.dump(compassYaml),
+      immutableLocalKeyPrefix: event.project.id.toString(),
       additionalExternalAliases: [{ externalId: event.project.id.toString(), externalSource: EXTERNAL_SOURCE }],
       externalSourceURL: `${event.project.web_url}/blob/${event.project.default_branch}/${TEST_FILE_NAME}`,
       additionalLinks: [
