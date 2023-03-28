@@ -1,6 +1,7 @@
 import { CommitFileDiff, CompassYaml, ComponentChanges, ComponentSyncPayload, PushEvent } from '../../types';
 import { getCommitDiff, getFileContent } from '../../client/gitlab';
 import { groupDiffsByChangeType } from '../../utils/push-event-utils';
+import { listFeatures } from '../feature-flags';
 
 const getRemovedFiles = async (
   token: string,
@@ -29,6 +30,20 @@ const getAddedFiles = async (
   );
 };
 
+function isFileIdentifierChanged(oldFile: CompassYaml, newFile: ComponentSyncPayload): boolean {
+  const { isCreateFromYamlEnabled } = listFeatures();
+  const { id: oldId, immutableLocalKey: oldImmutableLocalKey } = oldFile;
+  const {
+    componentYaml: { id: newId, immutableLocalKey: newImmutableLocalKey },
+  } = newFile;
+
+  const isIdChanged = oldId !== newId && oldId !== undefined;
+  const isImmutableLocalKeyChanged = oldImmutableLocalKey !== newImmutableLocalKey;
+  const isOnlyIdChanged = isIdChanged && oldImmutableLocalKey === undefined;
+
+  return isCreateFromYamlEnabled ? isIdChanged || isImmutableLocalKeyChanged : isOnlyIdChanged;
+}
+
 const getModifiedFiles = async (
   token: string,
   compassYmlFilesDiffs: CommitFileDiff[],
@@ -55,10 +70,7 @@ const getModifiedFiles = async (
 
   return changes.reduce<{ componentsToSync: ComponentSyncPayload[]; componentsToUnlink: CompassYaml[] }>(
     (result, { oldFile, newFile }) => {
-      if (
-        oldFile.id !== newFile.componentYaml.id ||
-        oldFile.immutableLocalKey !== newFile.componentYaml.immutableLocalKey
-      ) {
+      if (isFileIdentifierChanged(oldFile, newFile)) {
         result.componentsToUnlink.push(oldFile);
       }
       result.componentsToSync.push(newFile);
@@ -98,15 +110,6 @@ export const findConfigAsCodeFileChanges = async (event: PushEvent, token: strin
 
   const componentsToSync = [...addedComponents, ...modifiedComponents.componentsToSync];
   const componentsToUnlink = [...removedComponents, ...modifiedComponents.componentsToUnlink];
-
-  console.log(
-    'Identifiers of files to sync',
-    componentsToSync.map((c) => c.componentYaml.id || c.componentYaml.immutableLocalKey),
-  );
-  console.log(
-    'Identifiers of files to remove',
-    componentsToUnlink.map((c) => c.id || c.immutableLocalKey),
-  );
 
   return {
     componentsToSync,

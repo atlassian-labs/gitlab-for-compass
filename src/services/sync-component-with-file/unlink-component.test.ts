@@ -1,24 +1,15 @@
 /* eslint-disable import/first */
 
-import {
-  mockAgg,
-  mockDeleteExternalAlias,
-  mockDetachDataManager,
-  mockGetComponentByExternalAlias,
-} from '../../__tests__/helpers/mock-agg';
+import { mockAgg, mockDeleteExternalAlias, mockDetachDataManager } from '../../__tests__/helpers/mock-agg';
 
 mockAgg();
 
 import { unlinkComponent } from './unlink-component';
 import { CompassYaml } from '../../types';
-import { mockComponent, MOCK_CLOUD_ID } from '../../__tests__/fixtures/gitlab-data';
 
 describe('Unlink component from file', () => {
   const mockCompassYaml: CompassYaml = {
     id: 'abc123',
-  };
-  const mockCompassYamlWithExternalAlias: CompassYaml = {
-    immutableLocalKey: 'abc123',
   };
   const mockProjId = 'mockProjId-1';
 
@@ -35,28 +26,7 @@ describe('Unlink component from file', () => {
       success: true,
       errors: [],
     });
-    await unlinkComponent(mockCompassYaml, mockProjId, MOCK_CLOUD_ID);
-    expect(mockGetComponentByExternalAlias).not.toBeCalled();
-    expect(mockDetachDataManager).toBeCalled();
-    expect(mockDeleteExternalAlias).toBeCalled();
-  });
-
-  test('detaches data manager and deletes external alias by immutableLocalkey', async () => {
-    mockGetComponentByExternalAlias.mockResolvedValueOnce({
-      success: true,
-      data: { component: mockComponent },
-      errors: [],
-    });
-    mockDetachDataManager.mockResolvedValueOnce({
-      success: true,
-      errors: [],
-    });
-    mockDeleteExternalAlias.mockResolvedValueOnce({
-      success: true,
-      errors: [],
-    });
-    await unlinkComponent(mockCompassYamlWithExternalAlias, mockProjId, MOCK_CLOUD_ID);
-    expect(mockGetComponentByExternalAlias).toBeCalled();
+    await unlinkComponent(mockCompassYaml.id, mockProjId);
     expect(mockDetachDataManager).toBeCalled();
     expect(mockDeleteExternalAlias).toBeCalled();
   });
@@ -70,7 +40,7 @@ describe('Unlink component from file', () => {
       success: true,
       errors: [],
     });
-    await expect(unlinkComponent(mockCompassYaml, mockProjId, MOCK_CLOUD_ID)).rejects.toThrow(
+    await expect(unlinkComponent(mockCompassYaml.id, mockProjId)).rejects.toThrow(
       new Error('Error unlinking component: testError'),
     );
   });
@@ -84,7 +54,7 @@ describe('Unlink component from file', () => {
       success: true,
       errors: [{ message: 'testError' }],
     });
-    await expect(unlinkComponent(mockCompassYaml, mockProjId, MOCK_CLOUD_ID)).rejects.toThrow(
+    await expect(unlinkComponent(mockCompassYaml.id, mockProjId)).rejects.toThrow(
       new Error('Error unlinking component: testError'),
     );
   });

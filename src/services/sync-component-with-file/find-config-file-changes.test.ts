@@ -8,7 +8,8 @@ import { groupDiffsByChangeType } from '../../utils/push-event-utils';
 import { getCommitDiff, getFileContent } from '../../client/gitlab';
 import { findConfigAsCodeFileChanges } from './find-config-file-changes';
 import { generatePushEvent } from '../../__tests__/helpers/gitlab-helper';
-import { CommitFileDiff, CompassYaml, ComponentChanges } from '../../types';
+import { CommitFileDiff, CompassYaml, ComponentChanges, PushEvent } from '../../types';
+import { commitDiffMock } from '../../__tests__/fixtures/gitlab-data';
 
 jest.mock('../../client/gitlab', () => ({
   getCommitDiff: jest.fn(),
@@ -46,16 +47,8 @@ const createCommitFileDiffMock = (
 describe('findConfigAsCodeFileChanges', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    getCommitDiffMock.mockResolvedValue([
-      {
-        diff: 'string',
-        old_path: 'string',
-        new_path: 'string',
-        new_file: true,
-        renamed_file: false,
-        deleted_file: false,
-      },
-    ]);
+    getCommitDiffMock.mockResolvedValue([commitDiffMock]);
+    process.env.CREATE_FROM_YAML_FF = 'false';
   });
 
   it('returns empty componentsToSync and componentsToUnlink arrays if no changes present', async () => {
@@ -113,45 +106,134 @@ describe('findConfigAsCodeFileChanges', () => {
     expect(result).toEqual(expectedResult);
   });
 
-  it('unlinks component when the file ID changed to immutableLocalKey', async () => {
-    const event = generatePushEvent();
-    const modifiedMock = [
-      createCommitFileDiffMock([{ id: 'modifiedBefore1' }, { immutableLocalKey: 'modifiedAfter1' }]),
-    ];
+  describe('unlink component from modified file by immutableLocalKey', () => {
+    let event: PushEvent;
+    const MODIFIED_BEFORE = 'modifiedBefore';
+    const MODIFIED_AFTER = 'modifiedAfter1';
 
-    groupDiffsByChangeTypeMock.mockReturnValue({
-      added: [],
-      modified: modifiedMock,
-      removed: [],
+    beforeEach(() => {
+      jest.clearAllMocks();
+      getCommitDiffMock.mockResolvedValue([commitDiffMock]);
+      event = generatePushEvent();
+      process.env.CREATE_FROM_YAML_FF = 'false';
     });
-    const expectedResult: ComponentChanges = {
-      componentsToSync: [{ componentYaml: { immutableLocalKey: 'modifiedAfter1' }, absoluteFilePath: 'new/path' }],
-      componentsToUnlink: [{ id: 'modifiedBefore1' }],
-    };
 
-    const result = await findConfigAsCodeFileChanges(event, 'token');
+    it('unlinks component when ID changed to immutableLocalKey', async () => {
+      process.env.CREATE_FROM_YAML_FF = 'true';
+      const modifiedMock = [createCommitFileDiffMock([{ id: MODIFIED_BEFORE }, { immutableLocalKey: MODIFIED_AFTER }])];
 
-    expect(result).toEqual(expectedResult);
-  });
+      groupDiffsByChangeTypeMock.mockReturnValue({
+        added: [],
+        modified: modifiedMock,
+        removed: [],
+      });
+      const expectedResult: ComponentChanges = {
+        componentsToSync: [{ componentYaml: { immutableLocalKey: MODIFIED_AFTER }, absoluteFilePath: 'new/path' }],
+        componentsToUnlink: [{ id: MODIFIED_BEFORE }],
+      };
 
-  it('unlinks component when the file immutableLocalKey changed', async () => {
-    const event = generatePushEvent();
-    const modifiedMock = [
-      createCommitFileDiffMock([{ immutableLocalKey: 'modifiedBefore1' }, { immutableLocalKey: 'modifiedAfter1' }]),
-    ];
+      const result = await findConfigAsCodeFileChanges(event, 'token');
 
-    groupDiffsByChangeTypeMock.mockReturnValue({
-      added: [],
-      modified: modifiedMock,
-      removed: [],
+      expect(result).toEqual(expectedResult);
     });
-    const expectedResult: ComponentChanges = {
-      componentsToSync: [{ componentYaml: { immutableLocalKey: 'modifiedAfter1' }, absoluteFilePath: 'new/path' }],
-      componentsToUnlink: [{ immutableLocalKey: 'modifiedBefore1' }],
-    };
 
-    const result = await findConfigAsCodeFileChanges(event, 'token');
+    it('unlinks component when ID changed to immutableLocalKey and FF turned off', async () => {
+      process.env.CREATE_FROM_YAML_FF = 'true';
+      const modifiedMock = [createCommitFileDiffMock([{ id: MODIFIED_BEFORE }, { immutableLocalKey: MODIFIED_AFTER }])];
 
-    expect(result).toEqual(expectedResult);
+      groupDiffsByChangeTypeMock.mockReturnValue({
+        added: [],
+        modified: modifiedMock,
+        removed: [],
+      });
+      const expectedResult: ComponentChanges = {
+        componentsToSync: [{ componentYaml: { immutableLocalKey: MODIFIED_AFTER }, absoluteFilePath: 'new/path' }],
+        componentsToUnlink: [{ id: MODIFIED_BEFORE }],
+      };
+
+      const result = await findConfigAsCodeFileChanges(event, 'token');
+
+      expect(result).toEqual(expectedResult);
+    });
+
+    it('unlinks component when immutableLocalKey changed to ID', async () => {
+      process.env.CREATE_FROM_YAML_FF = 'true';
+      const modifiedMock = [createCommitFileDiffMock([{ immutableLocalKey: MODIFIED_AFTER }, { id: MODIFIED_BEFORE }])];
+
+      groupDiffsByChangeTypeMock.mockReturnValue({
+        added: [],
+        modified: modifiedMock,
+        removed: [],
+      });
+      const expectedResult: ComponentChanges = {
+        componentsToSync: [{ componentYaml: { id: MODIFIED_BEFORE }, absoluteFilePath: 'new/path' }],
+        componentsToUnlink: [{ immutableLocalKey: MODIFIED_AFTER }],
+      };
+
+      const result = await findConfigAsCodeFileChanges(event, 'token');
+
+      expect(result).toEqual(expectedResult);
+    });
+
+    it('does not unlink component when immutableLocalKey changed to ID and FF turned off', async () => {
+      process.env.CREATE_FROM_YAML_FF = 'false';
+      const modifiedMock = [createCommitFileDiffMock([{ immutableLocalKey: MODIFIED_AFTER }, { id: MODIFIED_BEFORE }])];
+
+      groupDiffsByChangeTypeMock.mockReturnValue({
+        added: [],
+        modified: modifiedMock,
+        removed: [],
+      });
+      const expectedResult: ComponentChanges = {
+        componentsToSync: [{ componentYaml: { id: MODIFIED_BEFORE }, absoluteFilePath: 'new/path' }],
+        componentsToUnlink: [],
+      };
+
+      const result = await findConfigAsCodeFileChanges(event, 'token');
+
+      expect(result).toEqual(expectedResult);
+    });
+
+    it('unlinks component when the file has changed immutableLocalKey', async () => {
+      process.env.CREATE_FROM_YAML_FF = 'true';
+      const modifiedMock = [
+        createCommitFileDiffMock([{ immutableLocalKey: MODIFIED_BEFORE }, { immutableLocalKey: MODIFIED_AFTER }]),
+      ];
+
+      groupDiffsByChangeTypeMock.mockReturnValue({
+        added: [],
+        modified: modifiedMock,
+        removed: [],
+      });
+      const expectedResult: ComponentChanges = {
+        componentsToSync: [{ componentYaml: { immutableLocalKey: MODIFIED_AFTER }, absoluteFilePath: 'new/path' }],
+        componentsToUnlink: [{ immutableLocalKey: MODIFIED_BEFORE }],
+      };
+
+      const result = await findConfigAsCodeFileChanges(event, 'token');
+
+      expect(result).toEqual(expectedResult);
+    });
+
+    it('does not unlink component when the file has changed immutableLocalKey and FF turned off', async () => {
+      process.env.CREATE_FROM_YAML_FF = 'false';
+      const modifiedMock = [
+        createCommitFileDiffMock([{ immutableLocalKey: MODIFIED_BEFORE }, { immutableLocalKey: MODIFIED_AFTER }]),
+      ];
+
+      groupDiffsByChangeTypeMock.mockReturnValue({
+        added: [],
+        modified: modifiedMock,
+        removed: [],
+      });
+      const expectedResult: ComponentChanges = {
+        componentsToSync: [{ componentYaml: { immutableLocalKey: MODIFIED_AFTER }, absoluteFilePath: 'new/path' }],
+        componentsToUnlink: [],
+      };
+
+      const result = await findConfigAsCodeFileChanges(event, 'token');
+
+      expect(result).toEqual(expectedResult);
+    });
   });
 });

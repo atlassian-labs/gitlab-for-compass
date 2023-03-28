@@ -92,7 +92,7 @@ describe('Gitlab push events', () => {
       event.project.default_branch,
       MOCK_CLOUD_ID,
     );
-    expect(removals).toBeCalledWith(mockComponentsToUnlink[0], expect.anything(), MOCK_CLOUD_ID);
+    expect(removals).toBeCalledWith(mockComponentsToUnlink[0].id, expect.anything());
   });
 
   it('performs config as code file updates for non-default branch which was set via project variable', async () => {
@@ -134,6 +134,6 @@ describe('Gitlab push events', () => {
       BRANCH_NAME,
       MOCK_CLOUD_ID,
     );
-    expect(removals).toBeCalledWith(mockComponentsToUnlink[0], expect.anything(), MOCK_CLOUD_ID);
+    expect(removals).toBeCalledWith(mockComponentsToUnlink[0].id, expect.anything());
   });
 });
