@@ -12,6 +12,7 @@ import graphqlGateway, {
   SdkError,
   CompassSynchronizeLinkAssociationsInput,
   SyncComponentWithFileInput,
+  GetComponentInput,
 } from '@atlassian/forge-graphql';
 import { ImportableProject, COMPASS_GATEWAY_MESSAGES, Metric } from '../types';
 import { EXTERNAL_SOURCE, IMPORT_LABEL } from '../constants';
@@ -138,6 +139,18 @@ export async function syncComponentWithFile(eventPayload: SyncComponentWithFileI
   const { errors, data } = await graphqlGateway.compass.configAsCode.asApp().syncComponentWithFile(eventPayload);
 
   throwIfErrors('syncComponentWithFile', errors);
+
+  return data;
+}
+
+export async function getComponent(input: GetComponentInput): Promise<ComponentPayload> {
+  const { errors, data } = await graphqlGateway.compass.asApp().getComponent({ ...input });
+
+  if (errors[0]?.message === COMPASS_GATEWAY_MESSAGES.COMPONENT_NOT_FOUND) {
+    return { component: null };
+  }
+
+  throwIfErrors('getComponent', errors);
 
   return data;
 }
