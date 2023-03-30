@@ -91,7 +91,7 @@ describe('Fetch Projects Service', () => {
       projects: generateProjectsWithStatuses(false, false, {
         componentId: undefined,
         labels: MOCK_GET_PROJECT_LABELS,
-        componentType: undefined,
+        typeId: undefined,
       }),
       total: expect.anything(),
     });

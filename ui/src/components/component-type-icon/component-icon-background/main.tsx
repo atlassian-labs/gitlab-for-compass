@@ -1,37 +1,30 @@
 import { Size } from '@atlaskit/icon';
-import { B200, Y400, P300, N100 } from '@atlaskit/theme/colors';
-import { CompassComponentType } from '@atlassian/forge-graphql/dist/src/graphql-types';
+import * as colors from '@atlaskit/theme/colors';
 
 import { IconBackground } from './styled';
+import { COMPONENT_TYPES } from '../../assets';
 
 type ComponentIconBackgroundProps = {
-  type: CompassComponentType;
+  typeId: string;
   size?: Size;
   testId?: string;
   children?: React.ReactNode;
 };
 
-const getBackgroundColor = (type: CompassComponentType) => {
-  switch (type) {
-    case CompassComponentType.Application:
-      return B200;
-    case CompassComponentType.Library:
-      return Y400;
-    case CompassComponentType.Service:
-      return P300;
-    case CompassComponentType.Other:
-    default:
-      return N100;
-  }
+const getBackgroundColorByTypeId = (typeId: string) => {
+  return (
+    COMPONENT_TYPES.find((componentTypeData) => componentTypeData.id.toLowerCase() === typeId.toLowerCase())?.color ??
+    colors.B200
+  );
 };
 
 /**
  * Creates an IconBackground with a color based on the type of component.
  */
 export function ComponentIconBackground(props: ComponentIconBackgroundProps): JSX.Element {
-  const { type, size = 'medium', testId, children } = props;
+  const { typeId, size = 'medium', testId, children } = props;
 
-  const color = getBackgroundColor(type);
+  const color = getBackgroundColorByTypeId(typeId);
 
   return (
     <IconBackground data-testid={testId} size={size} colour={color}>

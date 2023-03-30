@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
 
 import { SelectProjectsScreen } from '../SelectProjectsScreen';
-import { projectImportSelectionMock, groupMock } from '../__mocks__/mocks';
+import { projectImportSelectionMock, groupMock, componentTypesResultMock } from '../__mocks__/mocks';
 
 jest.mock('@forge/bridge', () => ({
   invoke: jest.fn(),
@@ -34,6 +34,8 @@ describe('SelectProjectsScreen', () => {
         isGroupsLoading={false}
         handleChangeGroup={jest.fn()}
         handleSearchValue={jest.fn()}
+        componentTypesResult={componentTypesResultMock}
+        locationGroupId={1}
       />,
     );
 
@@ -60,6 +62,8 @@ describe('SelectProjectsScreen', () => {
         isGroupsLoading={false}
         handleChangeGroup={jest.fn()}
         handleSearchValue={jest.fn()}
+        componentTypesResult={componentTypesResultMock}
+        locationGroupId={1}
       />,
     );
 
@@ -85,6 +89,8 @@ describe('SelectProjectsScreen', () => {
         isGroupsLoading={false}
         handleChangeGroup={jest.fn()}
         handleSearchValue={jest.fn()}
+        componentTypesResult={componentTypesResultMock}
+        locationGroupId={1}
       />,
     );
 

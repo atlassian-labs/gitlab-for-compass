@@ -73,7 +73,7 @@ const compareProjectWithExistingComponent = async (cloudId: string, projectId: n
       isCompassFilePrOpened: Boolean(mergeRequestWithCompassYML.length),
       componentId: component?.id,
       componentLinks: mapComponentLinks(component?.links),
-      componentType: component?.type,
+      typeId: component?.typeId,
     };
   } catch (err) {
     const ERROR_MESSAGE = 'Error while getting repository additional fields.';

@@ -3,15 +3,14 @@ import graphqlGateway, {
   CompassCreateEventInput,
   Component,
   ComponentPayload,
-  CreateCompassComponentExternalAliasInput,
   DeleteCompassComponentExternalAliasInput,
   DetachCompassComponentDataManagerInput,
   GetComponentByExternalAliasInput,
   UpdateCompassComponentDataManagerMetadataInput,
   UpdateComponentInput,
   SdkError,
-  CompassSynchronizeLinkAssociationsInput,
   SyncComponentWithFileInput,
+  CompassComponentTypeObject,
   GetComponentInput,
 } from '@atlassian/forge-graphql';
 import { ImportableProject, COMPASS_GATEWAY_MESSAGES, Metric } from '../types';
@@ -34,12 +33,12 @@ const throwIfErrors = function throwIfSdkErrors(method: string, errors: SdkError
 };
 
 export const createComponent = async (cloudId: string, project: ImportableProject): Promise<Component | never> => {
-  const { name, description, type, labels, url } = project;
+  const { name, description, typeId, labels, url } = project;
   const formattedLabels = labels.map((label) => label.split(' ').join('-').toLowerCase());
   const component = {
     name,
     description,
-    type,
+    typeId,
     labels: [IMPORT_LABEL, ...formattedLabels],
     links: [
       {
@@ -154,3 +153,9 @@ export async function getComponent(input: GetComponentInput): Promise<ComponentP
 
   return data;
 }
+
+export const getAllComponentTypeIds = async (cloudId: string): Promise<CompassComponentTypeObject[]> => {
+  const { data, errors } = await graphqlGateway.compass.asApp().getAllComponentTypes({ cloudId });
+  throwIfErrors('getAllComponentTypeIds', errors);
+  return data.componentTypes;
+};

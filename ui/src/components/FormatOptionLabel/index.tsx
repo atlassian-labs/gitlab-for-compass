@@ -9,7 +9,7 @@ export const FormatOptionLabel: FunctionComponent<CompassComponentTypeOption> = 
 }: CompassComponentTypeOption) => {
   return (
     <OptionContainer>
-      <ComponentTypeIcon label={label} type={value} />
+      <ComponentTypeIcon label={label} typeId={value} />
       <LabelContainer>{label}</LabelContainer>
     </OptionContainer>
   );

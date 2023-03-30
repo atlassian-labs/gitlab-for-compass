@@ -6,6 +6,7 @@ import { ForgeLink } from '../../ForgeLink';
 import { ButtonWrapper, DescriptionWrapper, ErrorWrapper, RootWrapper } from '../styles';
 import { SelectedProjectsTable, SelectedProjectsProps } from '../../SelectedProjectsTable';
 import { ImportErrorTypes, ResolverResponse } from '../../../resolverTypes';
+import { ComponentTypesResult } from '../../../services/types';
 
 type Props = {
   syncWithCompassYml: boolean;
@@ -14,6 +15,7 @@ type Props = {
   isProjectsImporting: boolean;
   handleImportProjects: () => void;
   projectsImportingData: ResolverResponse | null;
+  componentTypesResult: ComponentTypesResult;
 };
 
 export const ConfirmationScreen = ({
@@ -25,6 +27,7 @@ export const ConfirmationScreen = ({
   isProjectsImporting,
   handleImportProjects,
   projectsImportingData,
+  componentTypesResult,
 }: Props & SelectedProjectsProps) => {
   return (
     <>
@@ -69,6 +72,7 @@ export const ConfirmationScreen = ({
       <SelectedProjectsTable
         projectsReadyToImport={projectsReadyToImport}
         onChangeComponentType={onChangeComponentType}
+        componentTypesResult={componentTypesResult}
       />
       {projectsImportingData?.errors && projectsImportingData.errors.length !== 0 && (
         <ErrorWrapper>
