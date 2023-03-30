@@ -138,7 +138,7 @@ describe('findConfigAsCodeFileChanges', () => {
     });
 
     it('unlinks component when ID changed to immutableLocalKey and FF turned off', async () => {
-      process.env.CREATE_FROM_YAML_FF = 'true';
+      process.env.CREATE_FROM_YAML_FF = 'false';
       const modifiedMock = [createCommitFileDiffMock([{ id: MODIFIED_BEFORE }, { immutableLocalKey: MODIFIED_AFTER }])];
 
       groupDiffsByChangeTypeMock.mockReturnValue({
