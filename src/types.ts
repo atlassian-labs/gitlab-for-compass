@@ -130,6 +130,7 @@ type YamlRelationships = {
 
 type CompassYaml = {
   id?: string;
+  immutableLocalKey?: string;
   name?: string;
   description?: string;
   ownerId?: string;
