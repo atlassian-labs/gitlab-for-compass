@@ -47,4 +47,4 @@ export const DEFAULT_SERVER_ERROR_MESSAGE = 'Unexpected internal server error. T
 export const INVALID_YAML_ERROR = 'Invalid YAML format. Try again with a valid YAML file';
 
 export const UNKNOWN_EXTERNAL_ALIAS_ERROR_MESSAGE =
-  'We couldn’t find the external alias. Check for typos and try again';
+  'We couldn’t find the external alias. Check for typos and try again.';
