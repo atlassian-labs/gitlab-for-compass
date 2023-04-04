@@ -1,24 +1,24 @@
-import { CompassComponentType } from '@atlassian/forge-graphql/dist/src/graphql-types';
 import EditorPanelIcon from '@atlaskit/icon/glyph/editor/panel';
 import { CompassComponentTypeOption } from '../services/types';
 import { StatusLabel } from './styles';
+import { DEFAULT_COMPONENT_TYPE_ID } from '../constants';
+import { COMPONENT_TYPES } from './assets';
 
-export const capitalize = (value: string): string => value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+export const capitalize = (value: string): string =>
+  (value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()).replaceAll('_', ' ');
 
-export const COMPONENT_TYPE_OPTIONS = [
-  CompassComponentType.Service,
-  CompassComponentType.Library,
-  CompassComponentType.Application,
-  CompassComponentType.Other,
-].map((type) => {
-  return {
-    label: capitalize(type),
-    value: type,
-  };
-});
+export const getComponentTypeIdLabel = (typeId: string) => {
+  return COMPONENT_TYPES.find((componentType) => componentType.id === typeId)?.label ?? capitalize(typeId);
+};
 
-export const getComponentTypeOption = (type?: CompassComponentType): CompassComponentTypeOption => {
-  return COMPONENT_TYPE_OPTIONS.find(({ value }) => value === type) || COMPONENT_TYPE_OPTIONS[0];
+export const getComponentTypeOption = (typeId?: string): CompassComponentTypeOption => {
+  if (typeId) {
+    return {
+      label: getComponentTypeIdLabel(typeId),
+      value: typeId,
+    };
+  }
+  return getComponentTypeOption(DEFAULT_COMPONENT_TYPE_ID);
 };
 
 export const tooltipsText = {

@@ -1,4 +1,4 @@
-import { CompassComponentType, CreateLinkInput, CustomFieldFromYAML } from '@atlassian/forge-graphql';
+import { CreateLinkInput, CustomFieldFromYAML } from '@atlassian/forge-graphql';
 
 // 2nd parameter passed into extension point & webtrigger functions
 type InvocationContext = {
@@ -227,13 +227,13 @@ type ProjectImportStatus = {
 type ProjectReadyForImport = {
   componentId?: string;
   componentLinks?: CreateLinkInput[];
-  componentType?: CompassComponentType;
+  typeId?: string;
   shouldOpenMR?: boolean;
 } & ProjectImportStatus &
   Project;
 
 type ImportableProject = ProjectReadyForImport & {
-  type: CompassComponentType;
+  typeId: string;
 };
 
 type ProjectImportResult = {

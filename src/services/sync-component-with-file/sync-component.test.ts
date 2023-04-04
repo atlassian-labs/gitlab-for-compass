@@ -33,7 +33,7 @@ const getMockedComponent = (overrideMockedComponent: Partial<Component> = {}): C
   id: 'id',
   name: 'mock',
   type: CompassComponentType.Service,
-  typeId: 'service',
+  typeId: 'SERVICE',
   labels: MOCK_COMPONENT_LABELS,
   changeMetadata: {},
   ...overrideMockedComponent,

@@ -1,7 +1,12 @@
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 
 import { SelectProjectsScreen } from '../SelectProjectsScreen';
-import { projectImportSelectionMock, groupMock } from '../__mocks__/mocks';
+import {
+  projectImportSelectionMock,
+  groupMock,
+  componentTypesResultMock,
+  componentTypesErrorResultMock,
+} from '../__mocks__/mocks';
 
 jest.mock('@forge/bridge', () => ({
   invoke: jest.fn(),
@@ -34,6 +39,8 @@ describe('SelectProjectsScreen', () => {
         isGroupsLoading={false}
         handleChangeGroup={jest.fn()}
         handleSearchValue={jest.fn()}
+        componentTypesResult={componentTypesResultMock}
+        locationGroupId={1}
       />,
     );
 
@@ -60,6 +67,8 @@ describe('SelectProjectsScreen', () => {
         isGroupsLoading={false}
         handleChangeGroup={jest.fn()}
         handleSearchValue={jest.fn()}
+        componentTypesResult={componentTypesResultMock}
+        locationGroupId={1}
       />,
     );
 
@@ -85,9 +94,40 @@ describe('SelectProjectsScreen', () => {
         isGroupsLoading={false}
         handleChangeGroup={jest.fn()}
         handleSearchValue={jest.fn()}
+        componentTypesResult={componentTypesResultMock}
+        locationGroupId={1}
       />,
     );
 
     expect(getByTestId('load-more-button')).toHaveProperty('disabled', true);
+  });
+
+  it('should show an error message per component type dropdown when component types result is empty.', () => {
+    const { getByTestId, getByText } = render(
+      <SelectProjectsScreen
+        projects={projectImportSelectionMock}
+        isProjectsLoading={false}
+        onSelectAllItems={jest.fn()}
+        onChangeComponentType={jest.fn()}
+        handleNavigateToConnectedPage={jest.fn()}
+        projectsFetchingError=''
+        onSelectItem={jest.fn()}
+        selectedProjects={projectImportSelectionMock}
+        handleNavigateToScreen={jest.fn()}
+        isProjectsImporting
+        totalProjects={1}
+        setPage={jest.fn()}
+        groups={groupMock}
+        isGroupsLoading={false}
+        handleChangeGroup={jest.fn()}
+        handleSearchValue={jest.fn()}
+        componentTypesResult={componentTypesErrorResultMock}
+        locationGroupId={1}
+      />,
+    );
+
+    expect(getByTestId('error-loading-component-types'));
+    fireEvent.click(getByTestId('error-loading-component-types--button'));
+    expect(getByText('Error loading component types. Try refreshing!'));
   });
 });

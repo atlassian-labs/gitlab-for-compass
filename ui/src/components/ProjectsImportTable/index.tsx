@@ -4,7 +4,7 @@ import { DynamicTableStateless } from '@atlaskit/dynamic-table';
 import { buildTableBody } from './buildTableBody';
 import { buildTableHead } from './buildTableHead';
 import { buildEmptyView } from '../EmptyState/buildEmptyView';
-import { CompassComponentTypeOption, ProjectImportSelection } from '../../services/types';
+import { CompassComponentTypeOption, ComponentTypesResult, ProjectImportSelection } from '../../services/types';
 import { TableWrapper } from '../styles';
 
 type Props = {
@@ -14,6 +14,7 @@ type Props = {
   onSelectItem: (id: number) => void;
   onChangeComponentType: (id: number, type: CompassComponentTypeOption) => void;
   error?: string;
+  componentTypesResult: ComponentTypesResult;
 };
 
 const SPINNER_SIZE = 'large';
@@ -25,6 +26,7 @@ export const ProjectsImportTable = ({
   onSelectItem,
   onChangeComponentType,
   error,
+  componentTypesResult,
 }: Props) => {
   const emptyView = useMemo(() => buildEmptyView({ isProjectsExist: projects.length !== 0, error }), [projects, error]);
 
@@ -44,7 +46,7 @@ export const ProjectsImportTable = ({
             isAllItemsSelected,
             isLoading,
           })}
-          rows={buildTableBody({ projects, onSelectItem, onChangeComponentType })}
+          rows={buildTableBody({ projects, onSelectItem, onChangeComponentType, componentTypesResult })}
           loadingSpinnerSize={SPINNER_SIZE}
           isLoading={isLoading}
           emptyView={emptyView}

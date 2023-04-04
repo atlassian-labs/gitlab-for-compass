@@ -1,20 +1,21 @@
-import Select from '@atlaskit/select';
 import Tooltip from '@atlaskit/tooltip';
 import Checkbox from '@atlaskit/checkbox';
 import { RowType } from '@atlaskit/dynamic-table/dist/types/types';
 
-import { CompassComponentTypeOption, ProjectImportSelection } from '../../services/types';
+import { CompassComponentTypeOption, ComponentTypesResult, ProjectImportSelection } from '../../services/types';
 import { ForgeLink } from '../ForgeLink';
-import { COMPONENT_TYPE_OPTIONS, tooltipsText } from '../utils';
-import { FormatOptionLabel } from '../FormatOptionLabel';
+import { getComponentTypeOption, tooltipsText } from '../utils';
 import { TruncateDescription } from '../styles';
 import { TooltipGenerator } from '../TooltipGenerator';
 import { DropdownWrapper } from './styles';
+import ComponentTypeSelect from '../ComponentTypeSelect';
+import { DEFAULT_COMPONENT_TYPE_ID } from '../../constants';
 
 type Props = {
   projects: ProjectImportSelection[];
   onSelectItem: (id: number) => void;
   onChangeComponentType: (id: number, type: CompassComponentTypeOption) => void;
+  componentTypesResult: ComponentTypesResult;
 };
 
 const mapStatus = (isManaged: boolean, isCompassFilePrOpened: boolean, hasComponent: boolean) => {
@@ -43,7 +44,12 @@ const mapStatus = (isManaged: boolean, isCompassFilePrOpened: boolean, hasCompon
   return '-';
 };
 
-export const buildTableBody = ({ projects, onSelectItem, onChangeComponentType }: Props): RowType[] => {
+export const buildTableBody = ({
+  projects,
+  onSelectItem,
+  onChangeComponentType,
+  componentTypesResult,
+}: Props): RowType[] => {
   return projects.map((project) => {
     const {
       id,
@@ -53,7 +59,7 @@ export const buildTableBody = ({ projects, onSelectItem, onChangeComponentType }
       isSelected,
       groupFullPath,
       groupPath,
-      type,
+      typeOption,
       isManaged,
       isCompassFilePrOpened,
       hasComponent,
@@ -107,16 +113,15 @@ export const buildTableBody = ({ projects, onSelectItem, onChangeComponentType }
           key: 'type',
           content: (
             <DropdownWrapper data-testid={`select-${id}`}>
-              <Select
-                key={id}
-                classNamePrefix='type-selector'
+              <ComponentTypeSelect
+                loading={componentTypesResult.componentTypesLoading}
+                dropdownId={id.toString()}
+                componentTypes={componentTypesResult.componentTypes}
                 isDisabled={isManaged || isCompassFilePrOpened || hasComponent}
-                formatOptionLabel={FormatOptionLabel}
-                value={type ?? COMPONENT_TYPE_OPTIONS[0]}
-                options={COMPONENT_TYPE_OPTIONS}
-                onChange={(value) => {
-                  onChangeComponentType(id, value || COMPONENT_TYPE_OPTIONS[0]);
-                }}
+                selectedOption={typeOption}
+                onChange={(value) =>
+                  onChangeComponentType(id, value ?? getComponentTypeOption(DEFAULT_COMPONENT_TYPE_ID))
+                }
               />
             </DropdownWrapper>
           ),

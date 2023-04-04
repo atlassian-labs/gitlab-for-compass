@@ -2,6 +2,7 @@ import { IBackOffOptions } from 'exponential-backoff';
 
 export const BASE_URL = 'https://gitlab.com';
 export const GITLAB_EVENT_WEBTRIGGER = 'gitlab-event-webtrigger';
+export const DEFAULT_COMPONENT_TYPE_ID = 'SERVICE';
 
 export const STORAGE_KEYS = {
   GROUP_KEY_PREFIX: 'group-',

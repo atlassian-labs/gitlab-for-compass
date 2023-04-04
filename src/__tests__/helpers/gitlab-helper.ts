@@ -21,6 +21,7 @@ import {
   PushEvent,
 } from '../../types';
 import { TEST_COMPONENT_ID } from '../fixtures/gitlab-data';
+import { DEFAULT_COMPONENT_TYPE_ID } from '../../constants';
 
 export const generatePushEvent = (overrideEvent: Partial<PushEvent> = {}): PushEvent => {
   return {
@@ -134,7 +135,7 @@ export const generateComponent = (overrideComponent: Partial<Component> = {}): C
       id: TEST_COMPONENT_ID,
       name: 'koko',
       type: CompassComponentType.Service,
-      typeId: 'service',
+      typeId: DEFAULT_COMPONENT_TYPE_ID,
       changeMetadata: {},
       ...overrideComponent,
     },
@@ -155,7 +156,7 @@ export const generateProjectsWithStatuses = (
     url: 'web_url',
     componentId: TEST_COMPONENT_ID,
     componentLinks: [] as unknown as Link[],
-    componentType: CompassComponentType.Service,
+    typeId: DEFAULT_COMPONENT_TYPE_ID,
     hasComponent,
     isCompassFilePrOpened: false,
     isManaged,

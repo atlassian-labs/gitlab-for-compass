@@ -1,3 +1,3 @@
-export { ServiceGlyph, ApplicationGlyph, LibraryGlyph, OtherGlyph } from './component-glyphs';
+export { COMPONENT_TYPES } from './component-glyphs';
 
 export type { CompassIconsProps } from './types';

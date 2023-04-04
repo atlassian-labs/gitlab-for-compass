@@ -1,4 +1,5 @@
 import { invoke } from '@forge/bridge';
+import { CompassComponentTypeObject } from '@atlassian/forge-graphql';
 import {
   ImportableProject,
   ImportStatus,
@@ -76,4 +77,8 @@ export const listFeatures = (): Promise<ResolverResponse<FeaturesList>> => {
 
 export const getForgeAppId = (): Promise<ResolverResponse<string>> => {
   return invoke<ResolverResponse<string>>('appId');
+};
+
+export const getAllCompassComponentTypes = (): Promise<ResolverResponse<CompassComponentTypeObject[]>> => {
+  return invoke<ResolverResponse<CompassComponentTypeObject[]>>('getAllCompassComponentTypes');
 };

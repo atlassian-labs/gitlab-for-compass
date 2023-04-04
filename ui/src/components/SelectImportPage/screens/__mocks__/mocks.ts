@@ -1,5 +1,6 @@
 import { CompassComponentType } from '@atlassian/forge-graphql/dist/src/graphql-types';
 import { Link } from '@atlassian/forge-graphql';
+import { DEFAULT_COMPONENT_TYPE_ID } from '../../../../constants';
 
 export const groupMock = [
   {
@@ -13,9 +14,9 @@ export const groupMock = [
 export const projectImportSelectionMock = [
   {
     isSelected: false,
-    type: {
+    typeOption: {
       label: 'label',
-      value: CompassComponentType.Service,
+      value: DEFAULT_COMPONENT_TYPE_ID,
     },
     id: 2,
     name: 'a',
@@ -26,6 +27,7 @@ export const projectImportSelectionMock = [
     componentId: '',
     componentLinks: [] as unknown as Link[],
     componentType: CompassComponentType.Application,
+    typeId: 'APPLICATION',
     hasComponent: true,
     isCompassFilePrOpened: false,
     isManaged: true,
@@ -34,3 +36,25 @@ export const projectImportSelectionMock = [
     groupPath: 'koko',
   },
 ];
+
+export const componentTypesResultMock = {
+  componentTypesLoading: false,
+  error: null,
+  componentTypes: [
+    {
+      id: 'SERVICE',
+    },
+    {
+      id: 'APPLICATION',
+    },
+    {
+      id: 'MACHINE_LEARNING_MODEL',
+    },
+  ],
+};
+
+export const componentTypesErrorResultMock = {
+  componentTypesLoading: false,
+  error: null,
+  componentTypes: [],
+};
