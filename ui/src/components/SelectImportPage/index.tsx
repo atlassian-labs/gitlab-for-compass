@@ -5,13 +5,14 @@ import { router } from '@forge/bridge';
 import { CompassComponentTypeOption, ProjectImportSelection } from '../../services/types';
 import { ApplicationState } from '../../routes';
 import { getAllExistingGroups, getGroupProjects, importProjects } from '../../services/invokes';
-import { getComponentTypeOption } from '../utils';
 import { ImportableProject, ResolverResponse, GitlabAPIGroup } from '../../resolverTypes';
 import { useImportContext } from '../../hooks/useImportContext';
 import { SelectProjectsScreen } from './screens/SelectProjectsScreen';
 import { ConfirmationScreen } from './screens/ConfirmationScreen';
 import { SelectorItem } from './screens/SelectProjectsScreen/buildGroupsSelectorOptions';
 import { useAppContext } from '../../hooks/useAppContext';
+import { useComponentTypes } from '../../hooks/useComponentTypes';
+import { getComponentTypeOption } from '../utils';
 
 export enum Screens {
   CONFIRMATION = 'CONFIRMATION',
@@ -26,6 +27,7 @@ export const SelectImportPage = () => {
 
   const { getGroups, features } = useAppContext();
   const { setTotalSelectedRepos, setIsImportInProgress, setImportedRepositories } = useImportContext();
+  const componentTypesResult = useComponentTypes();
 
   const [projects, setProjects] = useState<ProjectImportSelection[]>([]);
   const [isProjectsLoading, setIsProjectsLoading] = useState<boolean>(false);
@@ -73,7 +75,7 @@ export const SelectImportPage = () => {
             ...project,
             isSelected: false,
             shouldOpenMR: false,
-            type: getComponentTypeOption(project?.componentType),
+            typeOption: getComponentTypeOption(project?.typeId),
           }));
 
           setTotalProjects(data.total);
@@ -143,11 +145,11 @@ export const SelectImportPage = () => {
     );
   };
 
-  const onChangeComponentType = (id: number, type: CompassComponentTypeOption) => {
+  const onChangeComponentType = (id: number, componentTypeOption: CompassComponentTypeOption) => {
     setProjects((prevProjects) =>
       prevProjects.map((project) => {
         if (id === project.id) {
-          return { ...project, type };
+          return { ...project, typeOption: componentTypeOption };
         }
 
         return project;
@@ -202,7 +204,7 @@ export const SelectImportPage = () => {
       if (curr.isSelected) {
         acc.push({
           ...curr,
-          type: curr.type.value,
+          typeId: curr.typeOption.value,
           shouldOpenMR: syncWithCompassYml,
         });
       }
@@ -249,6 +251,7 @@ export const SelectImportPage = () => {
           handleChangeGroup={handleChangeGroup}
           handleSearchValue={handleSearchValue}
           locationGroupId={locationGroupId}
+          componentTypesResult={componentTypesResult}
         />
       )}
       {screen === Screens.CONFIRMATION && (
@@ -261,6 +264,7 @@ export const SelectImportPage = () => {
           handleImportProjects={handleImportProjects}
           isProjectsImporting={isProjectsImporting}
           projectsImportingData={projectsImportingData}
+          componentTypesResult={componentTypesResult}
         />
       )}
     </>

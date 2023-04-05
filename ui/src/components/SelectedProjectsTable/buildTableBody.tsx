@@ -1,16 +1,21 @@
-import Select from '@atlaskit/select';
 import { RowType } from '@atlaskit/dynamic-table/types';
 import { ForgeLink } from '../ForgeLink';
-import { FormatOptionLabel } from '../FormatOptionLabel';
-import { COMPONENT_TYPE_OPTIONS } from '../utils';
-import { CompassComponentTypeOption, ProjectImportSelection } from '../../services/types';
+import { CompassComponentTypeOption, ComponentTypesResult, ProjectImportSelection } from '../../services/types';
+import ComponentTypeSelect from '../ComponentTypeSelect';
+import { DEFAULT_COMPONENT_TYPE_ID } from '../../constants';
+import { getComponentTypeOption } from '../utils';
 
 export interface SelectedProjectsProps {
   projectsReadyToImport: ProjectImportSelection[];
   onChangeComponentType: (id: number, type: CompassComponentTypeOption) => void;
+  componentTypesResult: ComponentTypesResult;
 }
 
-export const buildTableBody = ({ projectsReadyToImport, onChangeComponentType }: SelectedProjectsProps): RowType[] => {
+export const buildTableBody = ({
+  projectsReadyToImport,
+  onChangeComponentType,
+  componentTypesResult,
+}: SelectedProjectsProps): RowType[] => {
   return projectsReadyToImport.map((project) => {
     return {
       key: project.id.toString(),
@@ -34,16 +39,15 @@ export const buildTableBody = ({ projectsReadyToImport, onChangeComponentType }:
         {
           key: 'type',
           content: (
-            <Select
-              key={project.id}
-              classNamePrefix='type-selector'
+            <ComponentTypeSelect
+              loading={componentTypesResult.componentTypesLoading}
+              dropdownId={project.id.toString()}
+              componentTypes={componentTypesResult.componentTypes}
               isDisabled={project.isManaged || project.isCompassFilePrOpened || project.hasComponent}
-              formatOptionLabel={FormatOptionLabel}
-              value={project.type ?? COMPONENT_TYPE_OPTIONS[0]}
-              options={COMPONENT_TYPE_OPTIONS}
-              onChange={(value) => {
-                onChangeComponentType(project.id, value || COMPONENT_TYPE_OPTIONS[0]);
-              }}
+              selectedOption={project.typeOption}
+              onChange={(value) =>
+                onChangeComponentType(project.id, value ?? getComponentTypeOption(DEFAULT_COMPONENT_TYPE_ID))
+              }
             />
           ),
         },

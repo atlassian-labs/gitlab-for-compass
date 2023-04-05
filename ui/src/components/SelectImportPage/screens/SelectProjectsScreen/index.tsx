@@ -14,7 +14,7 @@ import {
   TableSearchWrapper,
   Wrapper,
 } from '../../styles';
-import { CompassComponentTypeOption, ProjectImportSelection } from '../../../../services/types';
+import { CompassComponentTypeOption, ComponentTypesResult, ProjectImportSelection } from '../../../../services/types';
 import { CenterWrapper } from '../../../styles';
 import { GitlabAPIGroup } from '../../../../types';
 import { buildGroupsSelectorOptions, SelectorItem } from './buildGroupsSelectorOptions';
@@ -37,6 +37,7 @@ type Props = {
   handleChangeGroup: (item: SelectorItem | null) => void;
   handleSearchValue: (value: string) => void;
   locationGroupId: number;
+  componentTypesResult: ComponentTypesResult;
 };
 
 export const SelectProjectsScreen = ({
@@ -57,6 +58,7 @@ export const SelectProjectsScreen = ({
   handleChangeGroup,
   handleSearchValue,
   locationGroupId,
+  componentTypesResult,
 }: Props) => {
   const groupSelectorOptions = useMemo(() => buildGroupsSelectorOptions(groups, locationGroupId), [groups]);
 
@@ -93,6 +95,7 @@ export const SelectProjectsScreen = ({
           onSelectItem={onSelectItem}
           onChangeComponentType={onChangeComponentType}
           error={projectsFetchingError}
+          componentTypesResult={componentTypesResult}
         />
         {projects.length !== 0 ? (
           <CenterWrapper>

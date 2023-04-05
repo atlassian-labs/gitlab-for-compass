@@ -1,12 +1,11 @@
 import Resolver from '@forge/resolver';
 
-import graphqlGateway from '@atlassian/forge-graphql';
+import graphqlGateway, { CompassComponentTypeObject } from '@atlassian/forge-graphql';
 import { getGroupProjects } from './services/fetch-projects';
 import {
   AuthErrorTypes,
   ImportErrorTypes,
   GitlabAPIGroup,
-  ProjectReadyForImport,
   ResolverResponse,
   ProjectImportResult,
   ImportStatus,
@@ -27,6 +26,7 @@ import { getForgeAppId } from './utils/get-forge-app-id';
 import { getLastSyncTime } from './services/last-sync-time';
 import { listFeatures } from './services/feature-flags';
 import { GroupProjectsResponse } from './types';
+import { getAllComponentTypeIds } from './client/compass';
 
 const resolver = new Resolver();
 
@@ -228,6 +228,19 @@ resolver.define('appId', (): ResolverResponse<string> => {
     return {
       success: false,
       errors: [{ message: e.message, errorType: DefaultErrorTypes.UNEXPECTED_ERROR }],
+    };
+  }
+});
+
+resolver.define('getAllCompassComponentTypes', async (req): Promise<ResolverResponse<CompassComponentTypeObject[]>> => {
+  const { cloudId } = req.context;
+  try {
+    const componentTypes = await getAllComponentTypeIds(cloudId);
+    return { success: true, data: componentTypes };
+  } catch (e) {
+    return {
+      success: false,
+      errors: [{ message: e.message }],
     };
   }
 });
