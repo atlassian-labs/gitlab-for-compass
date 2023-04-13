@@ -28,6 +28,7 @@ export const syncComponent = async (
     const data = await syncComponentWithFile({
       cloudId,
       configFile: yaml.dump(componentYaml),
+      immutableLocalKeyPrefix: event.project.id.toString(),
       additionalExternalAliases: [{ externalId: event.project.id.toString(), externalSource: EXTERNAL_SOURCE }],
       externalSourceURL,
       additionalLinks: [
