@@ -3,12 +3,18 @@ import { mockAgg, mockSyncComponentWithFile, mockUpdateComponent } from '../../_
 
 mockAgg();
 
-import { Component, CompassComponentType, CompassLinkType } from '@atlassian/forge-graphql';
+import {
+  Component,
+  CompassComponentType,
+  CompassLinkType,
+  ConfigFileActions,
+  KeyCollisionMetadata,
+} from '@atlassian/forge-graphql';
 import { mocked } from 'jest-mock';
 import yaml from 'js-yaml';
 
 import { generatePushEvent } from '../../__tests__/helpers/gitlab-helper';
-import { CompassYaml, YamlLink } from '../../types';
+import { CompassYaml, ComponentSyncDetails, ComponentSyncPayload, PushEvent, YamlLink } from '../../types';
 import { syncComponent } from './sync-component';
 import { EXTERNAL_SOURCE, IMPORT_LABEL } from '../../constants';
 import { reportSyncError } from './report-sync-error';
@@ -54,6 +60,32 @@ const createCompassYamlLink = (type: CompassLinkType): YamlLink => ({
   url: 'https://url',
 });
 
+const getMockedSyncPayload = (
+  compassYaml: CompassYaml,
+  event: PushEvent,
+): [ComponentSyncPayload, ComponentSyncDetails, KeyCollisionMetadata] => {
+  const mockComponentsToUpdate = {
+    componentYaml: compassYaml,
+    absoluteFilePath: TEST_FILE_NAME,
+    filePath: '/path/fileName.yaml',
+    previousFilePath: '/previousPath/fileName.yaml',
+  };
+  const mockComponentSyncDetails: ComponentSyncDetails = {
+    token: TEST_TOKEN,
+    event,
+    trackingBranch: event.project.default_branch,
+    cloudId: MOCK_CLOUD_ID,
+  };
+
+  const mockKeyCollisionMetadata = {
+    configFileAction: ConfigFileActions.UPDATE,
+    newPath: mockComponentsToUpdate.filePath,
+    oldPath: mockComponentsToUpdate.previousFilePath,
+  };
+
+  return [mockComponentsToUpdate, mockComponentSyncDetails, mockKeyCollisionMetadata];
+};
+
 describe('syncComponent', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -71,7 +103,8 @@ describe('syncComponent', () => {
       errors: [],
     });
 
-    await syncComponent(TEST_TOKEN, compassYaml, TEST_FILE_NAME, event, event.project.default_branch, MOCK_CLOUD_ID);
+    const syncPayload = getMockedSyncPayload(compassYaml, event);
+    await syncComponent(...syncPayload);
 
     expect(mockSyncComponentWithFile).toBeCalledWith({
       cloudId: MOCK_CLOUD_ID,
@@ -85,6 +118,7 @@ describe('syncComponent', () => {
           type: CompassLinkType.Repository,
         },
       ],
+      keyCollisionMetadata: syncPayload[2],
     });
   });
 
@@ -100,7 +134,9 @@ describe('syncComponent', () => {
       errors: [],
     });
 
-    await syncComponent(TEST_TOKEN, compassYaml, TEST_FILE_NAME, event, event.project.default_branch, MOCK_CLOUD_ID);
+    const syncPayload = getMockedSyncPayload(compassYaml, event);
+
+    await syncComponent(...syncPayload);
 
     const expectedLabels = [...MOCK_COMPONENT_LABELS, IMPORT_LABEL, ...MOCK_GET_PROJECT_LABELS];
 
@@ -123,7 +159,9 @@ describe('syncComponent', () => {
     });
 
     mockUpdateComponent.mockRejectedValue(error);
-    await syncComponent(TEST_TOKEN, compassYaml, TEST_FILE_NAME, event, event.project.default_branch, MOCK_CLOUD_ID);
+
+    const syncPayload = getMockedSyncPayload(compassYaml, event);
+    await syncComponent(...syncPayload);
 
     expect(reportSyncError).toBeCalledWith(error, component.id, expect.anything());
   });

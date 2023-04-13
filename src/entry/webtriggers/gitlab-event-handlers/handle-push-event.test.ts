@@ -1,8 +1,9 @@
-/* eslint-disable import/first */
-import { mocked } from 'jest-mock';
+/* eslint-disable import/first, import/order */
 import { mockForgeApi } from '../../../__tests__/helpers/forge-helper';
 
 mockForgeApi();
+import { ConfigFileActions } from '@atlassian/forge-graphql';
+import { mocked } from 'jest-mock';
 import { generatePushEvent } from '../../../__tests__/helpers/gitlab-helper';
 import { handlePushEvent } from './handle-push-event';
 import {
@@ -12,6 +13,7 @@ import {
 } from '../../../services/sync-component-with-file';
 import { getTrackingBranchName } from '../../../services/get-tracking-branch';
 import { MOCK_CLOUD_ID, TEST_TOKEN } from '../../../__tests__/fixtures/gitlab-data';
+import { ComponentSyncDetails } from '../../../types';
 
 jest.mock('../../../services/sync-component-with-file', () => {
   return {
@@ -28,7 +30,7 @@ describe('Gitlab push events', () => {
   const eventWithIncorrectRef = generatePushEvent({
     ref: 'wrong',
   });
-  const updates = mocked(syncComponent);
+  const syncs = mocked(syncComponent);
   const removals = mocked(unlinkComponent);
   const findConfigChanges = mocked(findConfigAsCodeFileChanges);
   const getNonDefaultBranchNameMock = mocked(getTrackingBranchName);
@@ -42,98 +44,110 @@ describe('Gitlab push events', () => {
 
     await handlePushEvent(eventWithIncorrectRef, TEST_TOKEN, MOCK_CLOUD_ID);
 
-    expect(updates).not.toBeCalled();
+    expect(syncs).not.toBeCalled();
     expect(removals).not.toBeCalled();
   });
 
   it('ignores event if no config as code file updates present', async () => {
     getNonDefaultBranchNameMock.mockResolvedValue(event.project.default_branch);
-    findConfigChanges.mockResolvedValue({ componentsToSync: [], componentsToUnlink: [] });
+    findConfigChanges.mockResolvedValue({ componentsToCreate: [], componentsToUpdate: [], componentsToUnlink: [] });
     await handlePushEvent(event, TEST_TOKEN, MOCK_CLOUD_ID);
 
-    expect(updates).not.toBeCalled();
+    expect(syncs).not.toBeCalled();
     expect(removals).not.toBeCalled();
   });
 
   it('performs config as code file updates for default branch', async () => {
-    const mockComponentsToSync = [
+    const mockComponentsToCreate = [
       {
         componentYaml: { id: 'test1' },
         absoluteFilePath: 'path/fileName1.yaml',
+        filePath: '/path/fileName1.yaml',
       },
+    ];
+    const mockComponentsToUpdate = [
       {
         componentYaml: { id: 'test2' },
         absoluteFilePath: 'path/fileName2.yaml',
+        filePath: '/path/fileName2.yaml',
+        previousFilePath: '/previousPath/fileName2.yaml',
       },
     ];
-    const mockComponentsToUnlink = [{ id: 'test1' }];
+    const mockComponentsToUnlink = [{ componentYaml: { id: 'test3' } }];
 
     getNonDefaultBranchNameMock.mockResolvedValue(event.project.default_branch);
     findConfigChanges.mockResolvedValue({
-      componentsToSync: mockComponentsToSync,
+      componentsToCreate: mockComponentsToCreate,
+      componentsToUpdate: mockComponentsToUpdate,
       componentsToUnlink: mockComponentsToUnlink,
     });
 
     await handlePushEvent(event, TEST_TOKEN, MOCK_CLOUD_ID);
 
-    expect(updates).toBeCalledWith(
-      TEST_TOKEN,
-      mockComponentsToSync[0].componentYaml,
-      mockComponentsToSync[0].absoluteFilePath,
-      expect.anything(),
-      event.project.default_branch,
-      MOCK_CLOUD_ID,
-    );
-    expect(updates).toBeCalledWith(
-      TEST_TOKEN,
-      mockComponentsToSync[1].componentYaml,
-      mockComponentsToSync[1].absoluteFilePath,
-      expect.anything(),
-      event.project.default_branch,
-      MOCK_CLOUD_ID,
-    );
-    expect(removals).toBeCalledWith(mockComponentsToUnlink[0].id, expect.anything());
+    const expectedComponentSyncDetails: ComponentSyncDetails = {
+      token: TEST_TOKEN,
+      event,
+      trackingBranch: event.project.default_branch,
+      cloudId: MOCK_CLOUD_ID,
+    };
+
+    expect(syncs).toBeCalledWith(mockComponentsToCreate[0], expectedComponentSyncDetails, {
+      configFileAction: ConfigFileActions.CREATE,
+      newPath: mockComponentsToCreate[0].filePath,
+    });
+    expect(syncs).toBeCalledWith(mockComponentsToUpdate[0], expectedComponentSyncDetails, {
+      configFileAction: ConfigFileActions.UPDATE,
+      newPath: mockComponentsToUpdate[0].filePath,
+      oldPath: mockComponentsToUpdate[0].previousFilePath,
+    });
+    expect(removals).toBeCalledWith(mockComponentsToUnlink[0].componentYaml.id, expect.anything());
   });
 
   it('performs config as code file updates for non-default branch which was set via project variable', async () => {
-    const mockComponentsToSync = [
+    const mockComponentsToCreate = [
       {
         componentYaml: { id: 'test1' },
         absoluteFilePath: 'path/fileName1.yaml',
+        filePath: '/path/fileName1.yaml',
       },
+    ];
+    const mockComponentsToUpdate = [
       {
         componentYaml: { id: 'test2' },
         absoluteFilePath: 'path/fileName2.yaml',
+        filePath: '/path/fileName2.yaml',
+        previousFilePath: '/previousPath/fileName2.yaml',
       },
     ];
+    const mockComponentsToUnlink = [{ componentYaml: { id: 'test3' } }];
     const BRANCH_NAME = 'koko';
-    const mockComponentsToUnlink = [{ id: 'test1' }];
     const pushEvent = generatePushEvent({ ref: `refs/heads/${BRANCH_NAME}` });
 
     getNonDefaultBranchNameMock.mockResolvedValue(BRANCH_NAME);
     findConfigChanges.mockResolvedValue({
-      componentsToSync: mockComponentsToSync,
+      componentsToCreate: mockComponentsToCreate,
+      componentsToUpdate: mockComponentsToUpdate,
       componentsToUnlink: mockComponentsToUnlink,
     });
 
     await handlePushEvent(pushEvent, TEST_TOKEN, MOCK_CLOUD_ID);
 
-    expect(updates).toBeCalledWith(
-      TEST_TOKEN,
-      mockComponentsToSync[0].componentYaml,
-      mockComponentsToSync[0].absoluteFilePath,
-      expect.anything(),
-      BRANCH_NAME,
-      MOCK_CLOUD_ID,
-    );
-    expect(updates).toBeCalledWith(
-      TEST_TOKEN,
-      mockComponentsToSync[1].componentYaml,
-      mockComponentsToSync[1].absoluteFilePath,
-      expect.anything(),
-      BRANCH_NAME,
-      MOCK_CLOUD_ID,
-    );
-    expect(removals).toBeCalledWith(mockComponentsToUnlink[0].id, expect.anything());
+    const expectedComponentSyncDetails: ComponentSyncDetails = {
+      token: TEST_TOKEN,
+      event: pushEvent,
+      trackingBranch: BRANCH_NAME,
+      cloudId: MOCK_CLOUD_ID,
+    };
+
+    expect(syncs).toBeCalledWith(mockComponentsToCreate[0], expectedComponentSyncDetails, {
+      configFileAction: ConfigFileActions.CREATE,
+      newPath: mockComponentsToCreate[0].filePath,
+    });
+    expect(syncs).toBeCalledWith(mockComponentsToUpdate[0], expectedComponentSyncDetails, {
+      configFileAction: ConfigFileActions.UPDATE,
+      newPath: mockComponentsToUpdate[0].filePath,
+      oldPath: mockComponentsToUpdate[0].previousFilePath,
+    });
+    expect(removals).toBeCalledWith(mockComponentsToUnlink[0].componentYaml.id, expect.anything());
   });
 });
