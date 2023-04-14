@@ -1,10 +1,11 @@
+import { ConfigFileActions } from '@atlassian/forge-graphql';
 import {
   findConfigAsCodeFileChanges,
   syncComponent,
   unlinkComponent,
 } from '../../../services/sync-component-with-file';
 import { isEventForTrackingBranch } from '../../../utils/push-event-utils';
-import { PushEvent } from '../../../types';
+import { ComponentSyncDetails, PushEvent } from '../../../types';
 import { getTrackingBranchName } from '../../../services/get-tracking-branch';
 
 export const handlePushEvent = async (event: PushEvent, groupToken: string, cloudId: string): Promise<void> => {
@@ -21,24 +22,45 @@ export const handlePushEvent = async (event: PushEvent, groupToken: string, clou
 
   console.log('Received push event for tracking branch -', trackingBranch);
 
-  const { componentsToSync, componentsToUnlink } = await findConfigAsCodeFileChanges(event, groupToken);
+  const { componentsToCreate, componentsToUpdate, componentsToUnlink } = await findConfigAsCodeFileChanges(
+    event,
+    groupToken,
+  );
 
-  if (componentsToSync.length === 0 && componentsToUnlink.length === 0) {
+  if (componentsToCreate.length === 0 && componentsToUpdate.length === 0 && componentsToUnlink.length === 0) {
     console.log('No config as code file updates in push event');
     return;
   }
 
   console.log({
     message: 'Performing config as code file updates',
-    updatedFiles: componentsToSync.length,
+    createdFiles: componentsToCreate.length,
+    updatedFiles: componentsToUpdate.length,
     removedFiles: componentsToUnlink.length,
   });
 
-  const updates = componentsToSync.map((c) =>
-    syncComponent(groupToken, c.componentYaml, c.absoluteFilePath, event, trackingBranch, cloudId),
+  const componentSyncDetails: ComponentSyncDetails = {
+    token: groupToken,
+    event,
+    trackingBranch,
+    cloudId,
+  };
+
+  const creates = componentsToCreate.map((componentPayload) =>
+    syncComponent(componentPayload, componentSyncDetails, {
+      configFileAction: ConfigFileActions.CREATE,
+      newPath: componentPayload.filePath,
+    }),
   );
-  const removals = componentsToUnlink.map((componentYaml) =>
+  const updates = componentsToUpdate.map((componentPayload) =>
+    syncComponent(componentPayload, componentSyncDetails, {
+      configFileAction: ConfigFileActions.UPDATE,
+      newPath: componentPayload.filePath,
+      oldPath: componentPayload.previousFilePath,
+    }),
+  );
+  const removals = componentsToUnlink.map(({ componentYaml }) =>
     unlinkComponent(componentYaml.id, event.project.id.toString()),
   );
-  await Promise.all([...updates, ...removals]);
+  await Promise.all([...creates, ...updates, ...removals]);
 };

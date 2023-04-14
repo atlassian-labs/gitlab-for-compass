@@ -146,11 +146,31 @@ type CompassYaml = {
 type ComponentSyncPayload = {
   componentYaml: CompassYaml;
   absoluteFilePath: string;
+  filePath: string;
+  previousFilePath?: string;
+};
+
+export type ComponentUnlinkPayload = {
+  componentYaml: CompassYaml;
+  filePath?: string;
+};
+
+type ModifiedFilePayload = {
+  oldFile: ComponentUnlinkPayload;
+  newFile: ComponentSyncPayload;
 };
 
 type ComponentChanges = {
-  componentsToSync: ComponentSyncPayload[];
-  componentsToUnlink: CompassYaml[];
+  componentsToCreate: ComponentSyncPayload[];
+  componentsToUpdate: ComponentSyncPayload[];
+  componentsToUnlink: ComponentUnlinkPayload[];
+};
+
+type ComponentSyncDetails = {
+  token: string;
+  event: PushEvent;
+  trackingBranch: string;
+  cloudId: string;
 };
 
 type RegisterWebhookPayload = {
@@ -392,6 +412,8 @@ export type {
   GroupProjectsResponse,
   ComponentTierField,
   ComponentLifecycleField,
+  ComponentSyncDetails,
+  ModifiedFilePayload,
 };
 
 export {
