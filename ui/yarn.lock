@@ -484,7 +484,7 @@
     "@babel/runtime" "^7.0.0"
     "@emotion/core" "^10.0.9"
 
-"@atlassian/forge-graphql@^12.0.1":
+"@atlassian/forge-graphql@12.0.5":
   version "12.0.5"
   resolved "https://packages.atlassian.com/api/npm/atlassian-npm/@atlassian/forge-graphql/-/forge-graphql-12.0.5.tgz#83c7f870609af98b537600e48923d49f3ccf5b2b"
   integrity sha512-ujOcm2RxPWVOilVsIb0HSoyAiqdv9+mBjXxd7gj2K6j1blTjrUWjtEeRCdEHFqsv2I2UGglLUsOxXJi2YegfCQ==

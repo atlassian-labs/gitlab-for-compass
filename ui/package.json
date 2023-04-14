@@ -19,7 +19,7 @@
     "@atlaskit/textfield": "^5.1.10",
     "@atlaskit/theme": "^12.1.6",
     "@atlaskit/tooltip": "^17.5.9",
-    "@atlassian/forge-graphql": "^12.0.1",
+    "@atlassian/forge-graphql": "12.0.5",
     "@forge/api": "^2.8.1",
     "@forge/bridge": "^2.3.0",
     "escape-string-regexp": "^5.0.0",
