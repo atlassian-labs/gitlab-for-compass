@@ -1,5 +1,6 @@
 modules:
-  # This module is currently experimental and unpublished. Use `forge deploy --no-verify` to deploy an app including componentImporter.
+  # This module is currently experimental and unpublished.
+  # Contact the Compass team if interested in building an app using this importer module.
   compass:componentImporter:
     - key: import-page-ui
       resolver:
@@ -14,7 +15,8 @@ modules:
       resource: main
       title: GitLab
       icon: https://about.gitlab.com/images/press/logo/png/gitlab-icon-rgb.png
-  # This module is currently experimental and unpublished. Use `forge deploy --no-verify` to deploy an app including configValidator.
+  # This module is currently experimental and unpublished.
+  # Contact the Compass team if interested in building an app using this module.
   compass:configValidator:
     - key: config-validator
       function: config-validator-fn
@@ -27,7 +29,8 @@ modules:
         - 'gitlab.com'
       linkTypes:
         - repository
-  # This module is currently experimental and unpublished. Use `forge deploy --no-verify` to deploy an app including preUninstall.
+  # This module is currently experimental and unpublished.
+  # Use `forge deploy --no-verify` to deploy an app including preUninstall, and note that it will only be invoked when uninstallation occurs via the UI.
   compass:preUninstall:
     - key: pre-uninstall-ep
       function: pre-uninstall
