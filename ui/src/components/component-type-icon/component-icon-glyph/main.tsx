@@ -2,7 +2,7 @@ import Icon, { CustomGlyphProps } from '@atlaskit/icon';
 import { GlyphProps } from '@atlaskit/icon/types';
 
 import { COMPONENT_TYPES, CompassIconsProps } from '../../assets';
-import { capitalize } from '../../utils';
+import { capitalizeAndReplaceUnderscoresWithSpaces } from '../../utils';
 
 export type ComponentIconGlyphProps = CompassIconsProps & {
   typeId: string;
@@ -19,7 +19,13 @@ export function ComponentIconGlyph(props: ComponentIconGlyphProps): JSX.Element 
   const { typeId, ...forwardProps } = props;
 
   // The order of the props is important so that they can be overwritten by forwardProps
-  return <Icon label={capitalize(typeId)} glyph={getComponentTypeIdData(typeId)} {...forwardProps} />;
+  return (
+    <Icon
+      label={capitalizeAndReplaceUnderscoresWithSpaces(typeId)}
+      glyph={getComponentTypeIdData(typeId)}
+      {...forwardProps}
+    />
+  );
 }
 
 export function ServiceIcon(props: GlyphProps): JSX.Element {

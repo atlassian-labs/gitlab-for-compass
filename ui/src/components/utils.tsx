@@ -4,11 +4,14 @@ import { StatusLabel } from './styles';
 import { DEFAULT_COMPONENT_TYPE_ID } from '../constants';
 import { COMPONENT_TYPES } from './assets';
 
-export const capitalize = (value: string): string =>
-  (value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()).replaceAll('_', ' ');
+export const capitalizeAndReplaceUnderscoresWithSpaces = (value: string): string =>
+  (value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()).split('_').join(' ');
 
 export const getComponentTypeIdLabel = (typeId: string) => {
-  return COMPONENT_TYPES.find((componentType) => componentType.id === typeId)?.label ?? capitalize(typeId);
+  return (
+    COMPONENT_TYPES.find((componentType) => componentType.id === typeId)?.label ??
+    capitalizeAndReplaceUnderscoresWithSpaces(typeId)
+  );
 };
 
 export const getComponentTypeOption = (typeId?: string): CompassComponentTypeOption => {
