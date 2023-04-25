@@ -53,6 +53,18 @@ export const componentTypesResultMock = {
   ],
 };
 
+export const componentTypesWithTemplateResultMock = {
+  componentTypesLoading: false,
+  error: null,
+  componentTypes: [
+    {
+      id: 'SERVICE',
+    },
+    {
+      id: 'TEMPLATE',
+    },
+  ],
+};
 export const componentTypesErrorResultMock = {
   componentTypesLoading: false,
   error: null,
