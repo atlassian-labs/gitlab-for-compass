@@ -28,6 +28,16 @@ export const ProjectsImportTable = ({
   error,
   componentTypesResult,
 }: Props) => {
+  const TEMPLATE_COMPONENT_TYPE_ID = 'TEMPLATE';
+
+  const getAvailableImportComponentTypes = (availableComponentTypes: ComponentTypesResult) => {
+    const importableComponentTypes = availableComponentTypes;
+    importableComponentTypes.componentTypes = availableComponentTypes.componentTypes?.filter(
+      (componentTypeId) => componentTypeId.id !== TEMPLATE_COMPONENT_TYPE_ID,
+    );
+    return importableComponentTypes;
+  };
+
   const emptyView = useMemo(() => buildEmptyView({ isProjectsExist: projects.length !== 0, error }), [projects, error]);
 
   const isAllItemsSelected = useMemo(
@@ -46,7 +56,12 @@ export const ProjectsImportTable = ({
             isAllItemsSelected,
             isLoading,
           })}
-          rows={buildTableBody({ projects, onSelectItem, onChangeComponentType, componentTypesResult })}
+          rows={buildTableBody({
+            projects,
+            onSelectItem,
+            onChangeComponentType,
+            componentTypesResult: getAvailableImportComponentTypes(componentTypesResult),
+          })}
           loadingSpinnerSize={SPINNER_SIZE}
           isLoading={isLoading}
           emptyView={emptyView}
