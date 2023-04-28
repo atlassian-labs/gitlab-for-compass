@@ -152,6 +152,7 @@ type ComponentSyncPayload = {
 
 export type ComponentUnlinkPayload = {
   componentYaml: CompassYaml;
+  immutableLocalKeyPrefix?: string;
   filePath?: string;
 };
 

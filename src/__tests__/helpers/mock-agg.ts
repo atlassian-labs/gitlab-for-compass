@@ -15,6 +15,7 @@ export const mockCreateEvent = jest.fn(defaultImpl);
 export const mockInsertMetricValueByExternalId = jest.fn(defaultImpl);
 export const mockSyncComponentWithFile = jest.fn(defaultImpl);
 export const mockGetComponentByExternalAlias = jest.fn(defaultImpl);
+export const mockUnlinkComponent = jest.fn(defaultImpl);
 
 export function mockAgg() {
   mockForgeApi();
@@ -34,6 +35,7 @@ export function mockAgg() {
       configAsCode: {
         asApp: () => ({
           syncComponentWithFile: mockSyncComponentWithFile,
+          unlinkComponent: mockUnlinkComponent,
         }),
       },
     },

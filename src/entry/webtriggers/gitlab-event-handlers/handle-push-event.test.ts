@@ -1,24 +1,21 @@
 /* eslint-disable import/first, import/order */
-import { mockForgeApi } from '../../../__tests__/helpers/forge-helper';
+import { mockAgg, mockUnlinkComponent } from '../../../__tests__/helpers/mock-agg';
 
-mockForgeApi();
+mockAgg();
+
 import { ConfigFileActions } from '@atlassian/forge-graphql';
 import { mocked } from 'jest-mock';
 import { generatePushEvent } from '../../../__tests__/helpers/gitlab-helper';
 import { handlePushEvent } from './handle-push-event';
-import {
-  findConfigAsCodeFileChanges,
-  syncComponent,
-  unlinkComponent,
-} from '../../../services/sync-component-with-file';
+import { findConfigAsCodeFileChanges, syncComponent } from '../../../services/sync-component-with-file';
 import { getTrackingBranchName } from '../../../services/get-tracking-branch';
 import { MOCK_CLOUD_ID, TEST_TOKEN } from '../../../__tests__/fixtures/gitlab-data';
 import { ComponentSyncDetails } from '../../../types';
+import { EXTERNAL_SOURCE } from '../../../constants';
 
 jest.mock('../../../services/sync-component-with-file', () => {
   return {
     syncComponent: jest.fn(),
-    unlinkComponent: jest.fn(),
     findConfigAsCodeFileChanges: jest.fn(),
   };
 });
@@ -31,9 +28,32 @@ describe('Gitlab push events', () => {
     ref: 'wrong',
   });
   const syncs = mocked(syncComponent);
-  const removals = mocked(unlinkComponent);
+  const removals = mockUnlinkComponent;
   const findConfigChanges = mocked(findConfigAsCodeFileChanges);
   const getNonDefaultBranchNameMock = mocked(getTrackingBranchName);
+
+  const mockComponentsToUnlink = [
+    {
+      componentYaml: { id: 'test2' },
+      filePath: '/compass.yml',
+      immutableLocalKeyPrefix: '1',
+    },
+  ];
+
+  const mockUnlinkComponentData = [
+    {
+      componentId: 'test2',
+      cloudId: MOCK_CLOUD_ID,
+      filePath: `/compass.yml`,
+      immutableLocalKeyPrefix: '1',
+      additionalExternalAliasesToRemove: [
+        {
+          externalId: '1',
+          externalSource: EXTERNAL_SOURCE,
+        },
+      ],
+    },
+  ];
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -73,7 +93,6 @@ describe('Gitlab push events', () => {
         previousFilePath: '/previousPath/fileName2.yaml',
       },
     ];
-    const mockComponentsToUnlink = [{ componentYaml: { id: 'test3' } }];
 
     getNonDefaultBranchNameMock.mockResolvedValue(event.project.default_branch);
     findConfigChanges.mockResolvedValue({
@@ -100,7 +119,7 @@ describe('Gitlab push events', () => {
       newPath: mockComponentsToUpdate[0].filePath,
       oldPath: mockComponentsToUpdate[0].previousFilePath,
     });
-    expect(removals).toBeCalledWith(mockComponentsToUnlink[0].componentYaml.id, expect.anything());
+    expect(removals).toBeCalledWith(mockUnlinkComponentData[0]);
   });
 
   it('performs config as code file updates for non-default branch which was set via project variable', async () => {
@@ -119,7 +138,6 @@ describe('Gitlab push events', () => {
         previousFilePath: '/previousPath/fileName2.yaml',
       },
     ];
-    const mockComponentsToUnlink = [{ componentYaml: { id: 'test3' } }];
     const BRANCH_NAME = 'koko';
     const pushEvent = generatePushEvent({ ref: `refs/heads/${BRANCH_NAME}` });
 
@@ -148,6 +166,6 @@ describe('Gitlab push events', () => {
       newPath: mockComponentsToUpdate[0].filePath,
       oldPath: mockComponentsToUpdate[0].previousFilePath,
     });
-    expect(removals).toBeCalledWith(mockComponentsToUnlink[0].componentYaml.id, expect.anything());
+    expect(removals).toBeCalledWith(mockUnlinkComponentData[0]);
   });
 });
