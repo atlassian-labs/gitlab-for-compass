@@ -24,6 +24,7 @@ const getRemovedFiles = async (
       return getFileContent(token, event.project.id, diff.old_path, event.before).then((componentYaml) => ({
         componentYaml,
         filePath: `/${diff.new_path}`,
+        immutableLocalKeyPrefix: event.project.id.toString(),
       }));
     }),
   );
@@ -65,7 +66,11 @@ const getModifiedFiles = async (
       };
 
       return {
-        oldFile: { componentYaml: oldFile },
+        oldFile: {
+          componentYaml: oldFile,
+          filePath: `/${diff.old_path}`,
+          immutableLocalKeyPrefix: event.project.id.toString(),
+        },
         newFile: componentSyncPayload,
       };
     }),

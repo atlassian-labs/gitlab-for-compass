@@ -129,6 +129,7 @@ describe('findConfigAsCodeFileChanges', () => {
         {
           componentYaml: compassYaml,
           filePath: '/compass.yml',
+          immutableLocalKeyPrefix: baseEvent.project.id.toString(),
         },
       ],
     };
@@ -224,6 +225,8 @@ describe('findConfigAsCodeFileChanges', () => {
       componentsToUnlink: [
         {
           componentYaml: compassYamlBefore,
+          filePath: '/compass.yml',
+          immutableLocalKeyPrefix: baseEvent.project.id.toString(),
         },
       ],
     };
@@ -349,6 +352,8 @@ describe('findConfigAsCodeFileChanges', () => {
         componentsToUnlink: [
           {
             componentYaml: compassYamlBefore,
+            filePath: '/compass.yml',
+            immutableLocalKeyPrefix: event.project.id.toString(),
           },
         ],
       };
@@ -375,6 +380,8 @@ describe('findConfigAsCodeFileChanges', () => {
         componentsToUnlink: [
           {
             componentYaml: compassYamlBefore,
+            filePath: '/compass.yml',
+            immutableLocalKeyPrefix: event.project.id.toString(),
           },
         ],
       };
@@ -534,6 +541,8 @@ describe('findConfigAsCodeFileChanges', () => {
         componentsToUnlink: [
           {
             componentYaml: compassYamlBefore,
+            filePath: '/compass.yml',
+            immutableLocalKeyPrefix: event.project.id.toString(),
           },
         ],
       };
@@ -560,6 +569,7 @@ describe('findConfigAsCodeFileChanges', () => {
           {
             componentYaml: compassYamlBefore,
             filePath: '/folder/compass.yml',
+            immutableLocalKeyPrefix: event.project.id.toString(),
           },
         ],
       };
@@ -586,6 +596,8 @@ describe('findConfigAsCodeFileChanges', () => {
         componentsToUnlink: [
           {
             componentYaml: compassYamlBefore,
+            filePath: '/compass.yml',
+            immutableLocalKeyPrefix: event.project.id.toString(),
           },
         ],
       };
@@ -612,6 +624,7 @@ describe('findConfigAsCodeFileChanges', () => {
           {
             componentYaml: compassYamlBefore,
             filePath: '/folder/compass.yml',
+            immutableLocalKeyPrefix: event.project.id.toString(),
           },
         ],
       };

@@ -12,6 +12,7 @@ import graphqlGateway, {
   SyncComponentWithFileInput,
   CompassComponentTypeObject,
   GetComponentInput,
+  UnLinkComponentInput,
 } from '@atlassian/forge-graphql';
 import { ImportableProject, COMPASS_GATEWAY_MESSAGES, Metric } from '../types';
 import { EXTERNAL_SOURCE, IMPORT_LABEL } from '../constants';
@@ -97,6 +98,11 @@ export async function unlinkCompassComponents(cloudId: string, ecosystemAppId: s
 
   throwIfErrors('unlinkExternalSource', errors);
 }
+
+export const unlinkComponentFromFile = async (input: UnLinkComponentInput): Promise<void> => {
+  const { errors } = await graphqlGateway.compass.configAsCode.asApp().unlinkComponent(input);
+  throwIfErrors('unlinkComponentFromFile', errors);
+};
 
 export async function getComponentByExternalAlias(input: GetComponentByExternalAliasInput): Promise<ComponentPayload> {
   const { errors, data } = await graphqlGateway.compass.asApp().getComponentByExternalAlias({ ...input });
