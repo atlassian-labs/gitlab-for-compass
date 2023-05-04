@@ -61,9 +61,7 @@ modules:
         function: import-projects
         method: import
 app:
-  id: ari:cloud:ecosystem::app/7720f009-97f5-4ee4-9209-590c758030ff
-  runtime:
-    snapshots: false
+  id: ari:cloud:ecosystem::app/883d6844-ebba-4a7a-b816-a4f5cc162ddb
 resources:
   - key: main
     path: ui/build
