@@ -20,6 +20,7 @@ jobs:
       - run: yarn install --frozen-lockfile
       - run: yarn ui:install --frozen-lockfile
       - run: yarn run lint
+      - run: yarn run lint:typecheck
       - run: yarn run ui:build
       - name: Forge Tests
         run:  yarn test

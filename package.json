@@ -52,6 +52,7 @@
     "test": "jest",
     "lint": "yarn lint:eslint && yarn lint:prettier --check",
     "fix:prettier:and:lint": "yarn lint:prettier:fix && yarn lint:eslint:fix",
+    "lint:typecheck": "tsc -p tsconfig.json --noEmit",
     "lint:eslint": "eslint '**/*.{tsx,js,ts}'",
     "lint:eslint:fix": "yarn lint:eslint --fix",
     "lint:prettier": "prettier '**/*.{tsx,js,ts}'",
