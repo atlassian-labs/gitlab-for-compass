@@ -71,7 +71,7 @@ const getModifiedFiles = async (
         oldFileContents = oldFileSettled.value;
       } else {
         console.error(`Could not retreive oldFile for ${oldFileSettled.reason}`);
-        oldFileContents = {}; // Hitesh want to do some fancy parsing here to figure out what component it is for? How can we surface this error?
+        oldFileContents = {};
       }
       if (newFileSettled.status === 'fulfilled') {
         newFileContents = newFileSettled.value;

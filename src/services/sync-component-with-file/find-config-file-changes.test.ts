@@ -435,6 +435,70 @@ describe('findConfigAsCodeFileChanges', () => {
       expect(result).toEqual(expectedResult);
     });
 
+    test('catches error when unable to retreive the file contents and marks it is an update to an empty file', async () => {
+      const compassYamlBefore = { name: 'name' };
+      getFileContentMock.mockResolvedValueOnce(compassYamlBefore);
+      getFileContentMock.mockRejectedValueOnce('Unable to parse file error');
+
+      const commitFileDiff = {
+        diff: 'diff',
+        new_path: 'compass.yml',
+        old_path: 'compass.yml',
+        new_file: false,
+        renamed_file: false,
+        deleted_file: false,
+      };
+      getCommitDiffMock.mockResolvedValue([commitFileDiff]);
+
+      const expectedResult: ComponentChanges = {
+        componentsToCreate: [],
+        componentsToUpdate: [
+          {
+            absoluteFilePath: 'compass.yml',
+            componentYaml: {},
+            filePath: '/compass.yml',
+            previousFilePath: '/compass.yml',
+          },
+        ],
+        componentsToUnlink: [],
+      };
+      const result = await findConfigAsCodeFileChanges(event, 'token');
+
+      expect(result).toEqual(expectedResult);
+    });
+
+    test('catches error when unable to retreive the OLD file contents and marks it is an update to the new file contents', async () => {
+      const compassYamlAfter = { name: 'name2' };
+      getFileContentMock.mockRejectedValueOnce('Unable to parse file error');
+      getFileContentMock.mockResolvedValueOnce(compassYamlAfter);
+
+      const commitFileDiff = {
+        diff: 'diff',
+        new_path: 'compass.yml',
+        old_path: 'compass.yml',
+        new_file: false,
+        renamed_file: false,
+        deleted_file: false,
+      };
+      getCommitDiffMock.mockResolvedValue([commitFileDiff]);
+
+      const expectedResult: ComponentChanges = {
+        componentsToCreate: [],
+        componentsToUpdate: [
+          {
+            absoluteFilePath: 'compass.yml',
+            componentYaml: { name: 'name2' },
+            filePath: '/compass.yml',
+            previousFilePath: '/compass.yml',
+          },
+        ],
+        componentsToUnlink: [],
+      };
+      const result = await findConfigAsCodeFileChanges(event, 'token');
+
+      expect(result).toEqual(expectedResult);
+    });
+
     test('updates component by name when the config file moved with minimum changes and treated by Gitlab as rename', async () => {
       const compassYamlBefore = { name: 'name' };
       const compassYamlAfter = { name: 'name' };

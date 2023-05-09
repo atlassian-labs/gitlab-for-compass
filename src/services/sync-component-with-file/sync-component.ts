@@ -25,10 +25,6 @@ export const syncComponent = async (
   let currentComponent: Component | null;
 
   try {
-    console.log({
-      url: event.project.web_url,
-      type: CompassLinkType.Repository,
-    });
     const data = await syncComponentWithFile({
       cloudId,
       configFile: yaml.dump(componentYaml),
