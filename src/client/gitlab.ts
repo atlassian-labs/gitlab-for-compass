@@ -289,6 +289,7 @@ export const getProjectRecentDeployments: GitlabPaginatedFetch<
   const { groupToken, projectId, dateAfter, dateBefore, environmentName } = fetchParameters;
   const params = {
     updated_after: dateAfter,
+    sort: 'asc',
     environment: environmentName,
     page: page.toString(),
     per_page: perPage.toString(),
