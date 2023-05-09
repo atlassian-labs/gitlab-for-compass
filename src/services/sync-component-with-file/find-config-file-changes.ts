@@ -22,11 +22,15 @@ const getRemovedFiles = async (
 ): Promise<ComponentUnlinkPayload[]> => {
   const settledPromises = await Promise.allSettled(
     compassYmlFilesDiffs.map((diff: CommitFileDiff) => {
-      return getFileContent(token, event.project.id, diff.old_path, event.before).then((componentYaml) => ({
-        componentYaml,
-        filePath: `/${diff.new_path}`,
-        immutableLocalKeyPrefix: event.project.id.toString(),
-      }));
+      return getFileContent(token, event.project.id, diff.old_path, event.before)
+        .then((componentYaml) => ({
+          componentYaml,
+          filePath: `/${diff.new_path}`,
+          immutableLocalKeyPrefix: event.project.id.toString(),
+        }))
+        .catch((err) => {
+          console.error(`Unable to get removed file. Error: ${err}`);
+        });
     }),
   );
   return settledPromises
@@ -41,11 +45,15 @@ const getAddedFiles = async (
 ): Promise<ComponentSyncPayload[]> => {
   const settledPromises = await Promise.allSettled(
     compassYmlFilesDiffs.map((diff: CommitFileDiff) =>
-      getFileContent(token, event.project.id, diff.new_path, event.after).then((componentYaml) => ({
-        componentYaml,
-        absoluteFilePath: diff.new_path,
-        filePath: `/${diff.new_path}`,
-      })),
+      getFileContent(token, event.project.id, diff.new_path, event.after)
+        .then((componentYaml) => ({
+          componentYaml,
+          absoluteFilePath: diff.new_path,
+          filePath: `/${diff.new_path}`,
+        }))
+        .catch((err) => {
+          console.error(`Unable to get added file. Error: ${err}`);
+        }),
     ),
   );
   return settledPromises
