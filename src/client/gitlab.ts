@@ -189,7 +189,7 @@ export const getFileContent = async (
   try {
     return yaml.load(fileRaw);
   } catch (e) {
-    console.warn({ message: 'Error parsing yaml file', error: e });
+    console.warn({ message: 'Error parsing yaml file', error: e }); // here
     throw new InvalidConfigFileError([INVALID_YAML_ERROR]);
   }
 };

@@ -4,7 +4,8 @@ export const isSendStagingEventsEnabled = (defaultValue = false): boolean => {
   return process.env.FF_SEND_STAGING_EVENTS === 'true' || defaultValue;
 };
 
-export const isCreateFromYamlEnabled = (defaultValue = false): boolean => {
+export const isCreateFromYamlEnabled = (defaultValue = true): boolean => {
+  console.log('is on', process.env.CREATE_FROM_YAML_FF === 'true' || defaultValue);
   return process.env.CREATE_FROM_YAML_FF === 'true' || defaultValue;
 };
 

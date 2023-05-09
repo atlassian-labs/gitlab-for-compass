@@ -64,7 +64,12 @@ Set up the Forge App
 - Use the `forge deploy` command when you want to persist code changes.
 - Use the `forge install` command when you want to install the app on a new site.
 - Once the app is installed on a site, the site picks up the new app changes you deploy without needing to rerun the install command.
-
+- When running `forge tunnel` you may need to add the following to your manifest.yml file's app section if you see a nullptr exception
+```
+app:
+  runtime:
+      snapshots: false
+```
 
 ## Documentation
 

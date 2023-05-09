@@ -61,7 +61,7 @@ modules:
         function: import-projects
         method: import
 app:
-  id: ari:cloud:ecosystem::app/883d6844-ebba-4a7a-b816-a4f5cc162ddb
+  id: ari:cloud:ecosystem::app/fe7b0913-7421-4c84-b401-041eaab2ef2e
 resources:
   - key: main
     path: ui/build
