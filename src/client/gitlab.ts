@@ -79,7 +79,10 @@ export const callGitlab = async (
   }
 
   if (resp.status >= 300) {
-    console.warn(`Gitlab client received a status code of ${resp.status} while fetching ${path}`);
+    const msg = await resp.json();
+    console.warn(
+      `Gitlab client received a status code of ${resp.status} while fetching ${path}. Error: ${JSON.stringify(msg)}`,
+    );
     throw new GitlabHttpMethodError(resp.status, resp.statusText);
   }
 
@@ -375,7 +378,6 @@ export const getProjectRecentPipelines: GitlabPaginatedFetch<
   const path = `/api/v4/projects/${projectId}/pipelines?${queryParams}`;
 
   const { data, headers } = await callGitlab(path, groupToken);
-
   return { data, headers };
 };
 
