@@ -58,7 +58,7 @@ export enum MergeRequestResultViewOptions {
   DEFAULT = 'default',
 }
 
-function isJsonBody(config?: CallGitLabConfig) {
+function isTextBody(config?: CallGitLabConfig) {
   return config?.contentType === GitLabContentType.RAW;
 }
 
@@ -83,12 +83,12 @@ export const callGitlab = async (
   }
 
   if (resp.status >= 300) {
-    const msg = isJsonBody(config) ? await resp.text() : JSON.stringify(await resp.json());
+    const msg = isTextBody(config) ? await resp.text() : JSON.stringify(await resp.json());
     console.warn(`Gitlab client received a status code of ${resp.status} while fetching ${path}. Error: ${msg}`);
     throw new GitlabHttpMethodError(resp.status, resp.statusText);
   }
 
-  if (isJsonBody(config)) {
+  if (isTextBody(config)) {
     return resp.text();
   }
 
