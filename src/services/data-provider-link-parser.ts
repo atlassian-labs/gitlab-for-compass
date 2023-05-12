@@ -26,6 +26,15 @@ export const getAllGroupTokens = async (): Promise<string[]> => {
   return groupTokens;
 };
 
+function doesURLMatch(projectUrl: string, path: string, name: string) {
+  const parsedUrl = parse(projectUrl);
+  const urlPath = parsedUrl.pathname;
+  const pathItems = urlPath.split('/');
+  const projectName = pathItems[pathItems.length - 1];
+
+  return urlPath === path && projectName === name;
+}
+
 export const getProjectDataFromUrl = async (
   url: string,
 ): Promise<{ project: GitlabAPIProject; groupToken: string }> => {
@@ -33,7 +42,6 @@ export const getProjectDataFromUrl = async (
     const { projectName, pathName } = extractProjectInformation(url);
     const groupTokens = await getAllGroupTokens();
 
-    console.log(`[getProjectDataFromUrl] groupTokens count: ${groupTokens.length}`);
     const projectsPromiseResults = await Promise.allSettled(
       groupTokens.map((token) => getOwnedProjectsBySearchCriteria(projectName, token)),
     );
@@ -52,10 +60,9 @@ export const getProjectDataFromUrl = async (
       },
       { projects: [], projectIndex: null },
     );
-    console.log(`[getProjectDataFromUrl] projectResults count: ${projectsResult.projects.length}`);
 
     const groupToken = groupTokens[projectsResult.projectIndex];
-    const project = projectsResult.projects.find(({ web_url: webUrl }) => webUrl.includes(pathName));
+    const project = projectsResult.projects.find(({ web_url: webUrl }) => doesURLMatch(webUrl, pathName, projectName));
 
     if (!groupToken || !project) {
       throw new Error('Project not found');
