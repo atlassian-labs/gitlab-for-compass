@@ -56,12 +56,11 @@ export const getProjectDataFromUrl = async (
 
     const groupToken = groupTokens[projectsResult.projectIndex];
     const project = projectsResult.projects.find(({ web_url: webUrl }) => webUrl.includes(pathName));
-    console.log(`[getProjectDataFromUrl] project_id: ${project.id}`);
 
     if (!groupToken || !project) {
       throw new Error('Project not found');
     }
-
+    console.log(`[getProjectDataFromUrl] project_id: ${project.id}`);
     return { project, groupToken };
   } catch (e) {
     console.log('Data provider link parser failed', e.message);
