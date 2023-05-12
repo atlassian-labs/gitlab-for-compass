@@ -33,7 +33,7 @@ export const getProjectDataFromUrl = async (
     const { projectName, pathName } = extractProjectInformation(url);
     const groupTokens = await getAllGroupTokens();
 
-    console.log(`[getProjectDataFromUrl] url: ${url} groupTokens count: ${groupTokens.length}`);
+    console.log(`[getProjectDataFromUrl] groupTokens count: ${groupTokens.length}`);
     const projectsPromiseResults = await Promise.allSettled(
       groupTokens.map((token) => getOwnedProjectsBySearchCriteria(projectName, token)),
     );
@@ -56,7 +56,7 @@ export const getProjectDataFromUrl = async (
 
     const groupToken = groupTokens[projectsResult.projectIndex];
     const project = projectsResult.projects.find(({ web_url: webUrl }) => webUrl.includes(pathName));
-    console.log(`[getProjectDataFromUrl] project: ${project.web_url} project_id: ${project.id}`);
+    console.log(`[getProjectDataFromUrl] project_id: ${project.id}`);
 
     if (!groupToken || !project) {
       throw new Error('Project not found');
