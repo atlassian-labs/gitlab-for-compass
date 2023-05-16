@@ -30,6 +30,7 @@ const getRemovedFiles = async (
         }))
         .catch((err) => {
           console.error(`Unable to get removed file. Error: ${err}`);
+          throw err;
         });
     }),
   );
@@ -53,6 +54,7 @@ const getAddedFiles = async (
         }))
         .catch((err) => {
           console.error(`Unable to get added file. Error: ${err}`);
+          throw err;
         }),
     ),
   );
@@ -78,13 +80,13 @@ const getModifiedFiles = async (
       if (oldFileSettled.status === 'fulfilled') {
         oldFileContents = oldFileSettled.value;
       } else {
-        console.error(`Could not retreive oldFile for ${oldFileSettled.reason}`);
+        console.error(`Could not retrieve oldFile for ${oldFileSettled.reason}`);
         oldFileContents = {};
       }
       if (newFileSettled.status === 'fulfilled') {
         newFileContents = newFileSettled.value;
       } else {
-        console.error(`Could not retreive oldFile for ${newFileSettled.reason}`);
+        console.error(`Could not retrieve oldFile for ${newFileSettled.reason}`);
         newFileContents = {};
       }
 
