@@ -26,7 +26,7 @@ const getRemovedFiles = async (
         .then((componentYaml) => ({
           componentYaml,
           filePath: `/${diff.new_path}`,
-          immutableLocalKeyPrefix: event.project.id.toString(),
+          deduplicationId: event.project.id.toString(),
         }))
         .catch((err) => {
           console.error(`Unable to get removed file. Error: ${err}`);
@@ -101,7 +101,7 @@ const getModifiedFiles = async (
         oldFile: {
           componentYaml: oldFileContents,
           filePath: `/${diff.old_path}`,
-          immutableLocalKeyPrefix: event.project.id.toString(),
+          deduplicationId: event.project.id.toString(),
         },
         newFile: componentSyncPayload,
       };

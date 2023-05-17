@@ -48,6 +48,7 @@ export const handlePushEvent = async (event: PushEvent, groupToken: string, clou
     syncComponent(componentPayload, componentSyncDetails, {
       configFileAction: ConfigFileActions.CREATE,
       newPath: componentPayload.filePath,
+      deduplicationId: event.project.id.toString(),
     }),
   );
   const updates = componentsToUpdate.map((componentPayload) =>
@@ -55,6 +56,7 @@ export const handlePushEvent = async (event: PushEvent, groupToken: string, clou
       configFileAction: ConfigFileActions.UPDATE,
       newPath: componentPayload.filePath,
       oldPath: componentPayload.previousFilePath,
+      deduplicationId: event.project.id.toString(),
     }),
   );
 
@@ -63,7 +65,7 @@ export const handlePushEvent = async (event: PushEvent, groupToken: string, clou
       cloudId,
       filePath: componentToUnlink.filePath,
       componentId: componentToUnlink.componentYaml.id,
-      immutableLocalKeyPrefix: componentToUnlink.immutableLocalKeyPrefix,
+      deduplicationId: componentToUnlink.deduplicationId,
       additionalExternalAliasesToRemove: [{ externalId: event.project.id.toString(), externalSource: EXTERNAL_SOURCE }],
     }),
   );

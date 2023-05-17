@@ -58,6 +58,10 @@ export enum MergeRequestResultViewOptions {
   DEFAULT = 'default',
 }
 
+function isTextBody(config?: CallGitLabConfig) {
+  return config?.contentType === GitLabContentType.RAW;
+}
+
 export const callGitlab = async (
   path: string,
   authToken: string,
@@ -79,11 +83,12 @@ export const callGitlab = async (
   }
 
   if (resp.status >= 300) {
-    console.warn(`Gitlab client received a status code of ${resp.status} while fetching ${path}`);
+    const msg = isTextBody(config) ? await resp.text() : JSON.stringify(await resp.json());
+    console.warn(`Gitlab client received a status code of ${resp.status} while fetching ${path}. Error: ${msg}`);
     throw new GitlabHttpMethodError(resp.status, resp.statusText);
   }
 
-  if (config?.contentType === GitLabContentType.RAW) {
+  if (isTextBody(config)) {
     return resp.text();
   }
 
@@ -289,6 +294,7 @@ export const getProjectRecentDeployments: GitlabPaginatedFetch<
   const { groupToken, projectId, dateAfter, dateBefore, environmentName } = fetchParameters;
   const params = {
     updated_after: dateAfter,
+    order_by: 'updated_at',
     environment: environmentName,
     page: page.toString(),
     per_page: perPage.toString(),
@@ -374,7 +380,6 @@ export const getProjectRecentPipelines: GitlabPaginatedFetch<
   const path = `/api/v4/projects/${projectId}/pipelines?${queryParams}`;
 
   const { data, headers } = await callGitlab(path, groupToken);
-
   return { data, headers };
 };
 

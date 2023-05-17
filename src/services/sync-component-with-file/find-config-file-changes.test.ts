@@ -129,7 +129,7 @@ describe('findConfigAsCodeFileChanges', () => {
         {
           componentYaml: compassYaml,
           filePath: '/compass.yml',
-          immutableLocalKeyPrefix: baseEvent.project.id.toString(),
+          deduplicationId: baseEvent.project.id.toString(),
         },
       ],
     };
@@ -226,7 +226,7 @@ describe('findConfigAsCodeFileChanges', () => {
         {
           componentYaml: compassYamlBefore,
           filePath: '/compass.yml',
-          immutableLocalKeyPrefix: baseEvent.project.id.toString(),
+          deduplicationId: baseEvent.project.id.toString(),
         },
       ],
     };
@@ -353,7 +353,7 @@ describe('findConfigAsCodeFileChanges', () => {
           {
             componentYaml: compassYamlBefore,
             filePath: '/compass.yml',
-            immutableLocalKeyPrefix: event.project.id.toString(),
+            deduplicationId: event.project.id.toString(),
           },
         ],
       };
@@ -381,7 +381,7 @@ describe('findConfigAsCodeFileChanges', () => {
           {
             componentYaml: compassYamlBefore,
             filePath: '/compass.yml',
-            immutableLocalKeyPrefix: event.project.id.toString(),
+            deduplicationId: event.project.id.toString(),
           },
         ],
       };
@@ -654,7 +654,7 @@ describe('findConfigAsCodeFileChanges', () => {
           {
             componentYaml: compassYamlBefore,
             filePath: '/compass.yml',
-            immutableLocalKeyPrefix: event.project.id.toString(),
+            deduplicationId: event.project.id.toString(),
           },
         ],
       };
@@ -681,7 +681,7 @@ describe('findConfigAsCodeFileChanges', () => {
           {
             componentYaml: compassYamlBefore,
             filePath: '/folder/compass.yml',
-            immutableLocalKeyPrefix: event.project.id.toString(),
+            deduplicationId: event.project.id.toString(),
           },
         ],
       };
@@ -709,7 +709,7 @@ describe('findConfigAsCodeFileChanges', () => {
           {
             componentYaml: compassYamlBefore,
             filePath: '/compass.yml',
-            immutableLocalKeyPrefix: event.project.id.toString(),
+            deduplicationId: event.project.id.toString(),
           },
         ],
       };
@@ -736,7 +736,7 @@ describe('findConfigAsCodeFileChanges', () => {
           {
             componentYaml: compassYamlBefore,
             filePath: '/folder/compass.yml',
-            immutableLocalKeyPrefix: event.project.id.toString(),
+            deduplicationId: event.project.id.toString(),
           },
         ],
       };

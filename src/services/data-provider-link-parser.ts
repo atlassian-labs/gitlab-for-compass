@@ -26,6 +26,15 @@ export const getAllGroupTokens = async (): Promise<string[]> => {
   return groupTokens;
 };
 
+function doesURLMatch(projectUrl: string, path: string, name: string) {
+  const parsedUrl = parse(projectUrl);
+  const urlPath = parsedUrl.pathname;
+  const pathItems = urlPath.split('/');
+  const projectName = pathItems[pathItems.length - 1];
+
+  return urlPath === path && projectName === name;
+}
+
 export const getProjectDataFromUrl = async (
   url: string,
 ): Promise<{ project: GitlabAPIProject; groupToken: string }> => {
@@ -53,12 +62,12 @@ export const getProjectDataFromUrl = async (
     );
 
     const groupToken = groupTokens[projectsResult.projectIndex];
-    const project = projectsResult.projects.find(({ web_url: webUrl }) => webUrl.includes(pathName));
+    const project = projectsResult.projects.find(({ web_url: webUrl }) => doesURLMatch(webUrl, pathName, projectName));
 
     if (!groupToken || !project) {
       throw new Error('Project not found');
     }
-
+    console.log(`[getProjectDataFromUrl] project_id: ${project.id}`);
     return { project, groupToken };
   } catch (e) {
     console.log('Data provider link parser failed', e.message);

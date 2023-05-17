@@ -19,6 +19,7 @@ const mockProjectUrl = 'https://gitlab.com/test/repo-name?testParam=test';
 const testToken1 = 'token1';
 const testToken2 = 'token2';
 const projectName1 = 'project1';
+const projectName1Deleted = 'project1-deleted';
 const projectName2 = 'project2';
 const projectName3 = 'project3';
 const projectName4 = 'project4';
@@ -70,6 +71,25 @@ describe('data-provider-link-parser', () => {
 
     const expectedResult = { project: expectedProjectData, groupToken: testToken2 };
 
+    expect(result).toEqual(expectedResult);
+  });
+
+  it('should match url on both path and name', async () => {
+    const expectedProjectData = generateGitlabProject({
+      id: 1,
+      name: projectName1,
+      web_url: 'https://gitlab.com/test/repo-name',
+    });
+    mockedGetGroupIds.mockResolvedValue([1]);
+    storage.getSecret.mockResolvedValueOnce(testToken1);
+
+    mockedGetOwnedProjectsBySearchCriteria.mockResolvedValueOnce([
+      generateGitlabProject({ id: 2, name: projectName1Deleted, web_url: 'https://gitlab.com/test/repo-name-deleted' }),
+      expectedProjectData,
+    ]);
+
+    const result = await getProjectDataFromUrl(mockProjectUrl);
+    const expectedResult = { project: expectedProjectData, groupToken: testToken1 };
     expect(result).toEqual(expectedResult);
   });
 
