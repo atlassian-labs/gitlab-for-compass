@@ -216,7 +216,7 @@ export const builds = [
   },
 ] as unknown as DataProviderBuildEvent[];
 
-export const deployment = {
+export const dataProviderDeploymentEvent = {
   environment: {
     category: expect.anything(),
     displayName: 'production',

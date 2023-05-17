@@ -276,7 +276,7 @@ type Deployment = {
   id: number;
   created_at: string;
   updated_at: string;
-  deployable?: {
+  deployable: {
     status: string;
     finished_at: string;
     pipeline: {

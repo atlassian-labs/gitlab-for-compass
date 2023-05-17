@@ -4,7 +4,11 @@ import { mockForgeApi } from '../../__tests__/helpers/forge-helper';
 
 mockForgeApi();
 
-import { deployment, generateEnvironmentEvent, generateDeployment } from '../../__tests__/helpers/gitlab-helper';
+import {
+  dataProviderDeploymentEvent,
+  generateEnvironmentEvent,
+  generateDeployment,
+} from '../../__tests__/helpers/gitlab-helper';
 import { getProjectEnvironments } from '../environment';
 import { Deployment, EnvironmentTier } from '../../types';
 import { getRecentDeployments, gitlabAPiDeploymentToCompassDataProviderDeploymentEvent } from '../deployment';
@@ -45,9 +49,10 @@ describe('getDeploymentsForEnvironmentTiers', () => {
   });
 
   it('returns deployment events for Production by default', async () => {
-    const mockDeployment = getMockDeployment();
     mockedGetProjectEnvironments.mockResolvedValue([generateEnvironmentEvent()]);
-    mockedGitlabAPiDeploymentToCompassDataProviderDeploymentEvent.mockReturnValue(deployment);
+    mockedGitlabAPiDeploymentToCompassDataProviderDeploymentEvent.mockReturnValue(dataProviderDeploymentEvent);
+
+    const mockDeployment = getMockDeployment();
     mockedGetRecentDeployments.mockResolvedValue([mockDeployment]);
 
     const deployments = await getDeploymentsForEnvironmentTiers('groupToken', 1, 'projectName');
@@ -99,7 +104,7 @@ describe('getDeploymentsForEnvironmentTiers', () => {
     });
 
     it('returns deployment events for all provided environments', async () => {
-      mockedGitlabAPiDeploymentToCompassDataProviderDeploymentEvent.mockReturnValue(deployment);
+      mockedGitlabAPiDeploymentToCompassDataProviderDeploymentEvent.mockReturnValue(dataProviderDeploymentEvent);
 
       mockedGetProjectEnvironments.mockResolvedValue([
         generateEnvironmentEvent(EnvironmentTier.PRODUCTION, 'productionEnvName'),
