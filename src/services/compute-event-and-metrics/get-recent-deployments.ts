@@ -20,9 +20,11 @@ const newGetDeploymentsForEnvironments = async (
     .filter((projectEnv) => environmentTiers.includes(projectEnv.tier))
     .map(async (projectEnv) => {
       const recentDeployments = await getRecentDeployments(groupToken, projectId, getDateInThePast(), projectEnv.name);
-      return recentDeployments.map((deployment) =>
-        gitlabAPiDeploymentToCompassDataProviderDeploymentEvent(deployment, projectName, projectEnv.tier),
-      );
+      return recentDeployments
+        .map((deployment) =>
+          gitlabAPiDeploymentToCompassDataProviderDeploymentEvent(deployment, projectName, projectEnv.tier),
+        )
+        .filter((event) => event != null);
     });
 
   // combine results from multiple projectEnvironments into single array
@@ -54,8 +56,10 @@ export const getDeploymentsForEnvironmentTiers = async (
   );
 
   const deployments = (await Promise.all(getDeploymentsPromises)).flat();
-
-  return deployments.map((deployment) =>
-    gitlabAPiDeploymentToCompassDataProviderDeploymentEvent(deployment, projectName, EnvironmentTier.PRODUCTION),
-  );
+  console.log(`asdf${deployments}`);
+  return deployments
+    .map((deployment) =>
+      gitlabAPiDeploymentToCompassDataProviderDeploymentEvent(deployment, projectName, EnvironmentTier.PRODUCTION),
+    )
+    .filter((event) => event != null);
 };
