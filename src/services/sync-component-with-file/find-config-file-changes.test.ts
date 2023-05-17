@@ -72,7 +72,6 @@ describe('findConfigAsCodeFileChanges', () => {
   let baseEvent: PushEvent;
   beforeEach(() => {
     jest.clearAllMocks();
-    process.env.CREATE_FROM_YAML_FF = 'false';
     baseEvent = generatePushEvent();
   });
 
@@ -236,13 +235,12 @@ describe('findConfigAsCodeFileChanges', () => {
     expect(result).toEqual(expectedResult);
   });
 
-  describe('create from yaml enabled', () => {
+  describe('create from yaml', () => {
     let event: PushEvent;
 
     beforeEach(() => {
       jest.clearAllMocks();
       event = generatePushEvent();
-      process.env.CREATE_FROM_YAML_FF = 'true';
     });
 
     test('updates component when the id added and the name is the same', async () => {
