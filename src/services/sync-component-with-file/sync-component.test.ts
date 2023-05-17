@@ -8,7 +8,7 @@ import {
   CompassComponentType,
   CompassLinkType,
   ConfigFileActions,
-  KeyCollisionMetadata,
+  ConfigFileMetadata,
 } from '@atlassian/forge-graphql';
 import { mocked } from 'jest-mock';
 import yaml from 'js-yaml';
@@ -63,7 +63,7 @@ const createCompassYamlLink = (type: CompassLinkType): YamlLink => ({
 const getMockedSyncPayload = (
   compassYaml: CompassYaml,
   event: PushEvent,
-): [ComponentSyncPayload, ComponentSyncDetails, KeyCollisionMetadata] => {
+): [ComponentSyncPayload, ComponentSyncDetails, ConfigFileMetadata] => {
   const mockComponentsToUpdate = {
     componentYaml: compassYaml,
     absoluteFilePath: TEST_FILE_NAME,
@@ -77,13 +77,14 @@ const getMockedSyncPayload = (
     cloudId: MOCK_CLOUD_ID,
   };
 
-  const mockKeyCollisionMetadata = {
+  const mockConfigFileMetadata = {
     configFileAction: ConfigFileActions.UPDATE,
     newPath: mockComponentsToUpdate.filePath,
     oldPath: mockComponentsToUpdate.previousFilePath,
+    deduplicationId: event.project.id.toString(),
   };
 
-  return [mockComponentsToUpdate, mockComponentSyncDetails, mockKeyCollisionMetadata];
+  return [mockComponentsToUpdate, mockComponentSyncDetails, mockConfigFileMetadata];
 };
 
 describe('syncComponent', () => {
@@ -109,7 +110,6 @@ describe('syncComponent', () => {
     expect(mockSyncComponentWithFile).toBeCalledWith({
       cloudId: MOCK_CLOUD_ID,
       configFile: yaml.dump(compassYaml),
-      immutableLocalKeyPrefix: event.project.id.toString(),
       additionalExternalAliases: [{ externalId: event.project.id.toString(), externalSource: EXTERNAL_SOURCE }],
       externalSourceURL: `${event.project.web_url}/blob/${event.project.default_branch}/${TEST_FILE_NAME}`,
       additionalLinks: [
@@ -118,7 +118,7 @@ describe('syncComponent', () => {
           type: CompassLinkType.Repository,
         },
       ],
-      keyCollisionMetadata: syncPayload[2],
+      configFileMetadata: syncPayload[2],
     });
   });
 

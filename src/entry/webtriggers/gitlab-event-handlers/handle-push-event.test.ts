@@ -36,7 +36,7 @@ describe('Gitlab push events', () => {
     {
       componentYaml: { id: 'test2' },
       filePath: '/compass.yml',
-      immutableLocalKeyPrefix: '1',
+      deduplicationId: '1',
     },
   ];
 
@@ -45,7 +45,7 @@ describe('Gitlab push events', () => {
       componentId: 'test2',
       cloudId: MOCK_CLOUD_ID,
       filePath: `/compass.yml`,
-      immutableLocalKeyPrefix: '1',
+      deduplicationId: '1',
       additionalExternalAliasesToRemove: [
         {
           externalId: '1',
@@ -113,11 +113,13 @@ describe('Gitlab push events', () => {
     expect(syncs).toBeCalledWith(mockComponentsToCreate[0], expectedComponentSyncDetails, {
       configFileAction: ConfigFileActions.CREATE,
       newPath: mockComponentsToCreate[0].filePath,
+      deduplicationId: '1',
     });
     expect(syncs).toBeCalledWith(mockComponentsToUpdate[0], expectedComponentSyncDetails, {
       configFileAction: ConfigFileActions.UPDATE,
       newPath: mockComponentsToUpdate[0].filePath,
       oldPath: mockComponentsToUpdate[0].previousFilePath,
+      deduplicationId: '1',
     });
     expect(removals).toBeCalledWith(mockUnlinkComponentData[0]);
   });
@@ -160,11 +162,13 @@ describe('Gitlab push events', () => {
     expect(syncs).toBeCalledWith(mockComponentsToCreate[0], expectedComponentSyncDetails, {
       configFileAction: ConfigFileActions.CREATE,
       newPath: mockComponentsToCreate[0].filePath,
+      deduplicationId: '1',
     });
     expect(syncs).toBeCalledWith(mockComponentsToUpdate[0], expectedComponentSyncDetails, {
       configFileAction: ConfigFileActions.UPDATE,
       newPath: mockComponentsToUpdate[0].filePath,
       oldPath: mockComponentsToUpdate[0].previousFilePath,
+      deduplicationId: '1',
     });
     expect(removals).toBeCalledWith(mockUnlinkComponentData[0]);
   });
