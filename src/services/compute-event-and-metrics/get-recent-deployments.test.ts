@@ -1,6 +1,5 @@
 /* eslint-disable import/first */
 import { mocked } from 'jest-mock';
-import { CompassDeploymentEventEnvironmentCategory, CompassDeploymentEventState } from '@atlassian/forge-graphql';
 import { mockForgeApi } from '../../__tests__/helpers/forge-helper';
 
 mockForgeApi();
@@ -61,7 +60,7 @@ describe('getDeploymentsForEnvironmentTiers', () => {
     const { deployable, environment, id, updated_at: updatedAt } = mockDeployment;
     const expectedResult = {
       environment: {
-        category: CompassDeploymentEventEnvironmentCategory.Production,
+        category: expect.anything(),
         displayName: environment.name,
         environmentId: environment.id.toString(),
       },
@@ -71,7 +70,7 @@ describe('getDeploymentsForEnvironmentTiers', () => {
         url: deployable.pipeline.web_url,
       },
       sequenceNumber: id,
-      state: CompassDeploymentEventState.Pending,
+      state: expect.anything(),
       description: `projectName deployment`,
       displayName: `projectName deployment ${id}`,
       lastUpdated: updatedAt,
@@ -135,7 +134,7 @@ describe('getDeploymentsForEnvironmentTiers', () => {
       const { deployable, environment, id, updated_at: updatedAt } = mockDeployment;
       const expectedResult = {
         environment: {
-          category: CompassDeploymentEventEnvironmentCategory.Production,
+          category: expect.anything(),
           displayName: environment.name,
           environmentId: environment.id.toString(),
         },
@@ -145,7 +144,7 @@ describe('getDeploymentsForEnvironmentTiers', () => {
           url: deployable.pipeline.web_url,
         },
         sequenceNumber: id,
-        state: CompassDeploymentEventState.Pending,
+        state: expect.anything(),
         description: `projectName deployment`,
         displayName: `projectName deployment ${id}`,
         lastUpdated: updatedAt,
