@@ -161,7 +161,7 @@ export const gitlabAPiDeploymentToCompassDataProviderDeploymentEvent = (
   deployment: Deployment,
   projectName: string,
   environmentTier: EnvironmentTier,
-): DataProviderDeploymentEvent => {
+): DataProviderDeploymentEvent | null => {
   try {
     const { environment, deployable } = deployment;
 

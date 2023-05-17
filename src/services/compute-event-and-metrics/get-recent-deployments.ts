@@ -24,7 +24,7 @@ const newGetDeploymentsForEnvironments = async (
         .map((deployment) =>
           gitlabAPiDeploymentToCompassDataProviderDeploymentEvent(deployment, projectName, projectEnv.tier),
         )
-        .filter((event) => event != null);
+        .filter((event) => event !== null);
     });
 
   // combine results from multiple projectEnvironments into single array
@@ -60,5 +60,5 @@ export const getDeploymentsForEnvironmentTiers = async (
     .map((deployment) =>
       gitlabAPiDeploymentToCompassDataProviderDeploymentEvent(deployment, projectName, EnvironmentTier.PRODUCTION),
     )
-    .filter((event) => event != null);
+    .filter((event) => event !== null);
 };
