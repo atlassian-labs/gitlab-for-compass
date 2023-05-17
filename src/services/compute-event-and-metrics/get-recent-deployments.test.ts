@@ -4,7 +4,11 @@ import { mockForgeApi } from '../../__tests__/helpers/forge-helper';
 
 mockForgeApi();
 
-import { generateEnvironmentEvent } from '../../__tests__/helpers/gitlab-helper';
+import {
+  dataProviderDeploymentEvent,
+  generateEnvironmentEvent,
+  generateDeployment,
+} from '../../__tests__/helpers/gitlab-helper';
 import { getProjectEnvironments } from '../environment';
 import { Deployment, EnvironmentTier } from '../../types';
 import { getRecentDeployments, gitlabAPiDeploymentToCompassDataProviderDeploymentEvent } from '../deployment';
@@ -46,6 +50,7 @@ describe('getDeploymentsForEnvironmentTiers', () => {
 
   it('returns deployment events for Production by default', async () => {
     mockedGetProjectEnvironments.mockResolvedValue([generateEnvironmentEvent()]);
+    mockedGitlabAPiDeploymentToCompassDataProviderDeploymentEvent.mockReturnValue(dataProviderDeploymentEvent);
 
     const mockDeployment = getMockDeployment();
     mockedGetRecentDeployments.mockResolvedValue([mockDeployment]);
@@ -71,6 +76,24 @@ describe('getDeploymentsForEnvironmentTiers', () => {
     expect(deployments).toHaveLength(0);
   });
 
+  it('ignores null events from when deployment event mapping returns null', async () => {
+    mockedGetProjectEnvironments.mockResolvedValue([generateEnvironmentEvent()]);
+
+    const mockDeployment = generateDeployment({ deployable: null });
+    mockedGetRecentDeployments.mockResolvedValue([mockDeployment]);
+    mockedGitlabAPiDeploymentToCompassDataProviderDeploymentEvent.mockReturnValue(null);
+
+    const deployments = await getDeploymentsForEnvironmentTiers('groupToken', 1, 'projectName');
+    expect(mockedGitlabAPiDeploymentToCompassDataProviderDeploymentEvent).toHaveBeenCalledTimes(1);
+    expect(mockedGitlabAPiDeploymentToCompassDataProviderDeploymentEvent).toHaveBeenCalledWith(
+      mockDeployment,
+      'projectName',
+      EnvironmentTier.PRODUCTION,
+    );
+
+    expect(deployments).toHaveLength(0);
+  });
+
   describe('when isSendStagingEventsEnabled', () => {
     beforeEach(() => {
       jest.spyOn(featureFlagService, 'isSendStagingEventsEnabled').mockReturnValue(true);
@@ -81,6 +104,8 @@ describe('getDeploymentsForEnvironmentTiers', () => {
     });
 
     it('returns deployment events for all provided environments', async () => {
+      mockedGitlabAPiDeploymentToCompassDataProviderDeploymentEvent.mockReturnValue(dataProviderDeploymentEvent);
+
       mockedGetProjectEnvironments.mockResolvedValue([
         generateEnvironmentEvent(EnvironmentTier.PRODUCTION, 'productionEnvName'),
         generateEnvironmentEvent(EnvironmentTier.STAGING, 'stagingEnvName'),

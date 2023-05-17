@@ -20,9 +20,16 @@ const newGetDeploymentsForEnvironments = async (
     .filter((projectEnv) => environmentTiers.includes(projectEnv.tier))
     .map(async (projectEnv) => {
       const recentDeployments = await getRecentDeployments(groupToken, projectId, getDateInThePast(), projectEnv.name);
-      return recentDeployments.map((deployment) =>
-        gitlabAPiDeploymentToCompassDataProviderDeploymentEvent(deployment, projectName, projectEnv.tier),
-      );
+      const dataProviderDeploymentEvents = recentDeployments
+        .map((deployment) =>
+          gitlabAPiDeploymentToCompassDataProviderDeploymentEvent(deployment, projectName, projectEnv.tier),
+        )
+        .filter((event) => event !== null);
+      const unprocessedEvents = recentDeployments.length - dataProviderDeploymentEvents.length;
+      if (unprocessedEvents > 0) {
+        console.log(`unprocessed deployment events count: ${unprocessedEvents} for environment ${projectEnv}`);
+      }
+      return dataProviderDeploymentEvents;
     });
 
   // combine results from multiple projectEnvironments into single array
@@ -54,8 +61,14 @@ export const getDeploymentsForEnvironmentTiers = async (
   );
 
   const deployments = (await Promise.all(getDeploymentsPromises)).flat();
-
-  return deployments.map((deployment) =>
-    gitlabAPiDeploymentToCompassDataProviderDeploymentEvent(deployment, projectName, EnvironmentTier.PRODUCTION),
-  );
+  const deploymentEvents = deployments
+    .map((deployment) =>
+      gitlabAPiDeploymentToCompassDataProviderDeploymentEvent(deployment, projectName, EnvironmentTier.PRODUCTION),
+    )
+    .filter((event) => event !== null);
+  const unprocessedEvents = deployments.length - deploymentEvents.length;
+  if (unprocessedEvents > 0) {
+    console.log(`unprocessed deployment events count: ${unprocessedEvents}`);
+  }
+  return deploymentEvents;
 };

@@ -111,6 +111,18 @@ describe('deployment', () => {
 
     expect(deploymentInput).toEqual(expectedResult);
   });
+
+  it('should return null when there is an error mapping the event', async () => {
+    const mockDeploymentWithNullDeployable = generateDeployment({ deployable: null });
+
+    const deploymentInput = gitlabAPiDeploymentToCompassDataProviderDeploymentEvent(
+      mockDeploymentWithNullDeployable,
+      mockProjectName,
+      EnvironmentTier.PRODUCTION,
+    );
+
+    expect(deploymentInput).toEqual(null);
+  });
 });
 
 describe('mapEnvTierToCompassDeploymentEnv', () => {

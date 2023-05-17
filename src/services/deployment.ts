@@ -161,26 +161,32 @@ export const gitlabAPiDeploymentToCompassDataProviderDeploymentEvent = (
   deployment: Deployment,
   projectName: string,
   environmentTier: EnvironmentTier,
-): DataProviderDeploymentEvent => {
-  const { environment, deployable } = deployment;
+): DataProviderDeploymentEvent | null => {
+  try {
+    const { environment, deployable } = deployment;
 
-  return {
-    environment: {
-      category: mapEnvTierToCompassDeploymentEnv(environmentTier),
-      displayName: environment.name,
-      environmentId: environment.id.toString(),
-    },
-    pipeline: {
-      displayName: `${projectName} pipeline`,
-      pipelineId: deployable.pipeline.id.toString(),
+    const deploymentEvent = {
+      environment: {
+        category: mapEnvTierToCompassDeploymentEnv(environmentTier),
+        displayName: environment.name,
+        environmentId: environment.id.toString(),
+      },
+      pipeline: {
+        displayName: `${projectName} pipeline`,
+        pipelineId: deployable.pipeline.id.toString(),
+        url: deployable.pipeline.web_url,
+      },
+      sequenceNumber: deployment.id,
+      state: gitLabStateToCompassFormat(deployable.status.toUpperCase()),
+      description: `${projectName} deployment`,
+      displayName: `${projectName} deployment ${deployment.id}`,
+      lastUpdated: new Date(deployment.updated_at).toISOString(),
+      updateSequenceNumber: new Date(deployment.updated_at).getTime(),
       url: deployable.pipeline.web_url,
-    },
-    sequenceNumber: deployment.id,
-    state: gitLabStateToCompassFormat(deployable.status.toUpperCase()),
-    description: `${projectName} deployment`,
-    displayName: `${projectName} deployment ${deployment.id}`,
-    lastUpdated: new Date(deployment.updated_at).toISOString(),
-    updateSequenceNumber: new Date(deployment.updated_at).getTime(),
-    url: deployable.pipeline.web_url,
-  };
+    };
+    return deploymentEvent;
+  } catch (err) {
+    console.error(`There was an error mapping the gitlab API deployment: ${err.message}`);
+    return null;
+  }
 };

@@ -1,9 +1,11 @@
 import {
   CompassBuildEventState,
   CompassComponentType,
+  CompassDeploymentEventState,
   Component,
   ComponentPayload,
   DataProviderBuildEvent,
+  DataProviderDeploymentEvent,
   Link,
 } from '@atlassian/forge-graphql';
 import { pipelineWebhookFixture } from '../fixtures/build-webhook-payload';
@@ -213,6 +215,26 @@ export const builds = [
     url: '',
   },
 ] as unknown as DataProviderBuildEvent[];
+
+export const dataProviderDeploymentEvent = {
+  environment: {
+    category: expect.anything(),
+    displayName: 'production',
+    environmentId: '1',
+  },
+  pipeline: {
+    displayName: `projectName pipeline`,
+    pipelineId: '1',
+    url: 'web_url',
+  },
+  sequenceNumber: 1,
+  state: CompassDeploymentEventState.Successful,
+  description: `projectName deployment`,
+  displayName: `projectName deployment 1`,
+  lastUpdated: '2022-06-23T12:57:29.654Z',
+  updateSequenceNumber: expect.anything(),
+  url: 'web_url',
+} as DataProviderDeploymentEvent;
 
 export const unsortedProjects = [
   {
