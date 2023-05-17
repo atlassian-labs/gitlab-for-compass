@@ -1,6 +1,7 @@
 import { flow } from 'lodash/fp';
 import {
   CommitFileDiff,
+  CompassYaml,
   ComponentChanges,
   ComponentSyncPayload,
   ComponentUnlinkPayload,
@@ -19,15 +20,23 @@ const getRemovedFiles = async (
   compassYmlFilesDiffs: CommitFileDiff[],
   event: PushEvent,
 ): Promise<ComponentUnlinkPayload[]> => {
-  return Promise.all(
+  const settledPromises = await Promise.allSettled(
     compassYmlFilesDiffs.map((diff: CommitFileDiff) => {
-      return getFileContent(token, event.project.id, diff.old_path, event.before).then((componentYaml) => ({
-        componentYaml,
-        filePath: `/${diff.new_path}`,
-        deduplicationId: event.project.id.toString(),
-      }));
+      return getFileContent(token, event.project.id, diff.old_path, event.before)
+        .then((componentYaml) => ({
+          componentYaml,
+          filePath: `/${diff.new_path}`,
+          deduplicationId: event.project.id.toString(),
+        }))
+        .catch((err) => {
+          console.error(`Unable to get removed file. Error: ${err}`);
+          throw err;
+        });
     }),
   );
+  return settledPromises
+    .filter((result) => result.status === 'fulfilled')
+    .map((result) => (result as PromiseFulfilledResult<ComponentUnlinkPayload>).value);
 };
 
 const getAddedFiles = async (
@@ -35,15 +44,23 @@ const getAddedFiles = async (
   compassYmlFilesDiffs: CommitFileDiff[],
   event: PushEvent,
 ): Promise<ComponentSyncPayload[]> => {
-  return Promise.all(
+  const settledPromises = await Promise.allSettled(
     compassYmlFilesDiffs.map((diff: CommitFileDiff) =>
-      getFileContent(token, event.project.id, diff.new_path, event.after).then((componentYaml) => ({
-        componentYaml,
-        absoluteFilePath: diff.new_path,
-        filePath: `/${diff.new_path}`,
-      })),
+      getFileContent(token, event.project.id, diff.new_path, event.after)
+        .then((componentYaml) => ({
+          componentYaml,
+          absoluteFilePath: diff.new_path,
+          filePath: `/${diff.new_path}`,
+        }))
+        .catch((err) => {
+          console.error(`Unable to get added file. Error: ${err}`);
+          throw err;
+        }),
     ),
   );
+  return settledPromises
+    .filter((result) => result.status === 'fulfilled')
+    .map((result) => (result as PromiseFulfilledResult<ComponentSyncPayload>).value);
 };
 
 const getModifiedFiles = async (
@@ -51,15 +68,30 @@ const getModifiedFiles = async (
   compassYmlFilesDiffs: CommitFileDiff[],
   event: PushEvent,
 ): Promise<ModifiedFilePayload[]> => {
-  return Promise.all(
+  const settledPromises = await Promise.allSettled(
     compassYmlFilesDiffs.map(async (diff) => {
       const oldFilePromise = getFileContent(token, event.project.id, diff.old_path, event.before);
       const newFilePromise = getFileContent(token, event.project.id, diff.new_path, event.after);
 
-      const [oldFile, newFile] = await Promise.all([oldFilePromise, newFilePromise]);
+      const [oldFileSettled, newFileSettled] = await Promise.allSettled([oldFilePromise, newFilePromise]);
+      let oldFileContents: CompassYaml;
+      let newFileContents: CompassYaml;
+
+      if (oldFileSettled.status === 'fulfilled') {
+        oldFileContents = oldFileSettled.value;
+      } else {
+        console.error(`Could not retrieve oldFile for ${oldFileSettled.reason}`);
+        oldFileContents = {};
+      }
+      if (newFileSettled.status === 'fulfilled') {
+        newFileContents = newFileSettled.value;
+      } else {
+        console.error(`Could not retrieve oldFile for ${newFileSettled.reason}`);
+        newFileContents = {};
+      }
 
       const componentSyncPayload: ComponentSyncPayload = {
-        componentYaml: newFile,
+        componentYaml: newFileContents,
         absoluteFilePath: diff.new_path,
         filePath: `/${diff.new_path}`,
         previousFilePath: `/${diff.old_path}`,
@@ -67,7 +99,7 @@ const getModifiedFiles = async (
 
       return {
         oldFile: {
-          componentYaml: oldFile,
+          componentYaml: oldFileContents,
           filePath: `/${diff.old_path}`,
           deduplicationId: event.project.id.toString(),
         },
@@ -75,6 +107,9 @@ const getModifiedFiles = async (
       };
     }),
   );
+  return settledPromises
+    .filter((result) => result.status === 'fulfilled')
+    .map((result) => (result as PromiseFulfilledResult<ModifiedFilePayload>).value);
 };
 
 export const findConfigAsCodeFileChanges = async (event: PushEvent, token: string): Promise<ComponentChanges> => {
