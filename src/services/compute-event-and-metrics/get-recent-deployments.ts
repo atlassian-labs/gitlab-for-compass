@@ -56,7 +56,6 @@ export const getDeploymentsForEnvironmentTiers = async (
   );
 
   const deployments = (await Promise.all(getDeploymentsPromises)).flat();
-  console.log(`asdf${deployments}`);
   return deployments
     .map((deployment) =>
       gitlabAPiDeploymentToCompassDataProviderDeploymentEvent(deployment, projectName, EnvironmentTier.PRODUCTION),

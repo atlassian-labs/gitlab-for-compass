@@ -4,7 +4,7 @@ import { mockForgeApi } from '../../__tests__/helpers/forge-helper';
 
 mockForgeApi();
 
-import { generateEnvironmentEvent } from '../../__tests__/helpers/gitlab-helper';
+import { deployment, generateEnvironmentEvent, generateDeployment } from '../../__tests__/helpers/gitlab-helper';
 import { getProjectEnvironments } from '../environment';
 import { Deployment, EnvironmentTier } from '../../types';
 import { getRecentDeployments, gitlabAPiDeploymentToCompassDataProviderDeploymentEvent } from '../deployment';
@@ -39,17 +39,6 @@ const getMockDeployment = (id = 1, environmentName = 'production'): Deployment =
   status: 'string',
 });
 
-const mockDeploymentWithoutDeployable = () => ({
-  id: 1,
-  created_at: new Date().toISOString(),
-  updated_at: new Date().toISOString(),
-  environment: {
-    name: 'production',
-    id: 123,
-  },
-  status: 'string',
-});
-
 describe('getDeploymentsForEnvironmentTiers', () => {
   afterEach(() => {
     jest.clearAllMocks();
@@ -57,28 +46,8 @@ describe('getDeploymentsForEnvironmentTiers', () => {
 
   it('returns deployment events for Production by default', async () => {
     const mockDeployment = getMockDeployment();
-    const { deployable, environment, id, updated_at: updatedAt } = mockDeployment;
-    const expectedResult = {
-      environment: {
-        category: expect.anything(),
-        displayName: environment.name,
-        environmentId: environment.id.toString(),
-      },
-      pipeline: {
-        displayName: `projectName pipeline`,
-        pipelineId: deployable.pipeline.id.toString(),
-        url: deployable.pipeline.web_url,
-      },
-      sequenceNumber: id,
-      state: expect.anything(),
-      description: `projectName deployment`,
-      displayName: `projectName deployment ${id}`,
-      lastUpdated: updatedAt,
-      updateSequenceNumber: expect.anything(),
-      url: deployable.pipeline.web_url,
-    };
     mockedGetProjectEnvironments.mockResolvedValue([generateEnvironmentEvent()]);
-    mockedGitlabAPiDeploymentToCompassDataProviderDeploymentEvent.mockReturnValue(expectedResult);
+    mockedGitlabAPiDeploymentToCompassDataProviderDeploymentEvent.mockReturnValue(deployment);
     mockedGetRecentDeployments.mockResolvedValue([mockDeployment]);
 
     const deployments = await getDeploymentsForEnvironmentTiers('groupToken', 1, 'projectName');
@@ -105,7 +74,7 @@ describe('getDeploymentsForEnvironmentTiers', () => {
   it('ignores null events from when deployment event mapping returns null', async () => {
     mockedGetProjectEnvironments.mockResolvedValue([generateEnvironmentEvent()]);
 
-    const mockDeployment = mockDeploymentWithoutDeployable();
+    const mockDeployment = generateDeployment({ deployable: null });
     mockedGetRecentDeployments.mockResolvedValue([mockDeployment]);
     mockedGitlabAPiDeploymentToCompassDataProviderDeploymentEvent.mockReturnValue(null);
 
@@ -130,28 +99,7 @@ describe('getDeploymentsForEnvironmentTiers', () => {
     });
 
     it('returns deployment events for all provided environments', async () => {
-      const mockDeployment = getMockDeployment();
-      const { deployable, environment, id, updated_at: updatedAt } = mockDeployment;
-      const expectedResult = {
-        environment: {
-          category: expect.anything(),
-          displayName: environment.name,
-          environmentId: environment.id.toString(),
-        },
-        pipeline: {
-          displayName: `projectName pipeline`,
-          pipelineId: deployable.pipeline.id.toString(),
-          url: deployable.pipeline.web_url,
-        },
-        sequenceNumber: id,
-        state: expect.anything(),
-        description: `projectName deployment`,
-        displayName: `projectName deployment ${id}`,
-        lastUpdated: updatedAt,
-        updateSequenceNumber: expect.anything(),
-        url: deployable.pipeline.web_url,
-      };
-      mockedGitlabAPiDeploymentToCompassDataProviderDeploymentEvent.mockReturnValue(expectedResult);
+      mockedGitlabAPiDeploymentToCompassDataProviderDeploymentEvent.mockReturnValue(deployment);
 
       mockedGetProjectEnvironments.mockResolvedValue([
         generateEnvironmentEvent(EnvironmentTier.PRODUCTION, 'productionEnvName'),
