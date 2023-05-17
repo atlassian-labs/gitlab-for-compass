@@ -1,4 +1,4 @@
-import { CompassLinkType, Component, KeyCollisionMetadata } from '@atlassian/forge-graphql';
+import { CompassLinkType, Component, ConfigFileMetadata } from '@atlassian/forge-graphql';
 import yaml from 'js-yaml';
 import { ComponentSyncDetails, ComponentSyncPayload, PushEvent } from '../../types';
 import { reportSyncError } from './report-sync-error';
@@ -14,7 +14,7 @@ const getFileUrl = (filePath: string, event: PushEvent, branchName: string) => {
 export const syncComponent = async (
   componentSyncPayload: ComponentSyncPayload,
   componentSyncDetails: ComponentSyncDetails,
-  keyCollisionMetadata: KeyCollisionMetadata,
+  configFileMetadata: ConfigFileMetadata,
 ): Promise<void> => {
   const { token, event, trackingBranch, cloudId } = componentSyncDetails;
   const { componentYaml, absoluteFilePath } = componentSyncPayload;
@@ -28,7 +28,6 @@ export const syncComponent = async (
     const data = await syncComponentWithFile({
       cloudId,
       configFile: yaml.dump(componentYaml),
-      immutableLocalKeyPrefix: event.project.id.toString(),
       additionalExternalAliases: [{ externalId: event.project.id.toString(), externalSource: EXTERNAL_SOURCE }],
       externalSourceURL,
       additionalLinks: [
@@ -37,7 +36,7 @@ export const syncComponent = async (
           type: CompassLinkType.Repository,
         },
       ],
-      keyCollisionMetadata,
+      configFileMetadata,
     });
     currentComponent = data.component;
     console.log({ message: `Main sync with file success for component ${currentComponent.id}` });
