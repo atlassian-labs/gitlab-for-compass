@@ -14,7 +14,7 @@ type Props = {
   onSelectItem: (id: number) => void;
   onChangeComponentType: (id: number, type: CompassComponentTypeOption) => void;
   error?: string;
-  componentTypesResult: ComponentTypesResult;
+  importableComponentTypes: ComponentTypesResult;
 };
 
 const SPINNER_SIZE = 'large';
@@ -26,7 +26,7 @@ export const ProjectsImportTable = ({
   onSelectItem,
   onChangeComponentType,
   error,
-  componentTypesResult,
+  importableComponentTypes,
 }: Props) => {
   const emptyView = useMemo(() => buildEmptyView({ isProjectsExist: projects.length !== 0, error }), [projects, error]);
 
@@ -50,7 +50,7 @@ export const ProjectsImportTable = ({
             projects,
             onSelectItem,
             onChangeComponentType,
-            componentTypesResult,
+            importableComponentTypes,
           })}
           loadingSpinnerSize={SPINNER_SIZE}
           isLoading={isLoading}

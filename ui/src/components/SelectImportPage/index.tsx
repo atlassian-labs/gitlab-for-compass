@@ -254,7 +254,7 @@ export const SelectImportPage = () => {
           handleChangeGroup={handleChangeGroup}
           handleSearchValue={handleSearchValue}
           locationGroupId={locationGroupId}
-          componentTypesResult={importableComponentTypes}
+          importableComponentTypes={importableComponentTypes}
         />
       )}
       {screen === Screens.CONFIRMATION && (
@@ -267,7 +267,7 @@ export const SelectImportPage = () => {
           handleImportProjects={handleImportProjects}
           isProjectsImporting={isProjectsImporting}
           projectsImportingData={projectsImportingData}
-          componentTypesResult={importableComponentTypes}
+          importableComponentTypes={importableComponentTypes}
         />
       )}
     </>

@@ -37,7 +37,7 @@ type Props = {
   handleChangeGroup: (item: SelectorItem | null) => void;
   handleSearchValue: (value: string) => void;
   locationGroupId: number;
-  componentTypesResult: ComponentTypesResult;
+  importableComponentTypes: ComponentTypesResult;
 };
 
 export const SelectProjectsScreen = ({
@@ -58,7 +58,7 @@ export const SelectProjectsScreen = ({
   handleChangeGroup,
   handleSearchValue,
   locationGroupId,
-  componentTypesResult,
+  importableComponentTypes,
 }: Props) => {
   const groupSelectorOptions = useMemo(() => buildGroupsSelectorOptions(groups, locationGroupId), [groups]);
 
@@ -95,7 +95,7 @@ export const SelectProjectsScreen = ({
           onSelectItem={onSelectItem}
           onChangeComponentType={onChangeComponentType}
           error={projectsFetchingError}
-          componentTypesResult={componentTypesResult}
+          importableComponentTypes={importableComponentTypes}
         />
         {projects.length !== 0 ? (
           <CenterWrapper>

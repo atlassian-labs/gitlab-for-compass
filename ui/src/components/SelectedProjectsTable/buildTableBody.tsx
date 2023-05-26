@@ -8,13 +8,13 @@ import { getComponentTypeOption } from '../utils';
 export interface SelectedProjectsProps {
   projectsReadyToImport: ProjectImportSelection[];
   onChangeComponentType: (id: number, type: CompassComponentTypeOption) => void;
-  componentTypesResult: ComponentTypesResult;
+  importableComponentTypes: ComponentTypesResult;
 }
 
 export const buildTableBody = ({
   projectsReadyToImport,
   onChangeComponentType,
-  componentTypesResult,
+  importableComponentTypes,
 }: SelectedProjectsProps): RowType[] => {
   return projectsReadyToImport.map((project) => {
     return {
@@ -40,9 +40,9 @@ export const buildTableBody = ({
           key: 'type',
           content: (
             <ComponentTypeSelect
-              loading={componentTypesResult.componentTypesLoading}
+              loading={importableComponentTypes.componentTypesLoading}
               dropdownId={project.id.toString()}
-              componentTypes={componentTypesResult.componentTypes}
+              componentTypes={importableComponentTypes.componentTypes}
               isDisabled={project.isManaged || project.isCompassFilePrOpened || project.hasComponent}
               selectedOption={project.typeOption}
               onChange={(value) =>

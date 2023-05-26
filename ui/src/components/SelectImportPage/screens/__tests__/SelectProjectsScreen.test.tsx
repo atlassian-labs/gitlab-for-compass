@@ -39,7 +39,7 @@ describe('SelectProjectsScreen', () => {
         isGroupsLoading={false}
         handleChangeGroup={jest.fn()}
         handleSearchValue={jest.fn()}
-        componentTypesResult={componentTypesResultMock}
+        importableComponentTypes={componentTypesResultMock}
         locationGroupId={1}
       />,
     );
@@ -67,7 +67,7 @@ describe('SelectProjectsScreen', () => {
         isGroupsLoading={false}
         handleChangeGroup={jest.fn()}
         handleSearchValue={jest.fn()}
-        componentTypesResult={componentTypesResultMock}
+        importableComponentTypes={componentTypesResultMock}
         locationGroupId={1}
       />,
     );
@@ -94,7 +94,7 @@ describe('SelectProjectsScreen', () => {
         isGroupsLoading={false}
         handleChangeGroup={jest.fn()}
         handleSearchValue={jest.fn()}
-        componentTypesResult={componentTypesResultMock}
+        importableComponentTypes={componentTypesResultMock}
         locationGroupId={1}
       />,
     );
@@ -121,7 +121,7 @@ describe('SelectProjectsScreen', () => {
         isGroupsLoading={false}
         handleChangeGroup={jest.fn()}
         handleSearchValue={jest.fn()}
-        componentTypesResult={componentTypesErrorResultMock}
+        importableComponentTypes={componentTypesErrorResultMock}
         locationGroupId={1}
       />,
     );
