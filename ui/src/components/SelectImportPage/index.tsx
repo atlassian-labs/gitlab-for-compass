@@ -13,6 +13,7 @@ import { SelectorItem } from './screens/SelectProjectsScreen/buildGroupsSelector
 import { useAppContext } from '../../hooks/useAppContext';
 import { useComponentTypes } from '../../hooks/useComponentTypes';
 import { getComponentTypeOption } from '../utils';
+import { getAvailableImportComponentTypes } from './utils';
 
 export enum Screens {
   CONFIRMATION = 'CONFIRMATION',
@@ -28,6 +29,8 @@ export const SelectImportPage = () => {
   const { getGroups, features } = useAppContext();
   const { setTotalSelectedRepos, setIsImportInProgress, setImportedRepositories } = useImportContext();
   const componentTypesResult = useComponentTypes();
+
+  const importableComponentTypes = getAvailableImportComponentTypes(componentTypesResult);
 
   const [projects, setProjects] = useState<ProjectImportSelection[]>([]);
   const [isProjectsLoading, setIsProjectsLoading] = useState<boolean>(false);
@@ -251,7 +254,7 @@ export const SelectImportPage = () => {
           handleChangeGroup={handleChangeGroup}
           handleSearchValue={handleSearchValue}
           locationGroupId={locationGroupId}
-          componentTypesResult={componentTypesResult}
+          componentTypesResult={importableComponentTypes}
         />
       )}
       {screen === Screens.CONFIRMATION && (
@@ -264,7 +267,7 @@ export const SelectImportPage = () => {
           handleImportProjects={handleImportProjects}
           isProjectsImporting={isProjectsImporting}
           projectsImportingData={projectsImportingData}
-          componentTypesResult={componentTypesResult}
+          componentTypesResult={importableComponentTypes}
         />
       )}
     </>
