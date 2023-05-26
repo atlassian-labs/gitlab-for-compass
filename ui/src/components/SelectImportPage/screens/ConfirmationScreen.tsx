@@ -15,7 +15,7 @@ type Props = {
   isProjectsImporting: boolean;
   handleImportProjects: () => void;
   projectsImportingData: ResolverResponse | null;
-  componentTypesResult: ComponentTypesResult;
+  importableComponentTypes: ComponentTypesResult;
 };
 
 export const ConfirmationScreen = ({
@@ -27,7 +27,7 @@ export const ConfirmationScreen = ({
   isProjectsImporting,
   handleImportProjects,
   projectsImportingData,
-  componentTypesResult,
+  importableComponentTypes,
 }: Props & SelectedProjectsProps) => {
   return (
     <>
@@ -72,7 +72,7 @@ export const ConfirmationScreen = ({
       <SelectedProjectsTable
         projectsReadyToImport={projectsReadyToImport}
         onChangeComponentType={onChangeComponentType}
-        componentTypesResult={componentTypesResult}
+        importableComponentTypes={importableComponentTypes}
       />
       {projectsImportingData?.errors && projectsImportingData.errors.length !== 0 && (
         <ErrorWrapper>

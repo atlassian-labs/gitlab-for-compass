@@ -15,7 +15,7 @@ type Props = {
   projects: ProjectImportSelection[];
   onSelectItem: (id: number) => void;
   onChangeComponentType: (id: number, type: CompassComponentTypeOption) => void;
-  componentTypesResult: ComponentTypesResult;
+  importableComponentTypes: ComponentTypesResult;
 };
 
 const mapStatus = (isManaged: boolean, isCompassFilePrOpened: boolean, hasComponent: boolean) => {
@@ -48,7 +48,7 @@ export const buildTableBody = ({
   projects,
   onSelectItem,
   onChangeComponentType,
-  componentTypesResult,
+  importableComponentTypes,
 }: Props): RowType[] => {
   return projects.map((project) => {
     const {
@@ -114,9 +114,9 @@ export const buildTableBody = ({
           content: (
             <DropdownWrapper data-testid={`select-${id}`}>
               <ComponentTypeSelect
-                loading={componentTypesResult.componentTypesLoading}
+                loading={importableComponentTypes.componentTypesLoading}
                 dropdownId={id.toString()}
-                componentTypes={componentTypesResult.componentTypes}
+                componentTypes={importableComponentTypes.componentTypes}
                 isDisabled={isManaged || isCompassFilePrOpened || hasComponent}
                 selectedOption={typeOption}
                 onChange={(value) =>
