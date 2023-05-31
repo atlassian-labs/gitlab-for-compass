@@ -1,20 +1,6 @@
 import { ComponentChanges, ComponentSyncPayload, ComponentUnlinkPayload, ModifiedFilePayload } from '../../types';
-import { listFeatures } from '../feature-flags';
-
-const isApplicableForBothIdentifiersOrOnlyForId = (isApplicableForId: boolean) => {
-  const { isCreateFromYamlEnabled } = listFeatures();
-
-  return isCreateFromYamlEnabled || isApplicableForId;
-};
-
-const isFileMovedDetectionEnabledForName = (isApplicableForName: boolean) => {
-  const { isCreateFromYamlEnabled } = listFeatures();
-
-  return isCreateFromYamlEnabled && isApplicableForName;
-};
 
 const isFileIdentifierChanged = (oldFile: ComponentUnlinkPayload, newFile: ComponentSyncPayload): boolean => {
-  const { isCreateFromYamlEnabled } = listFeatures();
   const { id: oldId, name: oldName } = oldFile.componentYaml;
   const { id: newId, name: newName } = newFile.componentYaml;
 
@@ -26,7 +12,7 @@ const isFileIdentifierChanged = (oldFile: ComponentUnlinkPayload, newFile: Compo
   const isNameChangedWithFileMove = isNameFileIdentifier && isFileMovedAsGitlabRename && oldName !== newName;
   const isIdFileIdentifierChanged = isIdChanged && !isIdAdded;
 
-  return isCreateFromYamlEnabled ? isNameChangedWithFileMove || isIdFileIdentifierChanged : isIdChanged;
+  return isNameChangedWithFileMove || isIdFileIdentifierChanged;
 };
 
 export const detectMovedFilesAndUpdateComponentChanges = (changes: ComponentChanges): ComponentChanges => {
@@ -58,7 +44,7 @@ export const detectMovedFilesAndUpdateComponentChanges = (changes: ComponentChan
       return isMovedById || isMovedByName || isMovedByIdentifierTransition;
     });
 
-    if (movedFile && isApplicableForBothIdentifiersOrOnlyForId(isMovedById)) {
+    if (movedFile) {
       updates.push({
         componentYaml,
         absoluteFilePath,
@@ -72,12 +58,12 @@ export const detectMovedFilesAndUpdateComponentChanges = (changes: ComponentChan
       unlinks = unlinks.filter((unlinkItem) => unlinkItem.componentYaml.id !== createId);
     }
 
-    if (movedFile && isFileMovedDetectionEnabledForName(isMovedByName)) {
+    if (movedFile && isMovedByName) {
       creates = creates.filter((createItem) => createItem.componentYaml.name !== createName);
       unlinks = unlinks.filter((unlinkItem) => unlinkItem.componentYaml.name !== createName);
     }
 
-    if (movedFile && isFileMovedDetectionEnabledForName(isMovedByIdentifierTransition)) {
+    if (movedFile && isMovedByIdentifierTransition) {
       creates = creates.filter((createItem) => createItem.componentYaml.id !== createId);
       unlinks = unlinks.filter((unlinkItem) => unlinkItem.componentYaml.name !== createName);
     }
@@ -95,13 +81,9 @@ export const handleModifiedFilesAndUpdateComponentChanges =
 
     for (const { oldFile, newFile } of modifiedFiles) {
       if (isFileIdentifierChanged(oldFile, newFile)) {
-        if (isApplicableForBothIdentifiersOrOnlyForId(Boolean(oldFile.componentYaml.id))) {
-          unlinks.push(oldFile);
-        }
-        if (isApplicableForBothIdentifiersOrOnlyForId(Boolean(newFile.componentYaml.id))) {
-          creates.push(newFile);
-        }
-      } else if (isApplicableForBothIdentifiersOrOnlyForId(Boolean(newFile.componentYaml.id))) {
+        unlinks.push(oldFile);
+        creates.push(newFile);
+      } else {
         updates.push(newFile);
       }
     }
