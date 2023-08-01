@@ -129,6 +129,12 @@ resolver.define('project/import', async (req): Promise<ResolverResponse> => {
     context: { cloudId },
   } = req;
 
+  console.log({
+    message: 'Begin importing projects',
+    count: projectsReadyToImport.length,
+    cloudId,
+  });
+
   try {
     await importProjects(cloudId, projectsReadyToImport, groupId);
     return {
