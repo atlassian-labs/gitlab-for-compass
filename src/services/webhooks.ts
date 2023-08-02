@@ -4,7 +4,7 @@ import { registerGroupWebhook, deleteGroupWebhook, getGroupWebhook } from '../cl
 import { GITLAB_EVENT_WEBTRIGGER, STORAGE_KEYS, STORAGE_SECRETS } from '../constants';
 import { generateSignature } from '../utils/generate-signature-utils';
 
-export const setupWebhook = async (groupId: number): Promise<number> => {
+export const setupAndValidateWebhook = async (groupId: number): Promise<number> => {
   const [existingWebhook, groupToken] = await Promise.all([
     storage.get(`${STORAGE_KEYS.WEBHOOK_KEY_PREFIX}${groupId}`),
     storage.getSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`),

@@ -4,7 +4,7 @@ export const filledMocks: {
   [key: string]: unknown;
 } = {
   ...defaultMocks,
-  groups: {
+  'groups/connectedInfo': {
     success: true,
     data: [
       {

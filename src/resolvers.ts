@@ -20,7 +20,7 @@ import {
   ImportFailedError,
   importProjects,
 } from './services/import-projects';
-import { setupWebhook } from './services/webhooks';
+import { setupAndValidateWebhook } from './services/webhooks';
 import { disconnectGroup } from './services/disconnect-group';
 import { getForgeAppId } from './utils/get-forge-app-id';
 import { getLastSyncTime } from './services/last-sync-time';
@@ -48,9 +48,13 @@ resolver.define('groups/disconnect', async (req): Promise<ResolverResponse> => {
   }
 });
 
-resolver.define('groups', async (): Promise<ResolverResponse<GitlabAPIGroup[]>> => {
+resolver.define('groups/connectedInfo', async (): Promise<ResolverResponse<GitlabAPIGroup[]>> => {
   try {
     const connectedGroups = await getConnectedGroups();
+
+    if (connectedGroups.length) {
+      await setupAndValidateWebhook(connectedGroups[0].id);
+    }
 
     return { success: true, data: connectedGroups };
   } catch (e) {
@@ -69,7 +73,7 @@ resolver.define('groups/connect', async (req): Promise<ResolverResponse> => {
   try {
     const groupId = await connectGroup(groupToken, groupTokenName);
 
-    await setupWebhook(groupId);
+    await setupAndValidateWebhook(groupId);
 
     await graphqlGateway.compass.asApp().synchronizeLinkAssociations({
       cloudId,
