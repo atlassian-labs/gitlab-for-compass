@@ -6,7 +6,7 @@ const getContext: jest.Mock = view.getContext as jest.Mock;
 export const defaultMocks: {
   [key: string]: unknown;
 } = {
-  groups: {
+  'groups/connectedInfo': {
     success: true,
     data: [],
   },

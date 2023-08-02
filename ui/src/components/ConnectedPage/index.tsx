@@ -20,7 +20,7 @@ export const ConnectedPage = () => {
   const [groups, setGroups] = useState<GitlabAPIGroup[]>();
 
   const navigate = useNavigate();
-  const { getGroups, clearGroup } = useAppContext();
+  const { getConnectedInfo, clearGroup } = useAppContext();
   const { isImportInProgress } = useImportContext();
 
   const handleDisconnectGroup = async (id: number) => {
@@ -45,7 +45,7 @@ export const ConnectedPage = () => {
   };
 
   useEffect(() => {
-    getGroups().then(setGroups);
+    getConnectedInfo().then(setGroups);
   }, []);
 
   if (errorType) {

@@ -137,7 +137,7 @@ export const deleteGroupWebhook = async (groupId: number, hookId: number, groupT
   try {
     await callGitlab(`/api/v4/groups/${groupId}/hooks/${hookId}`, groupToken, { method: HttpMethod.DELETE });
   } catch (e) {
-    if (e.message.includes('Not Found')) {
+    if (e.statusText.includes('Not Found')) {
       return;
     }
     throw e;
@@ -154,7 +154,7 @@ export const getGroupWebhook = async (
 
     return webhook;
   } catch (e) {
-    if (e.message.includes('Not Found')) {
+    if (e.statusText.includes('Not Found')) {
       return null;
     }
     throw e;

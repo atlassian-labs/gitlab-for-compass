@@ -16,8 +16,8 @@ export const disconnectGroup = (id: number): Promise<ResolverResponse> => {
   });
 };
 
-export const listConnectedGroups = (): Promise<ResolverResponse<GitlabAPIGroup[]>> => {
-  return invoke<ResolverResponse<GitlabAPIGroup[]>>('groups');
+export const connectedInfo = (): Promise<ResolverResponse<GitlabAPIGroup[]>> => {
+  return invoke<ResolverResponse<GitlabAPIGroup[]>>('groups/connectedInfo');
 };
 
 export const getAllExistingGroups = (): Promise<ResolverResponse<GitlabAPIGroup[]>> => {

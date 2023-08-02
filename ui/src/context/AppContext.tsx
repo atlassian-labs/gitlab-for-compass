@@ -6,7 +6,7 @@ import { view } from '@forge/bridge';
 import { CenterWrapper } from '../components/styles';
 import { AuthErrorTypes, ErrorTypes, FeaturesList, GitlabAPIGroup } from '../resolverTypes';
 import { ApplicationState } from '../routes';
-import { getForgeAppId, listConnectedGroups } from '../services/invokes';
+import { getForgeAppId, connectedInfo } from '../services/invokes';
 import { DefaultErrorState } from '../components/DefaultErrorState';
 import { useFeatures } from '../hooks/useFeatures';
 
@@ -16,7 +16,7 @@ type AppContextProviderProps = {
 
 export type AppContextProps = {
   initialRoute?: ApplicationState;
-  getGroups: () => Promise<GitlabAPIGroup[] | undefined>;
+  getConnectedInfo: () => Promise<GitlabAPIGroup[] | undefined>;
   clearGroup: (groupId: number) => void;
   features: FeaturesList;
   moduleKey: string;
@@ -63,7 +63,7 @@ export const AppContextProvider: FunctionComponent<AppContextProviderProps> = ({
         setErrorType(AuthErrorTypes.UNEXPECTED_ERROR);
       });
 
-    listConnectedGroups()
+    connectedInfo()
       .then(({ data, success, errors }) => {
         setGroupsLoading(false);
 
@@ -85,13 +85,13 @@ export const AppContextProvider: FunctionComponent<AppContextProviderProps> = ({
       });
   }, []);
 
-  const getGroups = async (): Promise<GitlabAPIGroup[] | undefined> => {
+  const getConnectedInfo = async (): Promise<GitlabAPIGroup[] | undefined> => {
     if (groups && groups?.length > 0) {
       return groups;
     }
 
     try {
-      const { data, success, errors } = await listConnectedGroups();
+      const { data, success, errors } = await connectedInfo();
 
       if (success && data && data.length > 0) {
         setGroups(data);
@@ -126,7 +126,7 @@ export const AppContextProvider: FunctionComponent<AppContextProviderProps> = ({
   }
 
   return (
-    <AppContext.Provider value={{ initialRoute, getGroups, clearGroup, features, moduleKey, appId }}>
+    <AppContext.Provider value={{ initialRoute, getConnectedInfo, clearGroup, features, moduleKey, appId }}>
       {children}
     </AppContext.Provider>
   );

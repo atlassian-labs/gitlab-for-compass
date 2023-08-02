@@ -5,7 +5,7 @@ import { storage, mockForgeApi, webTrigger } from '../__tests__/helpers/forge-he
 mockForgeApi();
 
 import { getGroupWebhook, registerGroupWebhook } from '../client/gitlab';
-import { setupWebhook } from './webhooks';
+import { setupAndValidateWebhook } from './webhooks';
 import { TEST_TOKEN } from '../__tests__/fixtures/gitlab-data';
 
 jest.mock('../client/gitlab');
@@ -27,7 +27,7 @@ describe('webhook service', () => {
     storage.getSecret = jest.fn().mockReturnValueOnce(TEST_TOKEN);
     mockGetGroupWebhook.mockResolvedValue({ id: 456 });
 
-    const result = await setupWebhook(123);
+    const result = await setupAndValidateWebhook(123);
 
     expect(storage.set).not.toHaveBeenCalled();
     expect(result).toBe(MOCK_WEBHOOK_ID);
@@ -39,7 +39,7 @@ describe('webhook service', () => {
     webTrigger.getUrl = jest.fn().mockReturnValue('https://example.com');
     mockRegisterGroupWebhook.mockResolvedValue(MOCK_WEBHOOK_ID);
 
-    const result = await setupWebhook(MOCK_GROUP_ID);
+    const result = await setupAndValidateWebhook(MOCK_GROUP_ID);
 
     expect(mockGetGroupWebhook).not.toHaveBeenCalled();
     expect(storage.set).toHaveBeenNthCalledWith(1, MOCK_WEBHOOK_KEY, MOCK_WEBHOOK_ID);
@@ -54,7 +54,7 @@ describe('webhook service', () => {
     webTrigger.getUrl = jest.fn().mockReturnValue('https://example.com');
     mockRegisterGroupWebhook.mockResolvedValue(MOCK_WEBHOOK_ID);
 
-    const result = await setupWebhook(MOCK_GROUP_ID);
+    const result = await setupAndValidateWebhook(MOCK_GROUP_ID);
 
     expect(storage.set).toHaveBeenNthCalledWith(1, MOCK_WEBHOOK_KEY, MOCK_WEBHOOK_ID);
     expect(storage.set).toHaveBeenNthCalledWith(2, MOCK_WEBHOOK_SIGNATURE_KEY, expect.anything());

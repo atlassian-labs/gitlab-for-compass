@@ -26,7 +26,7 @@ const DEFAULT_GROUP_ID = 0;
 export const SelectImportPage = () => {
   const navigate = useNavigate();
 
-  const { getGroups, features } = useAppContext();
+  const { getConnectedInfo, features } = useAppContext();
   const { setTotalSelectedRepos, setIsImportInProgress, setImportedRepositories } = useImportContext();
   const componentTypesResult = useComponentTypes();
 
@@ -99,7 +99,7 @@ export const SelectImportPage = () => {
 
   useEffect(() => {
     setIsProjectsLoading(true);
-    getGroups()
+    getConnectedInfo()
       .then((value) => {
         if (value) {
           setLocationGroupId(value[0].id);
