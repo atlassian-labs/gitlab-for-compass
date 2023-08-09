@@ -1,5 +1,6 @@
 import { CompassBuildEventState, CompassCreateEventInput, DataProviderBuildEvent } from '@atlassian/forge-graphql';
 import { max } from 'lodash';
+import { truncateProjectNameString } from './deployment';
 
 import { GitlabPipelineStates, GitlabApiPipeline, PipelineEvent } from '../types';
 
@@ -47,8 +48,12 @@ export const webhookPipelineEventToCompassBuildEvent = (
       build: {
         externalEventSourceId: pipeline.project.id.toString(),
         updateSequenceNumber: lastUpdated.getTime(),
-        displayName: `${pipeline.project.name} pipeline ${pipeline.object_attributes.id}`,
-        description: `Pipeline run ${pipeline.object_attributes.id} for project ${pipeline.project.name}`,
+        displayName: truncateProjectNameString(``, pipeline.project.name, ` pipeline ${pipeline.object_attributes.id}`),
+        description: truncateProjectNameString(
+          `Pipeline run ${pipeline.object_attributes.id} for project `,
+          pipeline.project.name,
+          ``,
+        ),
         url: `${pipeline.project.web_url}/-/pipelines/${pipeline.object_attributes.id}`,
         lastUpdated: lastUpdated.toISOString(),
         buildProperties: {
@@ -71,8 +76,8 @@ export const gitlabApiPipelineToCompassDataProviderBuildEvent = (
   const isCompleted = !(toCompassBuildState(pipeline.status) === CompassBuildEventState.InProgress);
 
   return {
-    description: `Pipeline run ${pipeline.id} for project ${projectName}`,
-    displayName: `${projectName} pipeline ${pipeline.id}`,
+    description: truncateProjectNameString(`Pipeline run ${pipeline.id} for project `, projectName, ``),
+    displayName: truncateProjectNameString(``, projectName, ` pipeline ${pipeline.id}`),
     state: toCompassBuildState(pipeline.status),
     startedAt: new Date(pipeline.created_at).toISOString(),
     completedAt: isCompleted ? new Date(pipeline.updated_at).toISOString() : null,

@@ -49,6 +49,18 @@ const isCompletedDeployment = (state: CompassDeploymentEventState) => {
   return state === CompassDeploymentEventState.Failed || state === CompassDeploymentEventState.Successful;
 };
 
+export const DESCRIPTION_TRUNCATION_LENGTH = 255;
+
+export const truncateProjectNameString = (beforeString: string, projectName: string, afterString: string) => {
+  // Spaces need to be included in `beforeString` and `afterString` so they can be considered in string length
+  let truncatedProjectName = projectName;
+  if (beforeString.length + projectName.length + afterString.length > DESCRIPTION_TRUNCATION_LENGTH) {
+    const projectNameLen = DESCRIPTION_TRUNCATION_LENGTH - beforeString.length - afterString.length;
+    truncatedProjectName = projectName.slice(0, projectNameLen);
+  }
+  return `${beforeString}${truncatedProjectName}${afterString}`;
+};
+
 export const gitlabApiDeploymentToCompassDeploymentEvent = (
   deployment: Deployment,
   projectId: number,
@@ -61,10 +73,10 @@ export const gitlabApiDeploymentToCompassDeploymentEvent = (
     cloudId,
     event: {
       deployment: {
-        description: `${projectName} deployment`,
+        description: truncateProjectNameString(``, projectName, ` deployment`),
         externalEventSourceId: projectId.toString(),
         updateSequenceNumber: new Date(deployment.updated_at).getTime(),
-        displayName: `${projectName} deployment ${deployment.id}`,
+        displayName: truncateProjectNameString(``, projectName, ` deployment ${deployment.id}`),
         url: deployment.deployable.pipeline.web_url,
         lastUpdated: new Date(deployment.updated_at).toISOString(),
         deploymentProperties: {
@@ -78,7 +90,7 @@ export const gitlabApiDeploymentToCompassDeploymentEvent = (
           pipeline: {
             pipelineId: deployment.deployable.pipeline.id.toString(),
             url: deployment.deployable.pipeline.web_url,
-            displayName: `${projectName} pipeline`,
+            displayName: truncateProjectNameString(``, projectName, ` pipeline`),
           },
           state: deploymentState,
           sequenceNumber: deployment.id,
@@ -172,14 +184,14 @@ export const gitlabAPiDeploymentToCompassDataProviderDeploymentEvent = (
         environmentId: environment.id.toString(),
       },
       pipeline: {
-        displayName: `${projectName} pipeline`,
+        displayName: truncateProjectNameString(``, projectName, ` pipeline`),
         pipelineId: deployable.pipeline.id.toString(),
         url: deployable.pipeline.web_url,
       },
       sequenceNumber: deployment.id,
       state: gitLabStateToCompassFormat(deployable.status.toUpperCase()),
-      description: `${projectName} deployment`,
-      displayName: `${projectName} deployment ${deployment.id}`,
+      description: truncateProjectNameString(``, projectName, ` deployment`),
+      displayName: truncateProjectNameString(``, projectName, ` deployment ${deployment.id}`),
       lastUpdated: new Date(deployment.updated_at).toISOString(),
       updateSequenceNumber: new Date(deployment.updated_at).getTime(),
       url: deployable.pipeline.web_url,
