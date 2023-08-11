@@ -62,10 +62,10 @@ export const gitlabApiDeploymentToCompassDeploymentEvent = (
     cloudId,
     event: {
       deployment: {
-        description: truncateProjectNameString(``, projectName, ` deployment`),
+        description: truncateProjectNameString('', projectName, ' deployment'),
         externalEventSourceId: projectId.toString(),
         updateSequenceNumber: new Date(deployment.updated_at).getTime(),
-        displayName: truncateProjectNameString(``, projectName, ` deployment ${deployment.id}`),
+        displayName: truncateProjectNameString('', projectName, ` deployment ${deployment.id}`),
         url: deployment.deployable.pipeline.web_url,
         lastUpdated: new Date(deployment.updated_at).toISOString(),
         deploymentProperties: {
@@ -79,7 +79,7 @@ export const gitlabApiDeploymentToCompassDeploymentEvent = (
           pipeline: {
             pipelineId: deployment.deployable.pipeline.id.toString(),
             url: deployment.deployable.pipeline.web_url,
-            displayName: truncateProjectNameString(``, projectName, ` pipeline`),
+            displayName: truncateProjectNameString('', projectName, ' pipeline'),
           },
           state: deploymentState,
           sequenceNumber: deployment.id,
@@ -173,14 +173,14 @@ export const gitlabAPiDeploymentToCompassDataProviderDeploymentEvent = (
         environmentId: environment.id.toString(),
       },
       pipeline: {
-        displayName: truncateProjectNameString(``, projectName, ` pipeline`),
+        displayName: truncateProjectNameString('', projectName, ' pipeline'),
         pipelineId: deployable.pipeline.id.toString(),
         url: deployable.pipeline.web_url,
       },
       sequenceNumber: deployment.id,
       state: gitLabStateToCompassFormat(deployable.status.toUpperCase()),
-      description: truncateProjectNameString(``, projectName, ` deployment`),
-      displayName: truncateProjectNameString(``, projectName, ` deployment ${deployment.id}`),
+      description: truncateProjectNameString('', projectName, ' deployment'),
+      displayName: truncateProjectNameString('', projectName, ` deployment ${deployment.id}`),
       lastUpdated: new Date(deployment.updated_at).toISOString(),
       updateSequenceNumber: new Date(deployment.updated_at).getTime(),
       url: deployable.pipeline.web_url,
