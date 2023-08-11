@@ -1,6 +1,6 @@
 import { CompassBuildEventState, CompassCreateEventInput, DataProviderBuildEvent } from '@atlassian/forge-graphql';
 import { max } from 'lodash';
-import { truncateProjectNameString } from './deployment';
+import { truncateProjectNameString } from '../utils/event-mapping';
 
 import { GitlabPipelineStates, GitlabApiPipeline, PipelineEvent } from '../types';
 

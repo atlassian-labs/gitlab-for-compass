@@ -10,6 +10,7 @@ import { Deployment, DeploymentEvent, EnvironmentTier } from '../types';
 import { fetchPaginatedData } from '../utils/fetchPaginatedData';
 import { getProjectEnvironments } from './environment';
 import { isSendStagingEventsEnabled } from './feature-flags';
+import { truncateProjectNameString } from '../utils/event-mapping';
 
 export const gitLabStateToCompassFormat = (state: string): CompassDeploymentEventState => {
   switch (state) {
@@ -47,18 +48,6 @@ export const mapEnvTierToCompassDeploymentEnv = (env: EnvironmentTier): CompassD
 
 const isCompletedDeployment = (state: CompassDeploymentEventState) => {
   return state === CompassDeploymentEventState.Failed || state === CompassDeploymentEventState.Successful;
-};
-
-export const DESCRIPTION_TRUNCATION_LENGTH = 255;
-
-export const truncateProjectNameString = (beforeString: string, projectName: string, afterString: string) => {
-  // Spaces need to be included in `beforeString` and `afterString` so they can be considered in string length
-  let truncatedProjectName = projectName;
-  if (beforeString.length + projectName.length + afterString.length > DESCRIPTION_TRUNCATION_LENGTH) {
-    const projectNameLen = DESCRIPTION_TRUNCATION_LENGTH - beforeString.length - afterString.length;
-    truncatedProjectName = projectName.slice(0, projectNameLen);
-  }
-  return `${beforeString}${truncatedProjectName}${afterString}`;
 };
 
 export const gitlabApiDeploymentToCompassDeploymentEvent = (
