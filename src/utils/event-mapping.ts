@@ -7,5 +7,5 @@ export const truncateProjectNameString = (beforeString: string, projectName: str
     const projectNameLen = DESCRIPTION_TRUNCATION_LENGTH - beforeString.length - afterString.length;
     truncatedProjectName = projectName.slice(0, projectNameLen);
   }
-  return `${beforeString}${truncatedProjectName}${afterString}`;
+  return `${beforeString}${truncatedProjectName}${afterString}`.slice(0, DESCRIPTION_TRUNCATION_LENGTH);
 };
