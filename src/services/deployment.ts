@@ -10,6 +10,7 @@ import { Deployment, DeploymentEvent, EnvironmentTier } from '../types';
 import { fetchPaginatedData } from '../utils/fetchPaginatedData';
 import { getProjectEnvironments } from './environment';
 import { isSendStagingEventsEnabled } from './feature-flags';
+import { truncateProjectNameString } from '../utils/event-mapping';
 
 export const gitLabStateToCompassFormat = (state: string): CompassDeploymentEventState => {
   switch (state) {
@@ -61,10 +62,10 @@ export const gitlabApiDeploymentToCompassDeploymentEvent = (
     cloudId,
     event: {
       deployment: {
-        description: `${projectName} deployment`,
+        description: truncateProjectNameString('', projectName, ' deployment'),
         externalEventSourceId: projectId.toString(),
         updateSequenceNumber: new Date(deployment.updated_at).getTime(),
-        displayName: `${projectName} deployment ${deployment.id}`,
+        displayName: truncateProjectNameString('', projectName, ` deployment ${deployment.id}`),
         url: deployment.deployable.pipeline.web_url,
         lastUpdated: new Date(deployment.updated_at).toISOString(),
         deploymentProperties: {
@@ -78,7 +79,7 @@ export const gitlabApiDeploymentToCompassDeploymentEvent = (
           pipeline: {
             pipelineId: deployment.deployable.pipeline.id.toString(),
             url: deployment.deployable.pipeline.web_url,
-            displayName: `${projectName} pipeline`,
+            displayName: truncateProjectNameString('', projectName, ' pipeline'),
           },
           state: deploymentState,
           sequenceNumber: deployment.id,
@@ -172,14 +173,14 @@ export const gitlabAPiDeploymentToCompassDataProviderDeploymentEvent = (
         environmentId: environment.id.toString(),
       },
       pipeline: {
-        displayName: `${projectName} pipeline`,
+        displayName: truncateProjectNameString('', projectName, ' pipeline'),
         pipelineId: deployable.pipeline.id.toString(),
         url: deployable.pipeline.web_url,
       },
       sequenceNumber: deployment.id,
       state: gitLabStateToCompassFormat(deployable.status.toUpperCase()),
-      description: `${projectName} deployment`,
-      displayName: `${projectName} deployment ${deployment.id}`,
+      description: truncateProjectNameString('', projectName, ' deployment'),
+      displayName: truncateProjectNameString('', projectName, ` deployment ${deployment.id}`),
       lastUpdated: new Date(deployment.updated_at).toISOString(),
       updateSequenceNumber: new Date(deployment.updated_at).getTime(),
       url: deployable.pipeline.web_url,
