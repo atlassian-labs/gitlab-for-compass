@@ -3,6 +3,8 @@ import {
   CompassCustomNumberField,
   CompassCustomTextField,
   CompassCustomUserField,
+  CompassCustomSingleSelectField,
+  CompassCustomMultiSelectField,
   CustomField,
   CustomFieldFromYAML,
   CustomFieldType,
@@ -19,6 +21,15 @@ export const isCompassCustomBooleanField = (customField: CustomField): customFie
 
 export const isCompassCustomUserField = (customField: CustomField): customField is CompassCustomUserField =>
   (customField as CompassCustomUserField).userIdValue !== undefined;
+
+export const isCompassCustomSingleSelectField = (
+  customField: CustomField,
+): customField is CompassCustomSingleSelectField =>
+  (customField as CompassCustomSingleSelectField).option !== undefined;
+
+export const isCompassCustomMultiSelectField = (
+  customField: CustomField,
+): customField is CompassCustomMultiSelectField => (customField as CompassCustomMultiSelectField).options !== undefined;
 
 export const formatCustomFieldsToYamlFormat = (
   customFieldsInComponent: CustomField[],
@@ -55,6 +66,18 @@ export const formatCustomFieldsToYamlFormat = (
     if (isCompassCustomUserField(customField)) {
       mappedCustomFieldToYamlFormat.type = CustomFieldType.USER;
       mappedCustomFieldToYamlFormat.value = customField?.userIdValue || null;
+      return [mappedCustomFieldToYamlFormat];
+    }
+
+    if (isCompassCustomSingleSelectField(customField)) {
+      mappedCustomFieldToYamlFormat.type = CustomFieldType.SINGLE_SELECT;
+      mappedCustomFieldToYamlFormat.value = customField?.option?.id || null;
+      return [mappedCustomFieldToYamlFormat];
+    }
+
+    if (isCompassCustomMultiSelectField(customField)) {
+      mappedCustomFieldToYamlFormat.type = CustomFieldType.MULTI_SELECT;
+      mappedCustomFieldToYamlFormat.value = customField?.options?.map((option) => option.id) || null;
       return [mappedCustomFieldToYamlFormat];
     }
 

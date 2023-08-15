@@ -20,15 +20,16 @@
     call-me-maybe "^1.0.1"
     js-yaml "^4.1.0"
 
-"@atlassian/forge-graphql@13.0.6":
-  version "13.0.6"
-  resolved "https://packages.atlassian.com/api/npm/atlassian-npm/@atlassian/forge-graphql/-/forge-graphql-13.0.6.tgz#0f0d69dfaf513f8451558362223d6f00985e57f9"
-  integrity sha512-yZjEdOY0DTXuXx/XwM64SEvZLiVdqhQTprWUFYMwksmn4L/xPFoclggoxo5o3n3xkJtfzVogxqxITUMt0kDtPw==
+"@atlassian/forge-graphql@13.3.0":
+  version "13.3.0"
+  resolved "https://packages.atlassian.com/api/npm/atlassian-npm/@atlassian/forge-graphql/-/forge-graphql-13.3.0.tgz#4711ec64e86739eb31ddb6b7472fb9a3dc449b41"
+  integrity sha512-Z9ZFD/PAfCexEfSYEMAM+Z9X0kocp5sgHcvvcrKcxf7uCMXwFPzagWcWt0q0PF2xoqprq/PQ2TIPSI0oDugXbA==
   dependencies:
     "@forge/api" "^2.3.0"
     axios "^0.21.1"
     fs "^0.0.1-security"
     js-yaml "^4.1.0"
+    lodash "^4.17.21"
     path "^0.12.7"
     url-parse "^1.5.10"
 
