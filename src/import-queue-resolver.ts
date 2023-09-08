@@ -59,7 +59,7 @@ resolver.define('import', async (req) => {
   try {
     if (!hasComponent) {
       const component = await backOff(() => createComponent(cloudId, project), backOffConfig);
-      console.log(`GitLab project ${name}:${id} was imported. Compass component was created - ${component.id}.`);
+      console.log(`GitLab project ${id} was imported. Compass component was created - ${component.id}.`);
 
       if (shouldOpenMR) {
         await createMRWithCompassYML(project, component.id, groupId);
@@ -90,7 +90,7 @@ resolver.define('import', async (req) => {
       }
     }
   } catch (err) {
-    console.error(`Failed to create or update compass component for "${name}" project after all retries`, err);
+    console.error(`Failed to create or update compass component for project "${id}" after all retries`, err);
 
     await setFailedRepositoriesToStore(project);
   }

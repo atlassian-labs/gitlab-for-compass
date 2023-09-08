@@ -27,7 +27,9 @@ const newGetDeploymentsForEnvironments = async (
         .filter((event) => event !== null);
       const unprocessedEvents = recentDeployments.length - dataProviderDeploymentEvents.length;
       if (unprocessedEvents > 0) {
-        console.log(`unprocessed deployment events count: ${unprocessedEvents} for environment ${projectEnv}`);
+        console.log(
+          `unprocessed deployment events count: ${unprocessedEvents} for environment id ${projectEnv.id} tier ${projectEnv.tier}`,
+        );
       }
       return dataProviderDeploymentEvents;
     });

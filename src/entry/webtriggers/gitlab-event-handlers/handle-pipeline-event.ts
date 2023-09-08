@@ -17,9 +17,7 @@ export const handlePipelineEvent = async (event: PipelineEvent, groupToken: stri
 
   if (!isEventForTrackingBranch(event, trackingBranch)) {
     console.log({
-      message: 'Received push event for non-tracking branch',
-      ref,
-      trackingBranch,
+      message: 'Received push event for non-tracking branch. Ignoring event',
     });
     return;
   }

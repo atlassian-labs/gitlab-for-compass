@@ -11,14 +11,12 @@ export const handlePushEvent = async (event: PushEvent, groupToken: string, clou
 
   if (!isEventForTrackingBranch(event, trackingBranch)) {
     console.log({
-      message: 'Received push event for non-tracking branch',
-      ref: event.ref,
-      trackingBranch,
+      message: 'Received push event for non-tracking branch. Ignoring event',
     });
     return;
   }
 
-  console.log('Received push event for tracking branch -', trackingBranch);
+  console.log('Received push event for tracking branch. Processing event');
 
   const { componentsToCreate, componentsToUpdate, componentsToUnlink } = await findConfigAsCodeFileChanges(
     event,
