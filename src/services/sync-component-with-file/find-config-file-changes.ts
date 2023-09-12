@@ -127,12 +127,16 @@ export const findConfigAsCodeFileChanges = async (event: PushEvent, token: strin
   const { added, removed, modified } = groupDiffsByChangeType(filesDiffs);
 
   if (added.length === 0 && removed.length === 0 && modified.length === 0) {
+    console.log('No file changes in push event. Returning.');
     return {
       componentsToCreate: [],
       componentsToUpdate: [],
       componentsToUnlink: [],
     };
   }
+  console.log(
+    `Found ${added.length} added diffs, ${removed.length} removed diffs, and ${added.length} removed diffs in push event. Now processing what files might have been moved or renamed.`,
+  );
 
   const [createPayload, unlinkPayload, modifiedFiles] = await Promise.all([
     getAddedFiles(token, added, event),

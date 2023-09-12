@@ -10,9 +10,7 @@ export const handlePushEvent = async (event: PushEvent, groupToken: string, clou
   const trackingBranch = await getTrackingBranchName(groupToken, event.project.id, event.project.default_branch);
 
   if (!isEventForTrackingBranch(event, trackingBranch)) {
-    console.log({
-      message: 'Received push event for non-tracking branch. Ignoring event',
-    });
+    console.log('Received push event for non-tracking branch. Ignoring event');
     return;
   }
 
@@ -28,8 +26,7 @@ export const handlePushEvent = async (event: PushEvent, groupToken: string, clou
     return;
   }
 
-  console.log({
-    message: 'Performing config as code file updates',
+  console.log('Performing config as code file updates', {
     createdFiles: componentsToCreate.length,
     updatedFiles: componentsToUpdate.length,
     removedFiles: componentsToUnlink.length,

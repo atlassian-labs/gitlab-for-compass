@@ -63,11 +63,13 @@ function isTextBody(config?: CallGitLabConfig) {
 }
 
 export const callGitlab = async (
+  apiOperation: string,
   path: string,
   authToken: string,
   config?: CallGitLabConfig,
   body?: string,
 ): Promise<any> => {
+  console.log(`Calling gitlab to ${apiOperation}`);
   const resp = await fetch(`${BASE_URL}${path}`, {
     method: config?.method || HttpMethod.GET,
     headers: {
@@ -107,18 +109,21 @@ export const getGroupsData = async (
 
   const queryParams = queryParamsGenerator(params);
 
-  console.log(`Calling gitlab to get groups. Query params: ${queryParams}`);
-  const { data } = await callGitlab(`/api/v4/groups?${queryParams}`, groupAccessToken);
+  const { data } = await callGitlab(
+    `getGroupsData - Query params: ${queryParams}`,
+    `/api/v4/groups?${queryParams}`,
+    groupAccessToken,
+  );
 
   return data;
 };
 
 export const registerGroupWebhook = async (payload: RegisterWebhookPayload): Promise<number> => {
   const { groupId, token: groupToken, url, signature } = payload;
-  console.log(`Calling gitlab to register webhook`);
   const {
     data: { id },
   } = await callGitlab(
+    `register webhook`,
     `/api/v4/groups/${groupId}/hooks`,
     groupToken,
     { method: HttpMethod.POST },
@@ -137,8 +142,9 @@ export const registerGroupWebhook = async (payload: RegisterWebhookPayload): Pro
 
 export const deleteGroupWebhook = async (groupId: number, hookId: number, groupToken: string): Promise<void> => {
   try {
-    console.log(`Calling gitlab to delete webhook`);
-    await callGitlab(`/api/v4/groups/${groupId}/hooks/${hookId}`, groupToken, { method: HttpMethod.DELETE });
+    await callGitlab('delete webhook', `/api/v4/groups/${groupId}/hooks/${hookId}`, groupToken, {
+      method: HttpMethod.DELETE,
+    });
   } catch (e) {
     if (e.statusText.includes('Not Found')) {
       return;
@@ -153,8 +159,7 @@ export const getGroupWebhook = async (
   groupToken: string,
 ): Promise<{ id: number } | null> => {
   try {
-    console.log(`Calling gitlab to get webhook`);
-    const { data: webhook } = await callGitlab(`/api/v4/groups/${groupId}/hooks/${hookId}`, groupToken);
+    const { data: webhook } = await callGitlab('get webhook', `/api/v4/groups/${groupId}/hooks/${hookId}`, groupToken);
 
     return webhook;
   } catch (e) {
@@ -167,14 +172,21 @@ export const getGroupWebhook = async (
 
 export const getGroupAccessTokens = async (groupToken: string, groupId: number): Promise<GroupAccessToken[]> => {
   console.log(`Calling gitlab to get group access tokens`);
-  const { data: groupAccessTokenList } = await callGitlab(`/api/v4/groups/${groupId}/access_tokens`, groupToken);
+  const { data: groupAccessTokenList } = await callGitlab(
+    'get group access tokens',
+    `/api/v4/groups/${groupId}/access_tokens`,
+    groupToken,
+  );
 
   return groupAccessTokenList;
 };
 
 export const getCommitDiff = async (groupToken: string, projectId: number, sha: string): Promise<CommitFileDiff[]> => {
-  console.log(`Calling gitlab to get commit diff`);
-  const { data: diff } = await callGitlab(`/api/v4/projects/${projectId}/repository/commits/${sha}/diff`, groupToken);
+  const { data: diff } = await callGitlab(
+    'get commit diff',
+    `/api/v4/projects/${projectId}/repository/commits/${sha}/diff`,
+    groupToken,
+  );
 
   return diff;
 };
@@ -190,8 +202,8 @@ export const getFileContent = async (
   };
 
   const queryParams = queryParamsGenerator(params);
-  console.log(`Calling gitlab to get file content`);
   const fileRaw = await callGitlab(
+    'get file contents',
     `/api/v4/projects/${projectId}/repository/files/${encodeURIComponent(filePath)}/raw?${queryParams}`,
     groupToken,
     { contentType: GitLabContentType.RAW },
@@ -220,22 +232,27 @@ export const getProjects = async (
   };
 
   const queryParams = queryParamsGenerator(params);
-  console.log(`Calling gitlab to get projects`);
-  const { data, headers } = await callGitlab(`/api/v4/groups/${groupId}/projects?${queryParams}`, groupToken);
+  const { data, headers } = await callGitlab(
+    'get projects',
+    `/api/v4/groups/${groupId}/projects?${queryParams}`,
+    groupToken,
+  );
 
   return { data, headers };
 };
 
 export const getProjectById = async (groupToken: string, projectId: number): Promise<GitlabAPIProject> => {
-  console.log(`Calling gitlab to get project by id`);
-  const { data: project } = await callGitlab(`/api/v4/projects/${projectId}`, groupToken);
+  const { data: project } = await callGitlab('get project by id', `/api/v4/projects/${projectId}`, groupToken);
 
   return project;
 };
 
 export const getProjectLanguages = async (groupToken: string, projectId: number) => {
-  console.log(`Calling gitlab to get project languages`);
-  const { data: languages } = await callGitlab(`/api/v4/projects/${projectId}/languages`, groupToken);
+  const { data: languages } = await callGitlab(
+    'get project languages',
+    `/api/v4/projects/${projectId}/languages`,
+    groupToken,
+  );
 
   return languages;
 };
@@ -245,12 +262,13 @@ export const getProjectVariable = async (
   projectId: number,
   variable: string,
 ): Promise<string | null | never> => {
-  console.log(
-    `Calling gitlab to get project variable ${variable}. It is normal for the request to 404 if the variable does not exist.`,
-  );
   const {
     data: { value },
-  } = await callGitlab(`/api/v4/projects/${projectId}/variables/${variable}`, groupToken);
+  } = await callGitlab(
+    `get variable ${variable}. It is normal for the request to 404 if the variable does not exist.`,
+    `/api/v4/projects/${projectId}/variables/${variable}`,
+    groupToken,
+  );
   return value;
 };
 
@@ -261,6 +279,7 @@ export const getProjectBranch = async (
 ): Promise<ProjectBranch> => {
   console.log(`Calling gitlab to get project branch`);
   const { data: branch } = await callGitlab(
+    'get project branch',
     `/api/v4/projects/${projectId}/repository/branches/${branchName}`,
     groupToken,
   );
@@ -277,8 +296,11 @@ export const getOwnedProjectsBySearchCriteria = async (
   };
 
   const queryParams = queryParamsGenerator(params);
-  console.log(`Calling gitlab to get owned projects by search criteria`);
-  const { data } = await callGitlab(`/api/v4/projects?${queryParams}`, groupToken);
+  const { data } = await callGitlab(
+    'get owned projects by search criteria',
+    `/api/v4/projects?${queryParams}`,
+    groupToken,
+  );
 
   return data;
 };
@@ -305,8 +327,7 @@ export const getProjectRecentDeployments: GitlabPaginatedFetch<
   const queryParams = queryParamsGenerator(params);
   const path = `/api/v4/projects/${projectId}/deployments?${queryParams}`;
 
-  console.log(`Calling gitlab to get project recent deployments`);
-  const { data, headers } = await callGitlab(path, groupToken);
+  const { data, headers } = await callGitlab("get project's recent deployments", path, groupToken);
 
   return { data, headers };
 };
@@ -343,22 +364,27 @@ export const getMergeRequests: GitlabPaginatedFetch<
   const queryParams = queryParamsGenerator(params);
   const path = `/api/v4/projects/${projectId}/merge_requests?${queryParams}`;
 
-  console.log(`Calling gitlab to get merge requests`);
-  const { data, headers } = await callGitlab(path, groupToken);
+  const { data, headers } = await callGitlab('get merge requests', path, groupToken);
 
   return { data, headers };
 };
 
 export const getProjectDeploymentById = async (projectId: number, deploymentId: number, groupToken: string) => {
-  console.log(`Calling gitlab to get project deployment by id`);
-  const { data } = await callGitlab(`/api/v4/projects/${projectId}/deployments/${deploymentId}`, groupToken);
+  const { data } = await callGitlab(
+    'get project deployment by id',
+    `/api/v4/projects/${projectId}/deployments/${deploymentId}`,
+    groupToken,
+  );
 
   return data;
 };
 
 export const getEnvironments = async (projectId: number, groupToken: string): Promise<Environment[]> => {
-  console.log(`Calling gitlab to get environments`);
-  const { data } = await callGitlab(`/api/v4/projects/${projectId}/environments`, groupToken);
+  const { data } = await callGitlab(
+    "get project's environments",
+    `/api/v4/projects/${projectId}/environments`,
+    groupToken,
+  );
 
   return data;
 };
@@ -385,7 +411,7 @@ export const getProjectRecentPipelines: GitlabPaginatedFetch<
   const path = `/api/v4/projects/${projectId}/pipelines?${queryParams}`;
 
   console.log(`Calling gitlab to get project recent pipelines`);
-  const { data, headers } = await callGitlab(path, groupToken);
+  const { data, headers } = await callGitlab("get project's recent pipelines", path, groupToken);
   return { data, headers };
 };
 
@@ -401,8 +427,8 @@ export const createFileInProject = async (
 ) => {
   const path = `/api/v4/projects/${projectId}/repository/files/${filePath}`;
 
-  console.log(`Calling gitlab to create file in project`);
   const { data } = await callGitlab(
+    'create file in project',
     path,
     groupToken,
     { method: HttpMethod.POST },
@@ -429,8 +455,8 @@ export const createMergeRequest = async (
 ) => {
   const path = `/api/v4/projects/${projectId}/merge_requests`;
 
-  console.log(`Calling gitlab to create merge request`);
   const { data } = await callGitlab(
+    'create merge request',
     path,
     groupToken,
     { method: HttpMethod.POST },
