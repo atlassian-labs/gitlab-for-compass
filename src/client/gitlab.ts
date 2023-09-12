@@ -171,7 +171,6 @@ export const getGroupWebhook = async (
 };
 
 export const getGroupAccessTokens = async (groupToken: string, groupId: number): Promise<GroupAccessToken[]> => {
-  console.log(`Calling gitlab to get group access tokens`);
   const { data: groupAccessTokenList } = await callGitlab(
     'get group access tokens',
     `/api/v4/groups/${groupId}/access_tokens`,
@@ -277,7 +276,6 @@ export const getProjectBranch = async (
   projectId: number,
   branchName: string,
 ): Promise<ProjectBranch> => {
-  console.log(`Calling gitlab to get project branch`);
   const { data: branch } = await callGitlab(
     'get project branch',
     `/api/v4/projects/${projectId}/repository/branches/${branchName}`,
@@ -410,7 +408,6 @@ export const getProjectRecentPipelines: GitlabPaginatedFetch<
   const queryParams = queryParamsGenerator(params);
   const path = `/api/v4/projects/${projectId}/pipelines?${queryParams}`;
 
-  console.log(`Calling gitlab to get project recent pipelines`);
   const { data, headers } = await callGitlab("get project's recent pipelines", path, groupToken);
   return { data, headers };
 };
