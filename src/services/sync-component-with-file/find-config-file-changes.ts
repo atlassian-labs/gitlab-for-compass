@@ -135,7 +135,7 @@ export const findConfigAsCodeFileChanges = async (event: PushEvent, token: strin
     };
   }
   console.log(
-    `Found ${added.length} added diffs, ${removed.length} removed diffs, and ${added.length} removed diffs in push event. Now processing what files might have been moved or renamed.`,
+    `Found ${added.length} added diffs, ${removed.length} removed diffs, and ${modified.length} modified diffs in push event. Now processing what files might have been moved or renamed.`,
   );
 
   const [createPayload, unlinkPayload, modifiedFiles] = await Promise.all([
