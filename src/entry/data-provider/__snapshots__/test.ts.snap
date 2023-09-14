@@ -11,6 +11,10 @@ Object {
       "derived": true,
       "initialValue": null,
     },
+    "ari:cloud:compass::metric-definition/builtin/deployment-time-avg-last-25": Object {
+      "derived": true,
+      "initialValue": null,
+    },
     "ari:cloud:compass::metric-definition/builtin/open-pull-requests": Object {
       "initialValue": 3,
     },

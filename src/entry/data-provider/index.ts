@@ -80,6 +80,10 @@ export const dataProvider = async (
         derived: true,
       },
       {
+        name: BuiltinMetricDefinitions.DEPLOYMENT_TIME_AVG_LAST_25,
+        derived: true,
+      },
+      {
         name: BuiltinMetricDefinitions.PULL_REQUEST_CYCLE_TIME_AVG_LAST_10,
         derived: false,
       },
