@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { h400 } from '@atlaskit/theme/typography';
 import { N200, N90, N900 } from '@atlaskit/theme/colors';
 import { gridSize } from '@atlaskit/theme';
+import { token } from '@atlaskit/tokens';
 
 export const CenterWrapper = styled.div`
   display: flex;
@@ -20,7 +21,7 @@ export const ImportantText = styled.strong`
 `;
 
 export const StatusLabel = styled.span`
-  color: ${N200};
+  color: ${token('color.text.inverse', N200)};
   cursor: pointer;
   &:hover {
     text-decoration: underline;
@@ -37,7 +38,7 @@ export const TruncateDescription = styled.div<{ maxWidth: number | string }>`
 export const Description = styled.span`
   font-size: 14px;
   line-height: 20px;
-  color: ${N900};
+  color: ${token('color.text', N900)}; // TODO check
 `;
 
 export const ImportButtonWrapper = styled.div`
@@ -51,7 +52,7 @@ export const ImportButtonWrapper = styled.div`
   }
 
   time {
-    color: ${N90};
+    color: ${token('color.text.subtlest', N90)};
     font-size: 11px;
   }
 `;

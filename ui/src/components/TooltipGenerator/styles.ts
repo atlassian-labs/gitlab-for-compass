@@ -3,9 +3,10 @@ import styled from 'styled-components';
 import { N30A, N0 } from '@atlaskit/theme/colors';
 import { gridSize, elevation, borderRadius } from '@atlaskit/theme';
 import { TooltipPrimitive } from '@atlaskit/tooltip';
+import { token } from '@atlaskit/tokens';
 
 export const Separator = styled.div`
-  background-color: ${N30A};
+  background-color: ${token('color.border', N30A)};
   height: 2px;
   margin: ${gridSize()}px 0px;
 `;
