@@ -24,6 +24,7 @@ const fetchProjects = async (
 
     const generatedProjectsWithLanguages = await Promise.all(
       projects.map(async (project) => {
+        console.log(`Getting project labels for project ${project.id}`);
         const labels = await getProjectLabels(project.id, groupToken, project.topics);
 
         return {
