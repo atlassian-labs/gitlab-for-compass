@@ -12,7 +12,7 @@ import {
   getDeploymentAfter28Days,
 } from './deployment';
 import { EnvironmentTier } from '../types';
-import { MOCK_CLOUD_ID } from '../__tests__/fixtures/gitlab-data';
+import { BASE_URL, MOCK_CLOUD_ID } from '../__tests__/fixtures/gitlab-data';
 import { mocked } from 'jest-mock';
 import { getEnvironments, getProjectRecentDeployments } from '../client/gitlab';
 import { generateDeployment, generateEnvironmentEvent } from '../__tests__/helpers/gitlab-helper';
@@ -169,10 +169,9 @@ describe('getDeploymentAfter28Days', () => {
       });
     });
 
-    expect(await getDeploymentAfter28Days('123', 1, '2021-01-20T00:32:51.059Z', '2022-01-20T00:32:51.059Z')).toEqual([
-      prodDeployment,
-      productionDeployment,
-    ]);
+    expect(
+      await getDeploymentAfter28Days(BASE_URL, '123', 1, '2021-01-20T00:32:51.059Z', '2022-01-20T00:32:51.059Z'),
+    ).toEqual([prodDeployment, productionDeployment]);
     expect(mockedGetProjectRecentDeployments).toHaveBeenCalledTimes(2);
   });
 
@@ -183,9 +182,9 @@ describe('getDeploymentAfter28Days', () => {
       generateEnvironmentEvent(EnvironmentTier.DEVELOPMENT, 'development'),
     ]);
 
-    expect(await getDeploymentAfter28Days('123', 1, '2021-01-20T00:32:51.059Z', '2022-01-20T00:32:51.059Z')).toEqual(
-      [],
-    );
+    expect(
+      await getDeploymentAfter28Days(BASE_URL, '123', 1, '2021-01-20T00:32:51.059Z', '2022-01-20T00:32:51.059Z'),
+    ).toEqual([]);
     expect(mockedGetProjectRecentDeployments).not.toHaveBeenCalled();
   });
 
@@ -226,11 +225,9 @@ describe('getDeploymentAfter28Days', () => {
         });
       });
 
-      expect(await getDeploymentAfter28Days('123', 1, '2021-01-20T00:32:51.059Z', '2021-01-20T00:32:51.059Z')).toEqual([
-        productionDeployment,
-        stagingDeployment,
-        stgDeployment,
-      ]);
+      expect(
+        await getDeploymentAfter28Days(BASE_URL, '123', 1, '2021-01-20T00:32:51.059Z', '2021-01-20T00:32:51.059Z'),
+      ).toEqual([productionDeployment, stagingDeployment, stgDeployment]);
       expect(mockedGetProjectRecentDeployments).toHaveBeenCalledTimes(3);
     });
 
@@ -241,9 +238,9 @@ describe('getDeploymentAfter28Days', () => {
         generateEnvironmentEvent(EnvironmentTier.OTHER, 'other'),
       ]);
 
-      expect(await getDeploymentAfter28Days('123', 1, '2021-01-20T00:32:51.059Z', '2021-01-20T00:32:51.059Z')).toEqual(
-        [],
-      );
+      expect(
+        await getDeploymentAfter28Days(BASE_URL, '123', 1, '2021-01-20T00:32:51.059Z', '2021-01-20T00:32:51.059Z'),
+      ).toEqual([]);
       expect(mockedGetProjectRecentDeployments).toHaveBeenCalledTimes(0);
     });
   });

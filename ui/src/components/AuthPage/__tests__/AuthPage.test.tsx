@@ -27,6 +27,11 @@ const setup = async () => {
   );
 
   await act(async () => {
+    fireEvent.change(await findByPlaceholderText('Enter your GitLab URL'), {
+      target: { value: 'https://gitlab.toto.io' },
+    });
+  });
+  await act(async () => {
     fireEvent.change(await findByPlaceholderText('Enter your group access token'), { target: { value: 'koko' } });
   });
   await act(async () => {

@@ -2,7 +2,7 @@ import { CreateLinkInput, Link } from '@atlassian/forge-graphql';
 import { storage } from '@forge/api';
 
 import { getComponentByExternalAlias } from '../client/compass';
-import { COMPASS_YML_BRANCH, EXTERNAL_SOURCE, STORAGE_SECRETS } from '../constants';
+import { COMPASS_YML_BRANCH, EXTERNAL_SOURCE, STORAGE_KEYS, STORAGE_SECRETS } from '../constants';
 import { getMergeRequests, getProjects, GitLabHeaders } from '../client/gitlab';
 import { GroupProjectsResponse, MergeRequestState, Project, ProjectReadyForImport } from '../types';
 import { getProjectLabels } from './get-labels';
@@ -13,6 +13,7 @@ const mapComponentLinks = (links: Link[] = []): CreateLinkInput[] =>
   });
 
 const fetchProjects = async (
+  baseUrl: string,
   groupToken: string,
   groupId: number,
   page: number,
@@ -20,11 +21,11 @@ const fetchProjects = async (
 ): Promise<{ total: number; projects: Project[] }> => {
   try {
     const PER_PAGE = 10;
-    const { data: projects, headers } = await getProjects(groupToken, groupId, page, PER_PAGE, search);
+    const { data: projects, headers } = await getProjects(baseUrl, groupToken, groupId, page, PER_PAGE, search);
 
     const generatedProjectsWithLanguages = await Promise.all(
       projects.map(async (project) => {
-        const labels = await getProjectLabels(project.id, groupToken, project.topics);
+        const labels = await getProjectLabels(project.id, baseUrl, groupToken, project.topics);
 
         return {
           id: project.id,
@@ -49,7 +50,12 @@ const fetchProjects = async (
   }
 };
 
-const compareProjectWithExistingComponent = async (cloudId: string, projectId: number, groupToken: string) => {
+const compareProjectWithExistingComponent = async (
+  cloudId: string,
+  projectId: number,
+  baseUrl: string,
+  groupToken: string,
+) => {
   try {
     const [{ component }, { data: mergeRequestWithCompassYML }] = await Promise.all([
       getComponentByExternalAlias({
@@ -60,6 +66,7 @@ const compareProjectWithExistingComponent = async (cloudId: string, projectId: n
       }),
       getMergeRequests(1, 1, {
         projectId,
+        baseUrl,
         groupToken,
         scope: 'all',
         sourceBranch: COMPASS_YML_BRANCH,
@@ -106,13 +113,14 @@ export const getGroupProjects = async (
   groupTokenId: number,
   search?: string,
 ): Promise<GroupProjectsResponse> => {
+  const baseUrl = await storage.get(STORAGE_KEYS.BASE_URL);
   const groupToken = await storage.getSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupTokenId}`);
 
-  const { projects, total } = await fetchProjects(groupToken, groupId, page, search);
+  const { projects, total } = await fetchProjects(baseUrl, groupToken, groupId, page, search);
 
   const checkedDataWithExistingComponents = await Promise.all(
     projects.map(({ id: projectId }) => {
-      return compareProjectWithExistingComponent(cloudId, projectId, groupToken);
+      return compareProjectWithExistingComponent(cloudId, projectId, baseUrl, groupToken);
     }),
   ).catch((err) => {
     throw new Error(err);

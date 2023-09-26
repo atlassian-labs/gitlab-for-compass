@@ -14,6 +14,7 @@ import { Deployment, EnvironmentTier } from '../../types';
 import { getRecentDeployments, gitlabAPiDeploymentToCompassDataProviderDeploymentEvent } from '../deployment';
 import { getDeploymentsForEnvironmentTiers } from './index';
 import * as featureFlagService from '../feature-flags';
+import { BASE_URL } from '../../__tests__/fixtures/gitlab-data';
 
 jest.mock('../environment');
 jest.mock('../deployment');
@@ -55,7 +56,7 @@ describe('getDeploymentsForEnvironmentTiers', () => {
     const mockDeployment = getMockDeployment();
     mockedGetRecentDeployments.mockResolvedValue([mockDeployment]);
 
-    const deployments = await getDeploymentsForEnvironmentTiers('groupToken', 1, 'projectName');
+    const deployments = await getDeploymentsForEnvironmentTiers(BASE_URL, 'groupToken', 1, 'projectName');
 
     expect(mockedGitlabAPiDeploymentToCompassDataProviderDeploymentEvent).toHaveBeenCalledTimes(1);
     expect(mockedGitlabAPiDeploymentToCompassDataProviderDeploymentEvent).toHaveBeenCalledWith(
@@ -69,7 +70,7 @@ describe('getDeploymentsForEnvironmentTiers', () => {
   it('ignores non-Production events', async () => {
     mockedGetProjectEnvironments.mockResolvedValue([generateEnvironmentEvent(EnvironmentTier.STAGING)]);
 
-    const deployments = await getDeploymentsForEnvironmentTiers('groupToken', 1, 'projectName');
+    const deployments = await getDeploymentsForEnvironmentTiers(BASE_URL, 'groupToken', 1, 'projectName');
 
     expect(mockedGetRecentDeployments).not.toHaveBeenCalled();
     expect(mockedGitlabAPiDeploymentToCompassDataProviderDeploymentEvent).not.toHaveBeenCalled();
@@ -83,7 +84,7 @@ describe('getDeploymentsForEnvironmentTiers', () => {
     mockedGetRecentDeployments.mockResolvedValue([mockDeployment]);
     mockedGitlabAPiDeploymentToCompassDataProviderDeploymentEvent.mockReturnValue(null);
 
-    const deployments = await getDeploymentsForEnvironmentTiers('groupToken', 1, 'projectName');
+    const deployments = await getDeploymentsForEnvironmentTiers(BASE_URL, 'groupToken', 1, 'projectName');
     expect(mockedGitlabAPiDeploymentToCompassDataProviderDeploymentEvent).toHaveBeenCalledTimes(1);
     expect(mockedGitlabAPiDeploymentToCompassDataProviderDeploymentEvent).toHaveBeenCalledWith(
       mockDeployment,
@@ -129,7 +130,7 @@ describe('getDeploymentsForEnvironmentTiers', () => {
         return null;
       });
 
-      const deployments = await getDeploymentsForEnvironmentTiers('groupToken', 1, 'projectName', [
+      const deployments = await getDeploymentsForEnvironmentTiers(BASE_URL, 'groupToken', 1, 'projectName', [
         EnvironmentTier.PRODUCTION,
         EnvironmentTier.STAGING,
       ]);
@@ -150,7 +151,7 @@ describe('getDeploymentsForEnvironmentTiers', () => {
         generateEnvironmentEvent(EnvironmentTier.OTHER, 'otherEnvName'),
       ]);
 
-      const deployments = await getDeploymentsForEnvironmentTiers('groupToken', 1, 'projectName', [
+      const deployments = await getDeploymentsForEnvironmentTiers(BASE_URL, 'groupToken', 1, 'projectName', [
         EnvironmentTier.PRODUCTION,
         EnvironmentTier.STAGING,
       ]);

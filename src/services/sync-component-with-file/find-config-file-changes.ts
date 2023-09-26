@@ -16,13 +16,14 @@ import {
 } from './config-file-changes-transformer';
 
 const getRemovedFiles = async (
+  baseUrl: string,
   token: string,
   compassYmlFilesDiffs: CommitFileDiff[],
   event: PushEvent,
 ): Promise<ComponentUnlinkPayload[]> => {
   const settledPromises = await Promise.allSettled(
     compassYmlFilesDiffs.map((diff: CommitFileDiff) => {
-      return getFileContent(token, event.project.id, diff.old_path, event.before)
+      return getFileContent(baseUrl, token, event.project.id, diff.old_path, event.before)
         .then((componentYaml) => ({
           componentYaml,
           filePath: `/${diff.new_path}`,
@@ -40,13 +41,14 @@ const getRemovedFiles = async (
 };
 
 const getAddedFiles = async (
+  baseUrl: string,
   token: string,
   compassYmlFilesDiffs: CommitFileDiff[],
   event: PushEvent,
 ): Promise<ComponentSyncPayload[]> => {
   const settledPromises = await Promise.allSettled(
     compassYmlFilesDiffs.map((diff: CommitFileDiff) =>
-      getFileContent(token, event.project.id, diff.new_path, event.after)
+      getFileContent(baseUrl, token, event.project.id, diff.new_path, event.after)
         .then((componentYaml) => ({
           componentYaml,
           absoluteFilePath: diff.new_path,
@@ -64,14 +66,15 @@ const getAddedFiles = async (
 };
 
 const getModifiedFiles = async (
+  baseUrl: string,
   token: string,
   compassYmlFilesDiffs: CommitFileDiff[],
   event: PushEvent,
 ): Promise<ModifiedFilePayload[]> => {
   const settledPromises = await Promise.allSettled(
     compassYmlFilesDiffs.map(async (diff) => {
-      const oldFilePromise = getFileContent(token, event.project.id, diff.old_path, event.before);
-      const newFilePromise = getFileContent(token, event.project.id, diff.new_path, event.after);
+      const oldFilePromise = getFileContent(baseUrl, token, event.project.id, diff.old_path, event.before);
+      const newFilePromise = getFileContent(baseUrl, token, event.project.id, diff.new_path, event.after);
 
       const [oldFileSettled, newFileSettled] = await Promise.allSettled([oldFilePromise, newFilePromise]);
       let oldFileContents: CompassYaml;
@@ -112,10 +115,14 @@ const getModifiedFiles = async (
     .map((result) => (result as PromiseFulfilledResult<ModifiedFilePayload>).value);
 };
 
-export const findConfigAsCodeFileChanges = async (event: PushEvent, token: string): Promise<ComponentChanges> => {
+export const findConfigAsCodeFileChanges = async (
+  event: PushEvent,
+  baseUrl: string,
+  token: string,
+): Promise<ComponentChanges> => {
   let filesDiffs: CommitFileDiff[] = [];
   try {
-    filesDiffs = await getCommitDiff(token, event.project.id, event.checkout_sha);
+    filesDiffs = await getCommitDiff(baseUrl, token, event.project.id, event.checkout_sha);
   } catch (e) {
     console.error({
       message: 'Error with commits diff request',
@@ -139,9 +146,9 @@ export const findConfigAsCodeFileChanges = async (event: PushEvent, token: strin
   );
 
   const [createPayload, unlinkPayload, modifiedFiles] = await Promise.all([
-    getAddedFiles(token, added, event),
-    getRemovedFiles(token, removed, event),
-    getModifiedFiles(token, modified, event),
+    getAddedFiles(baseUrl, token, added, event),
+    getRemovedFiles(baseUrl, token, removed, event),
+    getModifiedFiles(baseUrl, token, modified, event),
   ]);
 
   const componentChanges: ComponentChanges = {

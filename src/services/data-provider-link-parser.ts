@@ -2,7 +2,7 @@ import { storage } from '@forge/api';
 import parse from 'url-parse';
 
 import { getOwnedProjectsBySearchCriteria } from '../client/gitlab';
-import { STORAGE_SECRETS } from '../constants';
+import { STORAGE_KEYS, STORAGE_SECRETS } from '../constants';
 import { getGroupIds } from '../utils/storage-utils';
 import { GitlabAPIProject } from '../types';
 
@@ -37,13 +37,14 @@ function doesURLMatch(projectUrl: string, path: string, name: string) {
 
 export const getProjectDataFromUrl = async (
   url: string,
-): Promise<{ project: GitlabAPIProject; groupToken: string }> => {
+): Promise<{ project: GitlabAPIProject; baseUrl: string; groupToken: string }> => {
   try {
     const { projectName, pathName } = extractProjectInformation(url);
+    const baseUrl = await storage.get(STORAGE_KEYS.BASE_URL);
     const groupTokens = await getAllGroupTokens();
 
     const projectsPromiseResults = await Promise.allSettled(
-      groupTokens.map((token) => getOwnedProjectsBySearchCriteria(projectName, token)),
+      groupTokens.map((token) => getOwnedProjectsBySearchCriteria(projectName, baseUrl, token)),
     );
     const projectsResult = projectsPromiseResults.reduce<{ projects: GitlabAPIProject[]; projectIndex: number | null }>(
       (result, currentProjectResult, index) => {
@@ -68,7 +69,7 @@ export const getProjectDataFromUrl = async (
       throw new Error('Project not found');
     }
     console.log(`[getProjectDataFromUrl] project_id: ${project.id}`);
-    return { project, groupToken };
+    return { project, baseUrl, groupToken };
   } catch (e) {
     console.log('Data provider link parser failed', e.message);
     return null;

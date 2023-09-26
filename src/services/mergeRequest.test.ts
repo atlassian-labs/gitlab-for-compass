@@ -5,7 +5,7 @@ import { mockAgg } from '../__tests__/helpers/mock-agg';
 
 mockAgg();
 
-import { TEST_TOKEN } from '../__tests__/fixtures/gitlab-data';
+import { BASE_URL, TEST_TOKEN } from '../__tests__/fixtures/gitlab-data';
 import { fetchPaginatedData } from '../utils/fetchPaginatedData';
 import { getLastMergedMergeRequests, getOpenMergeRequests } from './mergeRequest';
 import { getMergeRequests } from '../client/gitlab';
@@ -27,13 +27,17 @@ describe('MergeRequest Service', () => {
   it('throws error in case of failed open MR fetching', async () => {
     const errorMsg = 'Error while fetching open merge requests from Gitlab!';
     mockedFetchPaginatedData.mockRejectedValue(new Error(errorMsg));
-    await expect(getOpenMergeRequests(TEST_TOKEN, MOCK_PROJECT_ID, BRANCH_NAME)).rejects.toThrowError(errorMsg);
+    await expect(getOpenMergeRequests(BASE_URL, TEST_TOKEN, MOCK_PROJECT_ID, BRANCH_NAME)).rejects.toThrowError(
+      errorMsg,
+    );
   });
 
   it('throws error in case of failed merged merge requests fetching', async () => {
     const errorMsg = 'Error while fetching merged merge requests from Gitlab!';
 
     mockedGetMergeRequests.mockRejectedValue(new Error(errorMsg));
-    await expect(getLastMergedMergeRequests(TEST_TOKEN, MOCK_PROJECT_ID, BRANCH_NAME)).rejects.toThrowError(errorMsg);
+    await expect(getLastMergedMergeRequests(BASE_URL, TEST_TOKEN, MOCK_PROJECT_ID, BRANCH_NAME)).rejects.toThrowError(
+      errorMsg,
+    );
   });
 });

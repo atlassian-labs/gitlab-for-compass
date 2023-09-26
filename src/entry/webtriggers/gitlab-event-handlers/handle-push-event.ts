@@ -6,8 +6,18 @@ import { getTrackingBranchName } from '../../../services/get-tracking-branch';
 import { unlinkComponentFromFile } from '../../../client/compass';
 import { EXTERNAL_SOURCE } from '../../../constants';
 
-export const handlePushEvent = async (event: PushEvent, groupToken: string, cloudId: string): Promise<void> => {
-  const trackingBranch = await getTrackingBranchName(groupToken, event.project.id, event.project.default_branch);
+export const handlePushEvent = async (
+  event: PushEvent,
+  baseUrl: string,
+  groupToken: string,
+  cloudId: string,
+): Promise<void> => {
+  const trackingBranch = await getTrackingBranchName(
+    baseUrl,
+    groupToken,
+    event.project.id,
+    event.project.default_branch,
+  );
 
   if (!isEventForTrackingBranch(event, trackingBranch)) {
     console.log('Received push event for non-tracking branch. Ignoring event');
@@ -18,6 +28,7 @@ export const handlePushEvent = async (event: PushEvent, groupToken: string, clou
 
   const { componentsToCreate, componentsToUpdate, componentsToUnlink } = await findConfigAsCodeFileChanges(
     event,
+    baseUrl,
     groupToken,
   );
 
@@ -33,6 +44,7 @@ export const handlePushEvent = async (event: PushEvent, groupToken: string, clou
   });
 
   const componentSyncDetails: ComponentSyncDetails = {
+    baseUrl,
     token: groupToken,
     event,
     trackingBranch,
