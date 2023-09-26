@@ -8,6 +8,7 @@ import { getCommitDiff, getFileContent } from '../../client/gitlab';
 import { findConfigAsCodeFileChanges } from './find-config-file-changes';
 import { generatePushEvent } from '../../__tests__/helpers/gitlab-helper';
 import { CommitFileDiff, CompassYaml, ComponentChanges, PushEvent } from '../../types';
+import { BASE_URL } from '../../__tests__/fixtures/gitlab-data';
 
 jest.mock('../../client/gitlab', () => ({
   getCommitDiff: jest.fn(),
@@ -84,7 +85,7 @@ describe('findConfigAsCodeFileChanges', () => {
       componentsToUnlink: [],
     };
 
-    const result = await findConfigAsCodeFileChanges(baseEvent, 'token');
+    const result = await findConfigAsCodeFileChanges(baseEvent, BASE_URL, 'token');
     expect(result).toEqual(expectedResult);
   });
 
@@ -108,7 +109,7 @@ describe('findConfigAsCodeFileChanges', () => {
       componentsToUnlink: [],
     };
 
-    const result = await findConfigAsCodeFileChanges(baseEvent, 'token');
+    const result = await findConfigAsCodeFileChanges(baseEvent, BASE_URL, 'token');
 
     expect(result).toEqual(expectedResult);
   });
@@ -133,7 +134,7 @@ describe('findConfigAsCodeFileChanges', () => {
       ],
     };
 
-    const result = await findConfigAsCodeFileChanges(baseEvent, 'token');
+    const result = await findConfigAsCodeFileChanges(baseEvent, BASE_URL, 'token');
 
     expect(result).toEqual(expectedResult);
   });
@@ -156,7 +157,7 @@ describe('findConfigAsCodeFileChanges', () => {
       componentsToUnlink: [],
     };
 
-    const result = await findConfigAsCodeFileChanges(baseEvent, 'token');
+    const result = await findConfigAsCodeFileChanges(baseEvent, BASE_URL, 'token');
 
     expect(result).toEqual(expectedResult);
   });
@@ -179,7 +180,7 @@ describe('findConfigAsCodeFileChanges', () => {
       componentsToUnlink: [],
     };
 
-    const result = await findConfigAsCodeFileChanges(baseEvent, 'token');
+    const result = await findConfigAsCodeFileChanges(baseEvent, BASE_URL, 'token');
 
     expect(result).toEqual(expectedResult);
   });
@@ -202,7 +203,7 @@ describe('findConfigAsCodeFileChanges', () => {
       componentsToUnlink: [],
     };
 
-    const result = await findConfigAsCodeFileChanges(baseEvent, 'token');
+    const result = await findConfigAsCodeFileChanges(baseEvent, BASE_URL, 'token');
 
     expect(result).toEqual(expectedResult);
   });
@@ -230,7 +231,7 @@ describe('findConfigAsCodeFileChanges', () => {
       ],
     };
 
-    const result = await findConfigAsCodeFileChanges(baseEvent, 'token');
+    const result = await findConfigAsCodeFileChanges(baseEvent, BASE_URL, 'token');
 
     expect(result).toEqual(expectedResult);
   });
@@ -261,7 +262,7 @@ describe('findConfigAsCodeFileChanges', () => {
         componentsToUnlink: [],
       };
 
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(event, BASE_URL, 'token');
 
       expect(result).toEqual(expectedResult);
     });
@@ -283,7 +284,7 @@ describe('findConfigAsCodeFileChanges', () => {
         ],
         componentsToUnlink: [],
       };
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(event, BASE_URL, 'token');
 
       expect(result).toEqual(expectedResult);
     });
@@ -305,7 +306,7 @@ describe('findConfigAsCodeFileChanges', () => {
         ],
         componentsToUnlink: [],
       };
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(event, BASE_URL, 'token');
 
       expect(result).toEqual(expectedResult);
     });
@@ -327,7 +328,7 @@ describe('findConfigAsCodeFileChanges', () => {
         ],
         componentsToUnlink: [],
       };
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(event, BASE_URL, 'token');
 
       expect(result).toEqual(expectedResult);
     });
@@ -355,7 +356,7 @@ describe('findConfigAsCodeFileChanges', () => {
           },
         ],
       };
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(event, BASE_URL, 'token');
 
       expect(result).toEqual(expectedResult);
     });
@@ -383,7 +384,7 @@ describe('findConfigAsCodeFileChanges', () => {
           },
         ],
       };
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(event, BASE_URL, 'token');
 
       expect(result).toEqual(expectedResult);
     });
@@ -406,7 +407,7 @@ describe('findConfigAsCodeFileChanges', () => {
         ],
         componentsToUnlink: [],
       };
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(event, BASE_URL, 'token');
 
       expect(result).toEqual(expectedResult);
     });
@@ -428,7 +429,7 @@ describe('findConfigAsCodeFileChanges', () => {
         ],
         componentsToUnlink: [],
       };
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(event, BASE_URL, 'token');
 
       expect(result).toEqual(expectedResult);
     });
@@ -461,7 +462,7 @@ describe('findConfigAsCodeFileChanges', () => {
           ],
           componentsToUnlink: [],
         };
-        const result = await findConfigAsCodeFileChanges(event, 'token');
+        const result = await findConfigAsCodeFileChanges(event, BASE_URL, 'token');
 
         expect(result).toEqual(expectedResult);
       });
@@ -493,7 +494,7 @@ describe('findConfigAsCodeFileChanges', () => {
           ],
           componentsToUnlink: [],
         };
-        const result = await findConfigAsCodeFileChanges(event, 'token');
+        const result = await findConfigAsCodeFileChanges(event, BASE_URL, 'token');
 
         expect(result).toEqual(expectedResult);
       });
@@ -516,7 +517,7 @@ describe('findConfigAsCodeFileChanges', () => {
           componentsToUpdate: [],
           componentsToUnlink: [],
         };
-        const result = await findConfigAsCodeFileChanges(event, 'token');
+        const result = await findConfigAsCodeFileChanges(event, BASE_URL, 'token');
 
         expect(result).toEqual(expectedResult);
       });
@@ -539,7 +540,7 @@ describe('findConfigAsCodeFileChanges', () => {
           componentsToUpdate: [],
           componentsToUnlink: [],
         };
-        const result = await findConfigAsCodeFileChanges(event, 'token');
+        const result = await findConfigAsCodeFileChanges(event, BASE_URL, 'token');
 
         expect(result).toEqual(expectedResult);
       });
@@ -562,7 +563,7 @@ describe('findConfigAsCodeFileChanges', () => {
         ],
         componentsToUnlink: [],
       };
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(event, BASE_URL, 'token');
 
       expect(result).toEqual(expectedResult);
     });
@@ -584,7 +585,7 @@ describe('findConfigAsCodeFileChanges', () => {
         ],
         componentsToUnlink: [],
       };
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(event, BASE_URL, 'token');
 
       expect(result).toEqual(expectedResult);
     });
@@ -606,7 +607,7 @@ describe('findConfigAsCodeFileChanges', () => {
         ],
         componentsToUnlink: [],
       };
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(event, BASE_URL, 'token');
 
       expect(result).toEqual(expectedResult);
     });
@@ -628,7 +629,7 @@ describe('findConfigAsCodeFileChanges', () => {
         ],
         componentsToUnlink: [],
       };
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(event, BASE_URL, 'token');
 
       expect(result).toEqual(expectedResult);
     });
@@ -656,7 +657,7 @@ describe('findConfigAsCodeFileChanges', () => {
           },
         ],
       };
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(event, BASE_URL, 'token');
 
       expect(result).toEqual(expectedResult);
     });
@@ -683,7 +684,7 @@ describe('findConfigAsCodeFileChanges', () => {
           },
         ],
       };
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(event, BASE_URL, 'token');
 
       expect(result).toEqual(expectedResult);
     });
@@ -711,7 +712,7 @@ describe('findConfigAsCodeFileChanges', () => {
           },
         ],
       };
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(event, BASE_URL, 'token');
 
       expect(result).toEqual(expectedResult);
     });
@@ -738,7 +739,7 @@ describe('findConfigAsCodeFileChanges', () => {
           },
         ],
       };
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(event, BASE_URL, 'token');
 
       expect(result).toEqual(expectedResult);
     });

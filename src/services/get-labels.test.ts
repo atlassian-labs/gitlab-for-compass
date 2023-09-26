@@ -6,7 +6,7 @@ mockForgeApi();
 
 import { getProjectLanguages } from '../client/gitlab';
 import { getProjectLabels } from './get-labels';
-import { TEST_TOKEN } from '../__tests__/fixtures/gitlab-data';
+import { BASE_URL, TEST_TOKEN } from '../__tests__/fixtures/gitlab-data';
 
 jest.mock('../client/gitlab');
 const mockGetProjectLanguages = mocked(getProjectLanguages);
@@ -21,7 +21,7 @@ describe('get project labels', () => {
   it('returns correct labels in case getProjectLanguages fails', async () => {
     mockGetProjectLanguages.mockRejectedValue(new Error('Ooops!'));
 
-    const result = await getProjectLabels(MOCK_PROJECT_ID, TEST_TOKEN, MOCK_TOPICS);
+    const result = await getProjectLabels(MOCK_PROJECT_ID, BASE_URL, TEST_TOKEN, MOCK_TOPICS);
 
     expect(result).toEqual(MOCK_TOPICS);
   });
@@ -33,7 +33,7 @@ describe('get project labels', () => {
       html: 2,
     });
 
-    const result = await getProjectLabels(MOCK_PROJECT_ID, TEST_TOKEN, MOCK_TOPICS);
+    const result = await getProjectLabels(MOCK_PROJECT_ID, BASE_URL, TEST_TOKEN, MOCK_TOPICS);
 
     expect(result).toEqual([...MOCK_TOPICS, 'language:javascript']);
   });

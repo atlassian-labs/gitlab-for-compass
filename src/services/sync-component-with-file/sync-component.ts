@@ -16,7 +16,7 @@ export const syncComponent = async (
   componentSyncDetails: ComponentSyncDetails,
   configFileMetadata: ConfigFileMetadata,
 ): Promise<void> => {
-  const { token, event, trackingBranch, cloudId } = componentSyncDetails;
+  const { baseUrl, token, event, trackingBranch, cloudId } = componentSyncDetails;
   const { componentYaml, absoluteFilePath } = componentSyncPayload;
 
   const startTime = Date.now();
@@ -41,8 +41,8 @@ export const syncComponent = async (
     currentComponent = data.component;
     console.log({ message: `Main sync with file success for component ${currentComponent.id}` });
 
-    const { topics } = await getProjectById(token, event.project.id);
-    const projectLabels = await getProjectLabels(event.project.id, token, topics);
+    const { topics } = await getProjectById(baseUrl, token, event.project.id);
+    const projectLabels = await getProjectLabels(event.project.id, baseUrl, token, topics);
 
     const formattedLabels = projectLabels.map((label) => label.split(' ').join('-').toLowerCase());
 

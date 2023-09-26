@@ -16,6 +16,7 @@ import { ForgeLink } from '../ForgeLink';
 import { connectGroup } from '../../services/invokes';
 import { ErrorMessages } from '../../errorMessages';
 import { AuthErrorTypes, ErrorTypes } from '../../resolverTypes';
+import { DEFAULT_GITLAB_URL } from '../../constants';
 
 const SectionMessageWrapper = styled.div`
   margin-bottom: ${gridSize() * 2}px;
@@ -92,6 +93,7 @@ const buildValidationMethod = (errorType: ErrorTypes) => {
 };
 
 export const AuthPage = () => {
+  const [gitlabUrl, setGitlabUrl] = useState<string>(DEFAULT_GITLAB_URL);
   const [tokenName, setTokenName] = useState<string>('');
   const [token, setToken] = useState<string>('');
   const [isLoadingSubmit, setLoadingSubmit] = useState<boolean>(false);
@@ -108,7 +110,7 @@ export const AuthPage = () => {
     setLoadingSubmit(true);
 
     try {
-      const { success, errors } = await connectGroup(token.trim(), tokenName);
+      const { success, errors } = await connectGroup(gitlabUrl.trim(), token.trim(), tokenName);
 
       if (success) {
         handleNavigateToConnectedPage();
@@ -121,6 +123,13 @@ export const AuthPage = () => {
       setLoadingSubmit(false);
       setErrorType(AuthErrorTypes.UNEXPECTED_ERROR);
     }
+  };
+
+  const gitlabUrlOnChange = (e: React.FormEvent<HTMLInputElement>) => {
+    if (errorType) {
+      setErrorType(null);
+    }
+    setGitlabUrl(e.currentTarget.value);
   };
 
   const tokenNameOnChange = (e: React.FormEvent<HTMLInputElement>) => {
@@ -173,6 +182,17 @@ export const AuthPage = () => {
       {errorType && buildValidationMethod(errorType)}
 
       <FormWrapper>
+        <Field label='GitLab URL' name='gitlabUrl' isRequired>
+          {({ fieldProps }) => (
+            <Textfield
+              {...fieldProps}
+              isCompact
+              placeholder='Enter your GitLab URL'
+              onChange={gitlabUrlOnChange}
+              type={'text'}
+            />
+          )}
+        </Field>
         <Field label='Group access token' name='accessToken' isRequired>
           {({ fieldProps }) => (
             <Textfield

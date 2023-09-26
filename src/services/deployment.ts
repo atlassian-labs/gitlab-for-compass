@@ -91,11 +91,12 @@ export const gitlabApiDeploymentToCompassDeploymentEvent = (
 
 export const getDeployment = async (
   event: DeploymentEvent,
+  baseUrl: string,
   groupToken: string,
   environmentTier: EnvironmentTier,
   cloudId: string,
 ): Promise<CompassCreateEventInput> => {
-  const deployment = await getProjectDeploymentById(event.project.id, event.deployment_id, groupToken);
+  const deployment = await getProjectDeploymentById(event.project.id, event.deployment_id, baseUrl, groupToken);
 
   return gitlabApiDeploymentToCompassDeploymentEvent(
     deployment as Deployment,
@@ -107,13 +108,20 @@ export const getDeployment = async (
 };
 
 export const getRecentDeployments = async (
+  baseUrl: string,
   groupToken: string,
   projectId: number,
   dateAfter: string,
   environmentName: string,
 ) => {
   try {
-    return fetchPaginatedData(getProjectRecentDeployments, { groupToken, projectId, dateAfter, environmentName });
+    return fetchPaginatedData(getProjectRecentDeployments, {
+      baseUrl,
+      groupToken,
+      projectId,
+      dateAfter,
+      environmentName,
+    });
   } catch (err) {
     const ERROR_MESSAGE = 'Error while fetching recent deployments from Gitlab!';
 
@@ -123,6 +131,7 @@ export const getRecentDeployments = async (
 };
 
 export const getDeploymentAfter28Days = async (
+  baseUrl: string,
   groupToken: string,
   projectId: number,
   dateAfter: string,
@@ -130,7 +139,7 @@ export const getDeploymentAfter28Days = async (
 ): Promise<Deployment[]> => {
   const PAGE = 1;
   const PER_PAGE = 1;
-  const environments = await getProjectEnvironments(projectId, groupToken);
+  const environments = await getProjectEnvironments(projectId, baseUrl, groupToken);
   const getDeploymentsPromises = environments.reduce<Promise<{ data: Deployment[]; headers: Headers }>[]>(
     (deploymentsPromises, currentEnvironment) => {
       if (
@@ -139,6 +148,7 @@ export const getDeploymentAfter28Days = async (
       ) {
         deploymentsPromises.push(
           getProjectRecentDeployments(PAGE, PER_PAGE, {
+            baseUrl,
             groupToken,
             projectId,
             environmentName: currentEnvironment.name,

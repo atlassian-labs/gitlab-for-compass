@@ -6,6 +6,7 @@ mockForgeApi();
 
 import { getProjectVariable, getProjectBranch } from '../client/gitlab';
 import { getTrackingBranchName } from './get-tracking-branch';
+import { BASE_URL } from '../__tests__/fixtures/gitlab-data';
 
 jest.mock('../client/gitlab');
 
@@ -20,7 +21,7 @@ describe('getTrackingBranchName', () => {
     mockGetProjectVariable.mockResolvedValue(MOCK_NON_DEFAULT_BRANCH_NAME);
     mockGetProjectBranch.mockResolvedValue({ name: MOCK_NON_DEFAULT_BRANCH_NAME });
 
-    expect(await getTrackingBranchName('groupToken', 1234, MOCK_DEFAULT_BRANCH_NAME)).toBe(
+    expect(await getTrackingBranchName(BASE_URL, 'groupToken', 1234, MOCK_DEFAULT_BRANCH_NAME)).toBe(
       MOCK_NON_DEFAULT_BRANCH_NAME,
     );
   });
@@ -29,6 +30,8 @@ describe('getTrackingBranchName', () => {
     mockGetProjectVariable.mockResolvedValue(MOCK_NON_DEFAULT_BRANCH_NAME);
     mockGetProjectBranch.mockRejectedValue('404 Branch Not Found');
 
-    expect(await getTrackingBranchName('groupToken', 1234, MOCK_DEFAULT_BRANCH_NAME)).toEqual(MOCK_DEFAULT_BRANCH_NAME);
+    expect(await getTrackingBranchName(BASE_URL, 'groupToken', 1234, MOCK_DEFAULT_BRANCH_NAME)).toEqual(
+      MOCK_DEFAULT_BRANCH_NAME,
+    );
   });
 });

@@ -10,6 +10,7 @@ import { EnvironmentTier } from '../types';
 import { isSendStagingEventsEnabled } from './feature-flags';
 
 export const getBackfillData = async (
+  baseUrl: string,
   groupToken: string,
   projectId: number,
   projectName: string,
@@ -23,16 +24,17 @@ export const getBackfillData = async (
   };
 }> => {
   const [allBuildsFor28Days, mrCycleTime, deployments, openMergeRequestsCount] = await Promise.all([
-    getProjectBuildsFor28Days(groupToken, projectId, projectName, branchName),
-    getMRCycleTime(groupToken, projectId, branchName),
+    getProjectBuildsFor28Days(baseUrl, groupToken, projectId, projectName, branchName),
+    getMRCycleTime(baseUrl, groupToken, projectId, branchName),
     getDeploymentsForEnvironmentTiers(
+      baseUrl,
       groupToken,
       projectId,
       projectName,
       isSendStagingEventsEnabled ? [EnvironmentTier.PRODUCTION, EnvironmentTier.STAGING] : undefined,
     ),
-    getOpenMergeRequestsCount(groupToken, projectId, branchName),
-    hasDeploymentAfter28Days(projectId, groupToken),
+    getOpenMergeRequestsCount(baseUrl, groupToken, projectId, branchName),
+    hasDeploymentAfter28Days(projectId, baseUrl, groupToken),
   ]);
 
   return {

@@ -6,6 +6,7 @@ import { getMRCycleTime, getOpenMergeRequestsCount } from '../../../services/com
 
 export const handleMergeRequestEvent = async (
   event: MergeRequestEvent,
+  baseUrl: string,
   groupToken: string,
   cloudId: string,
 ): Promise<void> => {
@@ -14,12 +15,12 @@ export const handleMergeRequestEvent = async (
     project: { id, default_branch: defaultBranch },
     object_attributes: { target_branch: targetBranch },
   } = event;
-  const trackingBranch = await getTrackingBranchName(groupToken, id, defaultBranch);
+  const trackingBranch = await getTrackingBranchName(baseUrl, groupToken, id, defaultBranch);
 
   if (trackingBranch === targetBranch) {
     const [cycleTime, openMergeRequestsCount] = await Promise.all([
-      getMRCycleTime(groupToken, id, trackingBranch),
-      getOpenMergeRequestsCount(groupToken, id, trackingBranch),
+      getMRCycleTime(baseUrl, groupToken, id, trackingBranch),
+      getOpenMergeRequestsCount(baseUrl, groupToken, id, trackingBranch),
     ]);
 
     const metricInput = {

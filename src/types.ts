@@ -168,6 +168,7 @@ type ComponentChanges = {
 };
 
 type ComponentSyncDetails = {
+  baseUrl: string;
   token: string;
   event: PushEvent;
   trackingBranch: string;
@@ -178,6 +179,7 @@ type RegisterWebhookPayload = {
   groupId: number;
   url: string;
   signature: string;
+  baseUrl: string;
   token: string;
 };
 

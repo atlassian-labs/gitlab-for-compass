@@ -3,6 +3,7 @@ import { getMergeRequests, MergeRequestWorkInProgressFilterOptions } from '../cl
 import { MergeRequest, MergeRequestOrderBy, MergeRequestState } from '../types';
 
 export const getOpenMergeRequests = async (
+  baseUrl: string,
   groupToken: string,
   projectId: number,
   targetBranch: string,
@@ -11,6 +12,7 @@ export const getOpenMergeRequests = async (
 
   try {
     return fetchPaginatedData(getMergeRequests, {
+      baseUrl,
       groupToken,
       projectId,
       state: MergeRequestState.OPENED,
@@ -29,6 +31,7 @@ export const getOpenMergeRequests = async (
 };
 
 export const getLastMergedMergeRequests = async (
+  baseUrl: string,
   groupToken: string,
   projectId: number,
   targetBranch: string,
@@ -39,6 +42,7 @@ export const getLastMergedMergeRequests = async (
 
   try {
     const { data } = await getMergeRequests(page, numberOfMergeRequests, {
+      baseUrl,
       groupToken,
       projectId,
       state: MergeRequestState.MERGED,

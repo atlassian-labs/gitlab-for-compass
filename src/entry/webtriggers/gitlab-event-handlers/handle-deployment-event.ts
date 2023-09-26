@@ -6,6 +6,7 @@ import { isSendStagingEventsEnabled } from '../../../services/feature-flags';
 
 export const handleDeploymentEvent = async (
   event: DeploymentEvent,
+  baseUrl: string,
   groupToken: string,
   cloudId: string,
 ): Promise<void> => {
@@ -13,7 +14,7 @@ export const handleDeploymentEvent = async (
     environment,
     project: { id: projectId },
   } = event;
-  const environments = await getProjectEnvironments(projectId, groupToken);
+  const environments = await getProjectEnvironments(projectId, baseUrl, groupToken);
 
   const environmentTier = await getEnvironmentTier(environments, environment);
 
@@ -21,7 +22,7 @@ export const handleDeploymentEvent = async (
     environmentTier === EnvironmentTier.PRODUCTION ||
     (isSendStagingEventsEnabled() && environmentTier === EnvironmentTier.STAGING)
   ) {
-    const deployment = await getDeployment(event, groupToken, environmentTier, cloudId);
+    const deployment = await getDeployment(event, baseUrl, groupToken, environmentTier, cloudId);
     await sendEventToCompass(deployment);
   }
 };

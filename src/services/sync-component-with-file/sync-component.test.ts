@@ -20,7 +20,12 @@ import { EXTERNAL_SOURCE, IMPORT_LABEL } from '../../constants';
 import { reportSyncError } from './report-sync-error';
 import { getProjectById } from '../../client/gitlab';
 import { getProjectLabels } from '../get-labels';
-import { MOCK_CLOUD_ID, TEST_GET_PROJECT_BY_ID_RESPONSE, TEST_TOKEN } from '../../__tests__/fixtures/gitlab-data';
+import {
+  BASE_URL,
+  MOCK_CLOUD_ID,
+  TEST_GET_PROJECT_BY_ID_RESPONSE,
+  TEST_TOKEN,
+} from '../../__tests__/fixtures/gitlab-data';
 
 jest.mock('../../client/gitlab');
 jest.mock('../../services/get-labels');
@@ -71,6 +76,7 @@ const getMockedSyncPayload = (
     previousFilePath: '/previousPath/fileName.yaml',
   };
   const mockComponentSyncDetails: ComponentSyncDetails = {
+    baseUrl: BASE_URL,
     token: TEST_TOKEN,
     event,
     trackingBranch: event.project.default_branch,
