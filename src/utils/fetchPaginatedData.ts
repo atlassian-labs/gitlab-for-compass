@@ -2,7 +2,7 @@ import { GitLabHeaders, GitlabPaginatedFetch } from '../client/gitlab';
 
 export const fetchPaginatedData = async <D, P>(
   fetchFn: GitlabPaginatedFetch<D, P>,
-  fetchFnParameters: Record<'groupToken', string> & P,
+  fetchFnParameters: Record<'baseUrl', string> & Record<'groupToken', string> & P,
   page = 1,
   perPage = 100,
 ): Promise<D[]> => {

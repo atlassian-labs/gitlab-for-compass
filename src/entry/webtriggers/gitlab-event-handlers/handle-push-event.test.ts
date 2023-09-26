@@ -9,7 +9,7 @@ import { generatePushEvent } from '../../../__tests__/helpers/gitlab-helper';
 import { handlePushEvent } from './handle-push-event';
 import { findConfigAsCodeFileChanges, syncComponent } from '../../../services/sync-component-with-file';
 import { getTrackingBranchName } from '../../../services/get-tracking-branch';
-import { MOCK_CLOUD_ID, TEST_TOKEN } from '../../../__tests__/fixtures/gitlab-data';
+import { BASE_URL, MOCK_CLOUD_ID, TEST_TOKEN } from '../../../__tests__/fixtures/gitlab-data';
 import { ComponentSyncDetails } from '../../../types';
 import { EXTERNAL_SOURCE } from '../../../constants';
 
@@ -62,7 +62,7 @@ describe('Gitlab push events', () => {
   it('ignores event if the branch is not tracking', async () => {
     getNonDefaultBranchNameMock.mockResolvedValue(eventWithIncorrectRef.project.default_branch);
 
-    await handlePushEvent(eventWithIncorrectRef, TEST_TOKEN, MOCK_CLOUD_ID);
+    await handlePushEvent(eventWithIncorrectRef, BASE_URL, TEST_TOKEN, MOCK_CLOUD_ID);
 
     expect(syncs).not.toBeCalled();
     expect(removals).not.toBeCalled();
@@ -71,7 +71,7 @@ describe('Gitlab push events', () => {
   it('ignores event if no config as code file updates present', async () => {
     getNonDefaultBranchNameMock.mockResolvedValue(event.project.default_branch);
     findConfigChanges.mockResolvedValue({ componentsToCreate: [], componentsToUpdate: [], componentsToUnlink: [] });
-    await handlePushEvent(event, TEST_TOKEN, MOCK_CLOUD_ID);
+    await handlePushEvent(event, BASE_URL, TEST_TOKEN, MOCK_CLOUD_ID);
 
     expect(syncs).not.toBeCalled();
     expect(removals).not.toBeCalled();
@@ -101,9 +101,10 @@ describe('Gitlab push events', () => {
       componentsToUnlink: mockComponentsToUnlink,
     });
 
-    await handlePushEvent(event, TEST_TOKEN, MOCK_CLOUD_ID);
+    await handlePushEvent(event, BASE_URL, TEST_TOKEN, MOCK_CLOUD_ID);
 
     const expectedComponentSyncDetails: ComponentSyncDetails = {
+      baseUrl: BASE_URL,
       token: TEST_TOKEN,
       event,
       trackingBranch: event.project.default_branch,
@@ -150,9 +151,10 @@ describe('Gitlab push events', () => {
       componentsToUnlink: mockComponentsToUnlink,
     });
 
-    await handlePushEvent(pushEvent, TEST_TOKEN, MOCK_CLOUD_ID);
+    await handlePushEvent(pushEvent, BASE_URL, TEST_TOKEN, MOCK_CLOUD_ID);
 
     const expectedComponentSyncDetails: ComponentSyncDetails = {
+      baseUrl: BASE_URL,
       token: TEST_TOKEN,
       event: pushEvent,
       trackingBranch: BRANCH_NAME,

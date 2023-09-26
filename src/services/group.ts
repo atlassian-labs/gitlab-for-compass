@@ -14,11 +14,12 @@ export class InvalidGroupTokenError extends Error {
 }
 
 const findGroupToken = async (
+  baseUrl: string,
   groupToken: string,
   groupTokenName: string,
   groupId: number,
 ): Promise<GroupAccessToken | undefined> => {
-  const groupAccessTokens = await getGroupAccessTokens(groupToken, groupId);
+  const groupAccessTokens = await getGroupAccessTokens(baseUrl, groupToken, groupId);
 
   return groupAccessTokens.find((groupAccessToken) => groupAccessToken.name === groupTokenName);
 };
@@ -27,17 +28,17 @@ const validateGroupTokenScopes = (requiredScopes: string[], tokenScopes: string[
   return requiredScopes.every((requiredScope) => tokenScopes.includes(requiredScope));
 };
 
-export const connectGroup = async (token: string, tokenName: string): Promise<number> => {
+export const connectGroup = async (baseUrl: string, token: string, tokenName: string): Promise<number> => {
   let groupId;
   let groupName;
   try {
-    const [group] = await getGroupsData(token, 'true');
+    const [group] = await getGroupsData(baseUrl, token, 'true');
     ({ id: groupId, name: groupName } = group);
   } catch (e) {
     throw new InvalidGroupTokenError(AuthErrorTypes.INVALID_GROUP_TOKEN);
   }
 
-  const groupToken = await findGroupToken(token, tokenName, groupId);
+  const groupToken = await findGroupToken(baseUrl, token, tokenName, groupId);
   if (!groupToken) {
     throw new InvalidGroupTokenError(AuthErrorTypes.INVALID_GROUP_TOKEN_NAME);
   }
@@ -47,6 +48,7 @@ export const connectGroup = async (token: string, tokenName: string): Promise<nu
     throw new InvalidGroupTokenError(AuthErrorTypes.INCORRECT_GROUP_TOKEN_SCOPES);
   }
 
+  await storage.set(`${STORAGE_KEYS.BASE_URL}`, baseUrl);
   await storage.set(`${STORAGE_KEYS.GROUP_KEY_PREFIX}${groupId}`, groupName);
   await storage.setSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`, token);
 
@@ -54,6 +56,8 @@ export const connectGroup = async (token: string, tokenName: string): Promise<nu
 };
 
 const getGroups = async (owned?: string, minAccessLevel?: number): Promise<GitlabAPIGroup[]> => {
+  const baseUrl = await storage.get(STORAGE_KEYS.BASE_URL);
+
   const response = storage.query().where('key', startsWith(STORAGE_KEYS.GROUP_KEY_PREFIX));
 
   const { results: groups } = await response.getMany();
@@ -66,7 +70,7 @@ const getGroups = async (owned?: string, minAccessLevel?: number): Promise<Gitla
     ),
   );
 
-  const groupPromises = tokens.map((token: string) => getGroupsData(token, owned, minAccessLevel));
+  const groupPromises = tokens.map((token: string) => getGroupsData(baseUrl, token, owned, minAccessLevel));
 
   // We need to remove revoked/invalid (on Gitlab side) tokens from storage
   const groupsResult = await Promise.allSettled(groupPromises);

@@ -1,8 +1,12 @@
 import { getEnvironments } from '../client/gitlab';
 import { Environment, EnvironmentTier } from '../types';
 
-export const getProjectEnvironments = (projectId: number, groupToken: string): Promise<Environment[]> => {
-  return getEnvironments(projectId, groupToken);
+export const getProjectEnvironments = (
+  projectId: number,
+  baseUrl: string,
+  groupToken: string,
+): Promise<Environment[]> => {
+  return getEnvironments(projectId, baseUrl, groupToken);
 };
 
 export const getEnvironmentTier = async (

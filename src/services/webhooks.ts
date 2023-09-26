@@ -7,12 +7,14 @@ import { generateSignature } from '../utils/generate-signature-utils';
 export const setupAndValidateWebhook = async (groupId: number): Promise<number> => {
   console.log('Setting up webhook');
   try {
-    const [existingWebhook, groupToken] = await Promise.all([
+    const [existingWebhook, baseUrl, groupToken] = await Promise.all([
       storage.get(`${STORAGE_KEYS.WEBHOOK_KEY_PREFIX}${groupId}`),
+      storage.get(STORAGE_KEYS.BASE_URL),
       storage.getSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`),
     ]);
 
-    const isWebhookValid = existingWebhook && (await getGroupWebhook(groupId, existingWebhook, groupToken)) !== null;
+    const isWebhookValid =
+      existingWebhook && (await getGroupWebhook(groupId, existingWebhook, baseUrl, groupToken)) !== null;
 
     if (isWebhookValid) {
       console.log('Using existing webhook');
@@ -25,6 +27,7 @@ export const setupAndValidateWebhook = async (groupId: number): Promise<number> 
     const webhookId = await registerGroupWebhook({
       groupId,
       url: webtriggerURLWithGroupId,
+      baseUrl,
       token: groupToken,
       signature: webhookSignature,
     });
@@ -43,12 +46,13 @@ export const setupAndValidateWebhook = async (groupId: number): Promise<number> 
 };
 
 export const deleteWebhook = async (groupId: number): Promise<void> => {
-  const [webhookId, groupToken] = await Promise.all([
+  const [webhookId, baseUrl, groupToken] = await Promise.all([
     storage.get(`${STORAGE_KEYS.WEBHOOK_KEY_PREFIX}${groupId}`),
+    storage.get(STORAGE_KEYS.BASE_URL),
     storage.getSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`),
   ]);
 
   if (webhookId) {
-    await deleteGroupWebhook(groupId, webhookId, groupToken);
+    await deleteGroupWebhook(groupId, webhookId, baseUrl, groupToken);
   }
 };

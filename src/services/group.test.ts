@@ -10,6 +10,7 @@ import { getGroupAccessTokens, getGroupsData } from '../client/gitlab';
 import { connectGroup, getConnectedGroups, InvalidGroupTokenError } from './group';
 import { AuthErrorTypes, GitlabAPIGroup } from '../resolverTypes';
 import { GroupAccessToken } from '../types';
+import { BASE_URL } from '../__tests__/fixtures/gitlab-data';
 
 jest.mock('../client/gitlab');
 
@@ -78,7 +79,7 @@ describe('Group service', () => {
       mockGetGroupsData.mockResolvedValue([MOCK_GROUP_DATA]);
       mockGetGroupAccessTokens.mockResolvedValue([mockGroupAccessToken]);
 
-      const result = await connectGroup(MOCK_TOKEN, mockGroupAccessToken.name);
+      const result = await connectGroup(BASE_URL, MOCK_TOKEN, mockGroupAccessToken.name);
 
       expect(storage.set).toHaveBeenCalledWith(
         `${STORAGE_KEYS.GROUP_KEY_PREFIX}${MOCK_GROUP_DATA.id}`,
@@ -96,7 +97,7 @@ describe('Group service', () => {
       const mockGroupAccessToken = generateMockGroupAccessToken();
       mockGetGroupsData.mockRejectedValue(undefined);
 
-      await expect(connectGroup(MOCK_TOKEN, mockGroupAccessToken.name)).rejects.toThrow(
+      await expect(connectGroup(BASE_URL, MOCK_TOKEN, mockGroupAccessToken.name)).rejects.toThrow(
         new InvalidGroupTokenError(AuthErrorTypes.INVALID_GROUP_TOKEN),
       );
       expect(storage.set).not.toHaveBeenCalled();
@@ -107,7 +108,7 @@ describe('Group service', () => {
       mockGetGroupsData.mockResolvedValue([MOCK_GROUP_DATA]);
       mockGetGroupAccessTokens.mockResolvedValue([mockGroupAccessToken]);
 
-      await expect(connectGroup(MOCK_TOKEN, 'momo')).rejects.toThrow(
+      await expect(connectGroup(BASE_URL, MOCK_TOKEN, 'momo')).rejects.toThrow(
         new InvalidGroupTokenError(AuthErrorTypes.INVALID_GROUP_TOKEN_NAME),
       );
       expect(storage.set).not.toHaveBeenCalled();
@@ -118,7 +119,7 @@ describe('Group service', () => {
       mockGetGroupsData.mockResolvedValue([MOCK_GROUP_DATA]);
       mockGetGroupAccessTokens.mockResolvedValue([mockGroupAccessToken]);
 
-      await expect(connectGroup(MOCK_TOKEN, mockGroupAccessToken.name)).rejects.toThrow(
+      await expect(connectGroup(BASE_URL, MOCK_TOKEN, mockGroupAccessToken.name)).rejects.toThrow(
         new InvalidGroupTokenError(AuthErrorTypes.INCORRECT_GROUP_TOKEN_SCOPES),
       );
       expect(storage.set).not.toHaveBeenCalled();

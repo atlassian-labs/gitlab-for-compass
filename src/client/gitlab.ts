@@ -1,7 +1,6 @@
-import { fetch } from '@forge/api';
+import { fetch, storage } from '@forge/api';
 import yaml from 'js-yaml';
 
-import { BASE_URL } from '../constants';
 import {
   GitlabAPIGroup,
   GroupAccessToken,
@@ -20,6 +19,7 @@ import {
 import { GitlabHttpMethodError, InvalidConfigFileError } from '../models/errors';
 import { INVALID_YAML_ERROR } from '../models/error-messages';
 import { queryParamsGenerator } from '../utils/url-utils';
+import { STORAGE_KEYS } from '../constants';
 
 export enum HttpMethod {
   GET = 'GET',
@@ -45,7 +45,7 @@ export enum GitLabHeaders {
 export type GitlabPaginatedFetch<D, P> = (
   page: number,
   perPage: number,
-  fetchFnParameters: Record<'groupToken', string> & P,
+  fetchFnParameters: Record<'baseUrl', string> & Record<'groupToken', string> & P,
 ) => Promise<{ data: D[]; headers: Headers }>;
 
 export enum MergeRequestWorkInProgressFilterOptions {
@@ -64,13 +64,14 @@ function isTextBody(config?: CallGitLabConfig) {
 
 export const callGitlab = async (
   apiOperation: string,
-  path: string,
+  url: string,
   authToken: string,
   config?: CallGitLabConfig,
   body?: string,
 ): Promise<any> => {
   console.log(`Calling gitlab to ${apiOperation}`);
-  const resp = await fetch(`${BASE_URL}${path}`, {
+
+  const resp = await fetch(`${url}`, {
     method: config?.method || HttpMethod.GET,
     headers: {
       'PRIVATE-TOKEN': authToken,
@@ -98,6 +99,7 @@ export const callGitlab = async (
 };
 
 export const getGroupsData = async (
+  baseUrl: string,
   groupAccessToken: string,
   owned?: string,
   minAccessLevel?: number,
@@ -111,7 +113,7 @@ export const getGroupsData = async (
 
   const { data } = await callGitlab(
     `getGroupsData - Query params: ${queryParams}`,
-    `/api/v4/groups?${queryParams}`,
+    `${baseUrl}/api/v4/groups?${queryParams}`,
     groupAccessToken,
   );
 
@@ -119,12 +121,12 @@ export const getGroupsData = async (
 };
 
 export const registerGroupWebhook = async (payload: RegisterWebhookPayload): Promise<number> => {
-  const { groupId, token: groupToken, url, signature } = payload;
+  const { groupId, baseUrl, token: groupToken, url, signature } = payload;
   const {
     data: { id },
   } = await callGitlab(
     `register webhook`,
-    `/api/v4/groups/${groupId}/hooks`,
+    `${baseUrl}/api/v4/groups/${groupId}/hooks`,
     groupToken,
     { method: HttpMethod.POST },
     JSON.stringify({
@@ -140,9 +142,14 @@ export const registerGroupWebhook = async (payload: RegisterWebhookPayload): Pro
   return id;
 };
 
-export const deleteGroupWebhook = async (groupId: number, hookId: number, groupToken: string): Promise<void> => {
+export const deleteGroupWebhook = async (
+  groupId: number,
+  hookId: number,
+  baseUrl: string,
+  groupToken: string,
+): Promise<void> => {
   try {
-    await callGitlab('delete webhook', `/api/v4/groups/${groupId}/hooks/${hookId}`, groupToken, {
+    await callGitlab('delete webhook', `${baseUrl}/api/v4/groups/${groupId}/hooks/${hookId}`, groupToken, {
       method: HttpMethod.DELETE,
     });
   } catch (e) {
@@ -156,10 +163,15 @@ export const deleteGroupWebhook = async (groupId: number, hookId: number, groupT
 export const getGroupWebhook = async (
   groupId: number,
   hookId: number,
+  baseUrl: string,
   groupToken: string,
 ): Promise<{ id: number } | null> => {
   try {
-    const { data: webhook } = await callGitlab('get webhook', `/api/v4/groups/${groupId}/hooks/${hookId}`, groupToken);
+    const { data: webhook } = await callGitlab(
+      'get webhook',
+      `${baseUrl}/api/v4/groups/${groupId}/hooks/${hookId}`,
+      groupToken,
+    );
 
     return webhook;
   } catch (e) {
@@ -170,20 +182,29 @@ export const getGroupWebhook = async (
   }
 };
 
-export const getGroupAccessTokens = async (groupToken: string, groupId: number): Promise<GroupAccessToken[]> => {
+export const getGroupAccessTokens = async (
+  baseUrl: string,
+  groupToken: string,
+  groupId: number,
+): Promise<GroupAccessToken[]> => {
   const { data: groupAccessTokenList } = await callGitlab(
     'get group access tokens',
-    `/api/v4/groups/${groupId}/access_tokens`,
+    `${baseUrl}/api/v4/groups/${groupId}/access_tokens`,
     groupToken,
   );
 
   return groupAccessTokenList;
 };
 
-export const getCommitDiff = async (groupToken: string, projectId: number, sha: string): Promise<CommitFileDiff[]> => {
+export const getCommitDiff = async (
+  baseUrl: string,
+  groupToken: string,
+  projectId: number,
+  sha: string,
+): Promise<CommitFileDiff[]> => {
   const { data: diff } = await callGitlab(
     'get commit diff',
-    `/api/v4/projects/${projectId}/repository/commits/${sha}/diff`,
+    `${baseUrl}/api/v4/projects/${projectId}/repository/commits/${sha}/diff`,
     groupToken,
   );
 
@@ -191,6 +212,7 @@ export const getCommitDiff = async (groupToken: string, projectId: number, sha: 
 };
 
 export const getFileContent = async (
+  baseUrl: string,
   groupToken: string,
   projectId: number,
   filePath: string,
@@ -203,7 +225,7 @@ export const getFileContent = async (
   const queryParams = queryParamsGenerator(params);
   const fileRaw = await callGitlab(
     'get file contents',
-    `/api/v4/projects/${projectId}/repository/files/${encodeURIComponent(filePath)}/raw?${queryParams}`,
+    `${baseUrl}/api/v4/projects/${projectId}/repository/files/${encodeURIComponent(filePath)}/raw?${queryParams}`,
     groupToken,
     { contentType: GitLabContentType.RAW },
   );
@@ -217,6 +239,7 @@ export const getFileContent = async (
 };
 
 export const getProjects = async (
+  baseUrl: string,
   groupToken: string,
   groupId: number,
   page: number,
@@ -233,23 +256,31 @@ export const getProjects = async (
   const queryParams = queryParamsGenerator(params);
   const { data, headers } = await callGitlab(
     'get projects',
-    `/api/v4/groups/${groupId}/projects?${queryParams}`,
+    `${baseUrl}/api/v4/groups/${groupId}/projects?${queryParams}`,
     groupToken,
   );
 
   return { data, headers };
 };
 
-export const getProjectById = async (groupToken: string, projectId: number): Promise<GitlabAPIProject> => {
-  const { data: project } = await callGitlab('get project by id', `/api/v4/projects/${projectId}`, groupToken);
+export const getProjectById = async (
+  baseUrl: string,
+  groupToken: string,
+  projectId: number,
+): Promise<GitlabAPIProject> => {
+  const { data: project } = await callGitlab(
+    'get project by id',
+    `${baseUrl}/api/v4/projects/${projectId}`,
+    groupToken,
+  );
 
   return project;
 };
 
-export const getProjectLanguages = async (groupToken: string, projectId: number) => {
+export const getProjectLanguages = async (baseUrl: string, groupToken: string, projectId: number) => {
   const { data: languages } = await callGitlab(
     'get project languages',
-    `/api/v4/projects/${projectId}/languages`,
+    `${baseUrl}/api/v4/projects/${projectId}/languages`,
     groupToken,
   );
 
@@ -257,6 +288,7 @@ export const getProjectLanguages = async (groupToken: string, projectId: number)
 };
 
 export const getProjectVariable = async (
+  baseUrl: string,
   groupToken: string,
   projectId: number,
   variable: string,
@@ -265,20 +297,21 @@ export const getProjectVariable = async (
     data: { value },
   } = await callGitlab(
     `get variable ${variable}. It is normal for the request to 404 if the variable does not exist.`,
-    `/api/v4/projects/${projectId}/variables/${variable}`,
+    `${baseUrl}/api/v4/projects/${projectId}/variables/${variable}`,
     groupToken,
   );
   return value;
 };
 
 export const getProjectBranch = async (
+  baseUrl: string,
   groupToken: string,
   projectId: number,
   branchName: string,
 ): Promise<ProjectBranch> => {
   const { data: branch } = await callGitlab(
     'get project branch',
-    `/api/v4/projects/${projectId}/repository/branches/${branchName}`,
+    `${baseUrl}/api/v4/projects/${projectId}/repository/branches/${branchName}`,
     groupToken,
   );
   return branch;
@@ -286,6 +319,7 @@ export const getProjectBranch = async (
 
 export const getOwnedProjectsBySearchCriteria = async (
   search: string,
+  baseUrl: string,
   groupToken: string,
 ): Promise<GitlabAPIProject[]> => {
   const params = {
@@ -296,7 +330,7 @@ export const getOwnedProjectsBySearchCriteria = async (
   const queryParams = queryParamsGenerator(params);
   const { data } = await callGitlab(
     'get owned projects by search criteria',
-    `/api/v4/projects?${queryParams}`,
+    `${baseUrl}/api/v4/projects?${queryParams}`,
     groupToken,
   );
 
@@ -312,7 +346,7 @@ export const getProjectRecentDeployments: GitlabPaginatedFetch<
     dateBefore?: string; // in iso date time format, e.g. 2019-03-15T08:00:00Z
   }
 > = async (page, perPage, fetchParameters) => {
-  const { groupToken, projectId, dateAfter, dateBefore, environmentName } = fetchParameters;
+  const { baseUrl, groupToken, projectId, dateAfter, dateBefore, environmentName } = fetchParameters;
   const params = {
     updated_after: dateAfter,
     order_by: 'updated_at',
@@ -323,9 +357,9 @@ export const getProjectRecentDeployments: GitlabPaginatedFetch<
   };
 
   const queryParams = queryParamsGenerator(params);
-  const path = `/api/v4/projects/${projectId}/deployments?${queryParams}`;
+  const url = `${baseUrl}/api/v4/projects/${projectId}/deployments?${queryParams}`;
 
-  const { data, headers } = await callGitlab("get project's recent deployments", path, groupToken);
+  const { data, headers } = await callGitlab("get project's recent deployments", url, groupToken);
 
   return { data, headers };
 };
@@ -333,6 +367,7 @@ export const getProjectRecentDeployments: GitlabPaginatedFetch<
 export const getMergeRequests: GitlabPaginatedFetch<
   MergeRequest,
   {
+    baseUrl: string;
     groupToken: string;
     projectId: number;
     state: MergeRequestState;
@@ -344,7 +379,7 @@ export const getMergeRequests: GitlabPaginatedFetch<
     sourceBranch?: string;
   }
 > = async (page, perPage, fetchParameters) => {
-  const { state, scope, targetBranch, orderBy, wip, isSimpleView, projectId, groupToken, sourceBranch } =
+  const { state, scope, targetBranch, orderBy, wip, isSimpleView, projectId, baseUrl, groupToken, sourceBranch } =
     fetchParameters;
 
   const params = {
@@ -360,27 +395,36 @@ export const getMergeRequests: GitlabPaginatedFetch<
   };
 
   const queryParams = queryParamsGenerator(params);
-  const path = `/api/v4/projects/${projectId}/merge_requests?${queryParams}`;
+  const url = `${baseUrl}/api/v4/projects/${projectId}/merge_requests?${queryParams}`;
 
-  const { data, headers } = await callGitlab('get merge requests', path, groupToken);
+  const { data, headers } = await callGitlab('get merge requests', url, groupToken);
 
   return { data, headers };
 };
 
-export const getProjectDeploymentById = async (projectId: number, deploymentId: number, groupToken: string) => {
+export const getProjectDeploymentById = async (
+  projectId: number,
+  deploymentId: number,
+  baseUrl: string,
+  groupToken: string,
+) => {
   const { data } = await callGitlab(
     'get project deployment by id',
-    `/api/v4/projects/${projectId}/deployments/${deploymentId}`,
+    `${baseUrl}/api/v4/projects/${projectId}/deployments/${deploymentId}`,
     groupToken,
   );
 
   return data;
 };
 
-export const getEnvironments = async (projectId: number, groupToken: string): Promise<Environment[]> => {
+export const getEnvironments = async (
+  projectId: number,
+  baseUrl: string,
+  groupToken: string,
+): Promise<Environment[]> => {
   const { data } = await callGitlab(
     "get project's environments",
-    `/api/v4/projects/${projectId}/environments`,
+    `${baseUrl}/api/v4/projects/${projectId}/environments`,
     groupToken,
   );
 
@@ -396,7 +440,7 @@ export const getProjectRecentPipelines: GitlabPaginatedFetch<
     status?: GitlabPipelineStates;
   }
 > = async (page, perPage, fetchParameters) => {
-  const { groupToken, projectId, dateAfter, branchName, status } = fetchParameters;
+  const { baseUrl, groupToken, projectId, dateAfter, branchName, status } = fetchParameters;
   const params = {
     ref: branchName,
     page: page.toString(),
@@ -406,13 +450,14 @@ export const getProjectRecentPipelines: GitlabPaginatedFetch<
   };
 
   const queryParams = queryParamsGenerator(params);
-  const path = `/api/v4/projects/${projectId}/pipelines?${queryParams}`;
+  const url = `${baseUrl}/api/v4/projects/${projectId}/pipelines?${queryParams}`;
 
-  const { data, headers } = await callGitlab("get project's recent pipelines", path, groupToken);
+  const { data, headers } = await callGitlab("get project's recent pipelines", url, groupToken);
   return { data, headers };
 };
 
 export const createFileInProject = async (
+  baseUrl: string,
   groupToken: string,
   projectId: number,
   filePath: string,
@@ -422,11 +467,9 @@ export const createFileInProject = async (
   content: string,
   commitMessage: string,
 ) => {
-  const path = `/api/v4/projects/${projectId}/repository/files/${filePath}`;
-
   const { data } = await callGitlab(
     'create file in project',
-    path,
+    `${baseUrl}/api/v4/projects/${projectId}/repository/files/${filePath}`,
     groupToken,
     { method: HttpMethod.POST },
     JSON.stringify({
@@ -442,6 +485,7 @@ export const createFileInProject = async (
 };
 
 export const createMergeRequest = async (
+  baseUrl: string,
   groupToken: string,
   projectId: number,
   sourceBranch: string,
@@ -450,11 +494,9 @@ export const createMergeRequest = async (
   description: string,
   removeSourceBranch: boolean,
 ) => {
-  const path = `/api/v4/projects/${projectId}/merge_requests`;
-
   const { data } = await callGitlab(
     'create merge request',
-    path,
+    `${baseUrl}/api/v4/projects/${projectId}/merge_requests`,
     groupToken,
     { method: HttpMethod.POST },
     JSON.stringify({

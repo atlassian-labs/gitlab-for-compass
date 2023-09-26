@@ -27,6 +27,7 @@ export const dataProvider = async (
 
   const {
     project: { id: projectId, default_branch: defaultBranch, name: projectName },
+    baseUrl,
     groupToken,
   } = await getProjectDataFromUrl(request.url);
 
@@ -35,7 +36,7 @@ export const dataProvider = async (
     return null;
   }
 
-  const trackingBranch = await getTrackingBranchName(groupToken, projectId, defaultBranch);
+  const trackingBranch = await getTrackingBranchName(baseUrl, groupToken, projectId, defaultBranch);
 
   const backfillData: BackfillData = {
     builds: [],
@@ -51,7 +52,7 @@ export const dataProvider = async (
       builds,
       deployments,
       metrics: { mrCycleTime, openMergeRequestsCount },
-    } = await getBackfillData(groupToken, projectId, projectName, trackingBranch);
+    } = await getBackfillData(baseUrl, groupToken, projectId, projectName, trackingBranch);
 
     backfillData.builds = builds;
     backfillData.deployments = deployments;

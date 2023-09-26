@@ -69,7 +69,8 @@ const MOCK_EVENTS_RESPONSE: {
     openMergeRequestsCount: 3,
   },
 };
-const MOCK_PROJECT_URL = 'https://gitlab.com/test/repo-name?testParam=test';
+const MOCK_BASE_URL = 'https://gitlab.com/test/repo-name?testParam=test';
+const MOCK_PROJECT_URL = `${MOCK_BASE_URL}/test/repo-name?testParam=test`;
 const MOCK_PROJECT: GitlabAPIProject = {
   id: 1,
   description: 'description',
@@ -91,6 +92,7 @@ describe('dataProvider module', () => {
     getEventsSpy.mockResolvedValue(MOCK_EVENTS_RESPONSE);
     projectDataSpy.mockResolvedValue({
       project: MOCK_PROJECT,
+      baseUrl: MOCK_BASE_URL,
       groupToken: 'mock-group-token',
     });
 
@@ -116,6 +118,7 @@ describe('dataProvider module', () => {
 
     getEventsSpy.mockRejectedValue(new GitlabHttpMethodError(InvocationStatusCode.INTERNAL_SERVER_ERROR, error));
     projectDataSpy.mockResolvedValue({
+      baseUrl: MOCK_BASE_URL,
       project: MOCK_PROJECT,
       groupToken: 'mock-group-token',
     });

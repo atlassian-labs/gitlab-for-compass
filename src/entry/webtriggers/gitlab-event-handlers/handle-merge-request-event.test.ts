@@ -9,7 +9,7 @@ import { BuiltinMetricDefinitions } from '@atlassian/forge-graphql';
 import { insertMetricValues } from '../../../services/insert-metric-values';
 import { getLastMergedMergeRequests, getOpenMergeRequests } from '../../../services/mergeRequest';
 import { getTrackingBranchName } from '../../../services/get-tracking-branch';
-import { mergeRequests, MOCK_CLOUD_ID, TEST_TOKEN } from '../../../__tests__/fixtures/gitlab-data';
+import { BASE_URL, mergeRequests, MOCK_CLOUD_ID, TEST_TOKEN } from '../../../__tests__/fixtures/gitlab-data';
 import { handleMergeRequestEvent } from './handle-merge-request-event';
 import {
   generateMergeRequestEvent,
@@ -41,7 +41,7 @@ describe('Gitlab merge request', () => {
     mockedGetLastMergedMergeRequests.mockResolvedValue(mergeRequests);
     mockedGetOpenMergeRequests.mockResolvedValue(mergeRequests);
 
-    await handleMergeRequestEvent(MOCK_MERGE_REQUEST_EVENT, TEST_TOKEN, MOCK_CLOUD_ID);
+    await handleMergeRequestEvent(MOCK_MERGE_REQUEST_EVENT, BASE_URL, TEST_TOKEN, MOCK_CLOUD_ID);
 
     expect(mockedInsertMetricValues).toHaveBeenCalledWith(MOCK_METRIC_INPUT, MOCK_CLOUD_ID);
   });

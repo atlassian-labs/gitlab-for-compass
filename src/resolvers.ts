@@ -67,11 +67,11 @@ resolver.define('groups/connectedInfo', async (): Promise<ResolverResponse<Gitla
 
 resolver.define('groups/connect', async (req): Promise<ResolverResponse> => {
   const {
-    payload: { groupToken, groupTokenName },
+    payload: { baseUrl, groupToken, groupTokenName },
     context: { cloudId },
   } = req;
   try {
-    const groupId = await connectGroup(groupToken, groupTokenName);
+    const groupId = await connectGroup(baseUrl, groupToken, groupTokenName);
 
     await setupAndValidateWebhook(groupId);
 

@@ -7,13 +7,18 @@ export const isEventForTrackingBranch = (event: PipelineEvent, trackingBranch: s
   return event.object_attributes.ref === trackingBranch;
 };
 
-export const handlePipelineEvent = async (event: PipelineEvent, groupToken: string, cloudId: string): Promise<void> => {
+export const handlePipelineEvent = async (
+  event: PipelineEvent,
+  baseUrl: string,
+  groupToken: string,
+  cloudId: string,
+): Promise<void> => {
   const {
     project: { id: projectId, default_branch: defaultBranch },
     object_attributes: { ref },
   } = event;
 
-  const trackingBranch = await getTrackingBranchName(groupToken, projectId, defaultBranch);
+  const trackingBranch = await getTrackingBranchName(baseUrl, groupToken, projectId, defaultBranch);
 
   if (!isEventForTrackingBranch(event, trackingBranch)) {
     console.log({

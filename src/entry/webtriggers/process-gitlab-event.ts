@@ -37,6 +37,7 @@ export const processGitlabEvent = async (event: WebtriggerRequest, context: Cont
   const { installContext } = context;
   const cloudId = parse(installContext).resourceId;
   const groupId = event.queryParameters.groupId[0];
+  const baseUrl = await storage.get(`${STORAGE_KEYS.BASE_URL}`);
   const groupToken = await storage.getSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`);
   const eventPayload = event.body;
   let parsedEvent: GitlabEvent;
@@ -58,19 +59,19 @@ export const processGitlabEvent = async (event: WebtriggerRequest, context: Cont
   }
 
   if (parsedEvent.object_kind === 'push') {
-    await handlePushEvent(parsedEvent as PushEvent, groupToken, cloudId);
+    await handlePushEvent(parsedEvent as PushEvent, baseUrl, groupToken, cloudId);
   }
 
   if (parsedEvent.object_kind === 'merge_request') {
-    await handleMergeRequestEvent(parsedEvent as MergeRequestEvent, groupToken, cloudId);
+    await handleMergeRequestEvent(parsedEvent as MergeRequestEvent, baseUrl, groupToken, cloudId);
   }
 
   if (parsedEvent.object_kind === 'pipeline') {
-    await handlePipelineEvent(parsedEvent as PipelineEvent, groupToken, cloudId);
+    await handlePipelineEvent(parsedEvent as PipelineEvent, baseUrl, groupToken, cloudId);
   }
 
   if (parsedEvent.object_kind === 'deployment') {
-    await handleDeploymentEvent(parsedEvent as DeploymentEvent, groupToken, cloudId);
+    await handleDeploymentEvent(parsedEvent as DeploymentEvent, baseUrl, groupToken, cloudId);
   }
 
   return serverResponse('Processed webhook event');
