@@ -55,3 +55,7 @@ export class GitlabHttpMethodError extends Error {
     this.statusText = statusText;
   }
 }
+
+export class ValidateWebhookSignatureError extends Error {}
+
+export class ParseWebhookEventPayloadError extends Error {}
