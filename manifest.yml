@@ -81,6 +81,10 @@ permissions:
     - read:metric:compass
   external:
     fetch:
+      client:
+        - '*.gitlab.com'
+        - 'gitlab.com'
+        - '*.atlassian.com'
       backend:
         - '*.services.atlassian.com'
         - 'https://gitlab.com'
