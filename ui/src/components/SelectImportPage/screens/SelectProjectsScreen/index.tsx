@@ -74,7 +74,7 @@ export const SelectProjectsScreen = ({
       </OverrideDescription>
       <>
         <TableHeaderWrapper>
-          <GroupSelectorWrapper>
+          <GroupSelectorWrapper data-testid='group-selector'>
             <Select
               isClearable
               isLoading={isGroupsLoading}
