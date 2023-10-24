@@ -60,7 +60,10 @@ export const SelectProjectsScreen = ({
   locationGroupId,
   importableComponentTypes,
 }: Props) => {
-  const groupSelectorOptions = useMemo(() => buildGroupsSelectorOptions(groups, locationGroupId), [groups]);
+  const groupSelectorOptions = useMemo(
+    () => buildGroupsSelectorOptions(groups, locationGroupId),
+    [groups, locationGroupId],
+  );
 
   return (
     <Wrapper data-testid='gitlab-select-projects-screen'>
