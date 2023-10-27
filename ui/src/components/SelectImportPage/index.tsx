@@ -166,13 +166,33 @@ export const SelectImportPage = () => {
     setIsProjectsLoading(true);
   };
 
-  const handleChangeGroup = (item: SelectorItem | null) => {
-    resetInitialProjectsData();
+  const handleClearSelectedGroup = () => {
+    const isSelectionClearedOnEmptyState = groupId === locationGroupId;
 
+    if (isSelectionClearedOnEmptyState) {
+      return;
+    }
+
+    resetInitialProjectsData();
+    setGroupId(locationGroupId);
+  };
+
+  const handleSelectGroup = (item: SelectorItem) => {
+    const isSameGroupSelected = item.value === groupId;
+
+    if (isSameGroupSelected) {
+      return;
+    }
+
+    resetInitialProjectsData();
+    setGroupId(item.value);
+  };
+
+  const handleChangeGroup = (item: SelectorItem | null) => {
     if (item) {
-      setGroupId(item.value);
+      handleSelectGroup(item);
     } else {
-      setGroupId(locationGroupId);
+      handleClearSelectedGroup();
     }
   };
 
