@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { router } from '@forge/bridge';
 
@@ -14,6 +14,7 @@ import { useAppContext } from '../../hooks/useAppContext';
 import { useComponentTypes } from '../../hooks/useComponentTypes';
 import { getComponentTypeOption } from '../utils';
 import { getAvailableImportComponentTypes } from './utils';
+import { useProjects } from '../../hooks/useProjects';
 
 export enum Screens {
   CONFIRMATION = 'CONFIRMATION',
@@ -47,6 +48,8 @@ export const SelectImportPage = () => {
   const [groups, setGroups] = useState<GitlabAPIGroup[]>([]);
   const [search, setSearch] = useState<string>();
 
+  const selectedProjects = useProjects(projects);
+
   const fetchGroups = async () => {
     setIsGroupsLoading(true);
 
@@ -74,13 +77,15 @@ export const SelectImportPage = () => {
     getGroupProjects(groupId, page, locationGroupId, search)
       .then(({ data, success, errors }) => {
         if (success && data && data.projects.length) {
-          const projectsForTable = data.projects.map((project) => ({
-            ...project,
-            isSelected: false,
-            shouldOpenMR: false,
-            typeOption: getComponentTypeOption(project?.typeId),
-          }));
-
+          const projectsForTable = data.projects.map((project) => {
+            const selectedProject = selectedProjects.find((selectedRepo) => selectedRepo.id === project.id);
+            return {
+              ...project,
+              isSelected: Boolean(selectedProject),
+              shouldOpenMR: false,
+              typeOption: selectedProject?.typeOption ?? getComponentTypeOption(project?.typeId),
+            };
+          });
           setTotalProjects(data.total);
           setProjects((prevState) => [...prevState, ...projectsForTable]);
         }
@@ -202,8 +207,6 @@ export const SelectImportPage = () => {
     setSearch(value);
   };
 
-  const selectedProjects = useMemo(() => projects.filter(({ isSelected }) => isSelected), [projects]);
-
   const handleNavigateToConnectedPage = () => {
     router.navigate('/compass/components');
   };
@@ -223,7 +226,7 @@ export const SelectImportPage = () => {
   const handleImportProjects = () => {
     setIsProjectsImporting(true);
 
-    const projectsReadyToImport = projects.reduce<ImportableProject[]>((acc, curr) => {
+    const projectsReadyToImport = selectedProjects.reduce<ImportableProject[]>((acc, curr) => {
       if (curr.isSelected) {
         acc.push({
           ...curr,
