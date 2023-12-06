@@ -18,7 +18,7 @@
     "@atlaskit/spinner": "^15.1.9",
     "@atlaskit/textfield": "^5.1.10",
     "@atlaskit/theme": "^12.1.6",
-    "@atlaskit/tokens": "^1.14.0",
+    "@atlaskit/tokens": "^1.29.1",
     "@atlaskit/tooltip": "^17.5.9",
     "@atlassian/forge-graphql": "13.3.10",
     "@forge/api": "^2.8.1",
