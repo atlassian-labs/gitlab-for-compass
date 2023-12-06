@@ -48,7 +48,9 @@ export const SelectImportPage = () => {
   const [groups, setGroups] = useState<GitlabAPIGroup[]>([]);
   const [search, setSearch] = useState<string>();
 
-  const selectedProjects = useProjects(projects);
+  const { changedProjects, setChangedProjects } = useProjects(projects);
+
+  const selectedProjects = changedProjects.filter((item) => item.isSelected);
 
   const fetchGroups = async () => {
     setIsGroupsLoading(true);
@@ -78,11 +80,10 @@ export const SelectImportPage = () => {
       .then(({ data, success, errors }) => {
         if (success && data && data.projects.length) {
           const projectsForTable = data.projects.map((project) => {
-            const selectedProject = selectedProjects.find((selectedRepo) => selectedRepo.id === project.id);
+            const selectedProject = changedProjects.find((selectedRepo) => selectedRepo.id === project.id);
             return {
               ...project,
-              isSelected: Boolean(selectedProject),
-              shouldOpenMR: false,
+              isSelected: Boolean(selectedProject?.isSelected),
               typeOption: selectedProject?.typeOption ?? getComponentTypeOption(project?.typeId),
             };
           });
@@ -155,13 +156,11 @@ export const SelectImportPage = () => {
 
   const onChangeComponentType = (id: number, componentTypeOption: CompassComponentTypeOption) => {
     setProjects((prevProjects) =>
-      prevProjects.map((project) => {
-        if (id === project.id) {
-          return { ...project, typeOption: componentTypeOption };
-        }
+      prevProjects.map((project) => (id === project.id ? { ...project, typeOption: componentTypeOption } : project)),
+    );
 
-        return project;
-      }),
+    setChangedProjects((prevState) =>
+      prevState.map((project) => (id === project.id ? { ...project, typeOption: componentTypeOption } : project)),
     );
   };
 
