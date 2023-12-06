@@ -62,6 +62,8 @@ modules:
         method: import
 app:
   id: ari:cloud:ecosystem::app/fe7b0913-7421-4c84-b401-041eaab2ef2e
+  features:
+    autoUserConsent: true
 resources:
   - key: main
     path: ui/build
@@ -81,6 +83,10 @@ permissions:
     - read:metric:compass
   external:
     fetch:
+      client:
+        - '*.gitlab.com'
+        - 'gitlab.com'
+        - '*.atlassian.com'
       backend:
         - '*.services.atlassian.com'
         - 'https://gitlab.com'

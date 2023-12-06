@@ -87,6 +87,17 @@ describe('processGitlabEvent', () => {
     expect(serverResponse).toHaveBeenCalledWith('Invalid event format', 400);
   });
 
+  it('returns server response error in case of unexpected error', async () => {
+    const webtriggerRequest = generateWebtriggerRequest('<p>Invalid body</p>');
+
+    storage.getSecret.mockRejectedValue(new Error());
+
+    await processGitlabEvent(webtriggerRequest, MOCK_CONTEXT);
+
+    expect(mockHandlePushEvent).not.toHaveBeenCalled();
+    expect(serverResponse).toHaveBeenCalledWith('The webhook could not be processed', 500);
+  });
+
   it('handles pipeline event when FF is enabled', async () => {
     const webtriggerRequest = generateWebtriggerRequest(JSON.stringify(MOCK_PIPELINE_EVENT));
 

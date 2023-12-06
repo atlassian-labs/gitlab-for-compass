@@ -8,7 +8,7 @@
   "private": true,
   "devDependencies": {
     "@atlaskit/eslint-plugin-design-system": "^8.7.0",
-    "@forge/cli": "^4.3.2",
+    "@forge/cli": "^6.21.0",
     "@types/jest": "^27.4.1",
     "@types/js-yaml": "^4.0.5",
     "@types/lodash": "^4.14.182",
@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@atlaskit/tokens": "^1.14.0",
-    "@atlassian/forge-graphql": "13.3.0",
+    "@atlassian/forge-graphql": "13.3.10",
     "@forge/api": "^2.8.1",
     "@forge/bridge": "^2.6.0",
     "@forge/events": "^0.5.3",

@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { router } from '@forge/bridge';
 
@@ -14,6 +14,7 @@ import { useAppContext } from '../../hooks/useAppContext';
 import { useComponentTypes } from '../../hooks/useComponentTypes';
 import { getComponentTypeOption } from '../utils';
 import { getAvailableImportComponentTypes } from './utils';
+import { useProjects } from '../../hooks/useProjects';
 
 export enum Screens {
   CONFIRMATION = 'CONFIRMATION',
@@ -47,6 +48,10 @@ export const SelectImportPage = () => {
   const [groups, setGroups] = useState<GitlabAPIGroup[]>([]);
   const [search, setSearch] = useState<string>();
 
+  const { changedProjects, setChangedProjects } = useProjects(projects);
+
+  const selectedProjects = changedProjects.filter((item) => item.isSelected);
+
   const fetchGroups = async () => {
     setIsGroupsLoading(true);
 
@@ -74,13 +79,14 @@ export const SelectImportPage = () => {
     getGroupProjects(groupId, page, locationGroupId, search)
       .then(({ data, success, errors }) => {
         if (success && data && data.projects.length) {
-          const projectsForTable = data.projects.map((project) => ({
-            ...project,
-            isSelected: false,
-            shouldOpenMR: false,
-            typeOption: getComponentTypeOption(project?.typeId),
-          }));
-
+          const projectsForTable = data.projects.map((project) => {
+            const selectedProject = changedProjects.find((selectedRepo) => selectedRepo.id === project.id);
+            return {
+              ...project,
+              isSelected: Boolean(selectedProject?.isSelected),
+              typeOption: selectedProject?.typeOption ?? getComponentTypeOption(project?.typeId),
+            };
+          });
           setTotalProjects(data.total);
           setProjects((prevState) => [...prevState, ...projectsForTable]);
         }
@@ -150,13 +156,11 @@ export const SelectImportPage = () => {
 
   const onChangeComponentType = (id: number, componentTypeOption: CompassComponentTypeOption) => {
     setProjects((prevProjects) =>
-      prevProjects.map((project) => {
-        if (id === project.id) {
-          return { ...project, typeOption: componentTypeOption };
-        }
+      prevProjects.map((project) => (id === project.id ? { ...project, typeOption: componentTypeOption } : project)),
+    );
 
-        return project;
-      }),
+    setChangedProjects((prevState) =>
+      prevState.map((project) => (id === project.id ? { ...project, typeOption: componentTypeOption } : project)),
     );
   };
 
@@ -166,13 +170,33 @@ export const SelectImportPage = () => {
     setIsProjectsLoading(true);
   };
 
-  const handleChangeGroup = (item: SelectorItem | null) => {
-    resetInitialProjectsData();
+  const handleClearSelectedGroup = () => {
+    const isSelectionClearedOnEmptyState = groupId === locationGroupId;
 
+    if (isSelectionClearedOnEmptyState) {
+      return;
+    }
+
+    resetInitialProjectsData();
+    setGroupId(locationGroupId);
+  };
+
+  const handleSelectGroup = (item: SelectorItem) => {
+    const isSameGroupSelected = item.value === groupId;
+
+    if (isSameGroupSelected) {
+      return;
+    }
+
+    resetInitialProjectsData();
+    setGroupId(item.value);
+  };
+
+  const handleChangeGroup = (item: SelectorItem | null) => {
     if (item) {
-      setGroupId(item.value);
+      handleSelectGroup(item);
     } else {
-      setGroupId(locationGroupId);
+      handleClearSelectedGroup();
     }
   };
 
@@ -181,8 +205,6 @@ export const SelectImportPage = () => {
 
     setSearch(value);
   };
-
-  const selectedProjects = useMemo(() => projects.filter(({ isSelected }) => isSelected), [projects]);
 
   const handleNavigateToConnectedPage = () => {
     router.navigate('/compass/components');
@@ -203,7 +225,7 @@ export const SelectImportPage = () => {
   const handleImportProjects = () => {
     setIsProjectsImporting(true);
 
-    const projectsReadyToImport = projects.reduce<ImportableProject[]>((acc, curr) => {
+    const projectsReadyToImport = selectedProjects.reduce<ImportableProject[]>((acc, curr) => {
       if (curr.isSelected) {
         acc.push({
           ...curr,
