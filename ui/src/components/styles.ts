@@ -38,7 +38,7 @@ export const TruncateDescription = styled.div<{ maxWidth: number | string }>`
 export const Description = styled.span`
   font-size: 14px;
   line-height: 20px;
-  color: ${token('color.text', N900)}; // TODO check
+  color: ${token('color.text', N900)};
 `;
 
 export const ImportButtonWrapper = styled.div`
