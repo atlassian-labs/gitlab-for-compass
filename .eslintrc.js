@@ -10,7 +10,7 @@ module.exports = {
     'import/external-module-folders': ['node_modules'],
   },
   parser: '@typescript-eslint/parser',
-  plugins: ['prettier', '@typescript-eslint'],
+  plugins: ['prettier', '@typescript-eslint', '@atlaskit/design-system'],
   rules: {
     'max-len': [
       'warn',
@@ -48,5 +48,10 @@ module.exports = {
     ],
     'arrow-body-style': 'off',
     'prefer-arrow-callback': 'off',
+    '@atlaskit/design-system/ensure-design-token-usage': [
+      'error',
+      { domains: ['color'], shouldEnforceFallbacks: true },
+    ],
+    '@atlaskit/design-system/no-deprecated-imports': 'off',
   },
 };

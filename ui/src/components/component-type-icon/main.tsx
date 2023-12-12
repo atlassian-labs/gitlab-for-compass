@@ -1,4 +1,5 @@
 import { N0 } from '@atlaskit/theme/colors';
+import { token } from '@atlaskit/tokens';
 
 import { ComponentIconBackground } from './component-icon-background';
 import { ComponentIconGlyph, ComponentIconGlyphProps } from './component-icon-glyph';
@@ -10,7 +11,12 @@ export const ComponentTypeIcon = (props: ComponentTypeIconProps): JSX.Element =>
 
   return (
     <ComponentIconBackground testId={testId} typeId={typeId} size={size}>
-      <ComponentIconGlyph typeId={typeId} size={size} primaryColor={N0} {...forwardProps} />
+      <ComponentIconGlyph
+        typeId={typeId}
+        size={size}
+        primaryColor={token('color.icon.inverse', N0)}
+        {...forwardProps}
+      />
     </ComponentIconBackground>
   );
 };

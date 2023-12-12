@@ -6,6 +6,7 @@ import ErrorIcon from '@atlaskit/icon/glyph/error';
 import CheckIcon from '@atlaskit/icon/glyph/check';
 
 import SectionMessage from '@atlaskit/section-message';
+import { token } from '@atlaskit/tokens';
 import { buildHead } from './buildHead';
 import { buildRows } from './buildRows';
 import { ErrorInfo, ImportResultCounterWrapper, SuccessInfo } from './styles';
@@ -72,14 +73,14 @@ export const ImportResult: FunctionComponent = () => {
       {failedProjects.length === 0 ? (
         <>
           <ImportResultCounterWrapper>
-            <CheckIcon primaryColor={G500} label='Check icon' />
+            <CheckIcon primaryColor={token('color.icon.success', G500)} label='Check icon' />
             <SuccessInfo>{successInfoText}</SuccessInfo>
           </ImportResultCounterWrapper>
         </>
       ) : (
         <>
           <ImportResultCounterWrapper>
-            <ErrorIcon primaryColor={R400} label='Error icon' />
+            <ErrorIcon primaryColor={token('color.icon.danger', R400)} label='Error icon' />
             <ErrorInfo>{failedProjects.length} components failed to import</ErrorInfo>
           </ImportResultCounterWrapper>
           <TableWrapper>

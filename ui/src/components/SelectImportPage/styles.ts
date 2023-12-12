@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { gridSize } from '@atlaskit/theme';
 import { h700 } from '@atlaskit/theme/typography';
 import { N800 } from '@atlaskit/theme/colors';
+import { token } from '@atlaskit/tokens';
 import { Description } from '../styles';
 
 export const ButtonWrapper = styled.div`
@@ -21,8 +22,8 @@ export const Wrapper = styled.div`
 `;
 
 export const Header = styled.span`
-  ${h700}
-  color: ${N800};
+  ${h700};
+  color: ${token('color.text', N800)};
   margin: 0;
 `;
 

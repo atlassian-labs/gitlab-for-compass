@@ -5,13 +5,14 @@ import { LoadingButton } from '@atlaskit/button';
 import { N30 } from '@atlaskit/theme/colors';
 import { gridSize } from '@atlaskit/theme';
 
+import { token } from '@atlaskit/tokens';
 import { GitlabAPIGroup } from '../../resolverTypes';
 
 const ConnectedGroupWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: 1px solid ${N30};
+  border: 1px solid ${token('color.border', N30)};
   border-radius: ${gridSize() / 2}px;
   padding: ${gridSize() * 2}px;
 `;
@@ -36,7 +37,7 @@ export const ConnectInfoPanel = ({ connectedGroup, handleDisconnectGroup, isDisc
   return (
     <ConnectedGroupWrapper>
       <IconTitleGroupWrapper>
-        <CheckCircleIcon label='check' primaryColor='green' />
+        <CheckCircleIcon label='check' primaryColor={token('color.icon.success', 'green')} />
         <ConnectedText>
           Your GitLab group <strong>{connectedGroup.name}</strong> is successfully connected to Compass
         </ConnectedText>
