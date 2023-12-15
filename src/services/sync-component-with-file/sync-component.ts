@@ -6,6 +6,7 @@ import { EXTERNAL_SOURCE, IMPORT_LABEL } from '../../constants';
 import { syncComponentWithFile, updateComponent } from '../../client/compass';
 import { getProjectLabels } from '../get-labels';
 import { getProjectById } from '../../client/gitlab';
+import { isUpdateCompassComponentDataManager } from '../../utils/push-event-utils';
 
 const getFileUrl = (filePath: string, event: PushEvent, branchName: string) => {
   return `${event.project.web_url}/blob/${branchName}/${filePath}`;
@@ -38,7 +39,18 @@ export const syncComponent = async (
       ],
       configFileMetadata,
     });
+
     currentComponent = data.component;
+
+    if (
+      currentComponent.dataManager &&
+      isUpdateCompassComponentDataManager(currentComponent.dataManager) &&
+      currentComponent.dataManager?.lastSyncEvent?.lastSyncErrors.length > 0
+    ) {
+      console.log({ message: `Main sync with file failed for component ${currentComponent.id}` });
+      return;
+    }
+
     console.log({ message: `Main sync with file success for component ${currentComponent.id}` });
 
     const { topics } = await getProjectById(token, event.project.id);

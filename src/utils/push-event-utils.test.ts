@@ -1,11 +1,12 @@
 /* eslint-disable import/first */
+import { ComponentSyncEventStatus } from '@atlassian/forge-graphql';
 import { mockForgeApi } from '../__tests__/helpers/forge-helper';
 
 mockForgeApi();
 
 import { DiffsByChangeType } from '../types';
 import { createCommitFileDiff } from '../__tests__/helpers/gitlab-helper';
-import { groupDiffsByChangeType } from './push-event-utils';
+import { groupDiffsByChangeType, isUpdateCompassComponentDataManager } from './push-event-utils';
 
 const validCompassYamlName = '/compass.yaml';
 const invalidCompassYamlName = '/invalidName.yaml';
@@ -55,5 +56,26 @@ describe('groupDiffsByChangeType', () => {
     const result = groupDiffsByChangeType(filesDiffs);
 
     expect(result).toEqual(expectedResult);
+  });
+});
+
+describe('isUpdateCompassComponentDataManager', () => {
+  it('should returns true in case if dataManager has lastSyncEvent', () => {
+    const dataManager = {
+      componentId: 'id',
+      lastSyncEvent: { lastSyncErrors: ['error'], status: ComponentSyncEventStatus.UserError },
+    };
+
+    const result = isUpdateCompassComponentDataManager(dataManager);
+
+    expect(result).toBe(true);
+  });
+
+  it('should returns false in case if dataManager has no lastSyncEvent', () => {
+    const dataManager = { externalSourceURL: 'https://google.com' };
+
+    const result = isUpdateCompassComponentDataManager(dataManager);
+
+    expect(result).toBe(false);
   });
 });
