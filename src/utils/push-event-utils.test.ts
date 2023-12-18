@@ -6,7 +6,7 @@ mockForgeApi();
 
 import { DiffsByChangeType } from '../types';
 import { createCommitFileDiff } from '../__tests__/helpers/gitlab-helper';
-import { groupDiffsByChangeType, isUpdateCompassComponentDataManager } from './push-event-utils';
+import { groupDiffsByChangeType, hasLastSyncEvent } from './push-event-utils';
 
 const validCompassYamlName = '/compass.yaml';
 const invalidCompassYamlName = '/invalidName.yaml';
@@ -60,21 +60,21 @@ describe('groupDiffsByChangeType', () => {
 });
 
 describe('isUpdateCompassComponentDataManager', () => {
-  it('should returns true in case if dataManager has lastSyncEvent', () => {
+  it('should return true in case if dataManager has lastSyncEvent', () => {
     const dataManager = {
       componentId: 'id',
       lastSyncEvent: { lastSyncErrors: ['error'], status: ComponentSyncEventStatus.UserError },
     };
 
-    const result = isUpdateCompassComponentDataManager(dataManager);
+    const result = hasLastSyncEvent(dataManager);
 
     expect(result).toBe(true);
   });
 
-  it('should returns false in case if dataManager has no lastSyncEvent', () => {
+  it('should return false in case if dataManager has no lastSyncEvent', () => {
     const dataManager = { externalSourceURL: 'https://google.com' };
 
-    const result = isUpdateCompassComponentDataManager(dataManager);
+    const result = hasLastSyncEvent(dataManager);
 
     expect(result).toBe(false);
   });

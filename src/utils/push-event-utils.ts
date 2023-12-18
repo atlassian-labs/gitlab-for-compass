@@ -45,7 +45,7 @@ export const isEventForTrackingBranch = (event: PushEvent, trackingBranch: strin
   return event.ref === trackingBranchRef;
 };
 
-export const isUpdateCompassComponentDataManager = (
+export const hasLastSyncEvent = (
   dataManager: DataManagerInput | UpdateCompassComponentDataManagerMetadataInput,
 ): dataManager is UpdateCompassComponentDataManagerMetadataInput =>
   (dataManager as UpdateCompassComponentDataManagerMetadataInput).lastSyncEvent !== undefined;
