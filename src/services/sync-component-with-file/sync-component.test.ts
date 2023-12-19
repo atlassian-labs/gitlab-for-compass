@@ -9,6 +9,7 @@ import {
   CompassLinkType,
   ConfigFileActions,
   ConfigFileMetadata,
+  ComponentSyncEventStatus,
 } from '@atlassian/forge-graphql';
 import { mocked } from 'jest-mock';
 import yaml from 'js-yaml';
@@ -150,7 +151,7 @@ describe('syncComponent', () => {
   it('should catch error when update component fails', async () => {
     const event = generatePushEvent();
     const compassYaml = getMockedCompassYaml();
-    const component = getMockedComponent();
+    const component = getMockedComponent({ dataManager: {} });
     const error = new Error('test');
     mockSyncComponentWithFile.mockResolvedValue({
       success: true,
@@ -164,5 +165,26 @@ describe('syncComponent', () => {
     await syncComponent(...syncPayload);
 
     expect(reportSyncError).toBeCalledWith(error, component.id, expect.anything());
+  });
+
+  it('should not update component when dataManager has sync error', async () => {
+    const event = generatePushEvent();
+    const compassYaml = getMockedCompassYaml();
+    const component = getMockedComponent({
+      dataManager: {
+        componentId: 'id',
+        lastSyncEvent: { lastSyncErrors: ['error'], status: ComponentSyncEventStatus.UserError },
+      },
+    });
+    mockSyncComponentWithFile.mockResolvedValue({
+      success: true,
+      data: { component },
+      errors: [],
+    });
+
+    const syncPayload = getMockedSyncPayload(compassYaml, event);
+    await syncComponent(...syncPayload);
+
+    expect(mockUpdateComponent).not.toBeCalled();
   });
 });

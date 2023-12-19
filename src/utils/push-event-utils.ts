@@ -1,3 +1,4 @@
+import { DataManagerInput, UpdateCompassComponentDataManagerMetadataInput } from '@atlassian/forge-graphql';
 import { CommitFileDiff, DiffsByChangeType, PushEvent } from '../types';
 
 const CONFIG_AS_CODE_FILE_REGEX = /(\/compass\.yml$)|^compass\.yml$|(\/compass\.yaml$)|^compass\.yaml$/;
@@ -43,3 +44,8 @@ export const isEventForTrackingBranch = (event: PushEvent, trackingBranch: strin
 
   return event.ref === trackingBranchRef;
 };
+
+export const hasLastSyncEvent = (
+  dataManager: DataManagerInput | UpdateCompassComponentDataManagerMetadataInput,
+): dataManager is UpdateCompassComponentDataManagerMetadataInput =>
+  (dataManager as UpdateCompassComponentDataManagerMetadataInput).lastSyncEvent !== undefined;
