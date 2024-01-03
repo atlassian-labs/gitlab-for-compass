@@ -8,7 +8,7 @@ mockForgeApi();
 import { STORAGE_KEYS, STORAGE_SECRETS } from '../constants';
 import { getGroupAccessTokens, getGroupsData } from '../client/gitlab';
 import { connectGroup, getConnectedGroups, InvalidGroupTokenError } from './group';
-import { AuthErrorTypes, GitlabAPIGroup } from '../resolverTypes';
+import { AuthErrorTypes, GitlabAPIGroup } from '../resolvers/resolverTypes';
 import { GroupAccessToken } from '../types';
 
 jest.mock('../client/gitlab');

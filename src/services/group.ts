@@ -3,7 +3,7 @@ import { Result, startsWith, storage } from '@forge/api';
 import { GitLabAccessLevels, GitlabAPIGroup, GroupAccessToken } from '../types';
 import { getGroupAccessTokens, getGroupsData } from '../client/gitlab';
 import { REQUIRED_SCOPES, STORAGE_KEYS, STORAGE_SECRETS } from '../constants';
-import { AuthErrorTypes } from '../resolverTypes';
+import { AuthErrorTypes } from '../resolvers/resolverTypes';
 import { deleteGroupDataFromStorage } from './clear-storage';
 
 export class InvalidGroupTokenError extends Error {

@@ -6,7 +6,7 @@ import { chunk } from 'lodash';
 
 import { CLEAR_STORAGE_CHUNK_SIZE, CLEAR_STORAGE_DELAY, STORAGE_KEYS } from '../constants';
 import { Queues, ImportableProject, ProjectImportResult, ImportStatus } from '../types';
-import { ImportErrorTypes } from '../resolverTypes';
+import { ImportErrorTypes } from '../resolvers/resolverTypes';
 import { setLastSyncTime } from './last-sync-time';
 import { deleteKeysFromStorageByChunks } from '../utils/storage-utils';
 
