@@ -82,7 +82,7 @@ Use `yarn ui:test` for UI tests and `yarn test` for all other tests.
 
 ## Contributions
 
-Contributions to the Compass GitLab Integration are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details. 
+Contributions to the Compass GitLab Integration are welcome. Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details. 
 
 ## License
 
