@@ -16,7 +16,7 @@ import {
 } from './import-projects';
 import { setLastSyncTime } from './last-sync-time';
 import { mocked } from 'jest-mock';
-import { ImportErrorTypes } from '../resolvers/resolverTypes';
+import { ImportErrorTypes } from '../resolverTypes';
 
 const storageGetSuccess = jest.fn().mockReturnValue(['jobId1', 'jobId2']);
 const storageGetEmptyArray = jest.fn().mockReturnValue([]);

@@ -1,7 +1,8 @@
-import { AuthErrorTypes, DefaultErrorTypes, FeaturesList, GitlabAPIGroup, ResolverResponse } from './resolverTypes';
+import { AuthErrorTypes, DefaultErrorTypes, FeaturesList, GitlabAPIGroup, ResolverResponse } from '../resolverTypes';
 import { listFeatures } from '../services/feature-flags';
 import { getAllExistingGroups, getConnectedGroups } from '../services/group';
 import { setupAndValidateWebhook } from '../services/webhooks';
+import { getForgeAppId } from '../utils/get-forge-app-id';
 
 export const getFeatures = (): ResolverResponse<FeaturesList> => {
   try {
@@ -44,6 +45,21 @@ export const connectedGroupsInfo = async (): Promise<ResolverResponse<GitlabAPIG
     return {
       success: false,
       errors: [{ message: 'Get connected groups failed.', errorType: AuthErrorTypes.UNEXPECTED_ERROR }],
+    };
+  }
+};
+
+export const appId = (): ResolverResponse<string> => {
+  try {
+    const forgeAppId = getForgeAppId();
+    return {
+      success: true,
+      data: forgeAppId,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      errors: [{ message: e.message, errorType: DefaultErrorTypes.UNEXPECTED_ERROR }],
     };
   }
 };

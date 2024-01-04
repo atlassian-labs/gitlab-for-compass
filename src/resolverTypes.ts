@@ -5,8 +5,8 @@ import {
   ProjectReadyForImport,
   ProjectImportResult,
   GroupProjectsResponse,
-} from '../types';
-import { FeaturesList } from '../features';
+} from './types';
+import { FeaturesList } from './features';
 
 export enum DefaultErrorTypes {
   UNEXPECTED_ERROR = 'UNEXPECTED_ERROR',

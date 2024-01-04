@@ -6,7 +6,7 @@ import { backOff, IBackOffOptions } from 'exponential-backoff';
 import { createComponent, updateComponent } from '../client/compass';
 import { STORAGE_KEYS, BACK_OFF, IMPORT_LABEL } from '../constants';
 import { appendLink } from '../utils/append-link';
-import { ImportableProject } from './resolverTypes';
+import { ImportableProject } from '../resolverTypes';
 import { sleep } from '../utils/time-utils';
 import { createMRWithCompassYML } from '../services/create-mr-with-compass-yml';
 

@@ -9,7 +9,8 @@ import {
   ProjectImportResult,
   ImportStatus,
   FeaturesList,
-} from './resolverTypes';
+  DefaultErrorTypes,
+} from '../resolverTypes';
 import {
   clearImportResult,
   getImportResult,
@@ -19,7 +20,8 @@ import {
 } from '../services/import-projects';
 import { GroupProjectsResponse } from '../types';
 import { getAllComponentTypeIds } from '../client/compass';
-import { connectedGroupsInfo, getFeatures, groupsAllExisting } from './shared-resolvers';
+import { appId, connectedGroupsInfo, getFeatures, groupsAllExisting } from './shared-resolvers';
+import { getForgeAppId } from '../utils/get-forge-app-id';
 
 const resolver = new Resolver();
 
@@ -121,6 +123,10 @@ resolver.define('project/import/clear', async (): Promise<ResolverResponse> => {
 
 resolver.define('features', (): ResolverResponse<FeaturesList> => {
   return getFeatures();
+});
+
+resolver.define('appId', (): ResolverResponse<string> => {
+  return appId();
 });
 
 resolver.define('getAllCompassComponentTypes', async (req): Promise<ResolverResponse<CompassComponentTypeObject[]>> => {
