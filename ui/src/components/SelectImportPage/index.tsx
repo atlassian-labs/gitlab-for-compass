@@ -79,7 +79,7 @@ export const SelectImportPage = () => {
     getGroupProjects(groupId, page, locationGroupId, search)
       .then(({ data, success, errors }) => {
         if (success && data && data.projects.length) {
-          const projectsForTable = data.projects.map((project) => {
+          const projectsForTable = data.projects.map((project: any) => {
             const selectedProject = changedProjects.find((selectedRepo) => selectedRepo.id === project.id);
             return {
               ...project,

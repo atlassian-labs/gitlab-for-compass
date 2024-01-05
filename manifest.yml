@@ -39,13 +39,13 @@ modules:
       function: process-gitlab-event
   function:
     - key: admin-resolver
-      handler: index.resolver
+      handler: index.adminResolver
     - key: import-resolver
-      handler: index.resolver
+      handler: index.importResolver
     - key: process-gitlab-event
       handler: index.processGitlabEvent
     - key: import-projects
-      handler: import-queue-resolver.run
+      handler: resolvers/import-queue-resolver.run
     - key: pre-uninstall
       handler: index.preUninstall
     - key: data-provider-fn
