@@ -883,7 +883,7 @@
 
 "@forge/api@^2.21.0":
   version "2.22.1"
-  resolved "https://registry.yarnpkg.com/api/npm/npm-remote/@forge/api/-/api-2.22.1.tgz#3ecafc63816669b1b0b7d9d28d8c6a2a7365dfb7"
+  resolved "https://registry.npmjs.com/api/npm/npm-remote/@forge/api/-/api-2.22.1.tgz#3ecafc63816669b1b0b7d9d28d8c6a2a7365dfb7"
   integrity sha512-rX7BRIZs94ojfnI5MF5Zpgbr1zoZ5tY4O2LHREGVhPP0pYsnY17rbjZbdrRhGQdlg3rvJSj98K5vOBCsqT6hfA==
   dependencies:
     "@forge/auth" "0.0.5"
