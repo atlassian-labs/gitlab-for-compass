@@ -11,11 +11,13 @@ import { gridSize } from '@atlaskit/theme';
 import WatchIcon from '@atlaskit/icon/glyph/watch';
 import WatchFilledIcon from '@atlaskit/icon/glyph/watch-filled';
 
+import { getCallBridge } from '@forge/bridge/out/bridge';
 import { ApplicationState } from '../../routes';
 import { ForgeLink } from '../ForgeLink';
 import { connectGroup } from '../../services/invokes';
 import { ErrorMessages } from '../../errorMessages';
 import { AuthErrorTypes, ErrorTypes } from '../../resolverTypes';
+import { useAppContext } from '../../hooks/useAppContext';
 
 const SectionMessageWrapper = styled.div`
   margin-bottom: ${gridSize() * 2}px;
@@ -97,8 +99,18 @@ export const AuthPage = () => {
   const [isLoadingSubmit, setLoadingSubmit] = useState<boolean>(false);
   const [errorType, setErrorType] = useState<ErrorTypes | null>(null);
   const [isTokenVisible, setIsTokenVisible] = useState<boolean>(false);
+  const { appId } = useAppContext();
 
   const navigate = useNavigate();
+
+  const fireAppConfiguredAnalytic = async () => {
+    const action = 'configured';
+    const actionSubject = 'compassApp';
+    await getCallBridge()('fireForgeAnalytic', {
+      forgeAppId: appId,
+      analyticEvent: `${action} ${actionSubject}`,
+    });
+  };
 
   const handleNavigateToConnectedPage = () => {
     navigate(`..${ApplicationState.CONNECTED}`, { replace: true });
@@ -111,6 +123,7 @@ export const AuthPage = () => {
       const { success, errors } = await connectGroup(token.trim(), tokenName);
 
       if (success) {
+        await fireAppConfiguredAnalytic();
         handleNavigateToConnectedPage();
       } else {
         setErrorType((errors && errors[0].errorType) || AuthErrorTypes.UNEXPECTED_ERROR);
