@@ -108,7 +108,7 @@ export const AuthPage = () => {
     const actionSubject = 'compassApp';
     await getCallBridge()('fireForgeAnalytic', {
       forgeAppId: appId,
-      analyticEvent: `${action} ${actionSubject}`,
+      analyticEvent: `${actionSubject} ${action}`,
     });
   };
 
