@@ -4,17 +4,20 @@ import { CompassComponentTypeOption, ComponentTypesResult, ProjectImportSelectio
 import ComponentTypeSelect from '../ComponentTypeSelect';
 import { DEFAULT_COMPONENT_TYPE_ID } from '../../constants';
 import { getComponentTypeOption } from '../utils';
+import { OwnerTeamSelect } from '../OwnerTeamSelect';
 
 export interface SelectedProjectsProps {
   projectsReadyToImport: ProjectImportSelection[];
   onChangeComponentType: (id: number, type: CompassComponentTypeOption) => void;
   importableComponentTypes: ComponentTypesResult;
+  isOwnerTeamEnabled: boolean;
 }
 
 export const buildTableBody = ({
   projectsReadyToImport,
   onChangeComponentType,
   importableComponentTypes,
+  isOwnerTeamEnabled,
 }: SelectedProjectsProps): RowType[] => {
   return projectsReadyToImport.map((project) => {
     return {
@@ -51,6 +54,25 @@ export const buildTableBody = ({
             />
           ),
         },
+        ...(isOwnerTeamEnabled
+          ? [
+              {
+                key: 'team',
+                content: (
+                  <OwnerTeamSelect
+                    isDisabled={false}
+                    selectKey={project.id.toString()}
+                    teams={{ teamsWithMembership: [], otherTeams: [] }}
+                    selectedTeamOption={null}
+                    isLoadingTeams={false}
+                    selectTeam={() => {
+                      // TBD
+                    }}
+                  />
+                ),
+              },
+            ]
+          : []),
       ],
     };
   });

@@ -16,6 +16,7 @@ type Props = {
   handleImportProjects: () => void;
   projectsImportingData: ResolverResponse | null;
   importableComponentTypes: ComponentTypesResult;
+  isOwnerTeamEnabled: boolean;
 };
 
 export const ConfirmationScreen = ({
@@ -28,6 +29,7 @@ export const ConfirmationScreen = ({
   handleImportProjects,
   projectsImportingData,
   importableComponentTypes,
+  isOwnerTeamEnabled,
 }: Props & SelectedProjectsProps) => {
   return (
     <>
@@ -73,6 +75,7 @@ export const ConfirmationScreen = ({
         projectsReadyToImport={projectsReadyToImport}
         onChangeComponentType={onChangeComponentType}
         importableComponentTypes={importableComponentTypes}
+        isOwnerTeamEnabled={isOwnerTeamEnabled}
       />
       {projectsImportingData?.errors && projectsImportingData.errors.length !== 0 && (
         <ErrorWrapper>

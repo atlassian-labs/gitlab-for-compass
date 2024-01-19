@@ -11,9 +11,16 @@ type Params = {
   onSelectAllItems: (filteredProjects: ProjectImportSelection[], isAllItemsSelected: boolean) => void;
   isAllItemsSelected: boolean;
   isLoading: boolean;
+  isOwnerTeamEnabled: boolean;
 };
 
-export const buildTableHead = ({ isLoading, onSelectAllItems, isAllItemsSelected, projects }: Params): HeadType => {
+export const buildTableHead = ({
+  isLoading,
+  onSelectAllItems,
+  isAllItemsSelected,
+  projects,
+  isOwnerTeamEnabled,
+}: Params): HeadType => {
   return {
     cells: [
       {
@@ -31,19 +38,19 @@ export const buildTableHead = ({ isLoading, onSelectAllItems, isAllItemsSelected
       {
         key: 'NAME',
         content: 'Name',
-        width: 20,
+        width: isOwnerTeamEnabled ? 10 : 20,
         isSortable: false,
       },
       {
         key: 'GROUP_NAME',
         content: 'Group name',
-        width: 25,
+        width: isOwnerTeamEnabled ? 15 : 25,
         isSortable: false,
       },
       {
         key: 'DESCRIPTION',
         content: 'Description',
-        width: 25,
+        width: isOwnerTeamEnabled ? 30 : 25,
         isSortable: false,
       },
       {
@@ -67,6 +74,15 @@ export const buildTableHead = ({ isLoading, onSelectAllItems, isAllItemsSelected
         content: 'Component type',
         width: 15,
       },
+      ...(isOwnerTeamEnabled
+        ? [
+            {
+              key: 'OWNER_TEAM',
+              content: 'Owner team',
+              width: 15,
+            },
+          ]
+        : []),
     ],
   };
 };

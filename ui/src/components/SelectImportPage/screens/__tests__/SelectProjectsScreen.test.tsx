@@ -42,6 +42,7 @@ describe('SelectProjectsScreen', () => {
         handleSearchValue={jest.fn()}
         importableComponentTypes={componentTypesResultMock}
         locationGroupId={1}
+        isOwnerTeamEnabled={false}
       />,
     );
 
@@ -70,6 +71,7 @@ describe('SelectProjectsScreen', () => {
         handleSearchValue={jest.fn()}
         importableComponentTypes={componentTypesResultMock}
         locationGroupId={1}
+        isOwnerTeamEnabled={false}
       />,
     );
 
@@ -97,6 +99,7 @@ describe('SelectProjectsScreen', () => {
         handleSearchValue={jest.fn()}
         importableComponentTypes={componentTypesResultMock}
         locationGroupId={1}
+        isOwnerTeamEnabled={false}
       />,
     );
 
@@ -124,6 +127,7 @@ describe('SelectProjectsScreen', () => {
         handleSearchValue={jest.fn()}
         importableComponentTypes={componentTypesErrorResultMock}
         locationGroupId={1}
+        isOwnerTeamEnabled={false}
       />,
     );
 
@@ -172,14 +176,23 @@ describe('SelectProjectsScreen', () => {
     };
 
     const { queryByTestId, rerender, queryByText } = render(
-      <SelectProjectsScreen {...unchangedProps} groups={[]} locationGroupId={0} />,
+      <SelectProjectsScreen {...unchangedProps} groups={[]} locationGroupId={0} isOwnerTeamEnabled={false} />,
     );
 
     // groups fetched and the groupSelectorOptions calculated and memoized
-    rerender(<SelectProjectsScreen {...unchangedProps} groups={groups} locationGroupId={0} />);
+    rerender(
+      <SelectProjectsScreen {...unchangedProps} groups={groups} locationGroupId={0} isOwnerTeamEnabled={false} />,
+    );
 
     // locationGroupId updated and the groupSelectorOptions should be recalculated
-    rerender(<SelectProjectsScreen {...unchangedProps} groups={groups} locationGroupId={parentGroupId} />);
+    rerender(
+      <SelectProjectsScreen
+        {...unchangedProps}
+        groups={groups}
+        locationGroupId={parentGroupId}
+        isOwnerTeamEnabled={false}
+      />,
+    );
 
     const selectContainer = queryByTestId('group-selector');
     expect(selectContainer).not.toBeNull();
@@ -190,5 +203,61 @@ describe('SelectProjectsScreen', () => {
 
     expect(queryByText(subgroupName)).not.toBeNull();
     expect(queryByText(parentGroupName)).toBeNull();
+  });
+
+  it('renders SelectProjectsScreen with Owner team column', async () => {
+    const { queryByText } = render(
+      <SelectProjectsScreen
+        projects={projectImportSelectionMock}
+        isProjectsLoading={false}
+        onSelectAllItems={jest.fn()}
+        onChangeComponentType={jest.fn()}
+        handleNavigateToConnectedPage={jest.fn()}
+        projectsFetchingError=''
+        onSelectItem={jest.fn()}
+        selectedProjects={projectImportSelectionMock}
+        handleNavigateToScreen={jest.fn()}
+        isProjectsImporting
+        totalProjects={1}
+        setPage={jest.fn()}
+        groups={groupMock}
+        isGroupsLoading={false}
+        handleChangeGroup={jest.fn()}
+        handleSearchValue={jest.fn()}
+        importableComponentTypes={componentTypesErrorResultMock}
+        locationGroupId={1}
+        isOwnerTeamEnabled={true}
+      />,
+    );
+
+    expect(await queryByText('Owner team')).toBeTruthy();
+  });
+
+  it('renders SelectProjectsScreen without Owner team column', async () => {
+    const { queryByText } = render(
+      <SelectProjectsScreen
+        projects={projectImportSelectionMock}
+        isProjectsLoading={false}
+        onSelectAllItems={jest.fn()}
+        onChangeComponentType={jest.fn()}
+        handleNavigateToConnectedPage={jest.fn()}
+        projectsFetchingError=''
+        onSelectItem={jest.fn()}
+        selectedProjects={projectImportSelectionMock}
+        handleNavigateToScreen={jest.fn()}
+        isProjectsImporting
+        totalProjects={1}
+        setPage={jest.fn()}
+        groups={groupMock}
+        isGroupsLoading={false}
+        handleChangeGroup={jest.fn()}
+        handleSearchValue={jest.fn()}
+        importableComponentTypes={componentTypesErrorResultMock}
+        locationGroupId={1}
+        isOwnerTeamEnabled={false}
+      />,
+    );
+
+    expect(await queryByText('Owner team')).toBeFalsy();
   });
 });

@@ -277,6 +277,7 @@ export const SelectImportPage = () => {
           handleSearchValue={handleSearchValue}
           locationGroupId={locationGroupId}
           importableComponentTypes={importableComponentTypes}
+          isOwnerTeamEnabled={features.isOwnerTeamEnabled}
         />
       )}
       {screen === Screens.CONFIRMATION && (
@@ -290,6 +291,7 @@ export const SelectImportPage = () => {
           isProjectsImporting={isProjectsImporting}
           projectsImportingData={projectsImportingData}
           importableComponentTypes={importableComponentTypes}
+          isOwnerTeamEnabled={features.isOwnerTeamEnabled}
         />
       )}
     </>
