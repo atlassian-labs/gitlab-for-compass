@@ -1,5 +1,6 @@
 import { invoke } from '@forge/bridge';
 import { CompassComponentTypeObject } from '@atlassian/forge-graphql';
+
 import {
   ImportableProject,
   ImportStatus,
@@ -9,6 +10,7 @@ import {
   FeaturesList,
   GroupProjectsResponse,
 } from '../resolverTypes';
+import { TeamsWithMembershipStatus } from '../types';
 
 export const disconnectGroup = (id: number): Promise<ResolverResponse> => {
   return invoke<ResolverResponse>('groups/disconnect', {
@@ -81,4 +83,12 @@ export const getForgeAppId = (): Promise<ResolverResponse<string>> => {
 
 export const getAllCompassComponentTypes = (): Promise<ResolverResponse<CompassComponentTypeObject[]>> => {
   return invoke<ResolverResponse<CompassComponentTypeObject[]>>('getAllCompassComponentTypes');
+};
+
+export const getFirstPageOfTeamsWithMembershipStatus = (
+  searchTeamValue?: string,
+): Promise<ResolverResponse<{ teams: TeamsWithMembershipStatus }>> => {
+  return invoke<ResolverResponse<{ teams: TeamsWithMembershipStatus }>>('getFirstPageOfTeamsWithMembershipStatus', {
+    searchTeamValue,
+  });
 };

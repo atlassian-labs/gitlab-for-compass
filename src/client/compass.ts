@@ -14,10 +14,13 @@ import graphqlGateway, {
   GetComponentInput,
   UnLinkComponentInput,
 } from '@atlassian/forge-graphql';
-import { ImportableProject, COMPASS_GATEWAY_MESSAGES, Metric } from '../types';
+import { ImportableProject, COMPASS_GATEWAY_MESSAGES, Metric, Team } from '../types';
 import { EXTERNAL_SOURCE, IMPORT_LABEL } from '../constants';
 import { UNKNOWN_EXTERNAL_ALIAS_ERROR_MESSAGE } from '../models/error-messages';
 import { AggClientError, GraphqlGatewayError } from '../models/errors';
+import { getTenantContextQuery } from './get-tenat-context-query';
+import { aggQuery } from './agg';
+import { getTeamsQuery } from './get-teams-query';
 
 const throwIfErrors = function throwIfSdkErrors(method: string, errors: SdkError[]) {
   // Checking if any invalid config errors to report.
@@ -164,4 +167,22 @@ export const getAllComponentTypeIds = async (cloudId: string): Promise<CompassCo
   const { data, errors } = await graphqlGateway.compass.asApp().getAllComponentTypes({ cloudId });
   throwIfErrors('getAllComponentTypeIds', errors);
   return data.componentTypes;
+};
+
+export const getTenantContext = async (cloudId: string) => {
+  const tenantContextQuery = getTenantContextQuery(cloudId);
+  const data = await aggQuery(tenantContextQuery);
+  return data;
+};
+
+export const getTeams = async (
+  orgId: string,
+  cloudId: string,
+  accountId?: string,
+  searchValue?: string,
+): Promise<Team[]> => {
+  const organizationId = `ari:cloud:platform::org/${orgId}`;
+  const teamsQuery = getTeamsQuery(organizationId, cloudId, accountId, searchValue);
+  const data = await aggQuery(teamsQuery);
+  return data.team.teamSearchV2.nodes;
 };

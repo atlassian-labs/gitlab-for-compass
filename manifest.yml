@@ -81,6 +81,7 @@ permissions:
     - write:scorecard:compass
     - write:metric:compass
     - read:metric:compass
+    - view:team:teams
   external:
     fetch:
       client:
