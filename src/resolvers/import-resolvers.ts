@@ -9,7 +9,6 @@ import {
   ProjectImportResult,
   ImportStatus,
   FeaturesList,
-  DefaultErrorTypes,
 } from '../resolverTypes';
 import {
   clearImportResult,
@@ -18,10 +17,11 @@ import {
   ImportFailedError,
   importProjects,
 } from '../services/import-projects';
-import { GroupProjectsResponse } from '../types';
+import { GroupProjectsResponse, TeamsWithMembershipStatus } from '../types';
 import { getAllComponentTypeIds } from '../client/compass';
 import { appId, connectedGroupsInfo, getFeatures, groupsAllExisting } from './shared-resolvers';
-import { getForgeAppId } from '../utils/get-forge-app-id';
+import { listFeatures } from '../services/feature-flags';
+import { getFirstPageOfTeamsWithMembershipStatus } from '../services/get-teams';
 
 const resolver = new Resolver();
 
@@ -141,5 +141,26 @@ resolver.define('getAllCompassComponentTypes', async (req): Promise<ResolverResp
     };
   }
 });
+
+resolver.define(
+  'getFirstPageOfTeamsWithMembershipStatus',
+  async (req): Promise<ResolverResponse<{ teams: TeamsWithMembershipStatus }>> => {
+    const { cloudId, accountId } = req.context;
+    const { searchTeamValue } = req.payload;
+    const { isOwnerTeamEnabled } = listFeatures();
+    if (!isOwnerTeamEnabled) {
+      return { success: true, data: { teams: { teamsWithMembership: [], otherTeams: [] } } };
+    }
+    try {
+      const teams = await getFirstPageOfTeamsWithMembershipStatus(cloudId, accountId, searchTeamValue);
+      return { success: true, data: { teams } };
+    } catch (e) {
+      return {
+        success: false,
+        errors: [{ message: e.message }],
+      };
+    }
+  },
+);
 
 export default resolver.getDefinitions();

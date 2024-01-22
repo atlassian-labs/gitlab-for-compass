@@ -377,13 +377,31 @@ type ComponentTierField = Array<string | null> | undefined;
 
 type ComponentLifecycleField = Array<string | null> | undefined;
 
+export interface AggOperation {
+  query: string;
+  name: string;
+  variables?: any;
+}
+
 type MappedTeam = {
   teamId: string;
   displayName: string;
   imageUrl: string;
 };
 
-type TeamsWithMembershipStatus = { teamsWithMembership: MappedTeam[]; otherTeams: MappedTeam[] };
+type Team = {
+  team: {
+    id: string;
+    displayName: string;
+    smallAvatarImageUrl: string;
+    state: string;
+  };
+};
+
+type TeamsWithMembershipStatus = {
+  teamsWithMembership: MappedTeam[];
+  otherTeams: MappedTeam[];
+};
 
 export type {
   WebtriggerRequest,
@@ -424,6 +442,7 @@ export type {
   ComponentSyncDetails,
   ModifiedFilePayload,
   MappedTeam,
+  Team,
   TeamsWithMembershipStatus,
 };
 
