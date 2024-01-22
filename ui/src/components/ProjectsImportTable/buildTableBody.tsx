@@ -10,12 +10,14 @@ import { TooltipGenerator } from '../TooltipGenerator';
 import { DropdownWrapper } from './styles';
 import ComponentTypeSelect from '../ComponentTypeSelect';
 import { DEFAULT_COMPONENT_TYPE_ID } from '../../constants';
+import { OwnerTeamSelect } from '../OwnerTeamSelect';
 
 type Props = {
   projects: ProjectImportSelection[];
   onSelectItem: (id: number) => void;
   onChangeComponentType: (id: number, type: CompassComponentTypeOption) => void;
   importableComponentTypes: ComponentTypesResult;
+  isOwnerTeamEnabled: boolean;
 };
 
 const mapStatus = (isManaged: boolean, isCompassFilePrOpened: boolean, hasComponent: boolean) => {
@@ -49,6 +51,7 @@ export const buildTableBody = ({
   onSelectItem,
   onChangeComponentType,
   importableComponentTypes,
+  isOwnerTeamEnabled,
 }: Props): RowType[] => {
   return projects.map((project) => {
     const {
@@ -126,6 +129,28 @@ export const buildTableBody = ({
             </DropdownWrapper>
           ),
         },
+        ...(isOwnerTeamEnabled
+          ? [
+              {
+                key: 'team',
+                content: (
+                  <OwnerTeamSelect
+                    selectKey={id.toString()}
+                    selectedTeamOption={null}
+                    isDisabled={isManaged || isCompassFilePrOpened}
+                    teams={{
+                      teamsWithMembership: [],
+                      otherTeams: [],
+                    }}
+                    isLoadingTeams={false}
+                    selectTeam={() => {
+                      // TBD
+                    }}
+                  />
+                ),
+              },
+            ]
+          : []),
       ],
     };
   });

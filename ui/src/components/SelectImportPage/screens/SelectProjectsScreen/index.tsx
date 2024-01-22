@@ -38,6 +38,7 @@ type Props = {
   handleSearchValue: (value: string) => void;
   locationGroupId: number;
   importableComponentTypes: ComponentTypesResult;
+  isOwnerTeamEnabled: boolean;
 };
 
 export const SelectProjectsScreen = ({
@@ -59,6 +60,7 @@ export const SelectProjectsScreen = ({
   handleSearchValue,
   locationGroupId,
   importableComponentTypes,
+  isOwnerTeamEnabled,
 }: Props) => {
   const groupSelectorOptions = useMemo(
     () => buildGroupsSelectorOptions(groups, locationGroupId),
@@ -99,6 +101,7 @@ export const SelectProjectsScreen = ({
           onChangeComponentType={onChangeComponentType}
           error={projectsFetchingError}
           importableComponentTypes={importableComponentTypes}
+          isOwnerTeamEnabled={isOwnerTeamEnabled}
         />
         {projects.length !== 0 ? (
           <CenterWrapper>

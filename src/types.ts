@@ -377,6 +377,14 @@ type ComponentTierField = Array<string | null> | undefined;
 
 type ComponentLifecycleField = Array<string | null> | undefined;
 
+type MappedTeam = {
+  teamId: string;
+  displayName: string;
+  imageUrl: string;
+};
+
+type TeamsWithMembershipStatus = { teamsWithMembership: MappedTeam[]; otherTeams: MappedTeam[] };
+
 export type {
   WebtriggerRequest,
   WebtriggerResponse,
@@ -415,6 +423,8 @@ export type {
   ComponentLifecycleField,
   ComponentSyncDetails,
   ModifiedFilePayload,
+  MappedTeam,
+  TeamsWithMembershipStatus,
 };
 
 export {
