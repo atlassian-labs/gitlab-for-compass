@@ -10,6 +10,8 @@ export const SelectedProjectsTable = ({
   onChangeComponentType,
   importableComponentTypes,
   isOwnerTeamEnabled,
+  teamsResult,
+  selectProjectTeam,
 }: SelectedProjectsProps) => {
   return (
     <TableWrapper>
@@ -20,6 +22,8 @@ export const SelectedProjectsTable = ({
           onChangeComponentType,
           importableComponentTypes,
           isOwnerTeamEnabled,
+          teamsResult,
+          selectProjectTeam,
         })}
       />
     </TableWrapper>

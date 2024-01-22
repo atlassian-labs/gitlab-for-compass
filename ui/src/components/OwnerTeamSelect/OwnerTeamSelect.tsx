@@ -6,6 +6,7 @@ import { OwnerTeamOption } from './OwnerTeamOption';
 import { getOwnerTeamSelectOptions } from './buildSelectOptions';
 import { EmptyStateDescription, EmptyStateWrapper } from './styles';
 import { SelectOwnerTeamOption, InputActionMeta } from './types';
+import { getFirstPageOfTeamsWithMembershipStatus } from '../../services/invokes';
 
 export type Props = {
   selectKey: string;
@@ -32,7 +33,25 @@ export const OwnerTeamSelect: FunctionComponent<Props> = ({
 
   useEffect(() => {
     if (searchTeamsQuery) {
-      // TBD Call teams request after search
+      getFirstPageOfTeamsWithMembershipStatus(searchTeamsQuery)
+        .then((response) => {
+          const { success, data } = response;
+          if (success && data) {
+            setSearchTeamsResult(data.teams);
+          } else {
+            setSearchTeamsResult(undefined);
+          }
+        })
+        .catch(() => {
+          setSearchTeamsResult(undefined);
+        })
+        .finally(() => {
+          const isLatestDebouncedRequest = searchTeamsQuery === actualSearchInput.current;
+
+          if (isLatestDebouncedRequest) {
+            setIsSearchTeamsLoading(false);
+          }
+        });
     }
   }, [searchTeamsQuery]);
 

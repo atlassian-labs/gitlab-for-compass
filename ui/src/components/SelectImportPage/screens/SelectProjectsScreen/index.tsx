@@ -1,7 +1,6 @@
 import { Dispatch, SetStateAction, useMemo } from 'react';
 import Button, { LoadingButton } from '@atlaskit/button';
 import Select from '@atlaskit/select';
-import { useLocation } from 'react-router-dom';
 
 import { Search } from '../../../Search';
 import { ProjectsImportTable } from '../../../ProjectsImportTable';
@@ -18,6 +17,8 @@ import { CompassComponentTypeOption, ComponentTypesResult, ProjectImportSelectio
 import { CenterWrapper } from '../../../styles';
 import { GitlabAPIGroup } from '../../../../types';
 import { buildGroupsSelectorOptions, SelectorItem } from './buildGroupsSelectorOptions';
+import { SelectOwnerTeamOption } from '../../../OwnerTeamSelect/types';
+import { TeamsForImportResult } from '../../../../hooks/useTeamsForImport';
 
 type Props = {
   projects: ProjectImportSelection[];
@@ -39,6 +40,8 @@ type Props = {
   locationGroupId: number;
   importableComponentTypes: ComponentTypesResult;
   isOwnerTeamEnabled: boolean;
+  teamsResult: TeamsForImportResult;
+  selectProjectTeam: (id: number, ownerTeamOption: SelectOwnerTeamOption | null) => void;
 };
 
 export const SelectProjectsScreen = ({
@@ -61,6 +64,8 @@ export const SelectProjectsScreen = ({
   locationGroupId,
   importableComponentTypes,
   isOwnerTeamEnabled,
+  teamsResult,
+  selectProjectTeam,
 }: Props) => {
   const groupSelectorOptions = useMemo(
     () => buildGroupsSelectorOptions(groups, locationGroupId),
@@ -102,6 +107,8 @@ export const SelectProjectsScreen = ({
           error={projectsFetchingError}
           importableComponentTypes={importableComponentTypes}
           isOwnerTeamEnabled={isOwnerTeamEnabled}
+          teamsResult={teamsResult}
+          selectProjectTeam={selectProjectTeam}
         />
         {projects.length !== 0 ? (
           <CenterWrapper>

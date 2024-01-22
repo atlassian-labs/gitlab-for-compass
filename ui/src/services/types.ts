@@ -1,3 +1,4 @@
+import { SelectOwnerTeamOption } from '../components/OwnerTeamSelect/types';
 import { ErrorTypes, ProjectReadyForImport } from '../resolverTypes';
 
 export type CompassComponentTypeOption = {
@@ -8,6 +9,7 @@ export type CompassComponentTypeOption = {
 export type ProjectImportSelection = ProjectReadyForImport & {
   isSelected: boolean;
   typeOption: CompassComponentTypeOption;
+  ownerTeamOption: SelectOwnerTeamOption | null;
 };
 
 export type CompassComponentTypeId = {

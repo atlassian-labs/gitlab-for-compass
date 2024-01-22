@@ -1,6 +1,13 @@
 import yaml from 'js-yaml';
 import { Component } from '@atlassian/forge-graphql';
-import { CompassYaml, ComponentLifecycleField, ComponentTierField, YamlFields, YamlLink } from '../types';
+import {
+  CompassYaml,
+  ComponentLifecycleField,
+  ComponentTierField,
+  ImportableProject,
+  YamlFields,
+  YamlLink,
+} from '../types';
 import { formatCustomFieldsToYamlFormat } from './format-custom-fields-to-yaml';
 import { DEFAULT_CONFIG_VERSION } from '../constants';
 
@@ -28,7 +35,7 @@ function formatLink(link: YamlLink) {
   };
 }
 
-export const generateCompassYamlData = (component: Component): CompassYaml => {
+export const generateCompassYamlData = (component: Component, project: ImportableProject): CompassYaml => {
   const {
     fields,
     name,
@@ -43,13 +50,15 @@ export const generateCompassYamlData = (component: Component): CompassYaml => {
     customFields,
   } = component;
 
+  const { ownerId: selectedOwnerId } = project;
+
   return {
     name,
     id: componentId,
     description,
     configVersion: DEFAULT_CONFIG_VERSION,
     typeId: typeId || type,
-    ownerId,
+    ownerId: ownerId || selectedOwnerId,
     fields: getFields(fields),
     links: links?.map(formatLink) || null,
     relationships: {

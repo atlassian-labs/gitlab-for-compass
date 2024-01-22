@@ -1,10 +1,15 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { select, openMenu } from 'react-select-event';
+import { invoke as realInvoke } from '@forge/bridge';
 import { OwnerTeamSelect, Props as OwnerTeamSelectProps } from './OwnerTeamSelect';
 import { MappedTeam } from '../../types';
 import { otherTeamsGroupLabel, teamsWithMembershipGroupLabel } from '../../constants';
 
-const mockSearchTeams = jest.fn();
+jest.mock('@forge/bridge', () => ({
+  invoke: jest.fn(),
+}));
+
+const invoke: jest.Mock = realInvoke as jest.Mock;
 const mockSelectTeam = jest.fn();
 const selectInputAreaLabel = 'Owner team selector';
 const optionLabelTestId = 'owner-team-option';
@@ -131,7 +136,65 @@ describe('OwnerTeamSelect', () => {
     expect(mockSelectTeam).toHaveBeenCalledWith(expectedOption);
   });
 
+  test('performs search', async () => {
+    const searchGroup1 = getMockedTeams(['member-team-2']);
+    const searchGroup2 = getMockedTeams(['other-team-2']);
+    invoke.mockImplementation(async () => {
+      return {
+        success: true,
+        data: {
+          teams: {
+            teamsWithMembership: searchGroup1,
+            otherTeams: searchGroup2,
+          },
+        },
+      };
+    });
+
+    const group1 = getMockedTeams(['member-team-1, member-team-2, member-team-3']);
+    const group2 = getMockedTeams(['other-team-1, other-team-2, other-team-3']);
+    const { findByLabelText, queryAllByTestId, queryByText } = renderOwnerTeamSelect({
+      teams: {
+        teamsWithMembership: group1,
+        otherTeams: group2,
+      },
+    });
+    const teamSelectInput = await findByLabelText(selectInputAreaLabel);
+
+    openMenu(teamSelectInput);
+
+    const searchInput = '2';
+
+    fireEvent.change(teamSelectInput, { target: { value: searchInput } });
+
+    await waitFor(
+      () => {
+        const options = queryAllByTestId(optionLabelTestId);
+        const option1 = queryByText('member-team-2');
+        const option2 = queryByText('other-team-2');
+
+        expect(options.length).toBe(2);
+        expect(option1).not.toBeNull();
+        expect(option2).not.toBeNull();
+        expect(invoke).toHaveBeenCalledWith('getFirstPageOfTeamsWithMembershipStatus', { searchTeamValue: '2' });
+      },
+      { timeout: 2000 },
+    );
+  });
+
   test('shows loading state on search', async () => {
+    invoke.mockImplementation(async () => {
+      return {
+        success: true,
+        data: {
+          teams: {
+            teamsWithMembership: [],
+            otherTeams: [],
+          },
+        },
+      };
+    });
+
     const group1 = getMockedTeams(['member-team-1, member-team-2, member-team-3']);
     const group2 = getMockedTeams(['other-team-1, other-team-2, other-team-3']);
     const { findByLabelText, queryByText } = renderOwnerTeamSelect({

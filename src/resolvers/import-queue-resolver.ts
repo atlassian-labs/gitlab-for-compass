@@ -54,6 +54,7 @@ resolver.define('import', async (req) => {
     componentLinks,
     componentId,
     shouldOpenMR,
+    ownerId,
   } = project;
 
   try {
@@ -72,6 +73,7 @@ resolver.define('import', async (req) => {
         type,
         labels: [IMPORT_LABEL, ...formattedLabels],
         links: appendLink(url, componentLinks) as CreateLinkInput[],
+        ownerId,
       };
 
       const updatedComponent = await backOff(() => updateComponent({ id: componentId, ...component }), backOffConfig);
