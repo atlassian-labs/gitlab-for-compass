@@ -20,6 +20,27 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
+const teamsResult = {
+  isTeamsDataLoading: false,
+  teams: {
+    teamsWithMembership: [
+      {
+        teamId: 'test',
+        displayName: 'test',
+        imageUrl: 'https://test.com',
+      },
+    ],
+    otherTeams: [
+      {
+        teamId: 'test-1',
+        displayName: 'test-1',
+        imageUrl: 'https://test-1.com',
+      },
+    ],
+  },
+  error: undefined,
+};
+
 describe('SelectProjectsScreen', () => {
   it('should render projects import table with load more button', async () => {
     const { findByTestId } = render(
@@ -43,6 +64,8 @@ describe('SelectProjectsScreen', () => {
         importableComponentTypes={componentTypesResultMock}
         locationGroupId={1}
         isOwnerTeamEnabled={false}
+        teamsResult={teamsResult}
+        selectProjectTeam={jest.fn()}
       />,
     );
 
@@ -72,6 +95,8 @@ describe('SelectProjectsScreen', () => {
         importableComponentTypes={componentTypesResultMock}
         locationGroupId={1}
         isOwnerTeamEnabled={false}
+        teamsResult={teamsResult}
+        selectProjectTeam={jest.fn()}
       />,
     );
 
@@ -100,6 +125,8 @@ describe('SelectProjectsScreen', () => {
         importableComponentTypes={componentTypesResultMock}
         locationGroupId={1}
         isOwnerTeamEnabled={false}
+        teamsResult={teamsResult}
+        selectProjectTeam={jest.fn()}
       />,
     );
 
@@ -128,6 +155,8 @@ describe('SelectProjectsScreen', () => {
         importableComponentTypes={componentTypesErrorResultMock}
         locationGroupId={1}
         isOwnerTeamEnabled={false}
+        teamsResult={teamsResult}
+        selectProjectTeam={jest.fn()}
       />,
     );
 
@@ -173,6 +202,8 @@ describe('SelectProjectsScreen', () => {
       handleChangeGroup: jest.fn(),
       handleSearchValue: jest.fn(),
       importableComponentTypes: componentTypesResultMock,
+      teamsResult,
+      selectProjectTeam: jest.fn(),
     };
 
     const { queryByTestId, rerender, queryByText } = render(
@@ -227,6 +258,8 @@ describe('SelectProjectsScreen', () => {
         importableComponentTypes={componentTypesErrorResultMock}
         locationGroupId={1}
         isOwnerTeamEnabled={true}
+        teamsResult={teamsResult}
+        selectProjectTeam={jest.fn()}
       />,
     );
 
@@ -255,6 +288,8 @@ describe('SelectProjectsScreen', () => {
         importableComponentTypes={componentTypesErrorResultMock}
         locationGroupId={1}
         isOwnerTeamEnabled={false}
+        teamsResult={teamsResult}
+        selectProjectTeam={jest.fn()}
       />,
     );
 

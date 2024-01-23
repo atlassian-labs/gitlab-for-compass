@@ -15,6 +15,8 @@ import { useComponentTypes } from '../../hooks/useComponentTypes';
 import { getComponentTypeOption } from '../utils';
 import { getAvailableImportComponentTypes } from './utils';
 import { useProjects } from '../../hooks/useProjects';
+import { useTeamsForImport } from '../../hooks/useTeamsForImport';
+import { SelectOwnerTeamOption } from '../OwnerTeamSelect/types';
 
 export enum Screens {
   CONFIRMATION = 'CONFIRMATION',
@@ -30,6 +32,7 @@ export const SelectImportPage = () => {
   const { getConnectedInfo, features } = useAppContext();
   const { setTotalSelectedRepos, setIsImportInProgress, setImportedRepositories } = useImportContext();
   const componentTypesResult = useComponentTypes();
+  const teamsResult = useTeamsForImport();
 
   const importableComponentTypes = getAvailableImportComponentTypes(componentTypesResult);
 
@@ -85,6 +88,7 @@ export const SelectImportPage = () => {
               ...project,
               isSelected: Boolean(selectedProject?.isSelected),
               typeOption: selectedProject?.typeOption ?? getComponentTypeOption(project?.typeId),
+              ownerTeamOption: selectedProject?.ownerTeamOption || null,
             };
           });
           setTotalProjects(data.total);
@@ -164,6 +168,16 @@ export const SelectImportPage = () => {
     );
   };
 
+  const onSelectProjectTeam = (id: number, ownerTeamOption: SelectOwnerTeamOption | null) => {
+    setProjects((prevProjects) =>
+      prevProjects.map((project) => (id === project.id ? { ...project, ownerTeamOption } : project)),
+    );
+
+    setChangedProjects((prevState) =>
+      prevState.map((project) => (id === project.id ? { ...project, ownerTeamOption } : project)),
+    );
+  };
+
   const resetInitialProjectsData = () => {
     setProjects([]);
     setPage(1);
@@ -231,6 +245,7 @@ export const SelectImportPage = () => {
           ...curr,
           typeId: curr.typeOption.value,
           shouldOpenMR: syncWithCompassYml,
+          ownerId: curr.ownerTeamOption?.value || null,
         });
       }
 
@@ -278,6 +293,8 @@ export const SelectImportPage = () => {
           locationGroupId={locationGroupId}
           importableComponentTypes={importableComponentTypes}
           isOwnerTeamEnabled={features.isOwnerTeamEnabled}
+          teamsResult={teamsResult}
+          selectProjectTeam={onSelectProjectTeam}
         />
       )}
       {screen === Screens.CONFIRMATION && (
@@ -292,6 +309,8 @@ export const SelectImportPage = () => {
           projectsImportingData={projectsImportingData}
           importableComponentTypes={importableComponentTypes}
           isOwnerTeamEnabled={features.isOwnerTeamEnabled}
+          teamsResult={teamsResult}
+          selectProjectTeam={onSelectProjectTeam}
         />
       )}
     </>

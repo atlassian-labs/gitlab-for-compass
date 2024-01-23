@@ -11,6 +11,8 @@ import { DropdownWrapper } from './styles';
 import ComponentTypeSelect from '../ComponentTypeSelect';
 import { DEFAULT_COMPONENT_TYPE_ID } from '../../constants';
 import { OwnerTeamSelect } from '../OwnerTeamSelect';
+import { SelectOwnerTeamOption } from '../OwnerTeamSelect/types';
+import { TeamsForImportResult } from '../../hooks/useTeamsForImport';
 
 type Props = {
   projects: ProjectImportSelection[];
@@ -18,6 +20,8 @@ type Props = {
   onChangeComponentType: (id: number, type: CompassComponentTypeOption) => void;
   importableComponentTypes: ComponentTypesResult;
   isOwnerTeamEnabled: boolean;
+  teamsResult: TeamsForImportResult;
+  selectProjectTeam: (id: number, ownerTeamOption: SelectOwnerTeamOption | null) => void;
 };
 
 const mapStatus = (isManaged: boolean, isCompassFilePrOpened: boolean, hasComponent: boolean) => {
@@ -52,6 +56,8 @@ export const buildTableBody = ({
   onChangeComponentType,
   importableComponentTypes,
   isOwnerTeamEnabled,
+  teamsResult,
+  selectProjectTeam,
 }: Props): RowType[] => {
   return projects.map((project) => {
     const {
@@ -66,7 +72,12 @@ export const buildTableBody = ({
       isManaged,
       isCompassFilePrOpened,
       hasComponent,
+      ownerTeamOption,
     } = project;
+
+    const selectTeam = (selectedOwnerTeamOption: SelectOwnerTeamOption | null) => {
+      selectProjectTeam(id, selectedOwnerTeamOption);
+    };
 
     return {
       key: `${id}`,
@@ -136,16 +147,11 @@ export const buildTableBody = ({
                 content: (
                   <OwnerTeamSelect
                     selectKey={id.toString()}
-                    selectedTeamOption={null}
+                    selectedTeamOption={ownerTeamOption}
                     isDisabled={isManaged || isCompassFilePrOpened}
-                    teams={{
-                      teamsWithMembership: [],
-                      otherTeams: [],
-                    }}
-                    isLoadingTeams={false}
-                    selectTeam={() => {
-                      // TBD
-                    }}
+                    teams={teamsResult.teams}
+                    isLoadingTeams={teamsResult.isTeamsDataLoading}
+                    selectTeam={selectTeam}
                   />
                 ),
               },

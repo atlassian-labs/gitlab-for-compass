@@ -7,6 +7,8 @@ import { ButtonWrapper, DescriptionWrapper, ErrorWrapper, RootWrapper } from '..
 import { SelectedProjectsTable, SelectedProjectsProps } from '../../SelectedProjectsTable';
 import { ImportErrorTypes, ResolverResponse } from '../../../resolverTypes';
 import { ComponentTypesResult } from '../../../services/types';
+import { SelectOwnerTeamOption } from '../../OwnerTeamSelect/types';
+import { TeamsForImportResult } from '../../../hooks/useTeamsForImport';
 
 type Props = {
   syncWithCompassYml: boolean;
@@ -17,6 +19,8 @@ type Props = {
   projectsImportingData: ResolverResponse | null;
   importableComponentTypes: ComponentTypesResult;
   isOwnerTeamEnabled: boolean;
+  teamsResult: TeamsForImportResult;
+  selectProjectTeam: (id: number, ownerTeamOption: SelectOwnerTeamOption | null) => void;
 };
 
 export const ConfirmationScreen = ({
@@ -30,6 +34,8 @@ export const ConfirmationScreen = ({
   projectsImportingData,
   importableComponentTypes,
   isOwnerTeamEnabled,
+  teamsResult,
+  selectProjectTeam,
 }: Props & SelectedProjectsProps) => {
   return (
     <>
@@ -76,6 +82,8 @@ export const ConfirmationScreen = ({
         onChangeComponentType={onChangeComponentType}
         importableComponentTypes={importableComponentTypes}
         isOwnerTeamEnabled={isOwnerTeamEnabled}
+        teamsResult={teamsResult}
+        selectProjectTeam={selectProjectTeam}
       />
       {projectsImportingData?.errors && projectsImportingData.errors.length !== 0 && (
         <ErrorWrapper>

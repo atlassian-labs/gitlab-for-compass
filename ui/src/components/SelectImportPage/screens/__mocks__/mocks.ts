@@ -34,6 +34,7 @@ export const projectImportSelectionMock = [
     groupFullPath: 'koko',
     groupName: 'koko',
     groupPath: 'koko',
+    ownerTeamOption: { value: 'test-team', label: 'test-team', iconUrl: 'https://google.com' },
   },
 ];
 

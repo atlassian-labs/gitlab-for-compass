@@ -5,12 +5,16 @@ import ComponentTypeSelect from '../ComponentTypeSelect';
 import { DEFAULT_COMPONENT_TYPE_ID } from '../../constants';
 import { getComponentTypeOption } from '../utils';
 import { OwnerTeamSelect } from '../OwnerTeamSelect';
+import { SelectOwnerTeamOption } from '../OwnerTeamSelect/types';
+import { TeamsForImportResult } from '../../hooks/useTeamsForImport';
 
 export interface SelectedProjectsProps {
   projectsReadyToImport: ProjectImportSelection[];
   onChangeComponentType: (id: number, type: CompassComponentTypeOption) => void;
   importableComponentTypes: ComponentTypesResult;
   isOwnerTeamEnabled: boolean;
+  teamsResult: TeamsForImportResult;
+  selectProjectTeam: (id: number, ownerTeamOption: SelectOwnerTeamOption | null) => void;
 }
 
 export const buildTableBody = ({
@@ -18,8 +22,14 @@ export const buildTableBody = ({
   onChangeComponentType,
   importableComponentTypes,
   isOwnerTeamEnabled,
+  teamsResult,
+  selectProjectTeam,
 }: SelectedProjectsProps): RowType[] => {
   return projectsReadyToImport.map((project) => {
+    const selectTeam = (selectedOwnerTeamOption: SelectOwnerTeamOption | null) => {
+      selectProjectTeam(project.id, selectedOwnerTeamOption);
+    };
+
     return {
       key: project.id.toString(),
       role: 'row',
@@ -62,12 +72,10 @@ export const buildTableBody = ({
                   <OwnerTeamSelect
                     isDisabled={false}
                     selectKey={project.id.toString()}
-                    teams={{ teamsWithMembership: [], otherTeams: [] }}
-                    selectedTeamOption={null}
-                    isLoadingTeams={false}
-                    selectTeam={() => {
-                      // TBD
-                    }}
+                    teams={teamsResult.teams}
+                    selectedTeamOption={project.ownerTeamOption}
+                    isLoadingTeams={teamsResult.isTeamsDataLoading}
+                    selectTeam={selectTeam}
                   />
                 ),
               },

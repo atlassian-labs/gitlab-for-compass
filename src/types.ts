@@ -250,6 +250,7 @@ type ProjectReadyForImport = {
   componentLinks?: CreateLinkInput[];
   typeId?: string;
   shouldOpenMR?: boolean;
+  ownerId?: string | null;
 } & ProjectImportStatus &
   Project;
 

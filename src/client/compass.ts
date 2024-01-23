@@ -37,7 +37,7 @@ const throwIfErrors = function throwIfSdkErrors(method: string, errors: SdkError
 };
 
 export const createComponent = async (cloudId: string, project: ImportableProject): Promise<Component | never> => {
-  const { name, description, typeId, labels, url } = project;
+  const { name, description, typeId, labels, url, ownerId } = project;
   const formattedLabels = labels.map((label) => label.split(' ').join('-').toLowerCase());
   const component = {
     name,
@@ -55,6 +55,7 @@ export const createComponent = async (cloudId: string, project: ImportableProjec
       externalSource: EXTERNAL_SOURCE,
     },
     cloudId,
+    ownerId,
   };
 
   const { data, errors } = await graphqlGateway.compass.asApp().createComponent(component);

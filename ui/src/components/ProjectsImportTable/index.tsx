@@ -6,6 +6,8 @@ import { buildTableHead } from './buildTableHead';
 import { buildEmptyView } from '../EmptyState/buildEmptyView';
 import { CompassComponentTypeOption, ComponentTypesResult, ProjectImportSelection } from '../../services/types';
 import { TableWrapper } from '../styles';
+import { SelectOwnerTeamOption } from '../OwnerTeamSelect/types';
+import { TeamsForImportResult } from '../../hooks/useTeamsForImport';
 
 type Props = {
   projects: ProjectImportSelection[];
@@ -16,6 +18,8 @@ type Props = {
   error?: string;
   importableComponentTypes: ComponentTypesResult;
   isOwnerTeamEnabled: boolean;
+  teamsResult: TeamsForImportResult;
+  selectProjectTeam: (id: number, ownerTeamOption: SelectOwnerTeamOption | null) => void;
 };
 
 const SPINNER_SIZE = 'large';
@@ -29,6 +33,8 @@ export const ProjectsImportTable = ({
   error,
   importableComponentTypes,
   isOwnerTeamEnabled,
+  teamsResult,
+  selectProjectTeam,
 }: Props) => {
   const emptyView = useMemo(() => buildEmptyView({ isProjectsExist: projects.length !== 0, error }), [projects, error]);
 
@@ -55,6 +61,8 @@ export const ProjectsImportTable = ({
             onChangeComponentType,
             importableComponentTypes,
             isOwnerTeamEnabled,
+            teamsResult,
+            selectProjectTeam,
           })}
           loadingSpinnerSize={SPINNER_SIZE}
           isLoading={isLoading}

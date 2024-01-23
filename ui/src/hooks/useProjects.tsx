@@ -30,7 +30,12 @@ export const useProjects = (projects: ProjectImportSelection[]): UseProjectsRetu
           setChangedProjects((prevState) =>
             prevState.map((el) =>
               el.id === itemInChangedList.id
-                ? { ...el, typeOption: project.typeOption, isSelected: project.isSelected }
+                ? {
+                    ...el,
+                    typeOption: project.typeOption,
+                    isSelected: project.isSelected,
+                    ownerTeamOption: project.ownerTeamOption,
+                  }
                 : el,
             ),
           );
@@ -43,6 +48,7 @@ export const useProjects = (projects: ProjectImportSelection[]): UseProjectsRetu
             {
               ...project,
               typeOption: project.typeOption || getComponentTypeOption(project.typeId),
+              ownerTeamOption: project.ownerTeamOption,
             },
           ]);
         }

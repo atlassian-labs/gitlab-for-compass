@@ -20,7 +20,7 @@ export const createMRWithCompassYML = async (project: ImportableProject, compone
 
   const groupToken = await storage.getSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`);
   const trackingBranch = await getTrackingBranchName(groupToken, id, defaultBranch);
-  const compassYamlData = generateCompassYamlData(component);
+  const compassYamlData = generateCompassYamlData(component, project);
 
   const content = createCompassYml(compassYamlData);
 

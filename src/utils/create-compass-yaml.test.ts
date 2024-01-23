@@ -4,7 +4,7 @@ import { mockForgeApi } from '../__tests__/helpers/forge-helper';
 mockForgeApi();
 
 import { CompassLinkType, Component, CustomField, CustomFields, CustomFieldType, Link } from '@atlassian/forge-graphql';
-import { CompassYaml } from '../types';
+import { CompassYaml, ImportableProject } from '../types';
 import { generateCompassYamlData } from './create-compass-yaml';
 import { DEFAULT_CONFIG_VERSION } from '../constants';
 
@@ -21,6 +21,27 @@ const getMockComponent = (override: Partial<Component> = {}): Component => {
       lastUserModificationAt: '2023-03-22T12:17:38.420Z',
     },
     ...override,
+  };
+};
+
+const getMockImportableProject = (override: Partial<ImportableProject> = {}): ImportableProject => {
+  return {
+    componentId: '123',
+    componentLinks: [],
+    typeId: 'SERVICE',
+    ownerId: 'ownerId',
+    isManaged: false,
+    isCompassFilePrOpened: false,
+    hasComponent: true,
+    id: 123,
+    description: '',
+    name: 'name',
+    url: '',
+    labels: [],
+    defaultBranch: 'main',
+    groupName: 'group',
+    groupPath: 'group/path',
+    groupFullPath: 'group/full/path',
   };
 };
 
@@ -46,8 +67,9 @@ const getExpectedYamlData = (override: Partial<CompassYaml> = {}): CompassYaml =
 describe('generateCompassYamlData', () => {
   it('returns compass yaml data with empty values', () => {
     const mockComponent = getMockComponent();
+    const project = getMockImportableProject();
 
-    const result = generateCompassYamlData(mockComponent);
+    const result = generateCompassYamlData(mockComponent, project);
 
     const expectedYamlData = getExpectedYamlData();
 
@@ -60,8 +82,9 @@ describe('generateCompassYamlData', () => {
       'compass:lifecycle': ['Active'],
     };
     const mockComponent = getMockComponent({ fields: mockFields });
+    const project = getMockImportableProject();
 
-    const result = generateCompassYamlData(mockComponent);
+    const result = generateCompassYamlData(mockComponent, project);
 
     const expectedYamlData = getExpectedYamlData({ fields: { tier: 4, lifecycle: 'Active' } });
 
@@ -73,8 +96,9 @@ describe('generateCompassYamlData', () => {
       'compass:tier': ['4'],
     };
     const mockComponent = getMockComponent({ fields: mockFields });
+    const project = getMockImportableProject();
 
-    const result = generateCompassYamlData(mockComponent);
+    const result = generateCompassYamlData(mockComponent, project);
 
     expect(result).not.toHaveProperty('fields.lifecycle');
   });
@@ -94,8 +118,9 @@ describe('generateCompassYamlData', () => {
       },
     ];
     const mockComponent = getMockComponent({ links: mockLinks });
+    const project = getMockImportableProject();
 
-    const result = generateCompassYamlData(mockComponent);
+    const result = generateCompassYamlData(mockComponent, project);
 
     const expectedYamlData = getExpectedYamlData({
       links: [
@@ -154,8 +179,9 @@ describe('generateCompassYamlData', () => {
       } as CustomField,
     ];
     const mockComponent = getMockComponent({ customFields: mockCustomFields });
+    const project = getMockImportableProject();
 
-    const result = generateCompassYamlData(mockComponent);
+    const result = generateCompassYamlData(mockComponent, project);
 
     const expectedYamlData = getExpectedYamlData({
       customFields: [

@@ -10,7 +10,7 @@ export const buildTableHead = (isOwnerTeamEnabled: boolean): HeadType => {
         isSortable: false,
         width: isOwnerTeamEnabled ? 50 : 65,
       },
-      { key: 'type', content: 'Component type', isSortable: false, width: isOwnerTeamEnabled ? 20 : 15 },
+      { key: 'type', content: 'Component type', isSortable: false, width: 15 },
       ...(isOwnerTeamEnabled
         ? [
             {
