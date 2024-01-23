@@ -91,9 +91,9 @@ permissions:
       backend:
         - '*.services.atlassian.com'
         - 'https://gitlab.com'
-      images:
-        - '*.atl-paas.net'
-        - '*.atlassian.com'
+    images:
+      - '*.atl-paas.net'
+      - '*.atlassian.com'
   content:
     styles:
       - 'unsafe-inline'
