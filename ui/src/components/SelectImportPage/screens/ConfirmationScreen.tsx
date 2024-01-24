@@ -18,7 +18,6 @@ type Props = {
   handleImportProjects: () => void;
   projectsImportingData: ResolverResponse | null;
   importableComponentTypes: ComponentTypesResult;
-  isOwnerTeamEnabled: boolean;
   teamsResult: TeamsForImportResult;
   selectProjectTeam: (id: number, ownerTeamOption: SelectOwnerTeamOption | null) => void;
 };
@@ -33,7 +32,6 @@ export const ConfirmationScreen = ({
   handleImportProjects,
   projectsImportingData,
   importableComponentTypes,
-  isOwnerTeamEnabled,
   teamsResult,
   selectProjectTeam,
 }: Props & SelectedProjectsProps) => {
@@ -81,7 +79,6 @@ export const ConfirmationScreen = ({
         projectsReadyToImport={projectsReadyToImport}
         onChangeComponentType={onChangeComponentType}
         importableComponentTypes={importableComponentTypes}
-        isOwnerTeamEnabled={isOwnerTeamEnabled}
         teamsResult={teamsResult}
         selectProjectTeam={selectProjectTeam}
       />

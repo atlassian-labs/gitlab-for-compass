@@ -63,7 +63,6 @@ describe('SelectProjectsScreen', () => {
         handleSearchValue={jest.fn()}
         importableComponentTypes={componentTypesResultMock}
         locationGroupId={1}
-        isOwnerTeamEnabled={false}
         teamsResult={teamsResult}
         selectProjectTeam={jest.fn()}
       />,
@@ -94,7 +93,6 @@ describe('SelectProjectsScreen', () => {
         handleSearchValue={jest.fn()}
         importableComponentTypes={componentTypesResultMock}
         locationGroupId={1}
-        isOwnerTeamEnabled={false}
         teamsResult={teamsResult}
         selectProjectTeam={jest.fn()}
       />,
@@ -124,7 +122,6 @@ describe('SelectProjectsScreen', () => {
         handleSearchValue={jest.fn()}
         importableComponentTypes={componentTypesResultMock}
         locationGroupId={1}
-        isOwnerTeamEnabled={false}
         teamsResult={teamsResult}
         selectProjectTeam={jest.fn()}
       />,
@@ -154,7 +151,6 @@ describe('SelectProjectsScreen', () => {
         handleSearchValue={jest.fn()}
         importableComponentTypes={componentTypesErrorResultMock}
         locationGroupId={1}
-        isOwnerTeamEnabled={false}
         teamsResult={teamsResult}
         selectProjectTeam={jest.fn()}
       />,
@@ -207,23 +203,14 @@ describe('SelectProjectsScreen', () => {
     };
 
     const { queryByTestId, rerender, queryByText } = render(
-      <SelectProjectsScreen {...unchangedProps} groups={[]} locationGroupId={0} isOwnerTeamEnabled={false} />,
+      <SelectProjectsScreen {...unchangedProps} groups={[]} locationGroupId={0} />,
     );
 
     // groups fetched and the groupSelectorOptions calculated and memoized
-    rerender(
-      <SelectProjectsScreen {...unchangedProps} groups={groups} locationGroupId={0} isOwnerTeamEnabled={false} />,
-    );
+    rerender(<SelectProjectsScreen {...unchangedProps} groups={groups} locationGroupId={0} />);
 
     // locationGroupId updated and the groupSelectorOptions should be recalculated
-    rerender(
-      <SelectProjectsScreen
-        {...unchangedProps}
-        groups={groups}
-        locationGroupId={parentGroupId}
-        isOwnerTeamEnabled={false}
-      />,
-    );
+    rerender(<SelectProjectsScreen {...unchangedProps} groups={groups} locationGroupId={parentGroupId} />);
 
     const selectContainer = queryByTestId('group-selector');
     expect(selectContainer).not.toBeNull();
@@ -257,42 +244,11 @@ describe('SelectProjectsScreen', () => {
         handleSearchValue={jest.fn()}
         importableComponentTypes={componentTypesErrorResultMock}
         locationGroupId={1}
-        isOwnerTeamEnabled={true}
         teamsResult={teamsResult}
         selectProjectTeam={jest.fn()}
       />,
     );
 
     expect(await queryByText('Owner team')).toBeTruthy();
-  });
-
-  it('renders SelectProjectsScreen without Owner team column', async () => {
-    const { queryByText } = render(
-      <SelectProjectsScreen
-        projects={projectImportSelectionMock}
-        isProjectsLoading={false}
-        onSelectAllItems={jest.fn()}
-        onChangeComponentType={jest.fn()}
-        handleNavigateToConnectedPage={jest.fn()}
-        projectsFetchingError=''
-        onSelectItem={jest.fn()}
-        selectedProjects={projectImportSelectionMock}
-        handleNavigateToScreen={jest.fn()}
-        isProjectsImporting
-        totalProjects={1}
-        setPage={jest.fn()}
-        groups={groupMock}
-        isGroupsLoading={false}
-        handleChangeGroup={jest.fn()}
-        handleSearchValue={jest.fn()}
-        importableComponentTypes={componentTypesErrorResultMock}
-        locationGroupId={1}
-        isOwnerTeamEnabled={false}
-        teamsResult={teamsResult}
-        selectProjectTeam={jest.fn()}
-      />,
-    );
-
-    expect(await queryByText('Owner team')).toBeFalsy();
   });
 });

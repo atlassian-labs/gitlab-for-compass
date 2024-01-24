@@ -1,6 +1,6 @@
 import { HeadType } from '@atlaskit/dynamic-table/types';
 
-export const buildTableHead = (isOwnerTeamEnabled: boolean): HeadType => {
+export const buildTableHead = (): HeadType => {
   return {
     cells: [
       { key: 'name', content: 'Name', isSortable: false, width: 20 },
@@ -8,18 +8,15 @@ export const buildTableHead = (isOwnerTeamEnabled: boolean): HeadType => {
         key: 'description',
         content: 'Description',
         isSortable: false,
-        width: isOwnerTeamEnabled ? 50 : 65,
+        width: 50,
       },
       { key: 'type', content: 'Component type', isSortable: false, width: 15 },
-      ...(isOwnerTeamEnabled
-        ? [
-            {
-              key: 'OWNER_TEAM',
-              content: 'Owner team',
-              width: 15,
-            },
-          ]
-        : []),
+
+      {
+        key: 'OWNER_TEAM',
+        content: 'Owner team',
+        width: 15,
+      },
     ],
   };
 };

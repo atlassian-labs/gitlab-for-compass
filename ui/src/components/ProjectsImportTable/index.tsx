@@ -17,7 +17,6 @@ type Props = {
   onChangeComponentType: (id: number, type: CompassComponentTypeOption) => void;
   error?: string;
   importableComponentTypes: ComponentTypesResult;
-  isOwnerTeamEnabled: boolean;
   teamsResult: TeamsForImportResult;
   selectProjectTeam: (id: number, ownerTeamOption: SelectOwnerTeamOption | null) => void;
 };
@@ -32,7 +31,6 @@ export const ProjectsImportTable = ({
   onChangeComponentType,
   error,
   importableComponentTypes,
-  isOwnerTeamEnabled,
   teamsResult,
   selectProjectTeam,
 }: Props) => {
@@ -53,14 +51,12 @@ export const ProjectsImportTable = ({
             onSelectAllItems,
             isAllItemsSelected,
             isLoading,
-            isOwnerTeamEnabled,
           })}
           rows={buildTableBody({
             projects,
             onSelectItem,
             onChangeComponentType,
             importableComponentTypes,
-            isOwnerTeamEnabled,
             teamsResult,
             selectProjectTeam,
           })}

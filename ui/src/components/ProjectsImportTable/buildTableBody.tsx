@@ -19,7 +19,6 @@ type Props = {
   onSelectItem: (id: number) => void;
   onChangeComponentType: (id: number, type: CompassComponentTypeOption) => void;
   importableComponentTypes: ComponentTypesResult;
-  isOwnerTeamEnabled: boolean;
   teamsResult: TeamsForImportResult;
   selectProjectTeam: (id: number, ownerTeamOption: SelectOwnerTeamOption | null) => void;
 };
@@ -55,7 +54,6 @@ export const buildTableBody = ({
   onSelectItem,
   onChangeComponentType,
   importableComponentTypes,
-  isOwnerTeamEnabled,
   teamsResult,
   selectProjectTeam,
 }: Props): RowType[] => {
@@ -140,23 +138,19 @@ export const buildTableBody = ({
             </DropdownWrapper>
           ),
         },
-        ...(isOwnerTeamEnabled
-          ? [
-              {
-                key: 'team',
-                content: (
-                  <OwnerTeamSelect
-                    selectKey={id.toString()}
-                    selectedTeamOption={ownerTeamOption}
-                    isDisabled={isManaged || isCompassFilePrOpened}
-                    teams={teamsResult.teams}
-                    isLoadingTeams={teamsResult.isTeamsDataLoading}
-                    selectTeam={selectTeam}
-                  />
-                ),
-              },
-            ]
-          : []),
+        {
+          key: 'team',
+          content: (
+            <OwnerTeamSelect
+              selectKey={id.toString()}
+              selectedTeamOption={ownerTeamOption}
+              isDisabled={isManaged || isCompassFilePrOpened}
+              teams={teamsResult.teams}
+              isLoadingTeams={teamsResult.isTeamsDataLoading}
+              selectTeam={selectTeam}
+            />
+          ),
+        },
       ],
     };
   });
