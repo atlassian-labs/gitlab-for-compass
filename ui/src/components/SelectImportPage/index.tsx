@@ -292,7 +292,6 @@ export const SelectImportPage = () => {
           handleSearchValue={handleSearchValue}
           locationGroupId={locationGroupId}
           importableComponentTypes={importableComponentTypes}
-          isOwnerTeamEnabled={features.isOwnerTeamEnabled}
           teamsResult={teamsResult}
           selectProjectTeam={onSelectProjectTeam}
         />
@@ -308,7 +307,6 @@ export const SelectImportPage = () => {
           isProjectsImporting={isProjectsImporting}
           projectsImportingData={projectsImportingData}
           importableComponentTypes={importableComponentTypes}
-          isOwnerTeamEnabled={features.isOwnerTeamEnabled}
           teamsResult={teamsResult}
           selectProjectTeam={onSelectProjectTeam}
         />

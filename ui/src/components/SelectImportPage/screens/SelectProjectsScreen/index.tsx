@@ -39,7 +39,6 @@ type Props = {
   handleSearchValue: (value: string) => void;
   locationGroupId: number;
   importableComponentTypes: ComponentTypesResult;
-  isOwnerTeamEnabled: boolean;
   teamsResult: TeamsForImportResult;
   selectProjectTeam: (id: number, ownerTeamOption: SelectOwnerTeamOption | null) => void;
 };
@@ -63,7 +62,6 @@ export const SelectProjectsScreen = ({
   handleSearchValue,
   locationGroupId,
   importableComponentTypes,
-  isOwnerTeamEnabled,
   teamsResult,
   selectProjectTeam,
 }: Props) => {
@@ -106,7 +104,6 @@ export const SelectProjectsScreen = ({
           onChangeComponentType={onChangeComponentType}
           error={projectsFetchingError}
           importableComponentTypes={importableComponentTypes}
-          isOwnerTeamEnabled={isOwnerTeamEnabled}
           teamsResult={teamsResult}
           selectProjectTeam={selectProjectTeam}
         />

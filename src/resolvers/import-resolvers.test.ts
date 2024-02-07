@@ -15,7 +15,6 @@ class MockResolver {
 jest.mock('@forge/resolver', () => MockResolver);
 
 import handler from './import-resolvers';
-import * as featureFlags from '../services/feature-flags';
 import * as getTeams from '../services/get-teams';
 import { MOCK_CLOUD_ID } from '../__tests__/fixtures/gitlab-data';
 
@@ -35,9 +34,6 @@ describe('importResolvers', () => {
       };
       const mockTeamsResponse = { teamsWithMembership: [mockTeam], otherTeams: [mockTeam] };
 
-      jest
-        .spyOn(featureFlags, 'listFeatures')
-        .mockReturnValueOnce({ isOwnerTeamEnabled: true, isSendStagingEventsEnabled: false });
       jest.spyOn(getTeams, 'getFirstPageOfTeamsWithMembershipStatus').mockResolvedValueOnce(mockTeamsResponse);
 
       const teamsResponse = await getFirstPageOfTeamsWithMembershipStatus({
@@ -60,9 +56,6 @@ describe('importResolvers', () => {
 
     test('returns an error if getFirstPageOfTeamsWithMembershipStatus request failed', async () => {
       const mockError = new Error('error');
-      jest
-        .spyOn(featureFlags, 'listFeatures')
-        .mockReturnValueOnce({ isOwnerTeamEnabled: true, isSendStagingEventsEnabled: false });
       jest.spyOn(getTeams, 'getFirstPageOfTeamsWithMembershipStatus').mockRejectedValueOnce(mockError);
 
       const teamsResponse = await getFirstPageOfTeamsWithMembershipStatus({
@@ -78,37 +71,6 @@ describe('importResolvers', () => {
       expect(teamsResponse).toEqual({
         success: false,
         errors: [{ message: mockError.message }],
-      });
-    });
-
-    test('returns empty teams data if the isOwnerTeamEnabled disabled', async () => {
-      const mockTeam = {
-        teamId: 'teamId',
-        displayName: 'displayName',
-        imageUrl: 'https://test',
-      };
-      const mockTeamsResponse = { teamsWithMembership: [mockTeam], otherTeams: [mockTeam] };
-
-      jest
-        .spyOn(featureFlags, 'listFeatures')
-        .mockReturnValueOnce({ isOwnerTeamEnabled: false, isSendStagingEventsEnabled: false });
-      jest.spyOn(getTeams, 'getFirstPageOfTeamsWithMembershipStatus').mockResolvedValueOnce(mockTeamsResponse);
-
-      const teamsResponse = await getFirstPageOfTeamsWithMembershipStatus({
-        context: {
-          cloudId: MOCK_CLOUD_ID,
-          accountId: 'test-account-id',
-        },
-        payload: {
-          searchTeamValue: 'searchTeamValue',
-        },
-      });
-
-      expect(teamsResponse).toEqual({
-        success: true,
-        data: {
-          teams: { teamsWithMembership: [], otherTeams: [] },
-        },
       });
     });
   });

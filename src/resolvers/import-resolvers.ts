@@ -20,7 +20,6 @@ import {
 import { GroupProjectsResponse, TeamsWithMembershipStatus } from '../types';
 import { getAllComponentTypeIds } from '../client/compass';
 import { appId, connectedGroupsInfo, getFeatures, groupsAllExisting } from './shared-resolvers';
-import { listFeatures } from '../services/feature-flags';
 import { getFirstPageOfTeamsWithMembershipStatus } from '../services/get-teams';
 
 const resolver = new Resolver();
@@ -147,10 +146,7 @@ resolver.define(
   async (req): Promise<ResolverResponse<{ teams: TeamsWithMembershipStatus }>> => {
     const { cloudId, accountId } = req.context;
     const { searchTeamValue } = req.payload;
-    const { isOwnerTeamEnabled } = listFeatures();
-    if (!isOwnerTeamEnabled) {
-      return { success: true, data: { teams: { teamsWithMembership: [], otherTeams: [] } } };
-    }
+
     try {
       const teams = await getFirstPageOfTeamsWithMembershipStatus(cloudId, accountId, searchTeamValue);
       return { success: true, data: { teams } };

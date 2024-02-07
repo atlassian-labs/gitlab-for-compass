@@ -12,7 +12,6 @@ export interface SelectedProjectsProps {
   projectsReadyToImport: ProjectImportSelection[];
   onChangeComponentType: (id: number, type: CompassComponentTypeOption) => void;
   importableComponentTypes: ComponentTypesResult;
-  isOwnerTeamEnabled: boolean;
   teamsResult: TeamsForImportResult;
   selectProjectTeam: (id: number, ownerTeamOption: SelectOwnerTeamOption | null) => void;
 }
@@ -21,7 +20,6 @@ export const buildTableBody = ({
   projectsReadyToImport,
   onChangeComponentType,
   importableComponentTypes,
-  isOwnerTeamEnabled,
   teamsResult,
   selectProjectTeam,
 }: SelectedProjectsProps): RowType[] => {
@@ -64,23 +62,19 @@ export const buildTableBody = ({
             />
           ),
         },
-        ...(isOwnerTeamEnabled
-          ? [
-              {
-                key: 'team',
-                content: (
-                  <OwnerTeamSelect
-                    isDisabled={false}
-                    selectKey={project.id.toString()}
-                    teams={teamsResult.teams}
-                    selectedTeamOption={project.ownerTeamOption}
-                    isLoadingTeams={teamsResult.isTeamsDataLoading}
-                    selectTeam={selectTeam}
-                  />
-                ),
-              },
-            ]
-          : []),
+        {
+          key: 'team',
+          content: (
+            <OwnerTeamSelect
+              isDisabled={false}
+              selectKey={project.id.toString()}
+              teams={teamsResult.teams}
+              selectedTeamOption={project.ownerTeamOption}
+              isLoadingTeams={teamsResult.isTeamsDataLoading}
+              selectTeam={selectTeam}
+            />
+          ),
+        },
       ],
     };
   });
