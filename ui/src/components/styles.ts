@@ -62,3 +62,18 @@ export const TableWrapper = styled.div`
   max-height: 60vh;
   overflow: auto;
 `;
+
+export const IncomingWebhookSectionWrapper = styled.div`
+  display: flex;
+  background-color: ${token('color.background.accent.gray.subtlest', '#F1F2F4')};
+  color: ${token('color.text.subtle', '#44546F')};
+  border-radius: 4px;
+  align-items: center;
+  padding: 10px;
+`;
+
+export const IncomingWebhookIcon = styled.img`
+  height: 34px;
+  width: 34px;
+  margin-right: 10px;
+`;

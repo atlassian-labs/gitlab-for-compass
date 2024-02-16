@@ -20,20 +20,20 @@ jest.mock('escape-string-regexp', () => ({
 }));
 
 const setup = async () => {
-  const { findByPlaceholderText, findByText } = render(
+  const { findByText, findByTestId } = render(
     <AppContextProvider>
       <AppRouter />
     </AppContextProvider>,
   );
 
   await act(async () => {
-    fireEvent.change(await findByPlaceholderText('Enter your group access token'), { target: { value: 'koko' } });
+    fireEvent.change(await findByTestId('group-access-token'), { target: { value: 'koko' } });
   });
   await act(async () => {
-    fireEvent.change(await findByPlaceholderText('Enter your group token name'), { target: { value: 'momo' } });
+    fireEvent.change(await findByTestId('access-token-name'), { target: { value: 'momo' } });
   });
   await act(async () => {
-    fireEvent.click(await findByText('Connect group'));
+    fireEvent.click(await findByText('Connect'));
   });
 };
 

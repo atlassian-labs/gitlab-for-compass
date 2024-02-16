@@ -18,6 +18,7 @@ import { connectGroup } from '../../services/invokes';
 import { ErrorMessages } from '../../errorMessages';
 import { AuthErrorTypes, ErrorTypes } from '../../resolverTypes';
 import { useAppContext } from '../../hooks/useAppContext';
+import { IncomingWebhookSectionMessage } from '../IncomingWebhookSectionMessage';
 
 const SectionMessageWrapper = styled.div`
   margin-bottom: ${gridSize() * 2}px;
@@ -161,38 +162,49 @@ export const AuthPage = () => {
   return (
     <div data-testid='gitlab-auth-page'>
       <SectionMessageWrapper>
-        <SectionMessage appearance='information'>
-          <p>
-            Create and retrieve your group access token from your GitLab account to connect to Compass. When creating
-            your group access token, make sure you:
-          </p>
-          <ul>
-            <li>do not set expiration date, leave it empty</li>
-            <li>select an owner role for the token</li>
-            <li>set required scopes for the token to “api” and “write_repository”</li>
-            <li>have GitLab owner permissions for the group you want to connect</li>
-          </ul>
-          <p>
-            <ForgeLink
-              to='https://docs.gitlab.com/ee/user/group/settings/group_access_tokens.html#create-a-group-access-token-using-ui'
-              openInNewTab
-            >
-              Learn more about group access tokens
-            </ForgeLink>
-          </p>
-        </SectionMessage>
+        <h4>Connect group</h4>
+        <p>
+          You can connect only one GitLab group to Compass at a time, and you must be an owner of that group. Create and
+          retrieve a group access token from your GitLab account to connect to Compass. When creating your token:
+        </p>
+        <ul>
+          <li>don't set any expiration date</li>
+          <li>
+            select <b>Owner</b> as the role
+          </li>
+          <li>
+            select the <b>api</b> and <b>write_repository</b> scopes
+          </li>
+        </ul>
+        <p>
+          <ForgeLink
+            to='https://docs.gitlab.com/ee/user/group/settings/group_access_tokens.html#create-a-group-access-token-using-ui'
+            openInNewTab
+          >
+            Learn more about group access tokens
+          </ForgeLink>
+        </p>
       </SectionMessageWrapper>
-
+      <IncomingWebhookSectionMessage />
+      <br />
       {errorType && buildValidationMethod(errorType)}
 
       <FormWrapper>
-        <Field label='Group access token' name='accessToken' isRequired>
+        <h5>Group access token</h5>
+        <Field label='Name' name='accessTokenName' isRequired>
+          {({ fieldProps }) => (
+            <>
+              <Textfield {...fieldProps} isCompact onChange={tokenNameOnChange} testId='access-token-name' />
+            </>
+          )}
+        </Field>
+        <Field label='Token' name='accessToken' isRequired>
           {({ fieldProps }) => (
             <Textfield
               {...fieldProps}
               isCompact
-              placeholder='Enter your group access token'
               onChange={tokenOnChange}
+              testId='group-access-token'
               type={isTokenVisible ? 'text' : 'password'}
               elemAfterInput={
                 <Button
@@ -210,19 +222,6 @@ export const AuthPage = () => {
             />
           )}
         </Field>
-        <Field label='Group access token name' name='accessTokenName' isRequired>
-          {({ fieldProps }) => (
-            <>
-              <Textfield
-                {...fieldProps}
-                isCompact
-                placeholder='Enter your group token name'
-                onChange={tokenNameOnChange}
-              />
-              <HelperMessage>Note: The name of the token must be the same as it is in GitLab</HelperMessage>
-            </>
-          )}
-        </Field>
         <FormFooter align='start'>
           <LoadingButton
             onClick={handleSubmit}
@@ -230,8 +229,9 @@ export const AuthPage = () => {
             isDisabled={isSubmitBtnDisabled}
             appearance='primary'
             isLoading={isLoadingSubmit}
+            alt='Connect project'
           >
-            Connect group
+            Connect
           </LoadingButton>
         </FormFooter>
       </FormWrapper>

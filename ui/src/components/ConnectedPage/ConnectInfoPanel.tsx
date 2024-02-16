@@ -39,7 +39,7 @@ export const ConnectInfoPanel = ({ connectedGroup, handleDisconnectGroup, isDisc
       <IconTitleGroupWrapper>
         <CheckCircleIcon label='check' primaryColor={token('color.icon.success', 'green')} />
         <ConnectedText>
-          Your GitLab group <strong>{connectedGroup.name}</strong> is successfully connected to Compass
+          <strong>{connectedGroup.name}</strong>
         </ConnectedText>
       </IconTitleGroupWrapper>
       <LoadingButton onClick={() => handleDisconnectGroup(connectedGroup.id)} isLoading={isDisconnectGroupInProgress}>
