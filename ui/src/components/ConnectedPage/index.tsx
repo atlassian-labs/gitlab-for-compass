@@ -13,6 +13,7 @@ import { useAppContext } from '../../hooks/useAppContext';
 import { AuthErrorTypes, ErrorTypes, GitlabAPIGroup } from '../../resolverTypes';
 import { useImportContext } from '../../hooks/useImportContext';
 import { ImportResult } from '../ImportResult';
+import { IncomingWebhookSectionMessage } from '../IncomingWebhookSectionMessage';
 
 export const ConnectedPage = () => {
   const [isDisconnectGroupInProgress, setDisconnectGroupInProgress] = useState(false);
@@ -62,13 +63,18 @@ export const ConnectedPage = () => {
 
   return (
     <div data-testid='gitlab-connected-page'>
+      <h4>Connected group</h4>
+      <p>You can connect only one GitLab group to Compass at a time, and you must be an owner of that group.</p>
+      <br />
+      <IncomingWebhookSectionMessage />
+      <br />
       <ConnectInfoPanel
         connectedGroup={groups[0]}
         handleDisconnectGroup={handleDisconnectGroup}
         isDisconnectGroupInProgress={isDisconnectGroupInProgress}
       />
 
-      <ImportControls groupName={groups[0].full_name} groupId={groups[0].id} />
+      <ImportControls />
 
       {!isImportInProgress ? <ImportResult /> : null}
     </div>

@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import Button from '@atlaskit/button';
 import Spinner from '@atlaskit/spinner';
 import InlineMessage from '@atlaskit/inline-message';
 import { router } from '@forge/bridge';
 
-import { ApplicationState } from '../../routes';
 import { ImportProgressBar } from '../ImportProgressBar';
 import { useImportContext } from '../../hooks/useImportContext';
 import { getLastSyncTime } from '../../services/invokes';
@@ -14,20 +12,13 @@ import { formatLastSyncTime } from '../../helpers/time';
 import { ImportButtonWrapper } from '../styles';
 import { useAppContext } from '../../hooks/useAppContext';
 
-type Props = {
-  groupName: string;
-  groupId: number;
-};
-
-export const ImportControls = ({ groupName, groupId }: Props) => {
+export const ImportControls = () => {
   const [lastSyncTime, setLastSyncTime] = useState<string | null>(null);
   const [lastSyncTimeIsLoading, setLastSyncTimeIsLoading] = useState<boolean>(false);
   const [lastSyncTimeErrorMessage, setLastSyncTimeAnErrorMessage] = useState<string>();
 
   const { isImportInProgress } = useImportContext();
   const { appId } = useAppContext();
-
-  const navigate = useNavigate();
 
   const handleImportNavigate = () => {
     router.navigate(`/compass/import/redirect/${encodeURIComponent(`ari:cloud:ecosystem::app/${appId}`)}`);
@@ -60,10 +51,8 @@ export const ImportControls = ({ groupName, groupId }: Props) => {
 
   return (
     <>
-      <h3>Import projects</h3>
-      <p>
-        Import projects from <strong>{groupName}</strong> as components to track in Compass.
-      </p>
+      <h4>Import projects</h4>
+      <p>Import projects from your connected group to track as components in Compass.</p>
 
       {isImportInProgress ? (
         <ImportProgressBar />
