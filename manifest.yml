@@ -20,6 +20,9 @@ modules:
   compass:configValidator:
     - key: config-validator
       function: config-validator-fn
+  compass:configValidatorWithoutUct:
+    - key: config-validator-without-uct
+      function: config-validator-fn
   compass:dataProvider:
     - key: data-provider
       function: data-provider-fn
