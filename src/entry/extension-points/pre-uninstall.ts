@@ -1,15 +1,18 @@
-import { InvocationContext } from '../../types';
 import { disconnectGroup } from '../../services/disconnect-group';
 import { getForgeAppId } from '../../utils/get-forge-app-id';
 import { getGroupIds } from '../../utils/storage-utils';
 
-export default async function preUninstall(
-  payload: Record<string, never>,
-  { installContext }: InvocationContext,
-): Promise<void> {
-  console.log(`Performing preUninstall for site ${installContext}`);
+type PreUninstallPayload = {
+  context: {
+    cloudId: string;
+  };
+};
 
-  const cloudId = installContext.split('/')[1];
+export default async function preUninstall(payload: PreUninstallPayload): Promise<void> {
+  const { cloudId } = payload.context;
+
+  console.log(`Performing preUninstall for site ${cloudId}`);
+
   const forgeAppId = getForgeAppId();
   const groupIds = await getGroupIds();
 

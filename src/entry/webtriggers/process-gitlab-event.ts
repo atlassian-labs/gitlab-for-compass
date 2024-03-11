@@ -10,7 +10,6 @@ import {
   WebtriggerResponse,
 } from '../../types';
 import { serverResponse } from '../../utils/webtrigger-utils';
-import { parse } from '../../utils/parse-ari';
 import { STORAGE_KEYS, STORAGE_SECRETS } from '../../constants';
 import {
   handlePushEvent,
@@ -18,13 +17,7 @@ import {
   handleDeploymentEvent,
   handlePipelineEvent,
 } from './gitlab-event-handlers';
-import { listFeatures } from '../../services/feature-flags';
 import { ParseWebhookEventPayloadError, ValidateWebhookSignatureError } from '../../models/errors';
-
-type Context = {
-  principal: undefined;
-  installContext: string;
-};
 
 const validateWebhookSignature = (eventSignature: string, controlSignature: string): void | never => {
   if (eventSignature !== controlSignature) {
@@ -40,10 +33,9 @@ const parseEventPayload = (eventPayload: string): GitlabEvent | never => {
   }
 };
 
-export const processGitlabEvent = async (event: WebtriggerRequest, context: Context): Promise<WebtriggerResponse> => {
+export const processGitlabEvent = async (event: WebtriggerRequest): Promise<WebtriggerResponse> => {
   try {
-    const { installContext } = context;
-    const cloudId = parse(installContext).resourceId;
+    const { cloudId } = event.context;
     const groupId = event.queryParameters.groupId[0];
     const groupToken = await storage.getSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`);
     const eventPayload = event.body;
