@@ -12,19 +12,11 @@ import { BackfillData, DataProviderPayload } from './types';
 import { getProjectDataFromUrl } from '../../services/data-provider-link-parser';
 import { getTrackingBranchName } from '../../services/get-tracking-branch';
 import { getBackfillData } from '../../services/get-backfill-data';
-import { parse } from '../../utils/parse-ari';
 import { GitlabHttpMethodError } from '../../models/errors';
 
 export const dataProvider = async (
   request: DataProviderPayload,
 ): Promise<DataProviderResult | ForgeInvocationError> => {
-  try {
-    parse(request.ctx.cloudId);
-  } catch {
-    console.error('Invalid cloudId.');
-    return null;
-  }
-
   const {
     project: { id: projectId, default_branch: defaultBranch, name: projectName },
     groupToken,

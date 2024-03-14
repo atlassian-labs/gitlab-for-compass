@@ -24,11 +24,6 @@ jest.mock('./gitlab-event-handlers');
 jest.mock('../../utils/webtrigger-utils');
 jest.mock('../../services/feature-flags');
 
-const MOCK_CONTEXT = {
-  principal: undefined as undefined,
-  installContext: `ari:cloud:compass::site/${MOCK_CLOUD_ID}`,
-};
-
 const MOCK_GROUP_ID = 1;
 
 const generateWebtriggerRequest = (body: string, token = TEST_TOKEN): WebtriggerRequest => {
@@ -39,6 +34,9 @@ const generateWebtriggerRequest = (body: string, token = TEST_TOKEN): Webtrigger
     },
     headers: {
       'x-gitlab-token': [token],
+    },
+    context: {
+      cloudId: MOCK_CLOUD_ID,
     },
   };
 };
@@ -63,7 +61,7 @@ describe('processGitlabEvent', () => {
   it('handles push event', async () => {
     const webtriggerRequest = generateWebtriggerRequest(JSON.stringify(MOCK_PUSH_EVENT));
 
-    await processGitlabEvent(webtriggerRequest, MOCK_CONTEXT);
+    await processGitlabEvent(webtriggerRequest);
 
     expect(mockHandlePushEvent).toHaveBeenCalledWith(MOCK_PUSH_EVENT, TEST_TOKEN, MOCK_CLOUD_ID);
     expect(serverResponse).toHaveBeenCalledWith('Processed webhook event');
@@ -72,7 +70,7 @@ describe('processGitlabEvent', () => {
   it('returns server response error in case of invalid webhook event secret', async () => {
     const webtriggerRequest = generateWebtriggerRequest(JSON.stringify(MOCK_PUSH_EVENT), 'invalid-token');
 
-    await processGitlabEvent(webtriggerRequest, MOCK_CONTEXT);
+    await processGitlabEvent(webtriggerRequest);
 
     expect(mockHandlePushEvent).not.toHaveBeenCalled();
     expect(serverResponse).toHaveBeenCalledWith('Invalid webhook secret', 403);
@@ -81,7 +79,7 @@ describe('processGitlabEvent', () => {
   it('returns server response error in case of failed parsing webhook event', async () => {
     const webtriggerRequest = generateWebtriggerRequest('<p>Invalid body</p>');
 
-    await processGitlabEvent(webtriggerRequest, MOCK_CONTEXT);
+    await processGitlabEvent(webtriggerRequest);
 
     expect(mockHandlePushEvent).not.toHaveBeenCalled();
     expect(serverResponse).toHaveBeenCalledWith('Invalid event format', 400);
@@ -92,7 +90,7 @@ describe('processGitlabEvent', () => {
 
     storage.getSecret.mockRejectedValue(new Error());
 
-    await processGitlabEvent(webtriggerRequest, MOCK_CONTEXT);
+    await processGitlabEvent(webtriggerRequest);
 
     expect(mockHandlePushEvent).not.toHaveBeenCalled();
     expect(serverResponse).toHaveBeenCalledWith('The webhook could not be processed', 500);
@@ -101,7 +99,7 @@ describe('processGitlabEvent', () => {
   it('handles pipeline event when FF is enabled', async () => {
     const webtriggerRequest = generateWebtriggerRequest(JSON.stringify(MOCK_PIPELINE_EVENT));
 
-    await processGitlabEvent(webtriggerRequest, MOCK_CONTEXT);
+    await processGitlabEvent(webtriggerRequest);
 
     expect(mockHandlePipelineEvent).toHaveBeenCalledWith(MOCK_PIPELINE_EVENT, TEST_TOKEN, MOCK_CLOUD_ID);
     expect(serverResponse).toHaveBeenCalledWith('Processed webhook event');
@@ -110,7 +108,7 @@ describe('processGitlabEvent', () => {
   it('handles merge request event', async () => {
     const webtriggerRequest = generateWebtriggerRequest(JSON.stringify(MOCK_MERGE_REQUEST_EVENT));
 
-    await processGitlabEvent(webtriggerRequest, MOCK_CONTEXT);
+    await processGitlabEvent(webtriggerRequest);
 
     expect(mockHandleMergeRequestEvent).toHaveBeenCalledWith(MOCK_MERGE_REQUEST_EVENT, TEST_TOKEN, MOCK_CLOUD_ID);
     expect(serverResponse).toHaveBeenCalledWith('Processed webhook event');
@@ -119,7 +117,7 @@ describe('processGitlabEvent', () => {
   it('handles deployment event when FF is enabled', async () => {
     const webtriggerRequest = generateWebtriggerRequest(JSON.stringify(MOCK_DEPLOYMENT_EVENT));
 
-    await processGitlabEvent(webtriggerRequest, MOCK_CONTEXT);
+    await processGitlabEvent(webtriggerRequest);
 
     expect(mockDeploymentEvent).toHaveBeenCalledWith(MOCK_DEPLOYMENT_EVENT, TEST_TOKEN, MOCK_CLOUD_ID);
     expect(serverResponse).toHaveBeenCalledWith('Processed webhook event');

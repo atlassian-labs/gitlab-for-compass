@@ -15,28 +15,24 @@ describe('Process gitlab webtrigger', () => {
 
   test('successfully parse webhook event', async () => {
     storage.get.mockResolvedValue(MOCK_TOKEN_SECRET);
-    const resp = await processGitlabEvent(
-      {
-        body: JSON.stringify({ body: 'some data' }),
-        headers: { 'x-gitlab-token': [MOCK_TOKEN_SECRET] },
-        queryParameters: { groupId: [12345] },
-      },
-      { installContext: 'ari:cloud:compass::site/00000000-0000-0000-0000-000000000000', principal: undefined },
-    );
+    const resp = await processGitlabEvent({
+      body: JSON.stringify({ body: 'some data' }),
+      headers: { 'x-gitlab-token': [MOCK_TOKEN_SECRET] },
+      queryParameters: { groupId: [12345] },
+      context: { cloudId: 'ari:cloud:compass::site/00000000-0000-0000-0000-000000000000' },
+    });
 
     expect(resp).toMatchSnapshot();
   });
 
   test('successfully parse webhook pipeline event', async () => {
     storage.get.mockResolvedValue(MOCK_TOKEN_SECRET);
-    const resp = await processGitlabEvent(
-      {
-        body: JSON.stringify({ body: pipelineWebhookFixture }),
-        headers: { 'x-gitlab-token': [MOCK_TOKEN_SECRET] },
-        queryParameters: { groupId: [12345] },
-      },
-      { installContext: 'ari:cloud:compass::site/00000000-0000-0000-0000-000000000000', principal: undefined },
-    );
+    const resp = await processGitlabEvent({
+      body: JSON.stringify({ body: pipelineWebhookFixture }),
+      headers: { 'x-gitlab-token': [MOCK_TOKEN_SECRET] },
+      queryParameters: { groupId: [12345] },
+      context: { cloudId: 'ari:cloud:compass::site/00000000-0000-0000-0000-000000000000' },
+    });
 
     expect(resp).toMatchSnapshot();
   });

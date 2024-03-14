@@ -1,13 +1,5 @@
 import { CreateLinkInput, CustomFieldFromYAML } from '@atlassian/forge-graphql';
 
-// 2nd parameter passed into extension point & webtrigger functions
-type InvocationContext = {
-  principal: {
-    accountId: string;
-  };
-  installContext: string;
-};
-
 type WebtriggerRequest = {
   body: string;
   queryParameters: {
@@ -15,6 +7,9 @@ type WebtriggerRequest = {
   };
   headers: {
     [key: string]: string[];
+  };
+  context: {
+    cloudId: string;
   };
 };
 
@@ -430,7 +425,6 @@ export type {
   ImportableProject,
   ProjectImportResult,
   ImportStatus,
-  InvocationContext,
   ProjectBranch,
   Deployment,
   MetricsEventPayload,
