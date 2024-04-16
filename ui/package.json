@@ -22,7 +22,6 @@
     "@atlaskit/tokens": "^1.29.1",
     "@atlaskit/tooltip": "^17.5.9",
     "@atlassian/forge-graphql": "13.3.14",
-    "@babel/traverse": "<8.0.0",
     "@forge/api": "^2.8.1",
     "@forge/bridge": "^2.6.0",
     "escape-string-regexp": "^5.0.0",
@@ -53,6 +52,9 @@
     "pretest": "node -p \"JSON.stringify({...require('@forge/bridge/package.json'), main: 'out/index.js'}, null, 2)\" > tmp.json && mv tmp.json node_modules/@forge/bridge/package.json",
     "eject": "react-scripts eject",
     "prebuild": "cd ../src && cp types.ts ../ui/src && cp resolverTypes.ts ../ui/src && cp features.ts ../ui/src"
+  },
+  "resolutions": {
+    "@babel/traverse": "^7.23.2"
   },
   "browserslist": {
     "production": [
