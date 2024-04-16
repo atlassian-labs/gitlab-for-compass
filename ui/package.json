@@ -25,12 +25,12 @@
     "@forge/api": "^2.8.1",
     "@forge/bridge": "^2.6.0",
     "escape-string-regexp": "^5.0.0",
+    "lodash": "^4.17.21",
     "lodash.debounce": "^4.0.8",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-router-dom": "^6.3.0",
-    "styled-components": "^5.3.7",
-    "lodash": "^4.17.21"
+    "styled-components": "^5.3.7"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.2",
@@ -42,8 +42,8 @@
     "@types/react-dom": "^17.0.13",
     "@types/styled-components": "^5.1.24",
     "react-scripts": "^5.0.0",
-    "typescript": "~4.5.5",
-    "react-select-event": "^5.5.1"
+    "react-select-event": "^5.5.1",
+    "typescript": "~4.5.5"
   },
   "scripts": {
     "start": "SKIP_PREFLIGHT_CHECK=true BROWSER=none PORT=3001 react-scripts start",
@@ -52,6 +52,9 @@
     "pretest": "node -p \"JSON.stringify({...require('@forge/bridge/package.json'), main: 'out/index.js'}, null, 2)\" > tmp.json && mv tmp.json node_modules/@forge/bridge/package.json",
     "eject": "react-scripts eject",
     "prebuild": "cd ../src && cp types.ts ../ui/src && cp resolverTypes.ts ../ui/src && cp features.ts ../ui/src"
+  },
+  "resolutions": {
+    "@babel/traverse": "^7.23.2"
   },
   "browserslist": {
     "production": [
