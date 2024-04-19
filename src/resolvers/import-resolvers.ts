@@ -21,6 +21,7 @@ import { GroupProjectsResponse, TeamsWithMembershipStatus } from '../types';
 import { getAllComponentTypeIds } from '../client/compass';
 import { appId, connectedGroupsInfo, getFeatures, groupsAllExisting } from './shared-resolvers';
 import { getFirstPageOfTeamsWithMembershipStatus } from '../services/get-teams';
+import { getTeamOnboarding, setTeamOnboarding } from '../services/onboarding';
 
 const resolver = new Resolver();
 
@@ -158,5 +159,40 @@ resolver.define(
     }
   },
 );
+
+resolver.define(
+  'onboarding/team/get',
+  async (req): Promise<ResolverResponse<{ isTeamOnboardingCompleted: boolean }>> => {
+    const { accountId } = req.context;
+
+    try {
+      const isTeamOnboardingCompleted = await getTeamOnboarding(accountId);
+
+      return { success: true, data: { isTeamOnboardingCompleted } };
+    } catch (e) {
+      return {
+        success: false,
+        errors: [{ message: e.message }],
+      };
+    }
+  },
+);
+
+resolver.define('onboarding/team/set', async (req): Promise<ResolverResponse> => {
+  const { accountId } = req.context;
+
+  try {
+    await setTeamOnboarding(accountId);
+
+    return {
+      success: true,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      errors: [{ message: e.message }],
+    };
+  }
+});
 
 export default resolver.getDefinitions();

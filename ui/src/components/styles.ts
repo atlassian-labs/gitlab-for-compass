@@ -61,6 +61,10 @@ export const TableWrapper = styled.div`
   margin-top: ${gridSize() * 4}px;
   max-height: 60vh;
   overflow: auto;
+  &::-webkit-scrollbar {
+    width: ${token('space.025', '2px')};
+    border: ${token('space.025', '2px')} solid ${token('color.border.input', '#091E4224')};
+  }
 `;
 
 export const IncomingWebhookSectionWrapper = styled.div`

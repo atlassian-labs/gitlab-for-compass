@@ -41,6 +41,8 @@ type Props = {
   importableComponentTypes: ComponentTypesResult;
   teamsResult: TeamsForImportResult;
   selectProjectTeam: (id: number, ownerTeamOption: SelectOwnerTeamOption | null) => void;
+  isSpotlightActive: boolean;
+  finishOnboarding: () => void;
 };
 
 export const SelectProjectsScreen = ({
@@ -64,6 +66,8 @@ export const SelectProjectsScreen = ({
   importableComponentTypes,
   teamsResult,
   selectProjectTeam,
+  isSpotlightActive,
+  finishOnboarding,
 }: Props) => {
   const groupSelectorOptions = useMemo(
     () => buildGroupsSelectorOptions(groups, locationGroupId),
@@ -106,6 +110,8 @@ export const SelectProjectsScreen = ({
           importableComponentTypes={importableComponentTypes}
           teamsResult={teamsResult}
           selectProjectTeam={selectProjectTeam}
+          isSpotlightActive={isSpotlightActive}
+          finishOnboarding={finishOnboarding}
         />
         {projects.length !== 0 ? (
           <CenterWrapper>

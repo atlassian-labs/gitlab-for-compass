@@ -4,7 +4,13 @@ import { router } from '@forge/bridge';
 
 import { CompassComponentTypeOption, ProjectImportSelection } from '../../services/types';
 import { ApplicationState } from '../../routes';
-import { getAllExistingGroups, getGroupProjects, importProjects } from '../../services/invokes';
+import {
+  getAllExistingGroups,
+  getGroupProjects,
+  getTeamOnboarding,
+  importProjects,
+  setTeamOnboarding,
+} from '../../services/invokes';
 import { ImportableProject, ResolverResponse, GitlabAPIGroup } from '../../resolverTypes';
 import { useImportContext } from '../../hooks/useImportContext';
 import { SelectProjectsScreen } from './screens/SelectProjectsScreen';
@@ -50,6 +56,24 @@ export const SelectImportPage = () => {
   const [groupId, setGroupId] = useState<number>(DEFAULT_GROUP_ID);
   const [groups, setGroups] = useState<GitlabAPIGroup[]>([]);
   const [search, setSearch] = useState<string>();
+  const [isSpotlightActive, setIsSpotlightActive] = useState(false);
+
+  const startOnboarding = async () => {
+    getTeamOnboarding()
+      .then(({ data, success, errors }) => {
+        if (success && !data?.isTeamOnboardingCompleted) {
+          setIsSpotlightActive(true);
+        }
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  };
+
+  const finishOnboarding = async () => {
+    await setTeamOnboarding();
+    setIsSpotlightActive(false);
+  };
 
   const { changedProjects, setChangedProjects } = useProjects(projects);
 
@@ -128,6 +152,12 @@ export const SelectImportPage = () => {
   useEffect(() => {
     fetchGroups();
   }, []);
+
+  useEffect(() => {
+    if (!isProjectsLoading && !isGroupsLoading) {
+      startOnboarding();
+    }
+  }, [isProjectsLoading, isGroupsLoading]);
 
   const onSelectAllItems = (filteredProjects: ProjectImportSelection[], isAllItemsSelected: boolean) => {
     setProjects((prevProjects) =>
@@ -294,6 +324,8 @@ export const SelectImportPage = () => {
           importableComponentTypes={importableComponentTypes}
           teamsResult={teamsResult}
           selectProjectTeam={onSelectProjectTeam}
+          isSpotlightActive={isSpotlightActive}
+          finishOnboarding={finishOnboarding}
         />
       )}
       {screen === Screens.CONFIRMATION && (
