@@ -4,11 +4,7 @@ import { STORAGE_KEYS } from '../constants';
 export const getTeamOnboarding = async (accountId: string): Promise<boolean> => {
   const isTeamOnboardingCompleted = await storage.get(`${STORAGE_KEYS.TEAM_ONBOARDING}:${accountId}`);
 
-  if (!isTeamOnboardingCompleted) {
-    return false;
-  }
-
-  return true;
+  return isTeamOnboardingCompleted ?? false;
 };
 
 export const setTeamOnboarding = async (accountId: string): Promise<void> => {

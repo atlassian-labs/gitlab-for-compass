@@ -85,26 +85,26 @@ export const buildTableHead = ({
         content: (
           <SpotlightManager blanketIsTinted={false}>
             <SpotlightTarget name='teamonboarding'>
-              <OwnerTeamHeadWrapper>
-                <p>Owner team</p>
-              </OwnerTeamHeadWrapper>
+              <OwnerTeamHeadWrapper>Owner team</OwnerTeamHeadWrapper>
             </SpotlightTarget>
             <SpotlightTransition>
               {isSpotlightActive && (
                 <Spotlight
                   actions={[
                     {
-                      onClick: () => finishOnboarding(),
-                      text: 'OK',
+                      onClick: finishOnboarding,
+                      text: 'Okay',
                     },
                   ]}
+                  dialogWidth={315}
                   heading='Select an owner team'
                   target='teamonboarding'
                   key='teamonboarding'
-                  targetRadius={3}
+                  dialogPlacement='left top'
+                  targetRadius={4}
                   targetBgColor={token('color.icon.inverse', N0)}
                 >
-                  Select an owner team for the components you import, and meet the criteria for your Service Readiness
+                  Select an owner team for the components you import and meet the criteria for your Service Readiness
                   scorecard.
                 </Spotlight>
               )}

@@ -6,5 +6,6 @@ export const DropdownWrapper = styled.div`
 `;
 
 export const OwnerTeamHeadWrapper = styled.div`
-  width: 150px;
+  height: 25px;
+  padding: 4px 8px;
 `;

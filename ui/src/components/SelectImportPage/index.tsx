@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { router } from '@forge/bridge';
 
@@ -64,16 +64,20 @@ export const SelectImportPage = () => {
         if (success && !data?.isTeamOnboardingCompleted) {
           setIsSpotlightActive(true);
         }
+
+        if (errors?.length) {
+          throw new Error(errors[0].message);
+        }
       })
       .catch((e) => {
         console.error(e);
       });
   };
 
-  const finishOnboarding = async () => {
-    await setTeamOnboarding();
+  const finishOnboarding = useCallback(() => {
     setIsSpotlightActive(false);
-  };
+    setTeamOnboarding();
+  }, []);
 
   const { changedProjects, setChangedProjects } = useProjects(projects);
 
