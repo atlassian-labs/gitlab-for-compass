@@ -88,7 +88,7 @@ export const buildTableHead = ({
               <OwnerTeamHeadWrapper>Owner team</OwnerTeamHeadWrapper>
             </SpotlightTarget>
             <SpotlightTransition>
-              {isSpotlightActive && (
+              {isSpotlightActive && !isLoading && (
                 <Spotlight
                   actions={[
                     {

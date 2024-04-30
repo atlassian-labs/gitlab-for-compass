@@ -58,7 +58,7 @@ export const SelectImportPage = () => {
   const [search, setSearch] = useState<string>();
   const [isSpotlightActive, setIsSpotlightActive] = useState(false);
 
-  const startOnboarding = async () => {
+  const startOnboarding = () => {
     getTeamOnboarding()
       .then(({ data, success, errors }) => {
         if (success && !data?.isTeamOnboardingCompleted) {
@@ -155,13 +155,8 @@ export const SelectImportPage = () => {
 
   useEffect(() => {
     fetchGroups();
+    startOnboarding();
   }, []);
-
-  useEffect(() => {
-    if (!isProjectsLoading && !isGroupsLoading) {
-      startOnboarding();
-    }
-  }, [isProjectsLoading, isGroupsLoading]);
 
   const onSelectAllItems = (filteredProjects: ProjectImportSelection[], isAllItemsSelected: boolean) => {
     setProjects((prevProjects) =>
