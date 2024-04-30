@@ -81,7 +81,7 @@ export const handleModifiedFilesAndUpdateComponentChanges =
 
     for (const { oldFile, newFile } of modifiedFiles) {
       if (isFileIdentifierChanged(oldFile, newFile)) {
-        unlinks.push(oldFile);
+        unlinks.push({ ...oldFile, shouldRemoveExternalAlias: true });
         creates.push(newFile);
       } else {
         updates.push(newFile);

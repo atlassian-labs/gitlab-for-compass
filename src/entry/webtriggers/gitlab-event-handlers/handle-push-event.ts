@@ -61,7 +61,9 @@ export const handlePushEvent = async (event: PushEvent, groupToken: string, clou
       filePath: componentToUnlink.filePath,
       componentId: componentToUnlink.componentYaml.id,
       deduplicationId: componentToUnlink.deduplicationId,
-      additionalExternalAliasesToRemove: [{ externalId: event.project.id.toString(), externalSource: EXTERNAL_SOURCE }],
+      additionalExternalAliasesToRemove: componentToUnlink.shouldRemoveExternalAlias
+        ? [{ externalId: event.project.id.toString(), externalSource: EXTERNAL_SOURCE }]
+        : [],
     }),
   );
   await Promise.all([...creates, ...updates, ...removals]);
