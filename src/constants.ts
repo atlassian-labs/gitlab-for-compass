@@ -12,6 +12,7 @@ export const STORAGE_KEYS = {
   CURRENT_IMPORT_TOTAL_PROJECTS: 'currentImportTotalProjects',
   CURRENT_IMPORT_QUEUE_JOB_IDS: 'currentImportQueueJobIds',
   CURRENT_IMPORT_FAILED_PROJECT_PREFIX: 'currentImportFailedProject-',
+  TEAM_ONBOARDING: 'isTeamOnboardingCompleted',
 };
 
 export const STORAGE_SECRETS = {

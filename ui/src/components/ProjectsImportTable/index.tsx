@@ -19,6 +19,8 @@ type Props = {
   importableComponentTypes: ComponentTypesResult;
   teamsResult: TeamsForImportResult;
   selectProjectTeam: (id: number, ownerTeamOption: SelectOwnerTeamOption | null) => void;
+  isSpotlightActive: boolean;
+  finishOnboarding: () => void;
 };
 
 const SPINNER_SIZE = 'large';
@@ -33,6 +35,8 @@ export const ProjectsImportTable = ({
   importableComponentTypes,
   teamsResult,
   selectProjectTeam,
+  isSpotlightActive,
+  finishOnboarding,
 }: Props) => {
   const emptyView = useMemo(() => buildEmptyView({ isProjectsExist: projects.length !== 0, error }), [projects, error]);
 
@@ -51,6 +55,8 @@ export const ProjectsImportTable = ({
             onSelectAllItems,
             isAllItemsSelected,
             isLoading,
+            isSpotlightActive,
+            finishOnboarding,
           })}
           rows={buildTableBody({
             projects,

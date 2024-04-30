@@ -92,3 +92,11 @@ export const getFirstPageOfTeamsWithMembershipStatus = (
     searchTeamValue,
   });
 };
+
+export const getTeamOnboarding = (): Promise<ResolverResponse<{ isTeamOnboardingCompleted: boolean }>> => {
+  return invoke<ResolverResponse<{ isTeamOnboardingCompleted: boolean }>>('onboarding/team/get');
+};
+
+export const setTeamOnboarding = (): Promise<ResolverResponse> => {
+  return invoke<ResolverResponse>('onboarding/team/set');
+};

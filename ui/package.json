@@ -13,6 +13,7 @@
     "@atlaskit/form": "^8.5.4",
     "@atlaskit/icon": "^21.10.6",
     "@atlaskit/inline-message": "^11.4.9",
+    "@atlaskit/onboarding": "^11.3.0",
     "@atlaskit/progress-bar": "^0.5.6",
     "@atlaskit/section-message": "^6.1.10",
     "@atlaskit/select": "^15.2.11",

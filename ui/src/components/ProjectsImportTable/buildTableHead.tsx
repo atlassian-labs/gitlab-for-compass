@@ -1,19 +1,32 @@
 import Checkbox from '@atlaskit/checkbox';
 import { HeadType } from '@atlaskit/dynamic-table/dist/types/types';
+import { Spotlight, SpotlightManager, SpotlightTarget, SpotlightTransition } from '@atlaskit/onboarding';
+import { N0 } from '@atlaskit/theme/colors';
+import { token } from '@atlaskit/tokens';
 
 import { TooltipGenerator } from '../TooltipGenerator';
 import { tooltipsText } from '../utils';
 import { StatusWrapper } from '../SelectImportPage/styles';
 import { ProjectImportSelection } from '../../services/types';
+import { OwnerTeamHeadWrapper } from './styles';
 
 type Params = {
   projects: ProjectImportSelection[];
   onSelectAllItems: (filteredProjects: ProjectImportSelection[], isAllItemsSelected: boolean) => void;
   isAllItemsSelected: boolean;
   isLoading: boolean;
+  isSpotlightActive: boolean;
+  finishOnboarding: () => void;
 };
 
-export const buildTableHead = ({ isLoading, onSelectAllItems, isAllItemsSelected, projects }: Params): HeadType => {
+export const buildTableHead = ({
+  isLoading,
+  onSelectAllItems,
+  isAllItemsSelected,
+  projects,
+  isSpotlightActive,
+  finishOnboarding,
+}: Params): HeadType => {
   return {
     cells: [
       {
@@ -69,7 +82,35 @@ export const buildTableHead = ({ isLoading, onSelectAllItems, isAllItemsSelected
       },
       {
         key: 'OWNER_TEAM',
-        content: 'Owner team',
+        content: (
+          <SpotlightManager blanketIsTinted={false}>
+            <SpotlightTarget name='teamonboarding'>
+              <OwnerTeamHeadWrapper>Owner team</OwnerTeamHeadWrapper>
+            </SpotlightTarget>
+            <SpotlightTransition>
+              {isSpotlightActive && !isLoading && (
+                <Spotlight
+                  actions={[
+                    {
+                      onClick: finishOnboarding,
+                      text: 'Okay',
+                    },
+                  ]}
+                  dialogWidth={315}
+                  heading='Select an owner team'
+                  target='teamonboarding'
+                  key='teamonboarding'
+                  dialogPlacement='left top'
+                  targetRadius={4}
+                  targetBgColor={token('color.icon.inverse', N0)}
+                >
+                  Select an owner team for the components you import and meet the criteria for your Service Readiness
+                  scorecard.
+                </Spotlight>
+              )}
+            </SpotlightTransition>
+          </SpotlightManager>
+        ),
         width: 15,
       },
     ],

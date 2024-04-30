@@ -1,10 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { router } from '@forge/bridge';
 
 import { CompassComponentTypeOption, ProjectImportSelection } from '../../services/types';
 import { ApplicationState } from '../../routes';
-import { getAllExistingGroups, getGroupProjects, importProjects } from '../../services/invokes';
+import {
+  getAllExistingGroups,
+  getGroupProjects,
+  getTeamOnboarding,
+  importProjects,
+  setTeamOnboarding,
+} from '../../services/invokes';
 import { ImportableProject, ResolverResponse, GitlabAPIGroup } from '../../resolverTypes';
 import { useImportContext } from '../../hooks/useImportContext';
 import { SelectProjectsScreen } from './screens/SelectProjectsScreen';
@@ -50,6 +56,28 @@ export const SelectImportPage = () => {
   const [groupId, setGroupId] = useState<number>(DEFAULT_GROUP_ID);
   const [groups, setGroups] = useState<GitlabAPIGroup[]>([]);
   const [search, setSearch] = useState<string>();
+  const [isSpotlightActive, setIsSpotlightActive] = useState(false);
+
+  const startOnboarding = () => {
+    getTeamOnboarding()
+      .then(({ data, success, errors }) => {
+        if (success && !data?.isTeamOnboardingCompleted) {
+          setIsSpotlightActive(true);
+        }
+
+        if (errors?.length) {
+          throw new Error(errors[0].message);
+        }
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  };
+
+  const finishOnboarding = useCallback(() => {
+    setIsSpotlightActive(false);
+    setTeamOnboarding();
+  }, []);
 
   const { changedProjects, setChangedProjects } = useProjects(projects);
 
@@ -127,6 +155,7 @@ export const SelectImportPage = () => {
 
   useEffect(() => {
     fetchGroups();
+    startOnboarding();
   }, []);
 
   const onSelectAllItems = (filteredProjects: ProjectImportSelection[], isAllItemsSelected: boolean) => {
@@ -294,6 +323,8 @@ export const SelectImportPage = () => {
           importableComponentTypes={importableComponentTypes}
           teamsResult={teamsResult}
           selectProjectTeam={onSelectProjectTeam}
+          isSpotlightActive={isSpotlightActive}
+          finishOnboarding={finishOnboarding}
         />
       )}
       {screen === Screens.CONFIRMATION && (
