@@ -226,6 +226,7 @@ describe('findConfigAsCodeFileChanges', () => {
           componentYaml: compassYamlBefore,
           filePath: '/compass.yml',
           deduplicationId: baseEvent.project.id.toString(),
+          shouldRemoveExternalAlias: true,
         },
       ],
     };
@@ -352,6 +353,7 @@ describe('findConfigAsCodeFileChanges', () => {
             componentYaml: compassYamlBefore,
             filePath: '/compass.yml',
             deduplicationId: event.project.id.toString(),
+            shouldRemoveExternalAlias: true,
           },
         ],
       };
@@ -380,6 +382,7 @@ describe('findConfigAsCodeFileChanges', () => {
             componentYaml: compassYamlBefore,
             filePath: '/compass.yml',
             deduplicationId: event.project.id.toString(),
+            shouldRemoveExternalAlias: true,
           },
         ],
       };
@@ -653,6 +656,7 @@ describe('findConfigAsCodeFileChanges', () => {
             componentYaml: compassYamlBefore,
             filePath: '/compass.yml',
             deduplicationId: event.project.id.toString(),
+            shouldRemoveExternalAlias: true,
           },
         ],
       };
@@ -708,6 +712,7 @@ describe('findConfigAsCodeFileChanges', () => {
             componentYaml: compassYamlBefore,
             filePath: '/compass.yml',
             deduplicationId: event.project.id.toString(),
+            shouldRemoveExternalAlias: true,
           },
         ],
       };

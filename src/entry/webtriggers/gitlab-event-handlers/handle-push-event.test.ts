@@ -3,7 +3,7 @@ import { mockAgg, mockUnlinkComponent } from '../../../__tests__/helpers/mock-ag
 
 mockAgg();
 
-import { ConfigFileActions } from '@atlassian/forge-graphql';
+import { ConfigFileActions, UnLinkComponentInput } from '@atlassian/forge-graphql';
 import { mocked } from 'jest-mock';
 import { generatePushEvent } from '../../../__tests__/helpers/gitlab-helper';
 import { handlePushEvent } from './handle-push-event';
@@ -37,6 +37,16 @@ describe('Gitlab push events', () => {
       componentYaml: { id: 'test2' },
       filePath: '/compass.yml',
       deduplicationId: '1',
+      shouldRemoveExternalAlias: true,
+    },
+  ];
+
+  const mockComponentsToUnlinkWithoutExternalAliasesToRemove = [
+    {
+      componentYaml: { id: 'test2' },
+      filePath: '/compass.yml',
+      deduplicationId: '1',
+      shouldRemoveExternalAlias: false,
     },
   ];
 
@@ -52,6 +62,16 @@ describe('Gitlab push events', () => {
           externalSource: EXTERNAL_SOURCE,
         },
       ],
+    },
+  ];
+
+  const mockUnlinkComponentDataWithoutExternalAliasesToRemove: UnLinkComponentInput[] = [
+    {
+      componentId: 'test2',
+      cloudId: MOCK_CLOUD_ID,
+      filePath: `/compass.yml`,
+      deduplicationId: '1',
+      additionalExternalAliasesToRemove: [],
     },
   ];
 
@@ -171,5 +191,18 @@ describe('Gitlab push events', () => {
       deduplicationId: '1',
     });
     expect(removals).toBeCalledWith(mockUnlinkComponentData[0]);
+  });
+
+  it('does not delete externalAlias for the current component', async () => {
+    getNonDefaultBranchNameMock.mockResolvedValue(event.project.default_branch);
+    findConfigChanges.mockResolvedValue({
+      componentsToCreate: [],
+      componentsToUpdate: [],
+      componentsToUnlink: mockComponentsToUnlinkWithoutExternalAliasesToRemove,
+    });
+
+    await handlePushEvent(event, TEST_TOKEN, MOCK_CLOUD_ID);
+
+    expect(removals).toBeCalledWith(mockUnlinkComponentDataWithoutExternalAliasesToRemove[0]);
   });
 });

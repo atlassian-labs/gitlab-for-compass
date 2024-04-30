@@ -149,6 +149,7 @@ export type ComponentUnlinkPayload = {
   componentYaml: CompassYaml;
   deduplicationId?: string;
   filePath?: string;
+  shouldRemoveExternalAlias?: boolean;
 };
 
 type ModifiedFilePayload = {
