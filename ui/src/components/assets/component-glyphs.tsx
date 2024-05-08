@@ -249,4 +249,64 @@ export const COMPONENT_TYPES: ComponentTypeData[] = [
     ),
     fieldDefinitionIds: ['compass:lifecycle'],
   },
+  {
+    id: 'DATASET',
+    label: 'Dataset',
+    color: token('color.icon.accent.magenta', '#CD519D'),
+    icon: (props: CustomGlyphProps) => (
+      <svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg' {...props}>
+        <path
+          d='M3 0H21C22.7 0 24 1.3 24 3V21C24 22.7 22.7 24 21 24H3C1.3 24 0 22.7 0 21V3C0 1.3 1.3 0 3 0Z'
+          fill='#CD519D'
+        />
+        <path
+          fillRule='evenodd'
+          clipRule='evenodd'
+          d='M6.5 6.5V17.5H17.5V6.5H6.5ZM6 5C5.44772 5 5 5.44772 5 6V18C5 18.5523 5.44772 19 6 19H18C18.5523 19 19 18.5523 19 18V6C19 5.44772 18.5523 5 18 5H6Z'
+          fill='white'
+        />
+        <path fillRule='evenodd' clipRule='evenodd' d='M18 10.75H5V9.25H18V10.75Z' fill='white' />
+        <path fillRule='evenodd' clipRule='evenodd' d='M18 14.75H5V13.25H18V14.75Z' fill='white' />
+        <path fillRule='evenodd' clipRule='evenodd' d='M12.75 5L12.75 18L11.25 18L11.25 5L12.75 5Z' fill='white' />
+      </svg>
+    ),
+    fieldDefinitionIds: ['compass:lifecycle'],
+  },
+  {
+    id: 'DASHBOARD',
+    label: 'Dashboard',
+    color: token('color.icon.accent.purple', colors.P200),
+    icon: (props: CustomGlyphProps) => (
+      <svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg' {...props}>
+        <path d='M0 21V3c0-1.7 1.3-3 3-3h18c1.7 0 3 1.3 3 3v18c0 1.7-1.3 3-3 3H3c-1.7 0-3-1.3-3-3Z' fill='#8270DB' />
+        <path
+          fillRule='evenodd'
+          clipRule='evenodd'
+          d='M5.5 17.5h13v-11h-13v11ZM4 18a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v12Z'
+          fill='#fff'
+        />
+        <path fillRule='evenodd' clipRule='evenodd' d='M4 9.25h8v1.5H4v-1.5ZM12 13.25h8v1.5h-8v-1.5Z' fill='#fff' />
+        <path fillRule='evenodd' clipRule='evenodd' d='M12.75 6v13h-1.5V6h1.5Z' fill='#fff' />
+      </svg>
+    ),
+    fieldDefinitionIds: ['compass:lifecycle'],
+  },
+  {
+    id: 'DATA_PRODUCT',
+    label: 'Data product',
+    color: token('color.icon.accent.green', colors.G300),
+    icon: (props: CustomGlyphProps) => (
+      <svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg' {...props}>
+        <path d='M0 21V3c0-1.7 1.3-3 3-3h18c1.7 0 3 1.3 3 3v18c0 1.7-1.3 3-3 3H3c-1.7 0-3-1.3-3-3Z' fill='#22A06B' />
+        <path
+          fillRule='evenodd'
+          clipRule='evenodd'
+          d='M4.1 5a.9.9 0 0 1 .9-.9h4v1.8H5.9V9H4.1V5ZM19 4.1a.9.9 0 0 1 .9.9v4h-1.8V5.9H15V4.1h4ZM19.9 19a.9.9 0 0 1-.9.9h-4v-1.8h3.1V15h1.8v4ZM5 19.9a.9.9 0 0 1-.9-.9v-4h1.8v3.1H9v1.8H5Z'
+          fill='#fff'
+        />
+        <path d='M11 8h2v2h-2V8ZM8 11h2v2H8v-2ZM11 14h2v2h-2v-2ZM14 11h2v2h-2v-2Z' fill='#fff' />
+      </svg>
+    ),
+    fieldDefinitionIds: ['compass:lifecycle'],
+  },
 ];
