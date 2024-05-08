@@ -6,6 +6,7 @@ import { DefaultErrorTypes, ErrorTypes } from '../resolverTypes';
 export const useFeatures = (): [FeaturesList, boolean, ErrorTypes | undefined] => {
   const [features, setFeatures] = useState<FeaturesList>({
     [GitlabFeaturesEnum.SEND_STAGING_EVENTS]: false,
+    [GitlabFeaturesEnum.DATA_COMPONENT_TYPES]: false,
   });
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<ErrorTypes>();
