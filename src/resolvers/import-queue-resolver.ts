@@ -56,6 +56,7 @@ resolver.define('import', async (req) => {
     shouldOpenMR,
     ownerId,
   } = project;
+  console.log(`import queue: processing repository ${id}`);
 
   try {
     if (!hasComponent) {
