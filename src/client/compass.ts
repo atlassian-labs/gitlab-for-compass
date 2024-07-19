@@ -21,6 +21,7 @@ import { AggClientError, GraphqlGatewayError } from '../models/errors';
 import { getTenantContextQuery } from './get-tenat-context-query';
 import { aggQuery } from './agg';
 import { getTeamsQuery } from './get-teams-query';
+import { formatLabels } from '../utils/format-labels';
 
 const throwIfErrors = function throwIfSdkErrors(method: string, errors: SdkError[]) {
   // Checking if any invalid config errors to report.
@@ -38,7 +39,7 @@ const throwIfErrors = function throwIfSdkErrors(method: string, errors: SdkError
 
 export const createComponent = async (cloudId: string, project: ImportableProject): Promise<Component | never> => {
   const { name, description, typeId, labels, url, ownerId } = project;
-  const formattedLabels = labels.map((label) => label.split(' ').join('-').toLowerCase());
+  const formattedLabels = formatLabels(labels);
   const component = {
     name,
     description,
