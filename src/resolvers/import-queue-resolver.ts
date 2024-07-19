@@ -9,6 +9,7 @@ import { appendLink } from '../utils/append-link';
 import { ImportableProject } from '../resolverTypes';
 import { sleep } from '../utils/time-utils';
 import { createMRWithCompassYML } from '../services/create-mr-with-compass-yml';
+import { formatLabels } from '../utils/format-labels';
 
 const backOffConfig: Partial<IBackOffOptions> = {
   startingDelay: BACK_OFF.startingDelay,
@@ -67,7 +68,7 @@ resolver.define('import', async (req) => {
         await createMRWithCompassYML(project, component.id, groupId);
       }
     } else if (hasComponent && !(isCompassFilePrOpened && isManaged)) {
-      const formattedLabels = labels.map((label: string) => label.split(' ').join('-').toLowerCase());
+      const formattedLabels = formatLabels(labels);
       const component = {
         name,
         description,

@@ -7,6 +7,7 @@ import { syncComponentWithFile, updateComponent } from '../../client/compass';
 import { getProjectLabels } from '../get-labels';
 import { getProjectById } from '../../client/gitlab';
 import { hasLastSyncEvent } from '../../utils/push-event-utils';
+import { formatLabels } from '../../utils/format-labels';
 
 const getFileUrl = (filePath: string, event: PushEvent, branchName: string) => {
   return `${event.project.web_url}/blob/${branchName}/${filePath}`;
@@ -56,7 +57,7 @@ export const syncComponent = async (
     const { topics } = await getProjectById(token, event.project.id);
     const projectLabels = await getProjectLabels(event.project.id, token, topics);
 
-    const formattedLabels = projectLabels.map((label) => label.split(' ').join('-').toLowerCase());
+    const formattedLabels = formatLabels(projectLabels);
 
     const labels = currentComponent.labels
       ? [...currentComponent.labels, IMPORT_LABEL, ...formattedLabels]
