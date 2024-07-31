@@ -1,5 +1,5 @@
 import yaml from 'js-yaml';
-import { Component } from '@atlassian/forge-graphql';
+import { CompassLinkType, Component } from '@atlassian/forge-graphql';
 import {
   CompassYaml,
   ComponentLifecycleField,
@@ -10,6 +10,7 @@ import {
 } from '../types';
 import { formatCustomFieldsToYamlFormat } from './format-custom-fields-to-yaml';
 import { DEFAULT_CONFIG_VERSION } from '../constants';
+import { listFeatures } from '../services/feature-flags';
 
 function getFields(fields?: Record<string, unknown>): YamlFields | null {
   if (fields) {
@@ -27,12 +28,23 @@ function getFields(fields?: Record<string, unknown>): YamlFields | null {
   return null;
 }
 
-function formatLink(link: YamlLink) {
-  return {
-    ...(link.name !== undefined ? { name: link.name } : {}),
-    type: link.type,
-    url: link.url,
-  };
+export function formatLinks(links: Array<YamlLink>) {
+  const featuresList = listFeatures();
+
+  return (
+    links
+      ?.filter((link) => {
+        if (featuresList.isDocumentComponentLinksDisabled) {
+          return link.type !== CompassLinkType.Document;
+        }
+        return true;
+      })
+      .map((link) => ({
+        ...(link.name !== undefined ? { name: link.name } : {}),
+        type: link.type,
+        url: link.url,
+      })) ?? null
+  );
 }
 
 export const generateCompassYamlData = (component: Component, project: ImportableProject): CompassYaml => {
@@ -60,7 +72,7 @@ export const generateCompassYamlData = (component: Component, project: Importabl
     typeId: typeId || type,
     ownerId: ownerId || selectedOwnerId,
     fields: getFields(fields),
-    links: links?.map(formatLink) || null,
+    links: formatLinks(links),
     relationships: {
       DEPENDS_ON: relationships ? relationships.map((relationship) => relationship.nodeId) : [],
     },
