@@ -7,7 +7,7 @@ export const useFeatures = (): [FeaturesList, boolean, ErrorTypes | undefined] =
   const [features, setFeatures] = useState<FeaturesList>({
     [GitlabFeaturesEnum.SEND_STAGING_EVENTS]: false,
     [GitlabFeaturesEnum.DATA_COMPONENT_TYPES]: false,
-    [GitlabFeaturesEnum.DATA_COMPONENT_TYPES]: false,
+    [GitlabFeaturesEnum.DISABLE_DOCUMENT_COMPONENT_LINKS]: false,
   });
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<ErrorTypes>();
