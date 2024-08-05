@@ -4,9 +4,10 @@ import { mockForgeApi } from '../__tests__/helpers/forge-helper';
 mockForgeApi();
 
 import { CompassLinkType, Component, CustomField, CustomFields, CustomFieldType, Link } from '@atlassian/forge-graphql';
-import { CompassYaml, ImportableProject } from '../types';
-import { generateCompassYamlData } from './create-compass-yaml';
+import { CompassYaml, ImportableProject, YamlLink } from '../types';
+import { formatLinks, generateCompassYamlData } from './create-compass-yaml';
 import { DEFAULT_CONFIG_VERSION } from '../constants';
+import * as featureFlags from '../services/feature-flags';
 
 const getMockComponent = (override: Partial<Component> = {}): Component => {
   return {
@@ -209,5 +210,55 @@ describe('generateCompassYamlData', () => {
     });
 
     expect(result).toEqual(expectedYamlData);
+  });
+});
+
+describe('formatLinks', () => {
+  const inputLinks: Array<YamlLink> = [
+    { name: undefined, type: CompassLinkType.Repository, url: 'url1' },
+    { name: 'Link 2', type: CompassLinkType.Document, url: 'url2' },
+    { name: 'Link 3', type: CompassLinkType.Dashboard, url: 'url3' },
+    { name: 'Link 4', type: CompassLinkType.Document, url: 'url4' },
+  ];
+
+  it('should filter out Document links and format remaining links correctly', async () => {
+    jest.spyOn(featureFlags, 'listFeatures').mockReturnValueOnce({
+      isDataComponentTypesEnabled: false,
+      isSendStagingEventsEnabled: false,
+      isDocumentComponentLinksDisabled: true,
+    });
+
+    const result = formatLinks(inputLinks);
+
+    expect(result).toHaveLength(2);
+    expect(result).toEqual([
+      { type: CompassLinkType.Repository, url: 'url1' },
+      { name: 'Link 3', type: CompassLinkType.Dashboard, url: 'url3' },
+    ]);
+  });
+
+  it('should return an empty array if input links are null', async () => {
+    jest.spyOn(featureFlags, 'listFeatures').mockReturnValueOnce({
+      isDataComponentTypesEnabled: false,
+      isSendStagingEventsEnabled: false,
+      isDocumentComponentLinksDisabled: true,
+    });
+
+    const result = formatLinks(null);
+
+    expect(result).toEqual(null);
+  });
+
+  it('Should allow all types of Component Links if DISABLE_DOCUMENT_COMPONENT_LINKS FF is off', async () => {
+    jest.spyOn(featureFlags, 'listFeatures').mockReturnValueOnce({
+      isDataComponentTypesEnabled: false,
+      isSendStagingEventsEnabled: false,
+      isDocumentComponentLinksDisabled: false,
+    });
+
+    const result = formatLinks(inputLinks);
+
+    expect(result).toHaveLength(inputLinks.length);
+    expect(result).toEqual(inputLinks);
   });
 });
