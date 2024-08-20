@@ -847,10 +847,10 @@
     "@babel/runtime" "^7.0.0"
     "@emotion/react" "^11.7.1"
 
-"@atlassian/forge-graphql@13.9.0":
-  version "13.9.0"
-  resolved "https://packages.atlassian.com/api/npm/atlassian-npm/@atlassian/forge-graphql/-/forge-graphql-13.9.0.tgz#e741e7e88e570905f5af3980a0d3c89496e38cc2"
-  integrity sha512-6WgfYfkCZanUrge9phCyt2OZGxTY/SY/VEdufNN4ngIiTcyaeT3ywKoDs/YIkOMk7MxurNCcTlNpC7y+SC0YNQ==
+"@atlassian/forge-graphql@13.9.1":
+  version "13.9.1"
+  resolved "https://packages.atlassian.com/api/npm/atlassian-npm/@atlassian/forge-graphql/-/forge-graphql-13.9.1.tgz#3faf3daf0aedfc579375b3830aa870e8fe816517"
+  integrity sha512-yzfEU+9orpAaEjoR8gyRVDC8Apu2x6QrTirSb4HzMLdffJhBYfhUaD3b76VuJYTn4tjRUD9SCIBAg0GA4iXE7Q==
   dependencies:
     "@forge/api" "^2.21.0"
     fs "^0.0.1-security"
