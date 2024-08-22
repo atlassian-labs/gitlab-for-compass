@@ -4,12 +4,12 @@ import { storage } from '@forge/api';
 import { backOff, IBackOffOptions } from 'exponential-backoff';
 
 import { createComponent, updateComponent } from '../client/compass';
-import { STORAGE_KEYS, BACK_OFF, IMPORT_LABEL } from '../constants';
+import { STORAGE_KEYS, BACK_OFF, IMPORT_LABEL, MAX_LABELS_LENGTH } from '../constants';
 import { appendLink } from '../utils/append-link';
 import { ImportableProject } from '../resolverTypes';
 import { sleep } from '../utils/time-utils';
 import { createMRWithCompassYML } from '../services/create-mr-with-compass-yml';
-import { formatLabels } from '../utils/format-labels';
+import { formatLabels } from '../utils/labels-utils';
 
 const backOffConfig: Partial<IBackOffOptions> = {
   startingDelay: BACK_OFF.startingDelay,
@@ -68,7 +68,8 @@ resolver.define('import', async (req) => {
         await createMRWithCompassYML(project, component.id, groupId);
       }
     } else if (hasComponent && !(isCompassFilePrOpened && isManaged)) {
-      const formattedLabels = formatLabels(labels);
+      const formattedLabels = formatLabels(labels).slice(0, MAX_LABELS_LENGTH - 1);
+
       const component = {
         name,
         description,
