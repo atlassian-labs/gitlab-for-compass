@@ -139,7 +139,7 @@ describe('syncComponent', () => {
 
     await syncComponent(...syncPayload);
 
-    const expectedLabels = [...MOCK_COMPONENT_LABELS, IMPORT_LABEL, ...MOCK_GET_PROJECT_LABELS];
+    const expectedLabels = ['source:gitlab', 'koko', 'label', 'language:javascript', 'momo'];
 
     expect(mockUpdateComponent).toBeCalledWith(
       expect.objectContaining({

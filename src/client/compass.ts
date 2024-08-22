@@ -21,7 +21,7 @@ import { AggClientError, GraphqlGatewayError } from '../models/errors';
 import { getTenantContextQuery } from './get-tenat-context-query';
 import { aggQuery } from './agg';
 import { getTeamsQuery } from './get-teams-query';
-import { formatLabels } from '../utils/format-labels';
+import { formatLabels } from '../utils/labels-utils';
 
 const throwIfErrors = function throwIfSdkErrors(method: string, errors: SdkError[]) {
   // Checking if any invalid config errors to report.

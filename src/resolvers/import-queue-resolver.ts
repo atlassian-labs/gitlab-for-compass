@@ -9,7 +9,7 @@ import { appendLink } from '../utils/append-link';
 import { ImportableProject } from '../resolverTypes';
 import { sleep } from '../utils/time-utils';
 import { createMRWithCompassYML } from '../services/create-mr-with-compass-yml';
-import { formatLabels } from '../utils/format-labels';
+import { formatLabels } from '../utils/labels-utils';
 
 const backOffConfig: Partial<IBackOffOptions> = {
   startingDelay: BACK_OFF.startingDelay,
