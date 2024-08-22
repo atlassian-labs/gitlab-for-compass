@@ -1,4 +1,4 @@
-import { IMPORT_LABEL } from '../constants';
+import { IMPORT_LABEL, MAX_LABELS_LENGTH } from '../constants';
 
 // Converts the topics from a GitLab project to a list of formatted labels for a Compass component.
 export const formatLabels = (labels: string[]): string[] => {
@@ -18,11 +18,11 @@ export function mergeLabels(projectLabels: string[], currentLabels: string[]): s
   uniqueLabels.sort();
 
   // Get up to 20 labels
-  let trimmedLabels = uniqueLabels.slice(0, 20);
+  let trimmedLabels = uniqueLabels.slice(0, MAX_LABELS_LENGTH);
 
   // If trimmedLabels doesn't include IMPORT_LABEL, add it to the trimmed labels
   if (!trimmedLabels.includes(IMPORT_LABEL)) {
-    trimmedLabels = [IMPORT_LABEL, ...trimmedLabels].slice(0, 20);
+    trimmedLabels = [IMPORT_LABEL, ...trimmedLabels].slice(0, MAX_LABELS_LENGTH);
   }
 
   return trimmedLabels;

@@ -15,7 +15,7 @@ import graphqlGateway, {
   UnLinkComponentInput,
 } from '@atlassian/forge-graphql';
 import { ImportableProject, COMPASS_GATEWAY_MESSAGES, Metric, Team } from '../types';
-import { EXTERNAL_SOURCE, IMPORT_LABEL } from '../constants';
+import { EXTERNAL_SOURCE, IMPORT_LABEL, MAX_LABELS_LENGTH } from '../constants';
 import { UNKNOWN_EXTERNAL_ALIAS_ERROR_MESSAGE } from '../models/error-messages';
 import { AggClientError, GraphqlGatewayError } from '../models/errors';
 import { getTenantContextQuery } from './get-tenat-context-query';
@@ -39,7 +39,7 @@ const throwIfErrors = function throwIfSdkErrors(method: string, errors: SdkError
 
 export const createComponent = async (cloudId: string, project: ImportableProject): Promise<Component | never> => {
   const { name, description, typeId, labels, url, ownerId } = project;
-  const formattedLabels = formatLabels(labels).slice(0, 19);
+  const formattedLabels = formatLabels(labels).slice(0, MAX_LABELS_LENGTH - 1);
   const component = {
     name,
     description,

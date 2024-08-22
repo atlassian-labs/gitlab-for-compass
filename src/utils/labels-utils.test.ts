@@ -1,4 +1,4 @@
-import { IMPORT_LABEL } from '../constants';
+import { IMPORT_LABEL, MAX_LABELS_LENGTH } from '../constants';
 import { formatLabels, mergeLabels } from './labels-utils';
 
 describe('formatLabels', () => {
@@ -64,11 +64,11 @@ describe('mergeLabels', () => {
     expect(result).toEqual([IMPORT_LABEL, 'label1', 'label2', 'label3']);
   });
 
-  it('should return up to 20 labels including IMPORT_LABEL', () => {
+  it('should return up to MAX_LABELS_LENGTH labels including IMPORT_LABEL', () => {
     const projectLabels = Array.from({ length: 15 }, (_, i) => `Label${i + 1}`);
     const currentLabels = Array.from({ length: 10 }, (_, i) => `label${i + 16}`);
     const result = mergeLabels(projectLabels, currentLabels);
-    expect(result.length).toBe(20);
+    expect(result.length).toBe(MAX_LABELS_LENGTH);
     expect(result).toContain(IMPORT_LABEL);
   });
 

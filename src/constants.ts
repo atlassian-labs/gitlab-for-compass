@@ -25,6 +25,7 @@ export const MAX_DESCRIPTION_LENGTH = 1000;
 export const EXTERNAL_SOURCE = 'gitlab-importer';
 export const IMPORT_LABEL = 'source:gitlab';
 export const MAX_LINKS_OF_TYPE = 5;
+export const MAX_LABELS_LENGTH = 20;
 export const BACK_OFF: Partial<IBackOffOptions> = {
   startingDelay: 300,
   timeMultiple: 3,

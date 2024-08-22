@@ -4,7 +4,7 @@ import { storage } from '@forge/api';
 import { backOff, IBackOffOptions } from 'exponential-backoff';
 
 import { createComponent, updateComponent } from '../client/compass';
-import { STORAGE_KEYS, BACK_OFF, IMPORT_LABEL } from '../constants';
+import { STORAGE_KEYS, BACK_OFF, IMPORT_LABEL, MAX_LABELS_LENGTH } from '../constants';
 import { appendLink } from '../utils/append-link';
 import { ImportableProject } from '../resolverTypes';
 import { sleep } from '../utils/time-utils';
@@ -68,7 +68,7 @@ resolver.define('import', async (req) => {
         await createMRWithCompassYML(project, component.id, groupId);
       }
     } else if (hasComponent && !(isCompassFilePrOpened && isManaged)) {
-      const formattedLabels = formatLabels(labels).slice(0, 19);
+      const formattedLabels = formatLabels(labels).slice(0, MAX_LABELS_LENGTH - 1);
 
       const component = {
         name,
