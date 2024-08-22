@@ -13,6 +13,25 @@ const getFileUrl = (filePath: string, event: PushEvent, branchName: string) => {
   return `${event.project.web_url}/blob/${branchName}/${filePath}`;
 };
 
+// Helper function to merge the project labels with the current labels
+function mergeLabels(projectLabels: string[], currentLabels: string[], importLabel: string): string[] {
+  const formattedLabels = formatLabels(projectLabels);
+  const labels = currentLabels ? [...currentLabels, ...formattedLabels] : formattedLabels;
+
+  // Deduplicate and sort the labels for consistency
+  const uniqueLabels = Array.from(new Set(labels));
+  uniqueLabels.sort();
+
+  // If first20Labels doesn't include IMPORT_LABEL, add it to the first 20 labels
+  const first20Labels = uniqueLabels.slice(0, 20);
+  if (!first20Labels.includes(importLabel)) {
+    first20Labels.pop();
+    first20Labels.unshift(importLabel);
+  }
+
+  return first20Labels;
+}
+
 export const syncComponent = async (
   componentSyncPayload: ComponentSyncPayload,
   componentSyncDetails: ComponentSyncDetails,
@@ -57,11 +76,7 @@ export const syncComponent = async (
     const { topics } = await getProjectById(token, event.project.id);
     const projectLabels = await getProjectLabels(event.project.id, token, topics);
 
-    const formattedLabels = formatLabels(projectLabels);
-
-    const labels = currentComponent.labels
-      ? [...currentComponent.labels, IMPORT_LABEL, ...formattedLabels]
-      : [IMPORT_LABEL, ...formattedLabels];
+    const labels = mergeLabels(projectLabels, currentComponent.labels, IMPORT_LABEL);
 
     await updateComponent({
       currentComponent,

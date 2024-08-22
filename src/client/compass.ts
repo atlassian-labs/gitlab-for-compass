@@ -39,7 +39,7 @@ const throwIfErrors = function throwIfSdkErrors(method: string, errors: SdkError
 
 export const createComponent = async (cloudId: string, project: ImportableProject): Promise<Component | never> => {
   const { name, description, typeId, labels, url, ownerId } = project;
-  const formattedLabels = formatLabels(labels);
+  const formattedLabels = formatLabels(labels).slice(0, 19);
   const component = {
     name,
     description,

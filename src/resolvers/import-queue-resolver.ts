@@ -68,7 +68,8 @@ resolver.define('import', async (req) => {
         await createMRWithCompassYML(project, component.id, groupId);
       }
     } else if (hasComponent && !(isCompassFilePrOpened && isManaged)) {
-      const formattedLabels = formatLabels(labels);
+      const formattedLabels = formatLabels(labels).slice(0, 19);
+
       const component = {
         name,
         description,
