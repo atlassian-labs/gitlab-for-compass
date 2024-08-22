@@ -64,8 +64,7 @@ modules:
         function: import-projects
         method: import
 app:
-  id: ari:cloud:ecosystem::app/439a701c-b846-44dc-8f07-d956f173a405
-
+  id: ari:cloud:ecosystem::app/fe7b0913-7421-4c84-b401-041eaab2ef2e
   features:
     autoUserConsent: true
 resources:
