@@ -1,13 +1,37 @@
 import styled, { css } from 'styled-components';
 
 import { h400 } from '@atlaskit/theme/typography';
-import { N200, N90, N900 } from '@atlaskit/theme/colors';
-import { gridSize } from '@atlaskit/theme';
+import { N200, N90, N900, N40 } from '@atlaskit/theme/colors';
+import { gridSize, borderRadius } from '@atlaskit/theme';
 import { token } from '@atlaskit/tokens';
+
+export const Padding = styled.div`
+  // padding: 12px 12px 10px 0;
+  margin-top: ${gridSize() * -1}px;
+`;
 
 export const CenterWrapper = styled.div`
   display: flex;
   justify-content: center;
+  margin-top: ${gridSize() * -3}px;
+`;
+
+export const ButtonWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin: ${gridSize() * -4}px 0px;
+  > button:not(:first-child) {
+    margin-left: ${gridSize()}px;
+    margin-right: ${gridSize()}px;
+  }
+`;
+
+export const Divider = styled.hr`
+  border: none;
+  background-color: ${token('color.border', N40)};
+  height: 2px;
+  border-radius: ${borderRadius}px;
 `;
 
 export const SectionWrapper = styled.div`
@@ -65,9 +89,17 @@ const disableLastHeaderCellStylingForSpotlight = css`
 
 export const TableWrapper = styled.div`
   margin-top: ${gridSize() * 4}px;
-  max-height: 60vh;
+  max-height: 65vh;
   overflow: auto;
   padding-right: 12px;
+
+  /* Hide scrollbar */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
 
   ${disableLastHeaderCellStylingForSpotlight}
 `;
