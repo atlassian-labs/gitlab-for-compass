@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction, useMemo } from 'react';
 import Button, { LoadingButton } from '@atlaskit/button';
 import Select from '@atlaskit/select';
 
+import Spinner from '@atlaskit/spinner';
 import { Search } from '../../../Search';
 import { ProjectsImportTable } from '../../../ProjectsImportTable';
 import {
@@ -123,41 +124,35 @@ export const SelectProjectsScreen = ({
             </p>
           </Padding>
           <CenterWrapper>
-            <LoadingButton
-              testId='load-more-button'
-              isDisabled={totalProjects <= projects.length}
-              onClick={() => setPage((prevPage) => prevPage + 1)}
-              isLoading={!!projects.length && isProjectsLoading}
-            >
-              Load More
-            </LoadingButton>
-            {/* {totalProjects > projects.length ? (
-              <LoadingButton
-                testId='load-more-button'
-                isDisabled={totalProjects <= projects.length}
-                onClick={() => setPage((prevPage) => prevPage + 1)}
-                isLoading={!!projects.length && isProjectsLoading}
-              >
-                Load More
-              </LoadingButton>
+            {totalProjects > projects.length ? (
+              <ButtonWrapper>
+                <Button
+                  testId={'load-more-button'}
+                  label={'Load More'}
+                  onClick={() => setPage((prevPage) => prevPage + 1)}
+                  isDisabled={totalProjects <= projects.length}
+                >
+                  {!!projects.length && isProjectsLoading ? <Spinner /> : 'Load More'}
+                </Button>
+              </ButtonWrapper>
             ) : (
-              <Divider />
-            )} */}
+              ''
+            )}
           </CenterWrapper>
-
-          <ButtonWrapper>
-            <Button onClick={() => handleNavigateToConnectedPage()}>Cancel</Button>
-            <LoadingButton
-              appearance='primary'
-              isDisabled={selectedProjects.length === 0}
-              onClick={() => handleNavigateToScreen()}
-              isLoading={isProjectsImporting}
-            >
-              Select
-            </LoadingButton>
-          </ButtonWrapper>
         </>
       ) : null}
+
+      <ButtonWrapper>
+        <Button onClick={() => handleNavigateToConnectedPage()}>Cancel</Button>
+        <LoadingButton
+          appearance='primary'
+          isDisabled={selectedProjects.length === 0}
+          onClick={() => handleNavigateToScreen()}
+          isLoading={isProjectsImporting}
+        >
+          Select
+        </LoadingButton>
+      </ButtonWrapper>
     </Wrapper>
   );
 };

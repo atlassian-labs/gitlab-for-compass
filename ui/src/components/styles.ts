@@ -6,21 +6,20 @@ import { gridSize, borderRadius } from '@atlaskit/theme';
 import { token } from '@atlaskit/tokens';
 
 export const Padding = styled.div`
-  // padding: 12px 12px 10px 0;
   margin-top: ${gridSize() * -1}px;
 `;
 
 export const CenterWrapper = styled.div`
   display: flex;
   justify-content: center;
-  margin-top: ${gridSize() * -3}px;
+  margin-top: ${gridSize() * -1}px;
 `;
 
 export const ButtonWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  margin: ${gridSize() * -4}px 0px;
+  margin: ${gridSize() * -2}px 0px;
   > button:not(:first-child) {
     margin-left: ${gridSize()}px;
     margin-right: ${gridSize()}px;
