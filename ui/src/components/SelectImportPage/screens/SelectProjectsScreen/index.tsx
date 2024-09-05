@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction, useMemo } from 'react';
 import Button, { LoadingButton } from '@atlaskit/button';
 import Select from '@atlaskit/select';
 import { Inline } from '@atlaskit/primitives';
+import { Inline } from '@atlaskit/primitives';
 import Spinner from '@atlaskit/spinner';
 import { Search } from '../../../Search';
 import { ProjectsImportTable } from '../../../ProjectsImportTable';
@@ -14,6 +15,7 @@ import {
   Wrapper,
 } from '../../styles';
 import { CompassComponentTypeOption, ComponentTypesResult, ProjectImportSelection } from '../../../../services/types';
+import { ButtonWrapper, Divider } from '../../../styles';
 import { ButtonWrapper, Divider } from '../../../styles';
 import { GitlabAPIGroup } from '../../../../types';
 import { buildGroupsSelectorOptions, SelectorItem } from './buildGroupsSelectorOptions';
@@ -118,6 +120,7 @@ export const SelectProjectsScreen = ({
         <>
           <Divider />
           <Inline spread='space-between' alignBlock='center'>
+          <Inline spread='space-between' alignBlock='center'>
             <p>
               <strong>{Object.keys(selectedProjects).length}</strong>{' '}
               {projectsToImportMessage(Object.keys(selectedProjects).length)}
@@ -133,11 +136,11 @@ export const SelectProjectsScreen = ({
               </Button>
             ) : null}
             <ButtonWrapper>
-              <Button onClick={handleNavigateToConnectedPage}>Cancel</Button>
+              <Button onClick={() => handleNavigateToConnectedPage()}>Cancel</Button>
               <LoadingButton
                 appearance='primary'
                 isDisabled={selectedProjects.length === 0}
-                onClick={handleNavigateToScreen}
+                onClick={() => handleNavigateToScreen()}
                 isLoading={isProjectsImporting}
               >
                 Select
