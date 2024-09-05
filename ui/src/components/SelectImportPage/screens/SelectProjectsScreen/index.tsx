@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useMemo } from 'react';
 import Button, { LoadingButton } from '@atlaskit/button';
 import Select from '@atlaskit/select';
-
+import { Inline } from '@atlaskit/primitives';
 import Spinner from '@atlaskit/spinner';
 import { Search } from '../../../Search';
 import { ProjectsImportTable } from '../../../ProjectsImportTable';
@@ -14,7 +14,7 @@ import {
   Wrapper,
 } from '../../styles';
 import { CompassComponentTypeOption, ComponentTypesResult, ProjectImportSelection } from '../../../../services/types';
-import { CenterWrapper, Padding, ButtonWrapper, Divider } from '../../../styles';
+import { ButtonWrapper, Divider } from '../../../styles';
 import { GitlabAPIGroup } from '../../../../types';
 import { buildGroupsSelectorOptions, SelectorItem } from './buildGroupsSelectorOptions';
 import { SelectOwnerTeamOption } from '../../../OwnerTeamSelect/types';
@@ -117,42 +117,35 @@ export const SelectProjectsScreen = ({
       {projects.length !== 0 ? (
         <>
           <Divider />
-          <Padding>
+          <Inline spread='space-between' alignBlock='center'>
             <p>
               <strong>{Object.keys(selectedProjects).length}</strong>{' '}
               {projectsToImportMessage(Object.keys(selectedProjects).length)}
             </p>
-          </Padding>
-          <CenterWrapper>
             {totalProjects > projects.length ? (
-              <ButtonWrapper>
-                <Button
-                  testId={'load-more-button'}
-                  label={'Load More'}
-                  onClick={() => setPage((prevPage) => prevPage + 1)}
-                  isDisabled={totalProjects <= projects.length}
-                >
-                  {!!projects.length && isProjectsLoading ? <Spinner /> : 'Load More'}
-                </Button>
-              </ButtonWrapper>
-            ) : (
-              ''
-            )}
-          </CenterWrapper>
+              <Button
+                testId={'load-more-button'}
+                label={'Load More'}
+                onClick={() => setPage((prevPage) => prevPage + 1)}
+                isDisabled={totalProjects <= projects.length}
+              >
+                {!!projects.length && isProjectsLoading ? <Spinner /> : 'Load More'}
+              </Button>
+            ) : null}
+            <ButtonWrapper>
+              <Button onClick={() => handleNavigateToConnectedPage()}>Cancel</Button>
+              <LoadingButton
+                appearance='primary'
+                isDisabled={selectedProjects.length === 0}
+                onClick={() => handleNavigateToScreen()}
+                isLoading={isProjectsImporting}
+              >
+                Select
+              </LoadingButton>
+            </ButtonWrapper>
+          </Inline>
         </>
       ) : null}
-
-      <ButtonWrapper>
-        <Button onClick={() => handleNavigateToConnectedPage()}>Cancel</Button>
-        <LoadingButton
-          appearance='primary'
-          isDisabled={selectedProjects.length === 0}
-          onClick={() => handleNavigateToScreen()}
-          isLoading={isProjectsImporting}
-        >
-          Select
-        </LoadingButton>
-      </ButtonWrapper>
     </Wrapper>
   );
 };

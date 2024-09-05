@@ -35,6 +35,7 @@
     "typescript": "~4.5.5"
   },
   "dependencies": {
+    "@atlaskit/primitives": "^12.1.0",
     "@atlaskit/tokens": "^1.29.1",
     "@atlassian/forge-graphql": "13.9.2",
     "@forge/api": "^2.8.1",

@@ -5,14 +5,9 @@ import { N200, N90, N900, N40 } from '@atlaskit/theme/colors';
 import { gridSize, borderRadius } from '@atlaskit/theme';
 import { token } from '@atlaskit/tokens';
 
-export const Padding = styled.div`
-  margin-top: ${gridSize() * -1}px;
-`;
-
 export const CenterWrapper = styled.div`
   display: flex;
   justify-content: center;
-  margin-top: ${gridSize() * -1}px;
 `;
 
 export const ButtonWrapper = styled.div`
