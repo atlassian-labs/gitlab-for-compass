@@ -9,7 +9,7 @@ export const ButtonWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  margin: ${gridSize() * 4}px 0px;
+  margin: ${gridSize() * -2}px 0px;
   > button:not(:first-child) {
     margin-left: ${gridSize()}px;
   }
