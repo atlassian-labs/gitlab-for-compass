@@ -158,30 +158,10 @@
     "@babel/types" "^7.20.0"
     bind-event-listener "^2.1.1"
 
-"@atlaskit/tokens@^1.58.0", "@atlaskit/tokens@^1.59.0":
-  version "1.59.1"
-  resolved "https://packages.atlassian.com/api/npm/npm-remote/@atlaskit/tokens/-/tokens-1.59.1.tgz#0d01f166f90f20a880cea9d0b7f612c3744e024d"
-  integrity sha512-V4sFrp1MphHFDL5toDS3PMkcnwQoJJbTO/ioGSwvhFq9r46UoDnoaxSljl2ktWdEfdfqTq+ybq8gpKMutojjXA==
-  dependencies:
-    "@atlaskit/ds-lib" "^2.5.0"
-    "@atlaskit/platform-feature-flags" "^0.3.0"
-    "@babel/runtime" "^7.0.0"
-    "@babel/traverse" "^7.23.2"
-    "@babel/types" "^7.20.0"
-    bind-event-listener "^3.0.0"
-
-"@atlaskit/visually-hidden@^1.5.0":
-  version "1.5.0"
-  resolved "https://packages.atlassian.com/api/npm/npm-remote/@atlaskit/visually-hidden/-/visually-hidden-1.5.0.tgz#88f6c8e92d62182b680750e890a4af9ce3c084e2"
-  integrity sha512-Khq3mgRcCVwvF8LhDnC4kkmqhYwVcTcAs3YqLGOXufqnoc8H/SD0orjKdFYm1lv8mdz6c1YmyS1zRHCbIXYiDw==
-  dependencies:
-    "@babel/runtime" "^7.0.0"
-    "@emotion/react" "^11.7.1"
-
-"@atlassian/forge-graphql@13.9.2":
-  version "13.9.2"
-  resolved "https://packages.atlassian.com/api/npm/atlassian-npm/@atlassian/forge-graphql/-/forge-graphql-13.9.2.tgz#9ea2e6882c88d7eb48e3f7a4038a814f376f708e"
-  integrity sha512-Mx4vCx7kBUwD8vGjQkt5e/Hj6DR+kKJhUc+fKkflc48vMN77drWR6AnbAuIVu+44BEsWJU2H0vm2oCAdzVAtQg==
+"@atlassian/forge-graphql@13.10.0":
+  version "13.10.0"
+  resolved "https://packages.atlassian.com/api/npm/atlassian-npm/@atlassian/forge-graphql/-/forge-graphql-13.10.0.tgz#14171310fa04480ea97bcda613e1c784ded29aa3"
+  integrity sha512-F/4EQsZ+DFmM1X8MkFr1QNyvUHGKMXMx4PQiYcpRL3xJTt0X5a1GMl+lbp0Y+ZlelwrrjRMwJX6dX3JQMjAQPQ==
   dependencies:
     "@forge/api" "^2.21.0"
     fs "^0.0.1-security"
