@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@atlaskit/tokens": "^1.29.1",
-    "@atlassian/forge-graphql": "13.9.2",
+    "@atlassian/forge-graphql": "13.10.0",
     "@forge/api": "^2.8.1",
     "@forge/bridge": "^2.6.0",
     "@forge/events": "^0.5.3",
