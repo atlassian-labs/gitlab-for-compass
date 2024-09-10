@@ -116,9 +116,9 @@
     "@babel/runtime" "^7.0.0"
 
 "@atlaskit/primitives@^12.1.0":
-  version "12.1.0"
-  resolved "https://packages.atlassian.com/api/npm/npm-remote/@atlaskit/primitives/-/primitives-12.1.0.tgz#c328847f9c48fce7c1c1cb28764713a2fde6617c"
-  integrity sha512-+zZRWFxY9KIeobXu/6ckMVFM+nqnWnkvvc3PQ34B4x3H7U+ezIolpi+ZAFxQp30Y1P1q6K6SI4o6Te0PAzLyew==
+  version "12.1.1"
+  resolved "https://packages.atlassian.com/api/npm/npm-remote/@atlaskit/primitives/-/primitives-12.1.1.tgz#04a3667cdaae4188e8ba096a10a66bbfe14e1e43"
+  integrity sha512-sTH9O1QW+RsjUlXQJ8zX2JvBKYOUfEbY35TPFEjS8y9k6Tm5R+L9M85F/Kn/hXby765k5lzUOVkIya/DKv3jJA==
   dependencies:
     "@atlaskit/analytics-next" "^10.1.0"
     "@atlaskit/app-provider" "^1.4.0"
@@ -131,7 +131,6 @@
     "@emotion/react" "^11.7.1"
     "@emotion/serialize" "^1.1.0"
     bind-event-listener "^3.0.0"
-    react-uid "^2.2.0"
     tiny-invariant "^1.2.0"
 
 "@atlaskit/tokens@*":
@@ -7952,7 +7951,7 @@ parse-asn1@^5.0.0, parse-asn1@^5.1.5:
 
 parse-json@^5.0.0, parse-json@^5.2.0:
   version "5.2.0"
-  resolved "https://registry.yarnpkg.com/parse-json/-/parse-json-5.2.0.tgz#c76fc66dee54231c962b22bcc8a72cf2f99753cd"
+  resolved "https://packages.atlassian.com/api/npm/npm-remote/parse-json/-/parse-json-5.2.0.tgz#c76fc66dee54231c962b22bcc8a72cf2f99753cd"
   integrity sha512-ayCKvm/phCGxOkYRSCM82iDwct8/EonSEgCSxWxD7ve6jHggsFl4fZVQBPRNgQoKiuV/odhFrGzQXZwbifC8Rg==
   dependencies:
     "@babel/code-frame" "^7.0.0"
@@ -8186,7 +8185,7 @@ prompts@^2.0.1:
 
 prop-types@^15.5.10, prop-types@^15.8.1:
   version "15.8.1"
-  resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
+  resolved "https://packages.atlassian.com/api/npm/npm-remote/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
   dependencies:
     loose-envify "^1.4.0"
@@ -10272,7 +10271,7 @@ yallist@^4.0.0:
 
 yaml@^1.10.0, yaml@^1.10.2:
   version "1.10.2"
-  resolved "https://registry.yarnpkg.com/yaml/-/yaml-1.10.2.tgz#2301c5ffbf12b467de8da2333a459e29e7920e4b"
+  resolved "https://packages.atlassian.com/api/npm/npm-remote/yaml/-/yaml-1.10.2.tgz#2301c5ffbf12b467de8da2333a459e29e7920e4b"
   integrity sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg==
 
 yaml@^2.2.2, yaml@^2.3.4:
