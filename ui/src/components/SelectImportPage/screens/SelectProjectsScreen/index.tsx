@@ -1,11 +1,11 @@
 import { Dispatch, SetStateAction, useMemo } from 'react';
 import Button, { LoadingButton } from '@atlaskit/button';
 import Select from '@atlaskit/select';
-
+import { Inline } from '@atlaskit/primitives';
+import Spinner from '@atlaskit/spinner';
 import { Search } from '../../../Search';
 import { ProjectsImportTable } from '../../../ProjectsImportTable';
 import {
-  ButtonWrapper,
   GroupSelectorWrapper,
   Header,
   OverrideDescription,
@@ -14,11 +14,13 @@ import {
   Wrapper,
 } from '../../styles';
 import { CompassComponentTypeOption, ComponentTypesResult, ProjectImportSelection } from '../../../../services/types';
-import { CenterWrapper } from '../../../styles';
+import { ButtonWrapper, Divider } from '../../../styles';
 import { GitlabAPIGroup } from '../../../../types';
 import { buildGroupsSelectorOptions, SelectorItem } from './buildGroupsSelectorOptions';
 import { SelectOwnerTeamOption } from '../../../OwnerTeamSelect/types';
 import { TeamsForImportResult } from '../../../../hooks/useTeamsForImport';
+
+const projectsToImportMessage = (projCount: number) => (projCount === 1 ? 'project selected' : 'projects selected');
 
 type Props = {
   projects: ProjectImportSelection[];
@@ -78,66 +80,72 @@ export const SelectProjectsScreen = ({
     <Wrapper data-testid='gitlab-select-projects-screen'>
       <Header>Select projects</Header>
       <OverrideDescription>
-        By importing projects as components, you can track them, manage them via configuration files, <br />
-        and bring in rich, real-time component data such as metrics, directly into Compass.
+        By importing projects as components, you can track them, manage them via configuration files, and bring in rich,
+        real-time component data such as metrics, directly into Compass.
       </OverrideDescription>
-      <>
-        <TableHeaderWrapper>
-          <GroupSelectorWrapper data-testid='group-selector'>
-            <Select
-              isClearable
-              isLoading={isGroupsLoading}
-              isDisabled={isProjectsLoading && !isGroupsLoading}
-              onChange={(e) => handleChangeGroup(e)}
-              inputId='select-group'
-              className='single-select'
-              classNamePrefix='react-select'
-              placeholder='Select group'
-              options={groupSelectorOptions}
-            />
-          </GroupSelectorWrapper>
-          <TableSearchWrapper>
-            <Search handleSearchValue={handleSearchValue} isProjectsLoading={isProjectsLoading} />
-          </TableSearchWrapper>
-        </TableHeaderWrapper>
-        <ProjectsImportTable
-          projects={projects}
-          isLoading={isProjectsLoading && !projects.length}
-          onSelectAllItems={onSelectAllItems}
-          onSelectItem={onSelectItem}
-          onChangeComponentType={onChangeComponentType}
-          error={projectsFetchingError}
-          importableComponentTypes={importableComponentTypes}
-          teamsResult={teamsResult}
-          selectProjectTeam={selectProjectTeam}
-          isSpotlightActive={isSpotlightActive}
-          finishOnboarding={finishOnboarding}
-        />
-        {projects.length !== 0 ? (
-          <CenterWrapper>
-            <LoadingButton
-              testId='load-more-button'
-              isDisabled={totalProjects <= projects.length}
-              onClick={() => setPage((prevPage) => prevPage + 1)}
-              isLoading={!!projects.length && isProjectsLoading}
-            >
-              Load More
-            </LoadingButton>
-          </CenterWrapper>
-        ) : null}
-      </>
-
-      <ButtonWrapper>
-        <Button onClick={() => handleNavigateToConnectedPage()}>Cancel</Button>
-        <LoadingButton
-          appearance='primary'
-          isDisabled={selectedProjects.length === 0}
-          onClick={() => handleNavigateToScreen()}
-          isLoading={isProjectsImporting}
-        >
-          Select
-        </LoadingButton>
-      </ButtonWrapper>
+      <TableHeaderWrapper>
+        <GroupSelectorWrapper data-testid='group-selector'>
+          <Select
+            isClearable
+            isLoading={isGroupsLoading}
+            isDisabled={isProjectsLoading && !isGroupsLoading}
+            onChange={(e) => handleChangeGroup(e)}
+            inputId='select-group'
+            className='single-select'
+            classNamePrefix='react-select'
+            placeholder='Select group'
+            options={groupSelectorOptions}
+          />
+        </GroupSelectorWrapper>
+        <TableSearchWrapper>
+          <Search handleSearchValue={handleSearchValue} isProjectsLoading={isProjectsLoading} />
+        </TableSearchWrapper>
+      </TableHeaderWrapper>
+      <ProjectsImportTable
+        projects={projects}
+        isLoading={isProjectsLoading && !projects.length}
+        onSelectAllItems={onSelectAllItems}
+        onSelectItem={onSelectItem}
+        onChangeComponentType={onChangeComponentType}
+        error={projectsFetchingError}
+        importableComponentTypes={importableComponentTypes}
+        teamsResult={teamsResult}
+        selectProjectTeam={selectProjectTeam}
+        isSpotlightActive={isSpotlightActive}
+        finishOnboarding={finishOnboarding}
+      />
+      {projects.length !== 0 ? (
+        <>
+          <Divider />
+          <Inline spread='space-between' alignBlock='center'>
+            <p>
+              <strong>{Object.keys(selectedProjects).length}</strong>{' '}
+              {projectsToImportMessage(Object.keys(selectedProjects).length)}
+            </p>
+            {totalProjects > projects.length ? (
+              <Button
+                testId={'load-more-button'}
+                label={'Load More'}
+                onClick={() => setPage((prevPage) => prevPage + 1)}
+                isDisabled={totalProjects <= projects.length}
+              >
+                {!!projects.length && isProjectsLoading ? <Spinner /> : 'Load More'}
+              </Button>
+            ) : null}
+            <ButtonWrapper>
+              <Button onClick={handleNavigateToConnectedPage}>Cancel</Button>
+              <LoadingButton
+                appearance='primary'
+                isDisabled={selectedProjects.length === 0}
+                onClick={handleNavigateToScreen}
+                isLoading={isProjectsImporting}
+              >
+                Select
+              </LoadingButton>
+            </ButtonWrapper>
+          </Inline>
+        </>
+      ) : null}
     </Wrapper>
   );
 };

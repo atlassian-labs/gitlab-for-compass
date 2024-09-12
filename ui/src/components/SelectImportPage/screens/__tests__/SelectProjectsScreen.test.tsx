@@ -101,8 +101,8 @@ describe('SelectProjectsScreen', () => {
     expect(queryByTestId('load-more-button')).toBeNull();
   });
 
-  it('should disabled load more button when all projects are rendered', () => {
-    const { getByTestId } = render(
+  it('should remove load more button when all projects are rendered', () => {
+    const { queryByTestId } = render(
       <SelectProjectsScreen
         projects={projectImportSelectionMock}
         isProjectsLoading={false}
@@ -127,7 +127,7 @@ describe('SelectProjectsScreen', () => {
       />,
     );
 
-    expect(getByTestId('load-more-button')).toHaveProperty('disabled', true);
+    expect(queryByTestId('load-more-button')).toBeNull();
   });
 
   it('should show an error message per component type dropdown when component types result is empty.', () => {
