@@ -123,13 +123,8 @@ export const SelectProjectsScreen = ({
               {projectsToImportMessage(Object.keys(selectedProjects).length)}
             </p>
             {totalProjects > projects.length ? (
-              <Button
-                testId={'load-more-button'}
-                label={'Load More'}
-                onClick={() => setPage((prevPage) => prevPage + 1)}
-                isDisabled={totalProjects <= projects.length}
-              >
-                {!!projects.length && isProjectsLoading ? <Spinner /> : 'Load More'}
+              <Button testId={'load-more-button'} onClick={() => setPage((prevPage) => prevPage + 1)}>
+                {!!projects.length && isProjectsLoading ? <Spinner /> : 'Load more'}
               </Button>
             ) : null}
             <ButtonWrapper>
