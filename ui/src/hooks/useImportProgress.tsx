@@ -41,7 +41,9 @@ export const useImportProgress = (): UseImportProgressType => {
 
   useInterval(() => {
     if (!isNeedToClearProgress && !error) {
-      fetchImportProgress();
+      fetchImportProgress().catch((e) => {
+        console.error('Error while fetching import progress', e);
+      });
     } else {
       setIsImportInProgress(false);
       setImportedRepositories(0);

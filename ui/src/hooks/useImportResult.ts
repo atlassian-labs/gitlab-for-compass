@@ -41,7 +41,9 @@ export const useImportResult = (): UseImportResultType => {
 
   useEffect(() => {
     if (!isImportInProgress) {
-      fetchFailedImportedRepositories();
+      fetchFailedImportedRepositories().catch((e) =>
+        console.error('Error while fetching failed imported repositories', e),
+      );
     }
   }, [isImportInProgress]);
 

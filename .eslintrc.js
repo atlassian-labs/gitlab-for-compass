@@ -9,8 +9,25 @@ module.exports = {
     },
     'import/external-module-folders': ['node_modules'],
   },
-  parser: '@typescript-eslint/parser',
   plugins: ['prettier', '@typescript-eslint', '@atlaskit/design-system'],
+  overrides: [
+    {
+      files: ['**/*.ts', '**/*.tsx'],
+      parser: '@typescript-eslint/parser',
+      parserOptions: {
+        project: ['./tsconfig.json', './ui/tsconfig.json'],
+      },
+      rules: {
+        '@typescript-eslint/no-misused-promises': [
+          'error',
+          {
+            checksVoidReturn: false,
+          },
+        ],
+        '@typescript-eslint/no-floating-promises': 'error',
+      },
+    },
+  ],
   rules: {
     'max-len': [
       'warn',

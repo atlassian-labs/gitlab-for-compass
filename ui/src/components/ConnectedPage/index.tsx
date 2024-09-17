@@ -46,7 +46,11 @@ export const ConnectedPage = () => {
   };
 
   useEffect(() => {
-    getConnectedInfo().then(setGroups);
+    getConnectedInfo()
+      .then(setGroups)
+      .catch((e) => {
+        console.error('Error while getting connected info', e);
+      });
   }, []);
 
   if (errorType) {

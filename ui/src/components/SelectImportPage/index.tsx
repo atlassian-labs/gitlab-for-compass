@@ -76,7 +76,15 @@ export const SelectImportPage = () => {
 
   const finishOnboarding = useCallback(() => {
     setIsSpotlightActive(false);
-    setTeamOnboarding();
+    setTeamOnboarding()
+      .then(({ errors }) => {
+        if (errors?.length) {
+          throw new Error(errors[0].message);
+        }
+      })
+      .catch((e) => {
+        console.error('Error while setting team onboarding', e);
+      });
   }, []);
 
   const { changedProjects, setChangedProjects } = useProjects(projects);
@@ -149,12 +157,16 @@ export const SelectImportPage = () => {
 
   useEffect(() => {
     if (groupId !== DEFAULT_GROUP_ID) {
-      fetchGroupProjects();
+      fetchGroupProjects().catch((e) => {
+        console.error('Error while fetching group projects', e);
+      });
     }
   }, [page, groupId, search]);
 
   useEffect(() => {
-    fetchGroups();
+    fetchGroups().catch((e) => {
+      console.log('Error while fetching groups', e);
+    });
     startOnboarding();
   }, []);
 
@@ -249,8 +261,8 @@ export const SelectImportPage = () => {
     setSearch(value);
   };
 
-  const handleNavigateToConnectedPage = () => {
-    router.navigate('/compass/components');
+  const handleNavigateToConnectedPage = async () => {
+    await router.navigate('/compass/components');
   };
 
   const handleNavigateToImportProgressPage = () => {

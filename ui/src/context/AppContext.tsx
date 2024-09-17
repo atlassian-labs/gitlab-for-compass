@@ -41,7 +41,9 @@ export const AppContextProvider: FunctionComponent<AppContextProviderProps> = ({
       setModuleKey(context.moduleKey);
     }
 
-    getContext();
+    getContext().catch((e) => {
+      console.error('Error while getting context', e);
+    });
 
     setGroupsLoading(true);
     setAppIdLoading(true);
