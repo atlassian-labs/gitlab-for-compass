@@ -32,6 +32,8 @@ jest.mock('../../../client/gitlab');
 jest.mock('../../../services/insert-metric-values');
 jest.mock('../../../utils/has-deployment-after-28days');
 
+jest.spyOn(global.console, 'error').mockImplementation(() => ({}));
+
 const mockedGetEnvironments = mocked(getEnvironments);
 const mockedGetDeployment = mocked(getDeployment);
 const mockedSendEventsToCompass = mocked(sendEventToCompass);
@@ -40,6 +42,7 @@ const MOCK_DEPLOYMENT_EVENT = generateDeploymentEvent();
 const MOCK_ENVIRONMENTS_EVENT = generateEnvironmentEvent();
 const PROJECT_ID = 123;
 const MOCK_DATE = Date.parse('2022-01-29T01:15:42.960Z');
+const MOCK_ERROR = new Error('Unexpected Error');
 
 const generateMockDeploymentInput = (
   environment = CompassDeploymentEventEnvironmentCategory.Production,
@@ -108,9 +111,24 @@ describe('GitLab deployment event', () => {
 
     mockedGetEnvironments.mockResolvedValue([MOCK_PRODUCTION_ENVIRONMENT_EVENT]);
 
-    await expect(handleDeploymentEvent(MOCK_PRD_DEPLOYMENT_EVENT, TEST_TOKEN, MOCK_CLOUD_ID)).rejects.toThrow(
-      'Environment with name "prd" not found',
+    await handleDeploymentEvent(MOCK_PRD_DEPLOYMENT_EVENT, TEST_TOKEN, MOCK_CLOUD_ID);
+
+    expect(console.error).toHaveBeenCalledWith(
+      'Error while sending deployment event to Compass',
+      new Error('Environment with name "prd" not found'),
     );
+  });
+
+  it('failed sending deployment event', async () => {
+    const MOCK_DEPLOYMENT_EVENT_INPUT = generateMockDeploymentInput();
+
+    mockedGetEnvironments.mockResolvedValue([MOCK_ENVIRONMENTS_EVENT]);
+    mockedGetDeployment.mockResolvedValue(MOCK_DEPLOYMENT_EVENT_INPUT);
+
+    mockedSendEventsToCompass.mockRejectedValue(MOCK_ERROR);
+
+    await handleDeploymentEvent(MOCK_DEPLOYMENT_EVENT, TEST_TOKEN, MOCK_CLOUD_ID);
+    expect(console.error).toHaveBeenCalledWith('Error while sending deployment event to Compass', MOCK_ERROR);
   });
 
   describe('when isSendStagingEventsEnabled', () => {

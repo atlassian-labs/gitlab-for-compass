@@ -30,7 +30,9 @@ export const useFeatures = (): [FeaturesList, boolean, ErrorTypes | undefined] =
   };
 
   useEffect(() => {
-    fetchFeatures();
+    fetchFeatures().catch((e) => {
+      console.error('Error while fetching features', e);
+    });
   }, []);
 
   return [features, loading, error];

@@ -21,6 +21,9 @@ jest.mock('../../../services/sync-component-with-file', () => {
 });
 
 jest.mock('../../../services/get-tracking-branch');
+jest.spyOn(global.console, 'error').mockImplementation(() => ({}));
+
+const MOCK_ERROR = new Error('Unexpected Error');
 
 describe('Gitlab push events', () => {
   const event = generatePushEvent();
@@ -204,5 +207,20 @@ describe('Gitlab push events', () => {
     await handlePushEvent(event, TEST_TOKEN, MOCK_CLOUD_ID);
 
     expect(removals).toBeCalledWith(mockUnlinkComponentDataWithoutExternalAliasesToRemove[0]);
+  });
+
+  it('failed handling push event ', async () => {
+    getNonDefaultBranchNameMock.mockResolvedValue(event.project.default_branch);
+    findConfigChanges.mockResolvedValue({
+      componentsToCreate: [],
+      componentsToUpdate: [],
+      componentsToUnlink: mockComponentsToUnlinkWithoutExternalAliasesToRemove,
+    });
+
+    removals.mockRejectedValue(MOCK_ERROR);
+
+    await handlePushEvent(event, TEST_TOKEN, MOCK_CLOUD_ID);
+
+    expect(console.error).toBeCalledWith('Error while handling push event', MOCK_ERROR);
   });
 });

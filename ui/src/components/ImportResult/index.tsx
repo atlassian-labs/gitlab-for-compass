@@ -37,7 +37,9 @@ export const ImportResult: FunctionComponent = () => {
 
   useEffect(() => {
     if (Boolean(failedProjects.length) || Boolean(totalProjects)) {
-      clearImportResults();
+      clearImportResults().catch((e) => {
+        console.error('Error while clearing import result', e);
+      });
     }
   }, [failedProjects, totalProjects]);
 

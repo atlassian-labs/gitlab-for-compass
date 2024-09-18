@@ -24,9 +24,9 @@ export const ImportProgressResultPage = ({ moduleKey }: Props) => {
 
   const navigate = useNavigate();
 
-  const handleNavigateWhenDone = () => {
+  const handleNavigateWhenDone = async () => {
     if (moduleKey === IMPORT_MODULE_KEY) {
-      router.navigate('/compass/components?status=pending');
+      await router.navigate('/compass/components?status=pending');
     } else {
       const path = `..${ApplicationState.CONNECTED}`;
       navigate(path, { replace: true });
