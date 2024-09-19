@@ -1,4 +1,9 @@
-import { CreateLinkInput, CustomFieldFromYAML } from '@atlassian/forge-graphql';
+import {
+  CreateLinkInput,
+  CustomFieldFromYAML,
+  DataProviderBuildEvent,
+  DataProviderDeploymentEvent,
+} from '@atlassian/forge-graphql';
 
 type WebtriggerRequest = {
   body: string;
@@ -250,6 +255,11 @@ type ProjectReadyForImport = {
 } & ProjectImportStatus &
   Project;
 
+type CompareProjectWithExistingComponent = Pick<
+  ProjectReadyForImport,
+  'isManaged' | 'hasComponent' | 'isCompassFilePrOpened' | 'componentId' | 'componentLinks' | 'typeId'
+>;
+
 type ImportableProject = ProjectReadyForImport & {
   typeId: string;
 };
@@ -400,6 +410,15 @@ type TeamsWithMembershipStatus = {
   otherTeams: MappedTeam[];
 };
 
+type BackfillData = {
+  builds: DataProviderBuildEvent[];
+  deployments: DataProviderDeploymentEvent[];
+  metrics: {
+    mrCycleTime: number;
+    openMergeRequestsCount: number;
+  };
+};
+
 export type {
   WebtriggerRequest,
   WebtriggerResponse,
@@ -440,6 +459,8 @@ export type {
   MappedTeam,
   Team,
   TeamsWithMembershipStatus,
+  CompareProjectWithExistingComponent,
+  BackfillData,
 };
 
 export {

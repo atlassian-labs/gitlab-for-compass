@@ -14,6 +14,7 @@ import {
   detectMovedFilesAndUpdateComponentChanges,
   handleModifiedFilesAndUpdateComponentChanges,
 } from './config-file-changes-transformer';
+import { ALL_SETTLED_STATUS, getFormattedErrors } from '../../utils/promise-allsettled-helpers';
 
 const getRemovedFiles = async (
   token: string,
@@ -138,11 +139,29 @@ export const findConfigAsCodeFileChanges = async (event: PushEvent, token: strin
     `Found ${added.length} added diffs, ${removed.length} removed diffs, and ${modified.length} modified diffs in push event. Now processing what files might have been moved or renamed.`,
   );
 
-  const [createPayload, unlinkPayload, modifiedFiles] = await Promise.all([
+  const [createPayloadResult, unlinkPayloadResult, modifiedFilesResult] = await Promise.allSettled([
     getAddedFiles(token, added, event),
     getRemovedFiles(token, removed, event),
     getModifiedFiles(token, modified, event),
   ]);
+
+  if (
+    createPayloadResult.status === ALL_SETTLED_STATUS.REJECTED ||
+    unlinkPayloadResult.status === ALL_SETTLED_STATUS.REJECTED ||
+    modifiedFilesResult.status === ALL_SETTLED_STATUS.REJECTED
+  ) {
+    throw new Error(
+      `Error addind or removed or modifying file: ${getFormattedErrors([
+        createPayloadResult,
+        unlinkPayloadResult,
+        modifiedFilesResult,
+      ])}`,
+    );
+  }
+
+  const createPayload = createPayloadResult.value;
+  const unlinkPayload = unlinkPayloadResult.value;
+  const modifiedFiles = modifiedFilesResult.value;
 
   const componentChanges: ComponentChanges = {
     componentsToCreate: createPayload,

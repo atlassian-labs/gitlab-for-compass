@@ -9,6 +9,7 @@ import { Queues, ImportableProject, ProjectImportResult, ImportStatus } from '..
 import { ImportErrorTypes } from '../resolverTypes';
 import { setLastSyncTime } from './last-sync-time';
 import { deleteKeysFromStorageByChunks } from '../utils/storage-utils';
+import { getFormattedErrors, hasRejections } from '../utils/promise-allsettled-helpers';
 
 export const QUEUE_ONE_TIME_LIMIT = 500;
 const QUEUE_PUSH_EVENTS_LIMIT = 50;
@@ -31,7 +32,7 @@ export const importProjects = async (
 
     const queue = new Queue({ key: Queues.IMPORT });
 
-    if (projectsReadyToImport.length > queueOneTimeLimit) {
+    if (projectsReadyToImport.length > Number(queueOneTimeLimit)) {
       throw new OneTimeLimitImportError(
         `Sorry, unfortunately you can import maximum ${QUEUE_ONE_TIME_LIMIT} projects at one time.`,
       );
@@ -76,11 +77,19 @@ export const getImportStatus = async (): Promise<ImportStatus> => {
       throw new Error('No running job');
     }
     const queue = new Queue({ key: Queues.IMPORT });
-    const jobStatuses = await Promise.all(
+    const jobStatusesResult = await Promise.allSettled(
       jobIds.map((id: string) => {
         const job = queue.getJob(id);
         return job.getStats().then((s) => s.json());
       }),
+    );
+
+    if (hasRejections(jobStatusesResult)) {
+      throw new Error(`Error getting job statuses: ${getFormattedErrors(jobStatusesResult)}`);
+    }
+
+    const jobStatuses = jobStatusesResult.map(
+      (jobStatusResult) => (jobStatusResult as PromiseFulfilledResult<ImportStatus>).value,
     );
 
     return jobStatuses.reduce<ImportStatus>(

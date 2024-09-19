@@ -5,6 +5,7 @@ import { getRecentDeployments, gitlabAPiDeploymentToCompassDataProviderDeploymen
 import { getProjectEnvironments } from '../environment';
 import { getDateInThePast } from '../../utils/time-utils';
 import { isSendStagingEventsEnabled } from '../feature-flags';
+import { getFormattedErrors, hasRejections } from '../../utils/promise-allsettled-helpers';
 
 const newGetDeploymentsForEnvironments = async (
   groupToken: string,
@@ -35,7 +36,17 @@ const newGetDeploymentsForEnvironments = async (
     });
 
   // combine results from multiple projectEnvironments into single array
-  return Promise.all(deploymentEvents).then((results) => results.flat());
+  const settledResults = await Promise.allSettled(deploymentEvents);
+
+  if (hasRejections(settledResults)) {
+    throw new Error(`Error getting deployment: ${getFormattedErrors(settledResults)}`);
+  }
+
+  const result = settledResults.map(
+    (settledResult) => (settledResult as PromiseFulfilledResult<DataProviderDeploymentEvent[]>).value,
+  );
+
+  return result.flat();
 };
 
 export const getDeploymentsForEnvironmentTiers = async (
@@ -62,7 +73,18 @@ export const getDeploymentsForEnvironmentTiers = async (
     [],
   );
 
-  const deployments = (await Promise.all(getDeploymentsPromises)).flat();
+  const deploymentsResult = await Promise.allSettled(getDeploymentsPromises);
+
+  if (hasRejections(deploymentsResult)) {
+    throw new Error(`Error getting deployments: ${getFormattedErrors(deploymentsResult)}`);
+  }
+
+  const deploymentsValues = deploymentsResult.map(
+    (deploymentResult) => (deploymentResult as PromiseFulfilledResult<Deployment[]>).value,
+  );
+
+  const deployments = deploymentsValues.flat();
+
   const deploymentEvents = deployments
     .map((deployment) =>
       gitlabAPiDeploymentToCompassDataProviderDeploymentEvent(deployment, projectName, EnvironmentTier.PRODUCTION),

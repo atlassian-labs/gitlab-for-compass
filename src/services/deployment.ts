@@ -11,6 +11,7 @@ import { fetchPaginatedData } from '../utils/fetchPaginatedData';
 import { getProjectEnvironments } from './environment';
 import { isSendStagingEventsEnabled } from './feature-flags';
 import { truncateProjectNameString } from '../utils/event-mapping';
+import { getFormattedErrors, hasRejections } from '../utils/promise-allsettled-helpers';
 
 export const gitLabStateToCompassFormat = (state: string): CompassDeploymentEventState => {
   switch (state) {
@@ -130,32 +131,46 @@ export const getDeploymentAfter28Days = async (
 ): Promise<Deployment[]> => {
   const PAGE = 1;
   const PER_PAGE = 1;
-  const environments = await getProjectEnvironments(projectId, groupToken);
-  const getDeploymentsPromises = environments.reduce<Promise<{ data: Deployment[]; headers: Headers }>[]>(
-    (deploymentsPromises, currentEnvironment) => {
-      if (
-        currentEnvironment.tier === EnvironmentTier.PRODUCTION ||
-        (isSendStagingEventsEnabled() && currentEnvironment.tier === EnvironmentTier.STAGING)
-      ) {
-        deploymentsPromises.push(
-          getProjectRecentDeployments(PAGE, PER_PAGE, {
-            groupToken,
-            projectId,
-            environmentName: currentEnvironment.name,
-            dateAfter,
-            dateBefore,
-          }),
-        );
-      }
+  try {
+    const environments = await getProjectEnvironments(projectId, groupToken);
+    const getDeploymentsPromises = environments.reduce<Promise<{ data: Deployment[]; headers: Headers }>[]>(
+      (deploymentsPromises, currentEnvironment) => {
+        if (
+          currentEnvironment.tier === EnvironmentTier.PRODUCTION ||
+          (isSendStagingEventsEnabled() && currentEnvironment.tier === EnvironmentTier.STAGING)
+        ) {
+          deploymentsPromises.push(
+            getProjectRecentDeployments(PAGE, PER_PAGE, {
+              groupToken,
+              projectId,
+              environmentName: currentEnvironment.name,
+              dateAfter,
+              dateBefore,
+            }),
+          );
+        }
 
-      return deploymentsPromises;
-    },
-    [],
-  );
+        return deploymentsPromises;
+      },
+      [],
+    );
 
-  const promisesResponse = await Promise.all(getDeploymentsPromises);
+    const promisesResponseResults = await Promise.allSettled(getDeploymentsPromises);
 
-  return promisesResponse ? promisesResponse.map((deployment) => deployment.data).flat() : [];
+    if (hasRejections(promisesResponseResults)) {
+      throw new Error(`Error getting deployments ${getFormattedErrors(promisesResponseResults)}`);
+    }
+
+    const promisesResponse = promisesResponseResults.map(
+      (promisesResponseResult) => (promisesResponseResult as PromiseFulfilledResult<{ data: Deployment[] }>).value,
+    );
+
+    return promisesResponse ? promisesResponse.map((deployment) => deployment.data).flat() : [];
+  } catch (e) {
+    console.error(e);
+
+    return [];
+  }
 };
 
 export const gitlabAPiDeploymentToCompassDataProviderDeploymentEvent = (

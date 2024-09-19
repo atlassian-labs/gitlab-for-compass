@@ -3,6 +3,7 @@ import { chunk } from 'lodash';
 
 import { sleep } from './time-utils';
 import { STORAGE_KEYS } from '../constants';
+import { getFormattedErrors, hasRejections } from './promise-allsettled-helpers';
 
 export const deleteKeysFromStorageByChunks = async (
   keys: string[],
@@ -12,7 +13,11 @@ export const deleteKeysFromStorageByChunks = async (
   const keyChunks = chunk(keys, chunkSize);
 
   for (const keyChunk of keyChunks) {
-    await Promise.all(keyChunk.map((key: string) => storage.delete(key)));
+    const settledResult = await Promise.allSettled(keyChunk.map((key: string) => storage.delete(key)));
+
+    if (hasRejections(settledResult)) {
+      throw new Error(`Error deleting key: ${getFormattedErrors(settledResult)}`);
+    }
     await sleep(delay);
   }
 };

@@ -1,6 +1,7 @@
 import { storage, ListResult, startsWith } from '@forge/api';
 import { CLEAR_STORAGE_CHUNK_SIZE, CLEAR_STORAGE_DELAY, STORAGE_KEYS, STORAGE_SECRETS } from '../constants';
 import { deleteKeysFromStorageByChunks } from '../utils/storage-utils';
+import { getFormattedErrors, hasRejections } from '../utils/promise-allsettled-helpers';
 
 const getLastFailedProjectsKeys = async (): Promise<string[]> => {
   const lastFailedProjects: ListResult = await storage
@@ -45,5 +46,17 @@ export const clearImportKeys = async (): Promise<void> => {
 };
 
 export const deleteGroupDataFromStorage = async (groupId: string): Promise<void> => {
-  await Promise.all([clearStorageSecretsForGroup(groupId), clearStorageEntriesForGroup(groupId), clearImportKeys()]);
+  try {
+    const deleteGroupDataResult = await Promise.allSettled([
+      clearStorageSecretsForGroup(groupId),
+      clearStorageEntriesForGroup(groupId),
+      clearImportKeys(),
+    ]);
+
+    if (hasRejections(deleteGroupDataResult)) {
+      throw new Error(`Error deleting group data: ${getFormattedErrors(deleteGroupDataResult)}`);
+    }
+  } catch (e) {
+    console.error('Error while deleting group data', e);
+  }
 };

@@ -3,6 +3,7 @@ import { getTrackingBranchName } from '../../../services/get-tracking-branch';
 import { MergeRequestEvent } from '../../../types';
 import { insertMetricValues } from '../../../services/insert-metric-values';
 import { getMRCycleTime, getOpenMergeRequestsCount } from '../../../services/compute-event-and-metrics';
+import { ALL_SETTLED_STATUS, getFormattedErrors } from '../../../utils/promise-allsettled-helpers';
 
 export const handleMergeRequestEvent = async (
   event: MergeRequestEvent,
@@ -18,10 +19,25 @@ export const handleMergeRequestEvent = async (
     const trackingBranch = await getTrackingBranchName(groupToken, id, defaultBranch);
 
     if (trackingBranch === targetBranch) {
-      const [cycleTime, openMergeRequestsCount] = await Promise.all([
+      const [cycleTimeResult, openMergeRequestsCountResult] = await Promise.allSettled([
         getMRCycleTime(groupToken, id, trackingBranch),
         getOpenMergeRequestsCount(groupToken, id, trackingBranch),
       ]);
+
+      if (
+        cycleTimeResult.status === ALL_SETTLED_STATUS.REJECTED ||
+        openMergeRequestsCountResult.status === ALL_SETTLED_STATUS.REJECTED
+      ) {
+        throw new Error(
+          `Failed to get merge request cycle time or open merge request count: ${getFormattedErrors([
+            cycleTimeResult,
+            openMergeRequestsCountResult,
+          ])}`,
+        );
+      }
+
+      const cycleTime = cycleTimeResult.value;
+      const openMergeRequestsCount = openMergeRequestsCountResult.value;
 
       const metricInput = {
         projectID: id.toString(),

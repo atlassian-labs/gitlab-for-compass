@@ -12,6 +12,7 @@ import { getTrackingBranchName } from '../../../services/get-tracking-branch';
 import { MOCK_CLOUD_ID, TEST_TOKEN } from '../../../__tests__/fixtures/gitlab-data';
 import { ComponentSyncDetails } from '../../../types';
 import { EXTERNAL_SOURCE } from '../../../constants';
+import { ALL_SETTLED_STATUS, getFormattedErrors } from '../../../utils/promise-allsettled-helpers';
 
 jest.mock('../../../services/sync-component-with-file', () => {
   return {
@@ -24,6 +25,10 @@ jest.mock('../../../services/get-tracking-branch');
 jest.spyOn(global.console, 'error').mockImplementation(() => ({}));
 
 const MOCK_ERROR = new Error('Unexpected Error');
+const RejectedPromiseSettled: PromiseSettledResult<unknown> = {
+  status: ALL_SETTLED_STATUS.REJECTED,
+  reason: MOCK_ERROR,
+};
 
 describe('Gitlab push events', () => {
   const event = generatePushEvent();
@@ -221,6 +226,9 @@ describe('Gitlab push events', () => {
 
     await handlePushEvent(event, TEST_TOKEN, MOCK_CLOUD_ID);
 
-    expect(console.error).toBeCalledWith('Error while handling push event', MOCK_ERROR);
+    expect(console.error).toBeCalledWith(
+      'Error while handling push event',
+      new Error(`Error removing components: ${getFormattedErrors([RejectedPromiseSettled])}`),
+    );
   });
 });
