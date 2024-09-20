@@ -131,46 +131,40 @@ export const getDeploymentAfter28Days = async (
 ): Promise<Deployment[]> => {
   const PAGE = 1;
   const PER_PAGE = 1;
-  try {
-    const environments = await getProjectEnvironments(projectId, groupToken);
-    const getDeploymentsPromises = environments.reduce<Promise<{ data: Deployment[]; headers: Headers }>[]>(
-      (deploymentsPromises, currentEnvironment) => {
-        if (
-          currentEnvironment.tier === EnvironmentTier.PRODUCTION ||
-          (isSendStagingEventsEnabled() && currentEnvironment.tier === EnvironmentTier.STAGING)
-        ) {
-          deploymentsPromises.push(
-            getProjectRecentDeployments(PAGE, PER_PAGE, {
-              groupToken,
-              projectId,
-              environmentName: currentEnvironment.name,
-              dateAfter,
-              dateBefore,
-            }),
-          );
-        }
+  const environments = await getProjectEnvironments(projectId, groupToken);
+  const getDeploymentsPromises = environments.reduce<Promise<{ data: Deployment[]; headers: Headers }>[]>(
+    (deploymentsPromises, currentEnvironment) => {
+      if (
+        currentEnvironment.tier === EnvironmentTier.PRODUCTION ||
+        (isSendStagingEventsEnabled() && currentEnvironment.tier === EnvironmentTier.STAGING)
+      ) {
+        deploymentsPromises.push(
+          getProjectRecentDeployments(PAGE, PER_PAGE, {
+            groupToken,
+            projectId,
+            environmentName: currentEnvironment.name,
+            dateAfter,
+            dateBefore,
+          }),
+        );
+      }
 
-        return deploymentsPromises;
-      },
-      [],
-    );
+      return deploymentsPromises;
+    },
+    [],
+  );
 
-    const promisesResponseResults = await Promise.allSettled(getDeploymentsPromises);
+  const promisesResponseResults = await Promise.allSettled(getDeploymentsPromises);
 
-    if (hasRejections(promisesResponseResults)) {
-      throw new Error(`Error getting deployments ${getFormattedErrors(promisesResponseResults)}`);
-    }
-
-    const promisesResponse = promisesResponseResults.map(
-      (promisesResponseResult) => (promisesResponseResult as PromiseFulfilledResult<{ data: Deployment[] }>).value,
-    );
-
-    return promisesResponse ? promisesResponse.map((deployment) => deployment.data).flat() : [];
-  } catch (e) {
-    console.error(e);
-
-    return [];
+  if (hasRejections(promisesResponseResults)) {
+    throw new Error(`Error getting deployments ${getFormattedErrors(promisesResponseResults)}`);
   }
+
+  const promisesResponse = promisesResponseResults.map(
+    (promisesResponseResult) => (promisesResponseResult as PromiseFulfilledResult<{ data: Deployment[] }>).value,
+  );
+
+  return promisesResponse ? promisesResponse.map((deployment) => deployment.data).flat() : [];
 };
 
 export const gitlabAPiDeploymentToCompassDataProviderDeploymentEvent = (

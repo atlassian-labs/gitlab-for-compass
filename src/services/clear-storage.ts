@@ -46,17 +46,13 @@ export const clearImportKeys = async (): Promise<void> => {
 };
 
 export const deleteGroupDataFromStorage = async (groupId: string): Promise<void> => {
-  try {
-    const deleteGroupDataResult = await Promise.allSettled([
-      clearStorageSecretsForGroup(groupId),
-      clearStorageEntriesForGroup(groupId),
-      clearImportKeys(),
-    ]);
+  const deleteGroupDataResult = await Promise.allSettled([
+    clearStorageSecretsForGroup(groupId),
+    clearStorageEntriesForGroup(groupId),
+    clearImportKeys(),
+  ]);
 
-    if (hasRejections(deleteGroupDataResult)) {
-      throw new Error(`Error deleting group data: ${getFormattedErrors(deleteGroupDataResult)}`);
-    }
-  } catch (e) {
-    console.error('Error while deleting group data', e);
+  if (hasRejections(deleteGroupDataResult)) {
+    throw new Error(`Error deleting group data: ${getFormattedErrors(deleteGroupDataResult)}`);
   }
 };

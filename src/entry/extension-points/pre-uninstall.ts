@@ -19,9 +19,9 @@ export default async function preUninstall(payload: PreUninstallPayload): Promis
   try {
     const groupIds = await getGroupIds();
 
-    const result = await Promise.allSettled(groupIds.map((groupId) => disconnectGroup(groupId, cloudId, forgeAppId)));
-    if (hasRejections(result)) {
-      throw new Error(`Error while disconnecting groups: ${getFormattedErrors(result)}`);
+    const results = await Promise.allSettled(groupIds.map((groupId) => disconnectGroup(groupId, cloudId, forgeAppId)));
+    if (hasRejections(results)) {
+      throw new Error(`Error while disconnecting groups: ${getFormattedErrors(results)}`);
     }
   } catch (e) {
     console.error({ message: 'Error performing preUninstall', error: e });
