@@ -1,4 +1,5 @@
 import { GitLabHeaders, GitlabPaginatedFetch } from '../client/gitlab';
+import { getFormattedErrors, hasRejections } from './promise-allsettled-helpers';
 
 export const fetchPaginatedData = async <D, P>(
   fetchFn: GitlabPaginatedFetch<D, P>,
@@ -20,7 +21,15 @@ export const fetchPaginatedData = async <D, P>(
     promises.push(fetchFn(pageNumber, perPage, fetchFnParameters));
   }
 
-  const restOfData = await Promise.all(promises);
+  const restOfDataResults = await Promise.allSettled(promises);
+
+  if (hasRejections(restOfDataResults)) {
+    throw new Error(`Error getting data results: ${getFormattedErrors(restOfDataResults)}`);
+  }
+
+  const restOfData = restOfDataResults.map(
+    (restOfDataResult) => (restOfDataResult as PromiseFulfilledResult<{ data: D[]; headers: Headers }>).value,
+  );
 
   return [...firstPageData, ...restOfData.map(({ data }) => data).flat()];
 };

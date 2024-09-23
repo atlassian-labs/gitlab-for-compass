@@ -5,6 +5,7 @@ import { ComponentSyncDetails, PushEvent } from '../../../types';
 import { getTrackingBranchName } from '../../../services/get-tracking-branch';
 import { unlinkComponentFromFile } from '../../../client/compass';
 import { EXTERNAL_SOURCE } from '../../../constants';
+import { hasRejections, getFormattedErrors } from '../../../utils/promise-allsettled-helpers';
 
 export const handlePushEvent = async (event: PushEvent, groupToken: string, cloudId: string): Promise<void> => {
   try {
@@ -56,6 +57,12 @@ export const handlePushEvent = async (event: PushEvent, groupToken: string, clou
       }),
     );
 
+    const creationAndUpdateResults = await Promise.allSettled([...creates, ...updates]);
+
+    if (hasRejections(creationAndUpdateResults)) {
+      throw new Error(`Error creating or updating components: ${getFormattedErrors(creationAndUpdateResults)}`);
+    }
+
     const removals = componentsToUnlink.map((componentToUnlink) =>
       unlinkComponentFromFile({
         cloudId,
@@ -67,7 +74,12 @@ export const handlePushEvent = async (event: PushEvent, groupToken: string, clou
           : [],
       }),
     );
-    await Promise.all([...creates, ...updates, ...removals]);
+
+    const removalResults = await Promise.allSettled(removals);
+
+    if (hasRejections(removalResults)) {
+      throw new Error(`Error removing components: ${getFormattedErrors(removalResults)}`);
+    }
   } catch (e) {
     console.error('Error while handling push event', e);
   }

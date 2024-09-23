@@ -5,6 +5,7 @@ import { getGroupAccessTokens, getGroupsData } from '../client/gitlab';
 import { REQUIRED_SCOPES, STORAGE_KEYS, STORAGE_SECRETS } from '../constants';
 import { AuthErrorTypes } from '../resolverTypes';
 import { deleteGroupDataFromStorage } from './clear-storage';
+import { ALL_SETTLED_STATUS, getFormattedErrors, hasRejections } from '../utils/promise-allsettled-helpers';
 
 export class InvalidGroupTokenError extends Error {
   constructor(public errorType: AuthErrorTypes) {
@@ -58,12 +59,20 @@ const getGroups = async (owned?: string, minAccessLevel?: number): Promise<Gitla
 
   const { results: groups } = await response.getMany();
 
-  const tokens = await Promise.all(
+  const tokensResult = await Promise.allSettled(
     groups.map((group: Result) =>
       storage.getSecret(
         `${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${group.key.replace(STORAGE_KEYS.GROUP_KEY_PREFIX, '')}`,
       ),
     ),
+  );
+
+  if (hasRejections(tokensResult)) {
+    throw new Error(`Error getting tokens ${getFormattedErrors(tokensResult)}`);
+  }
+
+  const tokens = tokensResult.map(
+    (tokenResult: PromiseSettledResult<string>) => (tokenResult as PromiseFulfilledResult<string>).value,
   );
 
   const groupPromises = tokens.map((token: string) => getGroupsData(token, owned, minAccessLevel));
@@ -80,10 +89,13 @@ const getGroups = async (owned?: string, minAccessLevel?: number): Promise<Gitla
       currentGroupResult: PromiseSettledResult<GitlabAPIGroup[]>,
       i: number,
     ) => {
-      if (currentGroupResult.status === 'rejected' && currentGroupResult.reason.toString().includes('Unauthorized')) {
+      if (
+        currentGroupResult.status === ALL_SETTLED_STATUS.REJECTED &&
+        currentGroupResult.reason.toString().includes('Unauthorized')
+      ) {
         result.invalidGroupIds.push(groups[i].key.replace(STORAGE_KEYS.GROUP_KEY_PREFIX, ''));
       }
-      if (currentGroupResult.status === 'fulfilled') {
+      if (currentGroupResult.status === ALL_SETTLED_STATUS.FULFILLED) {
         if (minAccessLevel) {
           result.accessedGroups.push(...currentGroupResult.value);
         } else {
@@ -96,7 +108,13 @@ const getGroups = async (owned?: string, minAccessLevel?: number): Promise<Gitla
     { accessedGroups: [], invalidGroupIds: [] },
   );
 
-  await Promise.all(reducedGroupsResult.invalidGroupIds.map((id: string) => deleteGroupDataFromStorage(id)));
+  const settledResult = await Promise.allSettled(
+    reducedGroupsResult.invalidGroupIds.map((id: string) => deleteGroupDataFromStorage(id)),
+  );
+
+  if (hasRejections(settledResult)) {
+    throw new Error(`Error deleting group data from storage: ${getFormattedErrors(settledResult)}`);
+  }
 
   return reducedGroupsResult.accessedGroups;
 };

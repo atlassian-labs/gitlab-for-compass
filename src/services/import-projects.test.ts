@@ -17,6 +17,7 @@ import {
 import { setLastSyncTime } from './last-sync-time';
 import { mocked } from 'jest-mock';
 import { ImportErrorTypes } from '../resolverTypes';
+import { ALL_SETTLED_STATUS, getFormattedErrors } from '../utils/promise-allsettled-helpers';
 
 const storageGetSuccess = jest.fn().mockReturnValue(['jobId1', 'jobId2']);
 const storageGetEmptyArray = jest.fn().mockReturnValue([]);
@@ -161,7 +162,20 @@ describe('clearImportResult test cases', () => {
   it('clearImportResult test case: storage delete failed', async () => {
     storage.query = storageQuerySuccess;
 
-    await expect(clearImportResult()).rejects.toThrow(errorForClearImportProject);
+    const RejectedPromiseSettled: PromiseSettledResult<unknown>[] = [
+      {
+        status: ALL_SETTLED_STATUS.REJECTED,
+        reason: errorForClearImportProject,
+      },
+      {
+        status: ALL_SETTLED_STATUS.REJECTED,
+        reason: errorForClearImportProject,
+      },
+    ];
+
+    await expect(clearImportResult()).rejects.toThrow(
+      `Error deleting key: ${getFormattedErrors(RejectedPromiseSettled)}`,
+    );
 
     expect(storage.query).toHaveBeenCalled();
     expect(storage.delete).toHaveBeenCalled();

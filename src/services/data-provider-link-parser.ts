@@ -5,6 +5,7 @@ import { getOwnedProjectsBySearchCriteria } from '../client/gitlab';
 import { STORAGE_SECRETS } from '../constants';
 import { getGroupIds } from '../utils/storage-utils';
 import { GitlabAPIProject } from '../types';
+import { getFormattedErrors, hasRejections } from '../utils/promise-allsettled-helpers';
 
 export const extractProjectInformation = (projectUrl: string): { projectName: string; pathName: string } | null => {
   const parsedUrl = parse(projectUrl);
@@ -18,12 +19,20 @@ export const extractProjectInformation = (projectUrl: string): { projectName: st
 };
 
 export const getAllGroupTokens = async (): Promise<string[]> => {
-  const groupIds = await getGroupIds();
-  const groupTokens = await Promise.all(
-    groupIds.map((groupId) => storage.getSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`)),
-  );
+  try {
+    const groupIds = await getGroupIds();
+    const groupTokensResult = await Promise.allSettled(
+      groupIds.map((groupId) => storage.getSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`)),
+    );
 
-  return groupTokens;
+    if (hasRejections(groupTokensResult)) {
+      throw new Error(`Error getting group tokens ${getFormattedErrors(groupTokensResult)}`);
+    }
+
+    return groupTokensResult.map((groupTokenResult) => (groupTokenResult as PromiseFulfilledResult<string>).value);
+  } catch (e) {
+    throw new Error(`Error while getting all group tokens: ${e}`);
+  }
 };
 
 function doesURLMatch(projectUrl: string, path: string, name: string) {

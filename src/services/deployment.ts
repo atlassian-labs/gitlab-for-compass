@@ -11,6 +11,7 @@ import { fetchPaginatedData } from '../utils/fetchPaginatedData';
 import { getProjectEnvironments } from './environment';
 import { isSendStagingEventsEnabled } from './feature-flags';
 import { truncateProjectNameString } from '../utils/event-mapping';
+import { getFormattedErrors, hasRejections } from '../utils/promise-allsettled-helpers';
 
 export const gitLabStateToCompassFormat = (state: string): CompassDeploymentEventState => {
   switch (state) {
@@ -153,7 +154,15 @@ export const getDeploymentAfter28Days = async (
     [],
   );
 
-  const promisesResponse = await Promise.all(getDeploymentsPromises);
+  const promisesResponseResults = await Promise.allSettled(getDeploymentsPromises);
+
+  if (hasRejections(promisesResponseResults)) {
+    throw new Error(`Error getting deployments ${getFormattedErrors(promisesResponseResults)}`);
+  }
+
+  const promisesResponse = promisesResponseResults.map(
+    (promisesResponseResult) => (promisesResponseResult as PromiseFulfilledResult<{ data: Deployment[] }>).value,
+  );
 
   return promisesResponse ? promisesResponse.map((deployment) => deployment.data).flat() : [];
 };
