@@ -48,7 +48,7 @@ modules:
     - key: process-gitlab-event
       handler: index.processGitlabEvent
     - key: import-projects
-      handler: resolvers/import-queue-resolver.run
+      handler: index.importQueueResolver
     - key: pre-uninstall
       handler: index.preUninstall
     - key: data-provider-fn
@@ -65,6 +65,8 @@ modules:
         method: import
 app:
   id: ari:cloud:ecosystem::app/fe7b0913-7421-4c84-b401-041eaab2ef2e
+  runtime:
+    name: nodejs18.x
   features:
     autoUserConsent: true
 resources:

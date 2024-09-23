@@ -1,5 +1,6 @@
 import adminResolver from './resolvers/admin-resolvers';
 import importResolver from './resolvers/import-resolvers';
+import importQueueResolver from './resolvers/import-queue-resolver';
 
 import { processGitlabEvent } from './entry/webtriggers';
 import { dataProvider } from './entry/data-provider';
@@ -12,7 +13,7 @@ export { preUninstall };
 // webtriggers
 export { processGitlabEvent };
 // resolvers
-export { adminResolver, importResolver };
+export { adminResolver, importResolver, importQueueResolver };
 // dataProvider
 export { dataProvider, callback };
 // configValidator
