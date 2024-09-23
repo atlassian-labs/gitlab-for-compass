@@ -39,13 +39,11 @@
     "@forge/api": "^3.9.1",
     "@forge/bridge": "^3.5.0",
     "@forge/events": "^0.9.1",
-    "@forge/metrics": "^0.2.17",
     "@forge/resolver": "^1.5.39",
     "@forge/ui": "^1.1.0",
     "exponential-backoff": "^3.1.0",
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
-    "react-router-dom": "^6.3.0",
     "url-parse": "^1.5.10"
   },
   "scripts": {
