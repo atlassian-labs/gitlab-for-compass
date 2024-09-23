@@ -369,6 +369,13 @@ enum GitLabAccessLevels {
   OWNER = 50,
 }
 
+enum WebhookTypes {
+  PUSH = 'push',
+  MERGE_REQUEST = 'merge_request',
+  PIPELINE = 'pipeline',
+  DEPLOYMENT = 'deployment',
+}
+
 type Environment = {
   id: number;
   name: string;
@@ -471,4 +478,5 @@ export {
   EnvironmentTier,
   GitlabPipelineStates,
   GitLabAccessLevels,
+  WebhookTypes,
 };
