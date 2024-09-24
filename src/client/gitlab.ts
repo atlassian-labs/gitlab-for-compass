@@ -75,6 +75,7 @@ export const callGitlab = async (
     headers: {
       'PRIVATE-TOKEN': authToken,
       Accept: config?.contentType || GitLabContentType.JSON,
+      'Content-Type': config?.contentType || GitLabContentType.JSON,
     },
     body,
   });
