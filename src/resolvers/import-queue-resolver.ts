@@ -101,4 +101,4 @@ resolver.define('import', async (req) => {
   }
 });
 
-export const run = resolver.getDefinitions();
+export default resolver.getDefinitions();
