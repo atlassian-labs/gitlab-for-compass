@@ -925,10 +925,22 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@forge/api@3.9.1", "@forge/api@^3.9.1":
+"@forge/api@3.9.1":
   version "3.9.1"
   resolved "https://packages.atlassian.com/api/npm/npm-remote/@forge/api/-/api-3.9.1.tgz#8ee05217006e979817b89d753ff9465f614646d5"
   integrity sha512-FUQ0WMZ3lZOe/7H5BAA4hhnm7Q4/KAIMuK2y3vlh9gp55n176zRwY/MvvNWmi/QIi1mHRQsXErAMbPM+dmw3hA==
+  dependencies:
+    "@forge/auth" "0.0.5"
+    "@forge/egress" "1.2.13"
+    "@forge/storage" "1.5.15"
+    "@forge/util" "1.4.4"
+    "@types/node-fetch" "^2.6.11"
+    node-fetch "2.7.0"
+
+"@forge/api@3.9.2", "@forge/api@^3.9.2":
+  version "3.9.2"
+  resolved "https://packages.atlassian.com/api/npm/npm-remote/@forge/api/-/api-3.9.2.tgz#5b2634aae778201c0bd43d65e4a17ea46aeccc27"
+  integrity sha512-KyjmHkyZLumb2qcSble4A/gHrH0blx+Mn3Zrs+4JlBYgs+iUFp5HW3o2Ui8ITBN+xtnVwQg8KAz1D88foGtW8A==
   dependencies:
     "@forge/auth" "0.0.5"
     "@forge/egress" "1.2.13"
@@ -1155,12 +1167,12 @@
     lodash "^4.17.21"
     yaml "^2.3.4"
 
-"@forge/metrics@0.2.17":
-  version "0.2.17"
-  resolved "https://packages.atlassian.com/api/npm/npm-remote/@forge/metrics/-/metrics-0.2.17.tgz#4f2f8e6ad59c0ec2bb3a225a8174a1b2e8a313f9"
-  integrity sha512-teQUgLUUIsYBdeuJm90FmdIz46geejel5MgvB+ztind3dmt4bNoj2+qe1DgnNoSvSHHLnqMSO1+reG4FEMSG4A==
+"@forge/metrics@0.2.18":
+  version "0.2.18"
+  resolved "https://packages.atlassian.com/api/npm/npm-remote/@forge/metrics/-/metrics-0.2.18.tgz#bf5068459e9876510be1f2a7babf75f3e5fce326"
+  integrity sha512-L4dPf1Pb8RjGgbLvk2zA1+rww6Uxp8Pa4O5YrWSrvrKvsT/m6nWKv1xrl6Qk5OTeBhp6He2Sf3/3wwJURT3U2A==
   dependencies:
-    "@forge/api" "3.9.1"
+    "@forge/api" "3.9.2"
     "@forge/runtime" "5.10.1"
     "@forge/util" "1.4.4"
 
