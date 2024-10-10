@@ -1,6 +1,7 @@
 import { CreateLinkInput } from '@atlassian/forge-graphql';
 import Resolver from '@forge/resolver';
 import { storage } from '@forge/api';
+import { internalMetrics } from '@forge/metrics';
 import { backOff, IBackOffOptions } from 'exponential-backoff';
 
 import { createComponent, updateComponent } from '../client/compass';
@@ -36,6 +37,7 @@ const setFailedRepositoriesToStore = async (project: ImportableProject) => {
 };
 
 resolver.define('import', async (req) => {
+  internalMetrics.counter('compass.gitlab.import.start').incr();
   const { createProjectData } = req.payload as ReqPayload;
 
   // Added this sleep to add some "jitter", and make progress more user-friendly
@@ -86,8 +88,10 @@ resolver.define('import', async (req) => {
       }
 
       if ('err' in updatedComponent) {
+        internalMetrics.counter('compass.bitbucket.import.end.fail').incr();
         await setFailedRepositoriesToStore(project);
       } else {
+        internalMetrics.counter('compass.bitbucket.import.end.success').incr();
         console.log(
           `GitLab project was imported.
         Compass component - ${updatedComponent.id} was updated.`,
@@ -95,6 +99,7 @@ resolver.define('import', async (req) => {
       }
     }
   } catch (err) {
+    internalMetrics.counter('compass.bitbucket.import.end.fail').incr();
     console.error(`Failed to create or update compass component for project "${id}" after all retries`, err);
 
     await setFailedRepositoriesToStore(project);
