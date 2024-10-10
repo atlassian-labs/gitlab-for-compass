@@ -1155,6 +1155,15 @@
     lodash "^4.17.21"
     yaml "^2.3.4"
 
+"@forge/metrics@0.2.17":
+  version "0.2.17"
+  resolved "https://packages.atlassian.com/api/npm/npm-remote/@forge/metrics/-/metrics-0.2.17.tgz#4f2f8e6ad59c0ec2bb3a225a8174a1b2e8a313f9"
+  integrity sha512-teQUgLUUIsYBdeuJm90FmdIz46geejel5MgvB+ztind3dmt4bNoj2+qe1DgnNoSvSHHLnqMSO1+reG4FEMSG4A==
+  dependencies:
+    "@forge/api" "3.9.1"
+    "@forge/runtime" "5.10.1"
+    "@forge/util" "1.4.4"
+
 "@forge/resolver@^1.5.39":
   version "1.5.39"
   resolved "https://packages.atlassian.com/api/npm/npm-remote/@forge/resolver/-/resolver-1.5.39.tgz#061d26c3c3c9491778dea0a87e492c0a388cb807"
