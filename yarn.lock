@@ -925,10 +925,22 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@forge/api@3.9.1", "@forge/api@^3.9.1":
+"@forge/api@3.9.1":
   version "3.9.1"
   resolved "https://packages.atlassian.com/api/npm/npm-remote/@forge/api/-/api-3.9.1.tgz#8ee05217006e979817b89d753ff9465f614646d5"
   integrity sha512-FUQ0WMZ3lZOe/7H5BAA4hhnm7Q4/KAIMuK2y3vlh9gp55n176zRwY/MvvNWmi/QIi1mHRQsXErAMbPM+dmw3hA==
+  dependencies:
+    "@forge/auth" "0.0.5"
+    "@forge/egress" "1.2.13"
+    "@forge/storage" "1.5.15"
+    "@forge/util" "1.4.4"
+    "@types/node-fetch" "^2.6.11"
+    node-fetch "2.7.0"
+
+"@forge/api@3.9.2", "@forge/api@^3.9.1":
+  version "3.9.2"
+  resolved "https://packages.atlassian.com/api/npm/npm-remote/@forge/api/-/api-3.9.2.tgz#5b2634aae778201c0bd43d65e4a17ea46aeccc27"
+  integrity sha512-KyjmHkyZLumb2qcSble4A/gHrH0blx+Mn3Zrs+4JlBYgs+iUFp5HW3o2Ui8ITBN+xtnVwQg8KAz1D88foGtW8A==
   dependencies:
     "@forge/auth" "0.0.5"
     "@forge/egress" "1.2.13"
@@ -1154,6 +1166,15 @@
     glob "^10.3.10"
     lodash "^4.17.21"
     yaml "^2.3.4"
+
+"@forge/metrics@0.2.18":
+  version "0.2.18"
+  resolved "https://packages.atlassian.com/api/npm/npm-remote/@forge/metrics/-/metrics-0.2.18.tgz#bf5068459e9876510be1f2a7babf75f3e5fce326"
+  integrity sha512-L4dPf1Pb8RjGgbLvk2zA1+rww6Uxp8Pa4O5YrWSrvrKvsT/m6nWKv1xrl6Qk5OTeBhp6He2Sf3/3wwJURT3U2A==
+  dependencies:
+    "@forge/api" "3.9.2"
+    "@forge/runtime" "5.10.1"
+    "@forge/util" "1.4.4"
 
 "@forge/resolver@^1.5.39":
   version "1.5.39"
@@ -9728,20 +9749,15 @@ write-file-atomic@^3.0.0:
     signal-exit "^3.0.2"
     typedarray-to-buffer "^3.1.5"
 
-ws@^7.3.1, ws@^7.5.9:
-  version "7.5.9"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-7.5.9.tgz#54fa7db29f4c7cec68b1ddd3a89de099942bb591"
-  integrity sha512-F+P9Jil7UiSKSkppIiD94dN07AwvFixvLIj1Og1Rl9GGMuNipJnV9JzjD6XuqmAeiswGvUmNLjr5cFuXwNS77Q==
-
-ws@^7.4.6:
-  version "7.5.7"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-7.5.7.tgz#9e0ac77ee50af70d58326ecff7e85eb3fa375e67"
-  integrity sha512-KMvVuFzpKBuiIXW3E4u3mySRO2/mCHSyZDJQM5NQ9Q9KHWHWh0NHgfbRMLLrceUK5qAL4ytALJbpRMjixFZh8A==
+ws@^7.3.1, ws@^7.4.6, ws@^7.5.9:
+  version "7.5.10"
+  resolved "https://packages.atlassian.com/api/npm/npm-remote/ws/-/ws-7.5.10.tgz#58b5c20dc281633f6c19113f39b349bd8bd558d9"
+  integrity sha512-+dbF1tHwZpXcbOJdVOkzLDxZP1ailvSxM6ZweXTegylPny803bFhA+vqBYw4s31NSAk4S2Qz+AKXK9a4wkdjcQ==
 
 ws@^8.13.0:
-  version "8.14.2"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-8.14.2.tgz#6c249a806eb2db7a20d26d51e7709eab7b2e6c7f"
-  integrity sha512-wEBG1ftX4jcglPxgFCMJmZ2PLtSbJ2Peg6TmpJFTbe9GZYOQCDPdMYu/Tm0/bGZkw8paZnJY45J4K2PZrLYq8g==
+  version "8.17.1"
+  resolved "https://packages.atlassian.com/api/npm/npm-remote/ws/-/ws-8.17.1.tgz#9293da530bb548febc95371d90f9c878727d919b"
+  integrity sha512-6XQFvXTkbfUOZOKKILFG1PDK2NDQs4azKQl26T0YS5CxqWLgXajbPZ+h4gZekJyRqFU8pvnbAbbs/3TgRPy+GQ==
 
 xml-name-validator@^3.0.0:
   version "3.0.0"
