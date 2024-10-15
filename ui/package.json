@@ -7,7 +7,7 @@
     "@atlaskit/avatar": "^21.4.2",
     "@atlaskit/button": "^16.2.2",
     "@atlaskit/checkbox": "^12.3.12",
-    "@atlaskit/css-reset": "^6.3.8",
+    "@atlaskit/css-reset": "^6.9.1",
     "@atlaskit/dynamic-table": "^14.5.4",
     "@atlaskit/empty-state": "^7.3.10",
     "@atlaskit/form": "^8.5.4",
