@@ -20,8 +20,8 @@ export const ImportControls = () => {
   const { isImportInProgress } = useImportContext();
   const { appId } = useAppContext();
 
-  const handleImportNavigate = () => {
-    router.navigate(`/compass/import/redirect/${encodeURIComponent(`ari:cloud:ecosystem::app/${appId}`)}`);
+  const handleImportNavigate = async () => {
+    await router.navigate(`/compass/import/redirect/${encodeURIComponent(`ari:cloud:ecosystem::app/${appId}`)}`);
   };
 
   const fetchLastSyncTime = async () => {
@@ -44,7 +44,9 @@ export const ImportControls = () => {
   };
 
   useEffect(() => {
-    fetchLastSyncTime();
+    fetchLastSyncTime().catch((e) => {
+      console.log('Error while fetching last sync time', e);
+    });
   }, []);
 
   const lastSyncTimeMsg = lastSyncTime ? `Last imported: ${formatLastSyncTime(lastSyncTime)}` : 'No import history';

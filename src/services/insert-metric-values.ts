@@ -1,3 +1,4 @@
+import { getFormattedErrors, hasRejections } from '../utils/promise-allsettled-helpers';
 import { insertMetricValueByExternalId } from '../client/compass';
 import { MetricsEventPayload } from '../types';
 
@@ -12,11 +13,15 @@ export const insertMetricValues = async (metricsPayload: MetricsEventPayload, cl
     cloudId,
   });
 
-  await Promise.all(
+  const settledResult = await Promise.allSettled(
     metrics.map(async (metric) => {
       await insertMetricValueByExternalId(cloudId, projectID, metric);
     }),
   );
+
+  if (hasRejections(settledResult)) {
+    throw new Error(`Error inserting metric values: ${getFormattedErrors(settledResult)}`);
+  }
 
   console.log({
     message: 'insertMetricValues finished.',

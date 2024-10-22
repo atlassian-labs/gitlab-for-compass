@@ -6,6 +6,7 @@ import {
   MergeRequestEvent,
   PipelineEvent,
   PushEvent,
+  WebhookTypes,
   WebtriggerRequest,
   WebtriggerResponse,
 } from '../../types';
@@ -47,20 +48,28 @@ export const processGitlabEvent = async (event: WebtriggerRequest): Promise<Webt
 
     const parsedEvent = parseEventPayload(eventPayload);
 
-    if (parsedEvent.object_kind === 'push') {
+    if (parsedEvent.object_kind === WebhookTypes.PUSH) {
       await handlePushEvent(parsedEvent as PushEvent, groupToken, cloudId);
+
+      return serverResponse('Processed webhook event of type PUSH');
     }
 
-    if (parsedEvent.object_kind === 'merge_request') {
+    if (parsedEvent.object_kind === WebhookTypes.MERGE_REQUEST) {
       await handleMergeRequestEvent(parsedEvent as MergeRequestEvent, groupToken, cloudId);
+
+      return serverResponse('Processed webhook event of type MERGE_REQUEST');
     }
 
-    if (parsedEvent.object_kind === 'pipeline') {
+    if (parsedEvent.object_kind === WebhookTypes.PIPELINE) {
       await handlePipelineEvent(parsedEvent as PipelineEvent, groupToken, cloudId);
+
+      return serverResponse('Processed webhook event of type PIPELINE');
     }
 
-    if (parsedEvent.object_kind === 'deployment') {
+    if (parsedEvent.object_kind === WebhookTypes.DEPLOYMENT) {
       await handleDeploymentEvent(parsedEvent as DeploymentEvent, groupToken, cloudId);
+
+      return serverResponse('Processed webhook event of type DEPLOYMENT');
     }
 
     return serverResponse('Processed webhook event');

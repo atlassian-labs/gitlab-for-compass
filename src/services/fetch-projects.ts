@@ -4,8 +4,15 @@ import { storage } from '@forge/api';
 import { getComponentByExternalAlias } from '../client/compass';
 import { COMPASS_YML_BRANCH, EXTERNAL_SOURCE, STORAGE_SECRETS } from '../constants';
 import { getMergeRequests, getProjects, GitLabHeaders } from '../client/gitlab';
-import { GroupProjectsResponse, MergeRequestState, Project, ProjectReadyForImport } from '../types';
+import {
+  CompareProjectWithExistingComponent,
+  GroupProjectsResponse,
+  MergeRequestState,
+  Project,
+  ProjectReadyForImport,
+} from '../types';
 import { getProjectLabels } from './get-labels';
+import { ALL_SETTLED_STATUS, getFormattedErrors, hasRejections } from '../utils/promise-allsettled-helpers';
 
 const mapComponentLinks = (links: Link[] = []): CreateLinkInput[] =>
   links.map((link) => {
@@ -22,7 +29,7 @@ const fetchProjects = async (
     const PER_PAGE = 10;
     const { data: projects, headers } = await getProjects(groupToken, groupId, page, PER_PAGE, search);
 
-    const generatedProjectsWithLanguages = await Promise.all(
+    const generatedProjectsWithLanguagesResult = await Promise.allSettled(
       projects.map(async (project) => {
         const labels = await getProjectLabels(project.id, groupToken, project.topics);
 
@@ -40,6 +47,17 @@ const fetchProjects = async (
       }),
     );
 
+    if (hasRejections(generatedProjectsWithLanguagesResult)) {
+      throw new Error(
+        `Error getting projects with languages: ${getFormattedErrors(generatedProjectsWithLanguagesResult)}`,
+      );
+    }
+
+    const generatedProjectsWithLanguages = generatedProjectsWithLanguagesResult.map(
+      (generatedProjectWithLanguagesResult) =>
+        (generatedProjectWithLanguagesResult as PromiseFulfilledResult<Project>).value,
+    );
+
     return { total: Number(headers.get(GitLabHeaders.PAGINATION_TOTAL)), projects: generatedProjectsWithLanguages };
   } catch (err) {
     const ERROR_MESSAGE = 'Error while fetching group projects from Gitlab!';
@@ -49,9 +67,13 @@ const fetchProjects = async (
   }
 };
 
-const compareProjectWithExistingComponent = async (cloudId: string, projectId: number, groupToken: string) => {
+const compareProjectWithExistingComponent = async (
+  cloudId: string,
+  projectId: number,
+  groupToken: string,
+): Promise<CompareProjectWithExistingComponent> => {
   try {
-    const [{ component }, { data: mergeRequestWithCompassYML }] = await Promise.all([
+    const [componentByExtenalAliasResult, mergeRequestsResults] = await Promise.allSettled([
       getComponentByExternalAlias({
         cloudId,
         externalId: projectId.toString(),
@@ -66,6 +88,21 @@ const compareProjectWithExistingComponent = async (cloudId: string, projectId: n
         state: MergeRequestState.OPENED,
       }),
     ]);
+
+    if (
+      componentByExtenalAliasResult.status === ALL_SETTLED_STATUS.REJECTED ||
+      mergeRequestsResults.status === ALL_SETTLED_STATUS.REJECTED
+    ) {
+      throw new Error(
+        `Error getting component by external alias or merge requests: ${getFormattedErrors([
+          componentByExtenalAliasResult,
+          mergeRequestsResults,
+        ])}`,
+      );
+    }
+
+    const { component } = componentByExtenalAliasResult.value;
+    const { data: mergeRequestWithCompassYML } = mergeRequestsResults.value;
 
     return {
       isManaged: Boolean(component?.dataManager),
@@ -106,21 +143,36 @@ export const getGroupProjects = async (
   groupTokenId: number,
   search?: string,
 ): Promise<GroupProjectsResponse> => {
-  const groupToken = await storage.getSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupTokenId}`);
+  try {
+    const groupToken = await storage.getSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupTokenId}`);
 
-  const { projects, total } = await fetchProjects(groupToken, groupId, page, search);
+    const { projects, total } = await fetchProjects(groupToken, groupId, page, search);
 
-  const checkedDataWithExistingComponents = await Promise.all(
-    projects.map(({ id: projectId }) => {
-      return compareProjectWithExistingComponent(cloudId, projectId, groupToken);
-    }),
-  ).catch((err) => {
-    throw new Error(err);
-  });
+    const checkedDataWithExistingComponentsResults = await Promise.allSettled(
+      projects.map(({ id: projectId }) => {
+        return compareProjectWithExistingComponent(cloudId, projectId, groupToken);
+      }),
+    );
 
-  const resultProjects = projects.map((project, i) => {
-    return { ...project, ...checkedDataWithExistingComponents[i] };
-  });
+    if (hasRejections(checkedDataWithExistingComponentsResults)) {
+      throw new Error(
+        `Error checking project with existing components: ${getFormattedErrors(
+          checkedDataWithExistingComponentsResults,
+        )}`,
+      );
+    }
 
-  return { total, projects: resultProjects };
+    const checkedDataWithExistingComponents = checkedDataWithExistingComponentsResults.map(
+      (checkedDataWithExistingComponentsResult) =>
+        (checkedDataWithExistingComponentsResult as PromiseFulfilledResult<CompareProjectWithExistingComponent>).value,
+    );
+
+    const resultProjects = projects.map((project, i) => {
+      return { ...project, ...checkedDataWithExistingComponents[i] };
+    });
+
+    return { total, projects: resultProjects };
+  } catch (e) {
+    throw new Error(`Error while getting group projects: ${e}`);
+  }
 };

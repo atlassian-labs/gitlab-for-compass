@@ -16,6 +16,7 @@ import {
   sortedProjects,
 } from '../__tests__/helpers/gitlab-helper';
 import { MergeRequest } from '../types';
+import { ALL_SETTLED_STATUS, getFormattedErrors } from '../utils/promise-allsettled-helpers';
 
 jest.mock('../client/gitlab');
 jest.mock('../client/compass');
@@ -59,6 +60,13 @@ const mergeRequestMock: MergeRequest[] = [
     created_at: new Date().toString(),
   },
 ];
+
+const MOCK_ERROR = 'Error: Error while getting repository additional fields.';
+
+const RejectedPromiseSettled: PromiseSettledResult<unknown> = {
+  status: ALL_SETTLED_STATUS.REJECTED,
+  reason: MOCK_ERROR,
+};
 
 describe('Fetch Projects Service', () => {
   beforeEach(() => {
@@ -128,15 +136,19 @@ describe('Fetch Projects Service', () => {
     mockGetProjects.mockRejectedValue(undefined);
 
     await expect(getGroupProjects(MOCK_CLOUD_ID, MOCK_GROUP_ID, 1, 1)).rejects.toThrow(
-      new Error('Error while fetching group projects from Gitlab!'),
+      `Error while getting group projects: ${new Error('Error while fetching group projects from Gitlab!')}`,
     );
   });
 
   it('returns error in case when getComponentByExternalAlias fails', async () => {
     mockGetComponentByExternalAlias.mockRejectedValue(undefined);
 
+    const settledError = new Error(
+      `Error checking project with existing components: ${getFormattedErrors([RejectedPromiseSettled])}`,
+    );
+
     await expect(getGroupProjects(MOCK_CLOUD_ID, MOCK_GROUP_ID, 1, 1)).rejects.toThrow(
-      new Error('Error: Error while getting repository additional fields.'),
+      `Error while getting group projects: ${settledError}`,
     );
   });
 

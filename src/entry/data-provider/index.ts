@@ -17,17 +17,34 @@ import { GitlabHttpMethodError } from '../../models/errors';
 export const dataProvider = async (
   request: DataProviderPayload,
 ): Promise<DataProviderResult | ForgeInvocationError> => {
-  const {
-    project: { id: projectId, default_branch: defaultBranch, name: projectName },
-    groupToken,
-  } = await getProjectDataFromUrl(request.url);
+  let projectId: number;
+  let defaultBranch: string;
+  let projectName: string;
+  let groupToken: string;
+  let trackingBranch: string;
+
+  try {
+    ({
+      project: { id: projectId, default_branch: defaultBranch, name: projectName },
+      groupToken,
+    } = await getProjectDataFromUrl(request.url));
+  } catch (e) {
+    console.error(`Error while getting project data from URL in dataProvider ${e}`);
+    return null;
+  }
 
   if (!projectId) {
     console.warn('Cannot get GitLab project data by provided link.');
     return null;
   }
 
-  const trackingBranch = await getTrackingBranchName(groupToken, projectId, defaultBranch);
+  try {
+    trackingBranch = await getTrackingBranchName(groupToken, projectId, defaultBranch);
+  } catch (e) {
+    console.error(`Error while getting tracking branch name in dataProvider ${e}`);
+
+    return null;
+  }
 
   const backfillData: BackfillData = {
     builds: [],

@@ -5,11 +5,11 @@ import styled from 'styled-components';
 import { gridSize } from '@atlaskit/theme';
 
 import { router } from '@forge/bridge';
+import { IMPORT_MODULE_KEY } from '../../constants';
 import { useImportContext } from '../../hooks/useImportContext';
 import { ApplicationState } from '../../routes';
 import { ImportProgressBar } from '../ImportProgressBar';
 import { ImportResult } from '../ImportResult';
-import { IMPORT_MODULE_KEY } from '../../constants';
 
 const DoneButtonWrapper = styled.div`
   margin-top: ${gridSize() * 2}px;
@@ -24,9 +24,9 @@ export const ImportProgressResultPage = ({ moduleKey }: Props) => {
 
   const navigate = useNavigate();
 
-  const handleNavigateWhenDone = () => {
+  const handleNavigateWhenDone = async () => {
     if (moduleKey === IMPORT_MODULE_KEY) {
-      router.navigate('/compass/components');
+      await router.navigate('/compass/components?status=pending');
     } else {
       const path = `..${ApplicationState.CONNECTED}`;
       navigate(path, { replace: true });

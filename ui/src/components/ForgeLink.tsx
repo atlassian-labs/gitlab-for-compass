@@ -13,10 +13,10 @@ export const ForgeLink: FunctionComponent<Props> = ({ to, testId, openInNewTab, 
   <a
     data-testid={testId}
     href={to}
-    onClick={(e) => {
+    onClick={async (e) => {
       e.preventDefault();
       const nav = openInNewTab ? 'open' : 'navigate';
-      router[nav](to);
+      await router[nav](to);
     }}
   >
     {children}

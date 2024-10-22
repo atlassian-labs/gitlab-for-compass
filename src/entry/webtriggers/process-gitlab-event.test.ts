@@ -64,7 +64,7 @@ describe('processGitlabEvent', () => {
     await processGitlabEvent(webtriggerRequest);
 
     expect(mockHandlePushEvent).toHaveBeenCalledWith(MOCK_PUSH_EVENT, TEST_TOKEN, MOCK_CLOUD_ID);
-    expect(serverResponse).toHaveBeenCalledWith('Processed webhook event');
+    expect(serverResponse).toHaveBeenCalledWith('Processed webhook event of type PUSH');
   });
 
   it('returns server response error in case of invalid webhook event secret', async () => {
@@ -102,7 +102,7 @@ describe('processGitlabEvent', () => {
     await processGitlabEvent(webtriggerRequest);
 
     expect(mockHandlePipelineEvent).toHaveBeenCalledWith(MOCK_PIPELINE_EVENT, TEST_TOKEN, MOCK_CLOUD_ID);
-    expect(serverResponse).toHaveBeenCalledWith('Processed webhook event');
+    expect(serverResponse).toHaveBeenCalledWith('Processed webhook event of type PIPELINE');
   });
 
   it('handles merge request event', async () => {
@@ -111,7 +111,7 @@ describe('processGitlabEvent', () => {
     await processGitlabEvent(webtriggerRequest);
 
     expect(mockHandleMergeRequestEvent).toHaveBeenCalledWith(MOCK_MERGE_REQUEST_EVENT, TEST_TOKEN, MOCK_CLOUD_ID);
-    expect(serverResponse).toHaveBeenCalledWith('Processed webhook event');
+    expect(serverResponse).toHaveBeenCalledWith('Processed webhook event of type MERGE_REQUEST');
   });
 
   it('handles deployment event when FF is enabled', async () => {
@@ -120,6 +120,6 @@ describe('processGitlabEvent', () => {
     await processGitlabEvent(webtriggerRequest);
 
     expect(mockDeploymentEvent).toHaveBeenCalledWith(MOCK_DEPLOYMENT_EVENT, TEST_TOKEN, MOCK_CLOUD_ID);
-    expect(serverResponse).toHaveBeenCalledWith('Processed webhook event');
+    expect(serverResponse).toHaveBeenCalledWith('Processed webhook event of type DEPLOYMENT');
   });
 });

@@ -1,4 +1,9 @@
-import { CreateLinkInput, CustomFieldFromYAML } from '@atlassian/forge-graphql';
+import {
+  CreateLinkInput,
+  CustomFieldFromYAML,
+  DataProviderBuildEvent,
+  DataProviderDeploymentEvent,
+} from '@atlassian/forge-graphql';
 
 type WebtriggerRequest = {
   body: string;
@@ -250,6 +255,11 @@ type ProjectReadyForImport = {
 } & ProjectImportStatus &
   Project;
 
+type CompareProjectWithExistingComponent = Pick<
+  ProjectReadyForImport,
+  'isManaged' | 'hasComponent' | 'isCompassFilePrOpened' | 'componentId' | 'componentLinks' | 'typeId'
+>;
+
 type ImportableProject = ProjectReadyForImport & {
   typeId: string;
 };
@@ -359,6 +369,13 @@ enum GitLabAccessLevels {
   OWNER = 50,
 }
 
+enum WebhookTypes {
+  PUSH = 'push',
+  MERGE_REQUEST = 'merge_request',
+  PIPELINE = 'pipeline',
+  DEPLOYMENT = 'deployment',
+}
+
 type Environment = {
   id: number;
   name: string;
@@ -398,6 +415,15 @@ type Team = {
 type TeamsWithMembershipStatus = {
   teamsWithMembership: MappedTeam[];
   otherTeams: MappedTeam[];
+};
+
+type BackfillData = {
+  builds: DataProviderBuildEvent[];
+  deployments: DataProviderDeploymentEvent[];
+  metrics: {
+    mrCycleTime: number;
+    openMergeRequestsCount: number;
+  };
 };
 
 export type {
@@ -440,6 +466,8 @@ export type {
   MappedTeam,
   Team,
   TeamsWithMembershipStatus,
+  CompareProjectWithExistingComponent,
+  BackfillData,
 };
 
 export {
@@ -450,4 +478,5 @@ export {
   EnvironmentTier,
   GitlabPipelineStates,
   GitLabAccessLevels,
+  WebhookTypes,
 };

@@ -3,14 +3,30 @@ import { storage, webTrigger } from '@forge/api';
 import { registerGroupWebhook, deleteGroupWebhook, getGroupWebhook } from '../client/gitlab';
 import { GITLAB_EVENT_WEBTRIGGER, STORAGE_KEYS, STORAGE_SECRETS } from '../constants';
 import { generateSignature } from '../utils/generate-signature-utils';
+import { ALL_SETTLED_STATUS, getFormattedErrors, hasRejections } from '../utils/promise-allsettled-helpers';
 
 export const setupAndValidateWebhook = async (groupId: number): Promise<number> => {
   console.log('Setting up webhook');
   try {
-    const [existingWebhook, groupToken] = await Promise.all([
+    const [existingWebhookResult, groupTokenResult] = await Promise.allSettled([
       storage.get(`${STORAGE_KEYS.WEBHOOK_KEY_PREFIX}${groupId}`),
       storage.getSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`),
     ]);
+
+    if (
+      existingWebhookResult.status === ALL_SETTLED_STATUS.REJECTED ||
+      groupTokenResult.status === ALL_SETTLED_STATUS.REJECTED
+    ) {
+      throw new Error(
+        `Error getting existing webhook or group token: ${getFormattedErrors([
+          existingWebhookResult,
+          groupTokenResult,
+        ])}`,
+      );
+    }
+
+    const existingWebhook = existingWebhookResult.value;
+    const groupToken = groupTokenResult.value;
 
     const isWebhookValid = existingWebhook && (await getGroupWebhook(groupId, existingWebhook, groupToken)) !== null;
 
@@ -29,10 +45,14 @@ export const setupAndValidateWebhook = async (groupId: number): Promise<number> 
       signature: webhookSignature,
     });
 
-    await Promise.all([
+    const settledResult = await Promise.allSettled([
       storage.set(`${STORAGE_KEYS.WEBHOOK_KEY_PREFIX}${groupId}`, webhookId),
       storage.set(`${STORAGE_KEYS.WEBHOOK_SIGNATURE_PREFIX}${groupId}`, webhookSignature),
     ]);
+
+    if (hasRejections(settledResult)) {
+      throw new Error(`Error setting webhookId or webhookSignature: ${getFormattedErrors(settledResult)}`);
+    }
 
     console.log('Successfully created webhook');
     return webhookId;
@@ -43,12 +63,29 @@ export const setupAndValidateWebhook = async (groupId: number): Promise<number> 
 };
 
 export const deleteWebhook = async (groupId: number): Promise<void> => {
-  const [webhookId, groupToken] = await Promise.all([
-    storage.get(`${STORAGE_KEYS.WEBHOOK_KEY_PREFIX}${groupId}`),
-    storage.getSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`),
-  ]);
+  try {
+    const [webhookIdResult, groupTokenResult] = await Promise.allSettled([
+      storage.get(`${STORAGE_KEYS.WEBHOOK_KEY_PREFIX}${groupId}`),
+      storage.getSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`),
+    ]);
 
-  if (webhookId) {
-    await deleteGroupWebhook(groupId, webhookId, groupToken);
+    if (
+      webhookIdResult.status === ALL_SETTLED_STATUS.REJECTED ||
+      groupTokenResult.status === ALL_SETTLED_STATUS.REJECTED
+    ) {
+      throw new Error(
+        `Error getting webhookId or groupToken: ${getFormattedErrors([webhookIdResult, groupTokenResult])}`,
+      );
+    }
+
+    const webhookId = webhookIdResult.value;
+    const groupToken = groupTokenResult.value;
+
+    if (webhookId) {
+      await deleteGroupWebhook(groupId, webhookId, groupToken);
+    }
+  } catch (e) {
+    console.error('Error while getting webhookId or groupToken', e);
+    throw new Error(`Error while getting webhookId or groupToken: ${e}`);
   }
 };

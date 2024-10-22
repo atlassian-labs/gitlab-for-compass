@@ -8,7 +8,7 @@
   "private": true,
   "devDependencies": {
     "@atlaskit/eslint-plugin-design-system": "^8.7.0",
-    "@forge/cli": "^6.21.0",
+    "@forge/cli": "^10.5.0",
     "@types/jest": "^27.4.1",
     "@types/js-yaml": "^4.0.5",
     "@types/lodash": "^4.14.182",
@@ -35,18 +35,16 @@
     "typescript": "~4.5.5"
   },
   "dependencies": {
-    "@atlaskit/tokens": "^1.29.1",
-    "@atlassian/forge-graphql": "13.9.2",
-    "@forge/api": "^2.8.1",
-    "@forge/bridge": "^2.6.0",
-    "@forge/events": "^0.5.3",
-    "@forge/metrics": "^0.1.1",
-    "@forge/resolver": "^1.4.6",
+    "@atlassian/forge-graphql": "13.12.1",
+    "@forge/api": "^3.9.1",
+    "@forge/bridge": "^3.5.0",
+    "@forge/events": "^0.9.1",
+    "@forge/resolver": "^1.5.39",
+    "@forge/metrics": "0.2.18",
     "@forge/ui": "^1.1.0",
     "exponential-backoff": "^3.1.0",
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
-    "react-router-dom": "^6.3.0",
     "url-parse": "^1.5.10"
   },
   "scripts": {

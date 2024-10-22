@@ -19,6 +19,10 @@ jest.mock('../../../client/gitlab');
 jest.mock('../../../services/compute-event-and-metrics');
 jest.mock('../../../services/insert-metric-values');
 
+jest.spyOn(global.console, 'error').mockImplementation(() => ({}));
+
+const MOCK_ERROR = new Error('Unexpected Error');
+
 describe('Gitlab events', () => {
   const event = generatePipelineEvent();
 
@@ -72,5 +76,15 @@ describe('Gitlab events', () => {
       webhookPipelineEventToCompassBuildEvent(nonDefaultBranchEvent, MOCK_CLOUD_ID),
     );
     expect(insertMetricValuesMock).not.toBeCalled();
+  });
+
+  it('failed sending pipeline events', async () => {
+    getTrackingBranchNameMock.mockResolvedValue(event.project.default_branch);
+
+    sendEventToCompassMock.mockRejectedValue(MOCK_ERROR);
+
+    await handlePipelineEvent(event, TEST_TOKEN, MOCK_CLOUD_ID);
+
+    expect(console.error).toHaveBeenCalledWith('Error while sending pipeline event to Compass', MOCK_ERROR);
   });
 });
