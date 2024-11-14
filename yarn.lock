@@ -57,10 +57,10 @@
     "@babel/types" "^7.20.0"
     bind-event-listener "^2.1.1"
 
-"@atlassian/forge-graphql@13.17.0":
-  version "13.17.0"
-  resolved "https://packages.atlassian.com/api/npm/atlassian-npm/@atlassian/forge-graphql/-/@atlassian/forge-graphql-13.17.0.tgz#1c4cd3d90a6bf8fa39c942dfc7bd655b87aadc97"
-  integrity sha512-g7JX0ICsd2HIKFwzk7xgJ6bOtwp3FItto5LNCw2NMIZva8aLErJitt9773LewrIfJvvQtsgSZRUU10V4WdvndA==
+"@atlassian/forge-graphql@13.17.1":
+  version "13.17.1"
+  resolved "https://packages.atlassian.com/api/npm/atlassian-npm/@atlassian/forge-graphql/-/forge-graphql-13.17.1.tgz#b2ba0d0a48d3df86f528262c0e943cd1babc9170"
+  integrity sha512-V2Ysq52uYtiFh7R2ZkP2HkMUvpDqlRjbdkblKx+ebxRHOzh24+Gv+CPF8tcqy+Pra91aqjBqQ2ygZMj1MpIJaQ==
   dependencies:
     "@forge/api" "^2.21.0"
     fs "^0.0.1-security"

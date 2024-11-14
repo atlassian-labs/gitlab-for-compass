@@ -23,7 +23,7 @@
     "@atlaskit/theme": "^12.1.6",
     "@atlaskit/tokens": "^1.29.1",
     "@atlaskit/tooltip": "^17.5.9",
-    "@atlassian/forge-graphql": "13.9.1",
+    "@atlassian/forge-graphql": "13.17.1",
     "@forge/bridge": "^3.5.0",
     "escape-string-regexp": "^5.0.0",
     "lodash": "^4.17.21",
