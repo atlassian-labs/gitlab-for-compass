@@ -11,10 +11,15 @@ const isDocumentComponentLinksDisabled = (defaultValue = false): boolean => {
   return process.env.DISABLE_DOCUMENT_COMPONENT_LINKS === 'true' || defaultValue;
 };
 
+const isGitlabMaintainerTokenEnabled = (defaultValue = false): boolean => {
+  return process.env.ENABLE_GITLAB_MAINTAINER_TOKEN === 'true' || defaultValue;
+};
+
 export const listFeatures = (): FeaturesList => {
   return {
     [GitlabFeaturesEnum.SEND_STAGING_EVENTS]: isSendStagingEventsEnabled(),
     [GitlabFeaturesEnum.DATA_COMPONENT_TYPES]: isDataComponentTypesEnabled(),
     [GitlabFeaturesEnum.DISABLE_DOCUMENT_COMPONENT_LINKS]: isDocumentComponentLinksDisabled(),
+    [GitlabFeaturesEnum.ENABLE_GITLAB_MAINTAINER_TOKEN]: isGitlabMaintainerTokenEnabled(),
   };
 };

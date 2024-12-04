@@ -226,6 +226,7 @@ describe('formatLinks', () => {
       isDataComponentTypesEnabled: false,
       isSendStagingEventsEnabled: false,
       isDocumentComponentLinksDisabled: true,
+      isGitlabMaintainerTokenEnabled: false,
     });
 
     const result = formatLinks(inputLinks);
@@ -242,6 +243,7 @@ describe('formatLinks', () => {
       isDataComponentTypesEnabled: false,
       isSendStagingEventsEnabled: false,
       isDocumentComponentLinksDisabled: true,
+      isGitlabMaintainerTokenEnabled: false,
     });
 
     const result = formatLinks(null);
@@ -254,6 +256,7 @@ describe('formatLinks', () => {
       isDataComponentTypesEnabled: false,
       isSendStagingEventsEnabled: false,
       isDocumentComponentLinksDisabled: false,
+      isGitlabMaintainerTokenEnabled: false,
     });
 
     const result = formatLinks(inputLinks);
