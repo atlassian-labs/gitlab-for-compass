@@ -1,6 +1,6 @@
 import { Result, startsWith, storage } from '@forge/api';
 
-import { GitLabAccessLevels, GitlabAPIGroup, GroupAccessToken } from '../types';
+import { ConnectGroupInput, GitLabAccessLevels, GitlabAPIGroup, GroupAccessToken } from '../types';
 import { getGroupAccessTokens, getGroupsData } from '../client/gitlab';
 import { REQUIRED_SCOPES, STORAGE_KEYS, STORAGE_SECRETS } from '../constants';
 import { AuthErrorTypes } from '../resolverTypes';
@@ -28,17 +28,17 @@ const validateGroupTokenScopes = (requiredScopes: string[], tokenScopes: string[
   return requiredScopes.every((requiredScope) => tokenScopes.includes(requiredScope));
 };
 
-export const connectGroup = async (token: string, tokenName: string): Promise<number> => {
+export const connectGroup = async (input: ConnectGroupInput): Promise<number> => {
   let groupId;
   let groupName;
   try {
-    const [group] = await getGroupsData(token, 'true');
+    const [group] = await getGroupsData(input.token, 'true');
     ({ id: groupId, name: groupName } = group);
   } catch (e) {
     throw new InvalidGroupTokenError(AuthErrorTypes.INVALID_GROUP_TOKEN);
   }
 
-  const groupToken = await findGroupToken(token, tokenName, groupId);
+  const groupToken = await findGroupToken(input.token, input.tokenName, groupId);
   if (!groupToken) {
     throw new InvalidGroupTokenError(AuthErrorTypes.INVALID_GROUP_TOKEN_NAME);
   }
@@ -49,7 +49,7 @@ export const connectGroup = async (token: string, tokenName: string): Promise<nu
   }
 
   await storage.set(`${STORAGE_KEYS.GROUP_KEY_PREFIX}${groupId}`, groupName);
-  await storage.setSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`, token);
+  await storage.setSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`, input.token);
 
   return groupId;
 };
