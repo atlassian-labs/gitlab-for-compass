@@ -26,10 +26,21 @@ export const getAllExistingGroups = (): Promise<ResolverResponse<GitlabAPIGroup[
   return invoke<ResolverResponse<GitlabAPIGroup[]>>('groups/allExisting');
 };
 
-export const connectGroup = (groupToken: string, groupTokenName: string): Promise<ResolverResponse> => {
+export const connectGroup = (
+  groupToken: string,
+  groupTokenName: string,
+  groupRole: string,
+  groupName: string,
+  webhookId: string,
+  webhookSecretToken: string,
+): Promise<ResolverResponse> => {
   return invoke<ResolverResponse>('groups/connect', {
     groupToken,
     groupTokenName,
+    groupRole,
+    groupName,
+    webhookId,
+    webhookSecretToken,
   });
 };
 
