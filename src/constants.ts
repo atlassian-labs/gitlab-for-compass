@@ -18,6 +18,9 @@ export const STORAGE_KEYS = {
 
 export const STORAGE_SECRETS = {
   GROUP_TOKEN_KEY_PREFIX: 'groupToken-',
+  WEBHOOK_SECRET_TOKEN_KEY_PREFIX: 'webhookSecretToken-',
+  TOKEN_ROLE_PREFIX: 'tokenRole-',
+  GROUP_NAME_PREFIX: 'groupName-',
 };
 
 export const REQUIRED_SCOPES = ['api', 'write_repository'];
