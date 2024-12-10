@@ -10,6 +10,7 @@ import { FeaturesList } from './features';
 
 export enum DefaultErrorTypes {
   UNEXPECTED_ERROR = 'UNEXPECTED_ERROR',
+  NO_APP_ID_VARIABLE_DEFINED = 'NO_APP_ID_VARIABLE_DEFINED',
 }
 
 export enum AuthErrorTypes {
