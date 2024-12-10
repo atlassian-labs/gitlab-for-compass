@@ -9,7 +9,7 @@ import { STORAGE_KEYS, STORAGE_SECRETS } from '../constants';
 import { getGroupAccessTokens, getGroupsData } from '../client/gitlab';
 import { connectGroup, getConnectedGroups, InvalidGroupTokenError } from './group';
 import { AuthErrorTypes, GitlabAPIGroup } from '../resolverTypes';
-import { GroupAccessToken } from '../types';
+import { ConnectGroupInput, GitLabRoles, GroupAccessToken } from '../types';
 
 jest.mock('../client/gitlab');
 
@@ -78,7 +78,13 @@ describe('Group service', () => {
       mockGetGroupsData.mockResolvedValue([MOCK_GROUP_DATA]);
       mockGetGroupAccessTokens.mockResolvedValue([mockGroupAccessToken]);
 
-      const result = await connectGroup(MOCK_TOKEN, mockGroupAccessToken.name);
+      const input: ConnectGroupInput = {
+        token: MOCK_TOKEN,
+        tokenName: mockGroupAccessToken.name,
+        groupRole: GitLabRoles.OWNER,
+      };
+
+      const result = await connectGroup(input);
 
       expect(storage.set).toHaveBeenCalledWith(
         `${STORAGE_KEYS.GROUP_KEY_PREFIX}${MOCK_GROUP_DATA.id}`,
@@ -96,9 +102,13 @@ describe('Group service', () => {
       const mockGroupAccessToken = generateMockGroupAccessToken();
       mockGetGroupsData.mockRejectedValue(undefined);
 
-      await expect(connectGroup(MOCK_TOKEN, mockGroupAccessToken.name)).rejects.toThrow(
-        new InvalidGroupTokenError(AuthErrorTypes.INVALID_GROUP_TOKEN),
-      );
+      const input: ConnectGroupInput = {
+        token: MOCK_TOKEN,
+        tokenName: mockGroupAccessToken.name,
+        groupRole: GitLabRoles.OWNER,
+      };
+
+      await expect(connectGroup(input)).rejects.toThrow(new InvalidGroupTokenError(AuthErrorTypes.INVALID_GROUP_TOKEN));
       expect(storage.set).not.toHaveBeenCalled();
     });
 
@@ -107,7 +117,13 @@ describe('Group service', () => {
       mockGetGroupsData.mockResolvedValue([MOCK_GROUP_DATA]);
       mockGetGroupAccessTokens.mockResolvedValue([mockGroupAccessToken]);
 
-      await expect(connectGroup(MOCK_TOKEN, 'momo')).rejects.toThrow(
+      const input: ConnectGroupInput = {
+        token: MOCK_TOKEN,
+        tokenName: 'momo',
+        groupRole: GitLabRoles.OWNER,
+      };
+
+      await expect(connectGroup(input)).rejects.toThrow(
         new InvalidGroupTokenError(AuthErrorTypes.INVALID_GROUP_TOKEN_NAME),
       );
       expect(storage.set).not.toHaveBeenCalled();
@@ -118,7 +134,13 @@ describe('Group service', () => {
       mockGetGroupsData.mockResolvedValue([MOCK_GROUP_DATA]);
       mockGetGroupAccessTokens.mockResolvedValue([mockGroupAccessToken]);
 
-      await expect(connectGroup(MOCK_TOKEN, mockGroupAccessToken.name)).rejects.toThrow(
+      const input: ConnectGroupInput = {
+        token: MOCK_TOKEN,
+        tokenName: mockGroupAccessToken.name,
+        groupRole: GitLabRoles.OWNER,
+      };
+
+      await expect(connectGroup(input)).rejects.toThrow(
         new InvalidGroupTokenError(AuthErrorTypes.INCORRECT_GROUP_TOKEN_SCOPES),
       );
       expect(storage.set).not.toHaveBeenCalled();
