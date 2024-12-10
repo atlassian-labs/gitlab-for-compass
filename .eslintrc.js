@@ -25,6 +25,7 @@ module.exports = {
           },
         ],
         '@typescript-eslint/no-floating-promises': 'error',
+        '@typescript-eslint/no-empty-function': 'off',
       },
     },
   ],

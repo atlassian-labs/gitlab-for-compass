@@ -10,6 +10,7 @@ import Button, { LoadingButton } from '@atlaskit/button';
 import { gridSize } from '@atlaskit/theme';
 import WatchIcon from '@atlaskit/icon/glyph/watch';
 import WatchFilledIcon from '@atlaskit/icon/glyph/watch-filled';
+import { RadioGroup } from '@atlaskit/radio';
 
 import { getCallBridge } from '@forge/bridge/out/bridge';
 import { ApplicationState } from '../../routes';
@@ -19,6 +20,7 @@ import { ErrorMessages } from '../../errorMessages';
 import { AuthErrorTypes, ErrorTypes } from '../../resolverTypes';
 import { useAppContext } from '../../hooks/useAppContext';
 import { IncomingWebhookSectionMessage } from '../IncomingWebhookSectionMessage';
+import { GitLabRoles } from '../../types';
 
 const SectionMessageWrapper = styled.div`
   margin-bottom: ${gridSize() * 2}px;
@@ -100,7 +102,12 @@ export const AuthPage = () => {
   const [isLoadingSubmit, setLoadingSubmit] = useState<boolean>(false);
   const [errorType, setErrorType] = useState<ErrorTypes | null>(null);
   const [isTokenVisible, setIsTokenVisible] = useState<boolean>(false);
-  const { appId } = useAppContext();
+  const [isWebhookTokenVisible, setIsWebhookTokenVisible] = useState<boolean>(false);
+  const [webhookSecretToken, setWebhookSecretToken] = useState<string>('');
+  const [selectedRole, setSelectedRole] = useState<string>(GitLabRoles.OWNER);
+  const [groupName, setGroupName] = useState<string>('');
+  const [webhookId, setWebhookId] = useState<string>('');
+  const { appId, features } = useAppContext();
 
   const navigate = useNavigate();
 
@@ -121,7 +128,14 @@ export const AuthPage = () => {
     setLoadingSubmit(true);
 
     try {
-      const { success, errors } = await connectGroup(token.trim(), tokenName);
+      const { success, errors } = await connectGroup(
+        token.trim(),
+        tokenName,
+        selectedRole,
+        groupName,
+        webhookId,
+        webhookSecretToken,
+      );
 
       if (success) {
         await fireAppConfiguredAnalytic();
@@ -157,7 +171,43 @@ export const AuthPage = () => {
     setIsTokenVisible(!isTokenVisible);
   };
 
-  const isSubmitBtnDisabled = !tokenName || !token;
+  const toggleWebhookTokenView = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
+    setIsWebhookTokenVisible(!isWebhookTokenVisible);
+  };
+
+  const isSubmitBtnDisabled =
+    !tokenName ||
+    !token ||
+    (selectedRole === GitLabRoles.MAINTAINER && (!groupName || !webhookSecretToken || !webhookId));
+
+  const handleRoleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (errorType) {
+      setErrorType(null);
+    }
+    setSelectedRole(e.target.value);
+  };
+
+  const handleGroupNameChange = (e: React.FormEvent<HTMLInputElement>) => {
+    if (errorType) {
+      setErrorType(null);
+    }
+    setGroupName(e.currentTarget.value);
+  };
+
+  const handleWebhookSecretTokenChange = (e: React.FormEvent<HTMLInputElement>) => {
+    if (errorType) {
+      setErrorType(null);
+    }
+    setWebhookSecretToken(e.currentTarget.value);
+  };
+
+  const handleWebhookIdChange = (e: React.FormEvent<HTMLInputElement>) => {
+    if (errorType) {
+      setErrorType(null);
+    }
+    setWebhookId(e.currentTarget.value);
+  };
 
   return (
     <div data-testid='gitlab-auth-page'>
@@ -191,7 +241,23 @@ export const AuthPage = () => {
 
       <FormWrapper>
         <h5>Group access token</h5>
-        <Field label='Name' name='accessTokenName' isRequired>
+        {features.isGitlabMaintainerTokenEnabled && (
+          <Field label='Token Role' name='tokenRole' isRequired>
+            {({ fieldProps }) => (
+              <RadioGroup
+                {...fieldProps}
+                value={selectedRole}
+                options={[
+                  { name: 'role', value: GitLabRoles.OWNER, label: 'Owner' },
+                  { name: 'role', value: GitLabRoles.MAINTAINER, label: 'Maintainer' },
+                ]}
+                onChange={handleRoleChange}
+              />
+            )}
+          </Field>
+        )}
+
+        <Field label='Token Name' name='accessTokenName' isRequired>
           {({ fieldProps }) => (
             <>
               <Textfield {...fieldProps} isCompact onChange={tokenNameOnChange} testId='access-token-name' />
@@ -222,6 +288,58 @@ export const AuthPage = () => {
             />
           )}
         </Field>
+
+        {features.isGitlabMaintainerTokenEnabled && selectedRole === GitLabRoles.MAINTAINER && (
+          <>
+            <Field label='Group Name' name='groupName' isRequired>
+              {({ fieldProps }) => (
+                <Textfield
+                  {...fieldProps}
+                  value={groupName}
+                  onChange={handleGroupNameChange}
+                  isCompact
+                  testId='group-name'
+                />
+              )}
+            </Field>
+            <Field label='Webhook ID' name='webhookId' isRequired>
+              {({ fieldProps }) => (
+                <Textfield
+                  {...fieldProps}
+                  isCompact
+                  onChange={handleWebhookIdChange}
+                  testId='webhook-id'
+                  value={webhookId}
+                />
+              )}
+            </Field>
+            <Field label='Webhook Secret Token' name='webhookSecretToken' isRequired>
+              {({ fieldProps }) => (
+                <Textfield
+                  {...fieldProps}
+                  isCompact
+                  onChange={handleWebhookSecretTokenChange}
+                  testId='webhook-secret-token'
+                  type={isWebhookTokenVisible ? 'text' : 'password'}
+                  elemAfterInput={
+                    <Button
+                      onClick={(e) => toggleWebhookTokenView(e)}
+                      iconBefore={
+                        isWebhookTokenVisible ? (
+                          <WatchFilledIcon size='medium' label='watch-filled-icon' />
+                        ) : (
+                          <WatchIcon size='medium' label='watch-icon' />
+                        )
+                      }
+                      appearance='subtle'
+                    />
+                  }
+                />
+              )}
+            </Field>
+          </>
+        )}
+
         <FormFooter align='start'>
           <LoadingButton
             onClick={handleSubmit}
