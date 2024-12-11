@@ -25,7 +25,7 @@ export const DefaultErrorState: FunctionComponent<Props> = ({ errorType }) => {
     default:
       return (
         <SectionWrapper data-testid='error-state'>
-          <SectionMessage title='Oopss! Something went wrong.' appearance='error'>
+          <SectionMessage title='Oops! Something went wrong.' appearance='error'>
             <ImportantText>{errorType}</ImportantText>
             <p>Please, try to reload a page.</p>
           </SectionMessage>
