@@ -26,8 +26,8 @@ export type AppContextProps = {
 export const AppContext = createContext({} as AppContextProps);
 
 export const AppContextProvider: FunctionComponent<AppContextProviderProps> = ({ children }) => {
-  const [isGroupsLoading, setGroupsLoading] = useState<boolean>(false);
-  const [isAppIdLoading, setAppIdLoading] = useState<boolean>(false);
+  const [isGroupsLoading, setIsGroupsLoading] = useState<boolean>(false);
+  const [isAppIdLoading, setIsAppIdLoading] = useState<boolean>(false);
   const [groups, setGroups] = useState<GitlabAPIGroup[]>();
   const [errorType, setErrorType] = useState<ErrorTypes>();
   const [initialRoute, setInitialRoute] = useState<ApplicationState>();
@@ -45,12 +45,12 @@ export const AppContextProvider: FunctionComponent<AppContextProviderProps> = ({
       console.error('Error while getting context', e);
     });
 
-    setGroupsLoading(true);
-    setAppIdLoading(true);
+    setIsGroupsLoading(true);
+    setIsAppIdLoading(true);
 
     getForgeAppId()
       .then(({ data, success, errors }) => {
-        setAppIdLoading(false);
+        setIsAppIdLoading(false);
 
         if (success && data) {
           setAppId(data);
@@ -61,13 +61,13 @@ export const AppContextProvider: FunctionComponent<AppContextProviderProps> = ({
         }
       })
       .catch(() => {
-        setAppIdLoading(false);
+        setIsAppIdLoading(false);
         setErrorType(AuthErrorTypes.UNEXPECTED_ERROR);
       });
 
     connectedInfo()
       .then(({ data, success, errors }) => {
-        setGroupsLoading(false);
+        setIsGroupsLoading(false);
 
         if (success && data && data.length > 0) {
           setGroups(data);
@@ -82,7 +82,7 @@ export const AppContextProvider: FunctionComponent<AppContextProviderProps> = ({
         setInitialRoute(ApplicationState.AUTH);
       })
       .catch(() => {
-        setGroupsLoading(false);
+        setIsGroupsLoading(false);
         setErrorType(AuthErrorTypes.UNEXPECTED_ERROR);
       });
   }, []);
