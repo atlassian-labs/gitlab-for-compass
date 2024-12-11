@@ -39,7 +39,7 @@
     "@forge/api": "^4.1.1",
     "@forge/bridge": "^3.5.0",
     "@forge/events": "^0.9.1",
-    "@forge/metrics": "0.2.18",
+    "@forge/metrics": "0.2.21",
     "@forge/resolver": "^1.6.2",
     "@forge/ui": "^1.1.0",
     "exponential-backoff": "^3.1.0",
