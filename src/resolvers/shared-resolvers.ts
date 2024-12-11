@@ -59,7 +59,7 @@ export const appId = (): ResolverResponse<string> => {
   } catch (e) {
     return {
       success: false,
-      errors: [{ message: e.message, errorType: DefaultErrorTypes.UNEXPECTED_ERROR }],
+      errors: [{ message: e.message, errorType: DefaultErrorTypes.NO_APP_ID_VARIABLE_DEFINED }],
     };
   }
 };
