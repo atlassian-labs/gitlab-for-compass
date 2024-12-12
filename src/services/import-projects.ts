@@ -1,5 +1,5 @@
 // eslint-disable-next-line max-classes-per-file
-import { storage, startsWith, ListResult } from '@forge/api';
+import { storage } from '@forge/api';
 import { Queue } from '@forge/events';
 import { Payload } from '@forge/events/out/types';
 import { chunk } from 'lodash';
@@ -10,17 +10,12 @@ import { ImportErrorTypes } from '../resolverTypes';
 import { setLastSyncTime } from './last-sync-time';
 import { deleteKeysFromStorageByChunks } from '../utils/storage-utils';
 import { getFormattedErrors, hasRejections } from '../utils/promise-allsettled-helpers';
+import { getFailedProjects, ImportFailedError } from '../resolvers/shared-resolvers';
 
 export const QUEUE_ONE_TIME_LIMIT = 500;
 const QUEUE_PUSH_EVENTS_LIMIT = 50;
 
 class OneTimeLimitImportError extends Error {}
-
-export class ImportFailedError extends Error {
-  constructor(readonly errorType: ImportErrorTypes, readonly message: string) {
-    super(message);
-  }
-}
 
 export const importProjects = async (
   cloudId: string,
@@ -107,24 +102,8 @@ export const getImportStatus = async (): Promise<ImportStatus> => {
   }
 };
 
-const getFailedProjects = (): Promise<ListResult> => {
-  const response = storage.query().where('key', startsWith(STORAGE_KEYS.CURRENT_IMPORT_FAILED_PROJECT_PREFIX));
-
-  return response.getMany();
-};
-
 export const getImportResult = async (): Promise<ProjectImportResult> => {
-  try {
-    const listFailedProjects = await getFailedProjects();
-    const failed = listFailedProjects.results.map(({ value }) => value as ImportableProject);
-    const total = await storage.get(STORAGE_KEYS.CURRENT_IMPORT_TOTAL_PROJECTS);
-    return {
-      failed,
-      total,
-    };
-  } catch (err) {
-    throw new ImportFailedError(ImportErrorTypes.CANNOT_GET_IMPORT_RESULT, err.message);
-  }
+  return getImportResult();
 };
 
 export const clearImportResult = async (): Promise<void | never> => {
