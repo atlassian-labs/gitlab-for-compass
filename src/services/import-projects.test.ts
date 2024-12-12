@@ -7,7 +7,6 @@ mockForgeApi();
 import { Queue } from '@forge/events';
 import { storage } from '@forge/api';
 import {
-  ImportFailedError,
   importProjects,
   clearImportResult,
   getImportResult,
@@ -18,6 +17,7 @@ import { setLastSyncTime } from './last-sync-time';
 import { mocked } from 'jest-mock';
 import { ImportErrorTypes } from '../resolverTypes';
 import { ALL_SETTLED_STATUS, getFormattedErrors } from '../utils/promise-allsettled-helpers';
+import { ImportFailedError } from '../resolvers/shared-resolvers';
 
 const storageGetSuccess = jest.fn().mockReturnValue(['jobId1', 'jobId2']);
 const storageGetEmptyArray = jest.fn().mockReturnValue([]);

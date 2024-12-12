@@ -1,15 +1,21 @@
 import Resolver from '@forge/resolver';
 
-import graphqlGateway, { CompassComponentTypeObject } from '@atlassian/forge-graphql';
-import { getGroupProjects } from '../services/fetch-projects';
-import { AuthErrorTypes, GitlabAPIGroup, ResolverResponse, DefaultErrorTypes, FeaturesList } from '../resolverTypes';
+import graphqlGateway from '@atlassian/forge-graphql';
+import {
+  AuthErrorTypes,
+  GitlabAPIGroup,
+  ResolverResponse,
+  DefaultErrorTypes,
+  FeaturesList,
+  ProjectImportResult,
+} from '../resolverTypes';
 import { connectGroup, InvalidGroupTokenError } from '../services/group';
 
 import { setupAndValidateWebhook } from '../services/webhooks';
 import { disconnectGroup } from '../services/disconnect-group';
 import { getForgeAppId } from '../utils/get-forge-app-id';
 import { getLastSyncTime } from '../services/last-sync-time';
-import { appId, connectedGroupsInfo, getFeatures, groupsAllExisting } from './shared-resolvers';
+import { appId, connectedGroupsInfo, getFeatures, getImportResult, groupsAllExisting } from './shared-resolvers';
 
 const resolver = new Resolver();
 
@@ -91,6 +97,18 @@ resolver.define('features', (): ResolverResponse<FeaturesList> => {
 
 resolver.define('appId', (): ResolverResponse<string> => {
   return appId();
+});
+
+resolver.define('project/import/result', async (): Promise<ResolverResponse<ProjectImportResult>> => {
+  try {
+    const importResult = await getImportResult();
+    return { success: true, data: importResult };
+  } catch (e) {
+    return {
+      success: false,
+      errors: [{ message: e.message, errorType: e.errorType }],
+    };
+  }
 });
 
 export default resolver.getDefinitions();
