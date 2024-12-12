@@ -118,18 +118,25 @@ export const setupAndValidateWebhook = async (
 
 export const deleteWebhook = async (groupId: number): Promise<void> => {
   try {
-    const [webhookIdResult, groupTokenResult] = await Promise.allSettled([
+    const [webhookIdResult, tokenRole, groupTokenResult] = await Promise.allSettled([
       storage.get(`${STORAGE_KEYS.WEBHOOK_KEY_PREFIX}${groupId}`),
+      storage.get(`${STORAGE_KEYS.TOKEN_ROLE_PREFIX}${groupId}`),
       storage.getSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`),
     ]);
 
     if (
       webhookIdResult.status === ALL_SETTLED_STATUS.REJECTED ||
+      tokenRole.status === ALL_SETTLED_STATUS.REJECTED ||
       groupTokenResult.status === ALL_SETTLED_STATUS.REJECTED
     ) {
       throw new Error(
         `Error getting webhookId or groupToken: ${getFormattedErrors([webhookIdResult, groupTokenResult])}`,
       );
+    }
+
+    if (tokenRole.value === GitLabRoles.MAINTAINER) {
+      console.log('Skipping webhook deletion since Maintainer token role is not authorized');
+      return;
     }
 
     const webhookId = webhookIdResult.value;
@@ -139,7 +146,7 @@ export const deleteWebhook = async (groupId: number): Promise<void> => {
       await deleteGroupWebhook(groupId, webhookId, groupToken);
     }
   } catch (e) {
-    console.error('Error while getting webhookId or groupToken', e);
-    throw new Error(`Error while getting webhookId or groupToken: ${e}`);
+    console.error('Error deleting webhook', e);
+    throw new Error(`Error deleting webhook: ${e}`);
   }
 };

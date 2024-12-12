@@ -4,21 +4,22 @@ import { storage, mockForgeApi, webTrigger } from '../__tests__/helpers/forge-he
 
 mockForgeApi();
 
-import { getGroupWebhook, registerGroupWebhook } from '../client/gitlab';
-import { setupAndValidateWebhook } from './webhooks';
+import { getGroupWebhook, registerGroupWebhook, deleteGroupWebhook } from '../client/gitlab';
+import { deleteWebhook, setupAndValidateWebhook } from './webhooks';
 import { TEST_TOKEN } from '../__tests__/fixtures/gitlab-data';
 import { GitLabRoles } from '../types';
 
 jest.mock('../client/gitlab');
 const mockGetGroupWebhook = mocked(getGroupWebhook);
 const mockRegisterGroupWebhook = mocked(registerGroupWebhook);
+const mockDeleteGroupWebhook = mocked(deleteGroupWebhook);
 
 const MOCK_GROUP_ID = 123;
 const MOCK_WEBHOOK_KEY = `webhook-id-${MOCK_GROUP_ID}`;
 const MOCK_WEBHOOK_SIGNATURE_KEY = `webhook-sign-id-${MOCK_GROUP_ID}`;
 const MOCK_WEBHOOK_ID = 345;
 
-describe('webhook service', () => {
+describe('setup webhook', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -96,5 +97,39 @@ describe('webhook service', () => {
       expect(storage.set).toHaveBeenNthCalledWith(2, MOCK_WEBHOOK_SIGNATURE_KEY, expect.anything());
       expect(result).toBe(MOCK_WEBHOOK_ID);
     });
+  });
+});
+
+describe('delete webhook', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('deletes webhook given owner token', async () => {
+    const MOCK_TOKEN = 'test-token';
+
+    storage.get = jest
+      .fn()
+      .mockResolvedValueOnce(MOCK_WEBHOOK_ID) // webhookId
+      .mockResolvedValueOnce(GitLabRoles.OWNER); // tokenRole
+    storage.getSecret = jest.fn().mockResolvedValue(MOCK_TOKEN);
+
+    await deleteWebhook(MOCK_GROUP_ID);
+
+    expect(deleteGroupWebhook).toHaveBeenCalledWith(MOCK_GROUP_ID, MOCK_WEBHOOK_ID, MOCK_TOKEN);
+  });
+
+  it('skips deleting webhook given maintainer token', async () => {
+    const MOCK_TOKEN = 'test-token';
+
+    storage.get = jest
+      .fn()
+      .mockResolvedValueOnce(MOCK_WEBHOOK_ID) // webhookId
+      .mockResolvedValueOnce(GitLabRoles.MAINTAINER); // tokenRole
+    storage.getSecret = jest.fn().mockResolvedValue(MOCK_TOKEN);
+
+    await deleteWebhook(MOCK_GROUP_ID);
+
+    expect(deleteGroupWebhook).not.toHaveBeenCalled();
   });
 });
