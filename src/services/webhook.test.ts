@@ -26,7 +26,7 @@ describe('setup webhook', () => {
 
   describe('with Owner token role', () => {
     it('returns existing webhook from storage', async () => {
-      storage.get = jest.fn().mockReturnValueOnce(MOCK_WEBHOOK_ID);
+      storage.get = jest.fn().mockReturnValueOnce(MOCK_WEBHOOK_ID).mockReturnValueOnce(GitLabRoles.OWNER);
       storage.getSecret = jest.fn().mockReturnValueOnce(TEST_TOKEN);
       mockGetGroupWebhook.mockResolvedValue({ id: 456 });
 
@@ -37,7 +37,21 @@ describe('setup webhook', () => {
     });
 
     it('setups new webhook', async () => {
-      storage.get = jest.fn().mockReturnValueOnce(undefined);
+      storage.get = jest.fn().mockReturnValueOnce(undefined).mockReturnValueOnce(GitLabRoles.OWNER);
+      storage.getSecret = jest.fn().mockReturnValueOnce(TEST_TOKEN);
+      webTrigger.getUrl = jest.fn().mockReturnValue('https://example.com');
+      mockRegisterGroupWebhook.mockResolvedValue(MOCK_WEBHOOK_ID);
+
+      const result = await setupAndValidateWebhook(MOCK_GROUP_ID);
+
+      expect(mockGetGroupWebhook).not.toHaveBeenCalled();
+      expect(storage.set).toHaveBeenNthCalledWith(1, MOCK_WEBHOOK_KEY, MOCK_WEBHOOK_ID);
+      expect(storage.set).toHaveBeenNthCalledWith(2, MOCK_WEBHOOK_SIGNATURE_KEY, expect.anything());
+      expect(result).toBe(MOCK_WEBHOOK_ID);
+    });
+
+    it('uses owner token role to setup new webhook when no role is found in storage', async () => {
+      storage.get = jest.fn().mockReturnValueOnce(undefined).mockReturnValueOnce(undefined);
       storage.getSecret = jest.fn().mockReturnValueOnce(TEST_TOKEN);
       webTrigger.getUrl = jest.fn().mockReturnValue('https://example.com');
       mockRegisterGroupWebhook.mockResolvedValue(MOCK_WEBHOOK_ID);
@@ -51,7 +65,7 @@ describe('setup webhook', () => {
     });
 
     it('setups new webhook in case of invalid webhook in storage', async () => {
-      storage.get = jest.fn().mockReturnValueOnce(MOCK_WEBHOOK_KEY);
+      storage.get = jest.fn().mockReturnValueOnce(MOCK_WEBHOOK_KEY).mockReturnValueOnce(GitLabRoles.OWNER);
       storage.getSecret = jest.fn().mockReturnValueOnce(TEST_TOKEN);
       mockGetGroupWebhook.mockResolvedValue(null);
       webTrigger.getUrl = jest.fn().mockReturnValue('https://example.com');
@@ -67,11 +81,11 @@ describe('setup webhook', () => {
 
   describe('with Maintainer token role', () => {
     it('returns existing webhook from storage', async () => {
-      storage.get = jest.fn().mockReturnValueOnce(MOCK_WEBHOOK_ID);
+      storage.get = jest.fn().mockReturnValueOnce(MOCK_WEBHOOK_ID).mockReturnValueOnce(GitLabRoles.MAINTAINER);
       storage.getSecret = jest.fn().mockReturnValueOnce(TEST_TOKEN);
       mockGetGroupWebhook.mockResolvedValue({ id: 456 });
 
-      const result = await setupAndValidateWebhook(MOCK_GROUP_ID, GitLabRoles.MAINTAINER);
+      const result = await setupAndValidateWebhook(MOCK_GROUP_ID);
 
       expect(mockGetGroupWebhook).not.toHaveBeenCalled();
       expect(mockRegisterGroupWebhook).not.toHaveBeenCalled();
@@ -81,15 +95,10 @@ describe('setup webhook', () => {
     });
 
     it('setups new webhook', async () => {
-      storage.get = jest.fn().mockReturnValueOnce(undefined);
+      storage.get = jest.fn().mockReturnValueOnce(undefined).mockReturnValue(GitLabRoles.MAINTAINER);
       storage.getSecret = jest.fn().mockReturnValueOnce(TEST_TOKEN);
 
-      const result = await setupAndValidateWebhook(
-        MOCK_GROUP_ID,
-        GitLabRoles.MAINTAINER,
-        MOCK_WEBHOOK_ID,
-        MOCK_WEBHOOK_SIGNATURE_KEY,
-      );
+      const result = await setupAndValidateWebhook(MOCK_GROUP_ID, MOCK_WEBHOOK_ID, MOCK_WEBHOOK_SIGNATURE_KEY);
 
       expect(mockGetGroupWebhook).not.toHaveBeenCalled();
       expect(mockRegisterGroupWebhook).not.toHaveBeenCalled();

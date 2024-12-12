@@ -5,14 +5,14 @@ mockForgeApi();
 
 import { mocked } from 'jest-mock';
 import { generateGitlabProject } from '../__tests__/helpers/gitlab-helper';
-import { getOwnedProjectsBySearchCriteria } from '../client/gitlab';
+import { getMaintainedProjectsBySearchCriteria } from '../client/gitlab';
 import { extractProjectInformation, getProjectDataFromUrl } from './data-provider-link-parser';
 import { getGroupIds } from '../utils/storage-utils';
 
 jest.mock('../client/gitlab');
 jest.mock('../utils/storage-utils');
 
-const mockedGetOwnedProjectsBySearchCriteria = mocked(getOwnedProjectsBySearchCriteria);
+const mockedGetOwnedProjectsBySearchCriteria = mocked(getMaintainedProjectsBySearchCriteria);
 const mockedGetGroupIds = mocked(getGroupIds);
 
 const mockProjectUrl = 'https://gitlab.com/test/repo-name?testParam=test';

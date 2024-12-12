@@ -51,7 +51,7 @@ resolver.define('groups/connect', async (req): Promise<ResolverResponse> => {
     };
     const groupId = await connectGroup(input);
 
-    await setupAndValidateWebhook(groupId, groupRole, webhookId, webhookSecretToken);
+    await setupAndValidateWebhook(groupId, webhookId, webhookSecretToken);
 
     await graphqlGateway.compass.asApp().synchronizeLinkAssociations({
       cloudId,

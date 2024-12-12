@@ -10,7 +10,7 @@ import {
   FeaturesList,
   GroupProjectsResponse,
 } from '../resolverTypes';
-import { TeamsWithMembershipStatus } from '../types';
+import { GitLabRoles, TeamsWithMembershipStatus } from '../types';
 
 export const disconnectGroup = (id: number): Promise<ResolverResponse> => {
   return invoke<ResolverResponse>('groups/disconnect', {
@@ -29,15 +29,17 @@ export const getAllExistingGroups = (): Promise<ResolverResponse<GitlabAPIGroup[
 export const connectGroup = (
   groupToken: string,
   groupTokenName: string,
-  groupRole: string,
-  groupName: string,
-  webhookSecretToken: string,
+  groupName?: string,
+  webhookSecretToken?: string,
+  webhookId?: number,
+  groupRole: string = GitLabRoles.OWNER,
 ): Promise<ResolverResponse> => {
   return invoke<ResolverResponse>('groups/connect', {
     groupToken,
     groupTokenName,
     groupRole,
     groupName,
+    webhookId,
     webhookSecretToken,
   });
 };

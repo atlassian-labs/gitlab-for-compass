@@ -16,6 +16,7 @@ import {
   Deployment,
   Environment,
   GitlabPipelineStates,
+  GitLabAccessLevels,
 } from '../types';
 import { GitlabHttpMethodError, InvalidConfigFileError } from '../models/errors';
 import { INVALID_YAML_ERROR } from '../models/error-messages';
@@ -287,12 +288,17 @@ export const getProjectBranch = async (
   return branch;
 };
 
-export const getOwnedProjectsBySearchCriteria = async (
+/**
+ * Get project data that the token role is at least a maintainer of, filtered by search criteria.
+ * @param search - search criteria i.e. project name
+ * @param groupToken - Gitlab access token
+ */
+export const getMaintainedProjectsBySearchCriteria = async (
   search: string,
   groupToken: string,
 ): Promise<GitlabAPIProject[]> => {
   const params = {
-    owned: 'true',
+    min_access_level: GitLabAccessLevels.MAINTAINER.toString(),
     search,
   };
 

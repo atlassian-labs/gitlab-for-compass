@@ -71,24 +71,26 @@ const setupAndValidateForMaintainerToken = async (
 
 export const setupAndValidateWebhook = async (
   groupId: number,
-  tokenRole?: GitLabRoles,
   webhookId?: number,
   webhookSecretToken?: string,
 ): Promise<number> => {
   console.log('Setting up webhook');
   try {
-    const [existingWebhookResult, groupTokenResult] = await Promise.allSettled([
+    const [existingWebhookResult, tokenRoleResult, groupTokenResult] = await Promise.allSettled([
       storage.get(`${STORAGE_KEYS.WEBHOOK_KEY_PREFIX}${groupId}`),
+      storage.get(`${STORAGE_KEYS.TOKEN_ROLE_PREFIX}${groupId}`),
       storage.getSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`),
     ]);
 
     if (
       existingWebhookResult.status === ALL_SETTLED_STATUS.REJECTED ||
+      tokenRoleResult.status === ALL_SETTLED_STATUS.REJECTED ||
       groupTokenResult.status === ALL_SETTLED_STATUS.REJECTED
     ) {
       throw new Error(
-        `Error getting existing webhook or group token: ${getFormattedErrors([
+        `Error getting existing webhook, token role or group token: ${getFormattedErrors([
           existingWebhookResult,
+          tokenRoleResult,
           groupTokenResult,
         ])}`,
       );
@@ -96,9 +98,11 @@ export const setupAndValidateWebhook = async (
 
     const existingWebhook = existingWebhookResult.value;
     const groupToken = groupTokenResult.value;
+    const tokenRole: string = tokenRoleResult.value;
 
-    // One of the pathways calling this is for fetching connectedGroups
-    // in which case, the tokenRole could be empty.
+    console.log('INFO: Setting up webhook', groupId, tokenRole, webhookId, webhookSecretToken);
+
+    // Legacy integrations might not have the new tokenRole stored. These are treated as OWNER.
     if (!tokenRole || tokenRole === GitLabRoles.OWNER) {
       return setupAndValidateForOwnerToken(groupId, existingWebhook, groupToken);
     }
