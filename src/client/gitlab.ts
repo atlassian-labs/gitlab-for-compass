@@ -102,10 +102,12 @@ export const getGroupsData = async (
   groupAccessToken: string,
   owned?: string,
   minAccessLevel?: number,
+  name?: string,
 ): Promise<GitlabAPIGroup[]> => {
   const params = {
     ...(owned ? { owned } : {}),
     ...(minAccessLevel ? { min_access_level: minAccessLevel.toString() } : {}),
+    ...(name ? { search: name } : {}),
   };
 
   const queryParams = queryParamsGenerator(params);

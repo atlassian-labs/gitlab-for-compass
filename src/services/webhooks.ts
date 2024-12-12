@@ -4,8 +4,77 @@ import { registerGroupWebhook, deleteGroupWebhook, getGroupWebhook } from '../cl
 import { GITLAB_EVENT_WEBTRIGGER, STORAGE_KEYS, STORAGE_SECRETS } from '../constants';
 import { generateSignature } from '../utils/generate-signature-utils';
 import { ALL_SETTLED_STATUS, getFormattedErrors, hasRejections } from '../utils/promise-allsettled-helpers';
+import { GitLabRoles } from '../types';
 
-export const setupAndValidateWebhook = async (groupId: number): Promise<number> => {
+const setupAndValidateForOwnerToken = async (
+  groupId: number,
+  existingWebhook: number,
+  groupToken: string,
+): Promise<number> => {
+  console.log('Setting up webhook for Owner token role');
+
+  const isWebhookValid = existingWebhook && (await getGroupWebhook(groupId, existingWebhook, groupToken)) !== null;
+
+  if (isWebhookValid) {
+    console.log('Using existing webhook');
+    return existingWebhook;
+  }
+
+  const webtriggerURL = await webTrigger.getUrl(GITLAB_EVENT_WEBTRIGGER);
+  const webtriggerURLWithGroupId = `${webtriggerURL}?groupId=${groupId}`;
+  const webhookSignature = generateSignature();
+  const webhookId = await registerGroupWebhook({
+    groupId,
+    url: webtriggerURLWithGroupId,
+    token: groupToken,
+    signature: webhookSignature,
+  });
+
+  const settledResult = await Promise.allSettled([
+    storage.set(`${STORAGE_KEYS.WEBHOOK_KEY_PREFIX}${groupId}`, webhookId),
+    storage.set(`${STORAGE_KEYS.WEBHOOK_SIGNATURE_PREFIX}${groupId}`, webhookSignature),
+  ]);
+
+  if (hasRejections(settledResult)) {
+    throw new Error(`Error setting webhookId or webhookSignature: ${getFormattedErrors(settledResult)}`);
+  }
+
+  console.log('Successfully created webhook with owner token role');
+  return webhookId;
+};
+
+const setupAndValidateForMaintainerToken = async (
+  groupId: number,
+  webhookId: number,
+  isExistingWebhook?: boolean,
+  webhookSignature?: string,
+): Promise<number> => {
+  console.log('Setting up webhook for Maintainer token role');
+
+  if (isExistingWebhook) {
+    console.log('Using existing webhook. Skipping webhook validation since Maintainer token role is not authorized');
+    return webhookId;
+  }
+
+  const settledResult = await Promise.allSettled([
+    storage.set(`${STORAGE_KEYS.WEBHOOK_KEY_PREFIX}${groupId}`, webhookId),
+    storage.set(`${STORAGE_KEYS.WEBHOOK_SIGNATURE_PREFIX}${groupId}`, webhookSignature),
+  ]);
+
+  if (hasRejections(settledResult)) {
+    throw new Error(`Error setting webhookId or webhookSignature: ${getFormattedErrors(settledResult)}`);
+  }
+
+  console.log('Successfully created webhook with maintainer token role');
+  return webhookId;
+};
+
+export const setupAndValidateWebhook = async (
+  groupId: number,
+  tokenRole?: GitLabRoles,
+  webhookId?: number,
+  webhookSecretToken?: string,
+): Promise<number> => {
   console.log('Setting up webhook');
   try {
     const [existingWebhookResult, groupTokenResult] = await Promise.allSettled([
@@ -28,34 +97,19 @@ export const setupAndValidateWebhook = async (groupId: number): Promise<number> 
     const existingWebhook = existingWebhookResult.value;
     const groupToken = groupTokenResult.value;
 
-    const isWebhookValid = existingWebhook && (await getGroupWebhook(groupId, existingWebhook, groupToken)) !== null;
-
-    if (isWebhookValid) {
-      console.log('Using existing webhook');
-      return existingWebhook;
+    // One of the pathways calling this is for fetching connectedGroups
+    // in which case, the tokenRole could be empty.
+    if (!tokenRole || tokenRole === GitLabRoles.OWNER) {
+      return setupAndValidateForOwnerToken(groupId, existingWebhook, groupToken);
     }
 
-    const webtriggerURL = await webTrigger.getUrl(GITLAB_EVENT_WEBTRIGGER);
-    const webtriggerURLWithGroupId = `${webtriggerURL}?groupId=${groupId}`;
-    const webhookSignature = generateSignature();
-    const webhookId = await registerGroupWebhook({
+    // Prioritize using existing webhooks setup over incoming webhookId.
+    return setupAndValidateForMaintainerToken(
       groupId,
-      url: webtriggerURLWithGroupId,
-      token: groupToken,
-      signature: webhookSignature,
-    });
-
-    const settledResult = await Promise.allSettled([
-      storage.set(`${STORAGE_KEYS.WEBHOOK_KEY_PREFIX}${groupId}`, webhookId),
-      storage.set(`${STORAGE_KEYS.WEBHOOK_SIGNATURE_PREFIX}${groupId}`, webhookSignature),
-    ]);
-
-    if (hasRejections(settledResult)) {
-      throw new Error(`Error setting webhookId or webhookSignature: ${getFormattedErrors(settledResult)}`);
-    }
-
-    console.log('Successfully created webhook');
-    return webhookId;
+      existingWebhook ?? webhookId,
+      !!existingWebhook,
+      webhookSecretToken,
+    );
   } catch (e) {
     console.log('Error setting up webhook, ', e);
     return null;

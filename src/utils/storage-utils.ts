@@ -25,8 +25,8 @@ export const deleteKeysFromStorageByChunks = async (
 export const getGroupIds = async (): Promise<number[]> => {
   const groupsKeys: ListResult = await storage
     .query()
-    .where('key', startsWith(STORAGE_KEYS.GROUP_KEY_PREFIX))
+    .where('key', startsWith(STORAGE_KEYS.GROUP_NAME_KEY_PREFIX))
     .getMany();
 
-  return groupsKeys.results.map(({ key }) => Number(key.replace(STORAGE_KEYS.GROUP_KEY_PREFIX, '')));
+  return groupsKeys.results.map(({ key }) => Number(key.replace(STORAGE_KEYS.GROUP_NAME_KEY_PREFIX, '')));
 };

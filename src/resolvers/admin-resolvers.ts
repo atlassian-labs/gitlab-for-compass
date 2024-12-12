@@ -1,7 +1,6 @@
 import Resolver from '@forge/resolver';
 
-import graphqlGateway, { CompassComponentTypeObject } from '@atlassian/forge-graphql';
-import { getGroupProjects } from '../services/fetch-projects';
+import graphqlGateway from '@atlassian/forge-graphql';
 import { AuthErrorTypes, GitlabAPIGroup, ResolverResponse, DefaultErrorTypes, FeaturesList } from '../resolverTypes';
 import { connectGroup, InvalidGroupTokenError } from '../services/group';
 
@@ -10,6 +9,7 @@ import { disconnectGroup } from '../services/disconnect-group';
 import { getForgeAppId } from '../utils/get-forge-app-id';
 import { getLastSyncTime } from '../services/last-sync-time';
 import { appId, connectedGroupsInfo, getFeatures, groupsAllExisting } from './shared-resolvers';
+import { ConnectGroupInput } from '../types';
 
 const resolver = new Resolver();
 
@@ -37,13 +37,21 @@ resolver.define('groups/connectedInfo', async (): Promise<ResolverResponse<Gitla
 
 resolver.define('groups/connect', async (req): Promise<ResolverResponse> => {
   const {
-    payload: { groupToken, groupTokenName },
+    payload: { groupToken, groupTokenName, groupRole, groupName, webhookId, webhookSecretToken },
     context: { cloudId },
   } = req;
   try {
-    const groupId = await connectGroup(groupToken, groupTokenName);
+    const input: ConnectGroupInput = {
+      token: groupToken,
+      tokenName: groupTokenName,
+      tokenRole: groupRole,
+      groupName,
+      webhookId,
+      webhookSecretToken,
+    };
+    const groupId = await connectGroup(input);
 
-    await setupAndValidateWebhook(groupId);
+    await setupAndValidateWebhook(groupId, groupRole, webhookId, webhookSecretToken);
 
     await graphqlGateway.compass.asApp().synchronizeLinkAssociations({
       cloudId,

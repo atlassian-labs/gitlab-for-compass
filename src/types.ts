@@ -426,6 +426,25 @@ type BackfillData = {
   };
 };
 
+enum GitLabRoles {
+  OWNER = 'owner',
+  MAINTAINER = 'maintainer',
+}
+
+type ConnectGroupInput = {
+  token: string;
+  tokenName: string;
+  tokenRole: GitLabRoles;
+  groupName?: string;
+  webhookId?: string;
+  webhookSecretToken?: string;
+};
+
+type TokenFetchResult = {
+  token: string;
+  groupId: number;
+};
+
 export type {
   WebtriggerRequest,
   WebtriggerResponse,
@@ -468,6 +487,8 @@ export type {
   TeamsWithMembershipStatus,
   CompareProjectWithExistingComponent,
   BackfillData,
+  ConnectGroupInput,
+  TokenFetchResult,
 };
 
 export {
@@ -479,4 +500,5 @@ export {
   GitlabPipelineStates,
   GitLabAccessLevels,
   WebhookTypes,
+  GitLabRoles,
 };

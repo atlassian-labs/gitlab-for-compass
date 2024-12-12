@@ -7,6 +7,7 @@ mockForgeApi();
 import { getGroupWebhook, registerGroupWebhook } from '../client/gitlab';
 import { setupAndValidateWebhook } from './webhooks';
 import { TEST_TOKEN } from '../__tests__/fixtures/gitlab-data';
+import { GitLabRoles } from '../types';
 
 jest.mock('../client/gitlab');
 const mockGetGroupWebhook = mocked(getGroupWebhook);
@@ -22,42 +23,78 @@ describe('webhook service', () => {
     jest.clearAllMocks();
   });
 
-  it('returns existing webhook from storage', async () => {
-    storage.get = jest.fn().mockReturnValueOnce(MOCK_WEBHOOK_ID);
-    storage.getSecret = jest.fn().mockReturnValueOnce(TEST_TOKEN);
-    mockGetGroupWebhook.mockResolvedValue({ id: 456 });
+  describe('with Owner token role', () => {
+    it('returns existing webhook from storage', async () => {
+      storage.get = jest.fn().mockReturnValueOnce(MOCK_WEBHOOK_ID);
+      storage.getSecret = jest.fn().mockReturnValueOnce(TEST_TOKEN);
+      mockGetGroupWebhook.mockResolvedValue({ id: 456 });
 
-    const result = await setupAndValidateWebhook(123);
+      const result = await setupAndValidateWebhook(123);
 
-    expect(storage.set).not.toHaveBeenCalled();
-    expect(result).toBe(MOCK_WEBHOOK_ID);
+      expect(storage.set).not.toHaveBeenCalled();
+      expect(result).toBe(MOCK_WEBHOOK_ID);
+    });
+
+    it('setups new webhook', async () => {
+      storage.get = jest.fn().mockReturnValueOnce(undefined);
+      storage.getSecret = jest.fn().mockReturnValueOnce(TEST_TOKEN);
+      webTrigger.getUrl = jest.fn().mockReturnValue('https://example.com');
+      mockRegisterGroupWebhook.mockResolvedValue(MOCK_WEBHOOK_ID);
+
+      const result = await setupAndValidateWebhook(MOCK_GROUP_ID);
+
+      expect(mockGetGroupWebhook).not.toHaveBeenCalled();
+      expect(storage.set).toHaveBeenNthCalledWith(1, MOCK_WEBHOOK_KEY, MOCK_WEBHOOK_ID);
+      expect(storage.set).toHaveBeenNthCalledWith(2, MOCK_WEBHOOK_SIGNATURE_KEY, expect.anything());
+      expect(result).toBe(MOCK_WEBHOOK_ID);
+    });
+
+    it('setups new webhook in case of invalid webhook in storage', async () => {
+      storage.get = jest.fn().mockReturnValueOnce(MOCK_WEBHOOK_KEY);
+      storage.getSecret = jest.fn().mockReturnValueOnce(TEST_TOKEN);
+      mockGetGroupWebhook.mockResolvedValue(null);
+      webTrigger.getUrl = jest.fn().mockReturnValue('https://example.com');
+      mockRegisterGroupWebhook.mockResolvedValue(MOCK_WEBHOOK_ID);
+
+      const result = await setupAndValidateWebhook(MOCK_GROUP_ID);
+
+      expect(storage.set).toHaveBeenNthCalledWith(1, MOCK_WEBHOOK_KEY, MOCK_WEBHOOK_ID);
+      expect(storage.set).toHaveBeenNthCalledWith(2, MOCK_WEBHOOK_SIGNATURE_KEY, expect.anything());
+      expect(result).toBe(MOCK_WEBHOOK_ID);
+    });
   });
 
-  it('setups new webhook', async () => {
-    storage.get = jest.fn().mockReturnValueOnce(undefined);
-    storage.getSecret = jest.fn().mockReturnValueOnce(TEST_TOKEN);
-    webTrigger.getUrl = jest.fn().mockReturnValue('https://example.com');
-    mockRegisterGroupWebhook.mockResolvedValue(MOCK_WEBHOOK_ID);
+  describe('with Maintainer token role', () => {
+    it('returns existing webhook from storage', async () => {
+      storage.get = jest.fn().mockReturnValueOnce(MOCK_WEBHOOK_ID);
+      storage.getSecret = jest.fn().mockReturnValueOnce(TEST_TOKEN);
+      mockGetGroupWebhook.mockResolvedValue({ id: 456 });
 
-    const result = await setupAndValidateWebhook(MOCK_GROUP_ID);
+      const result = await setupAndValidateWebhook(MOCK_GROUP_ID, GitLabRoles.MAINTAINER);
 
-    expect(mockGetGroupWebhook).not.toHaveBeenCalled();
-    expect(storage.set).toHaveBeenNthCalledWith(1, MOCK_WEBHOOK_KEY, MOCK_WEBHOOK_ID);
-    expect(storage.set).toHaveBeenNthCalledWith(2, MOCK_WEBHOOK_SIGNATURE_KEY, expect.anything());
-    expect(result).toBe(MOCK_WEBHOOK_ID);
-  });
+      expect(mockGetGroupWebhook).not.toHaveBeenCalled();
+      expect(mockRegisterGroupWebhook).not.toHaveBeenCalled();
 
-  it('setups new webhook in case of invalid webhook in storage', async () => {
-    storage.get = jest.fn().mockReturnValueOnce(MOCK_WEBHOOK_KEY);
-    storage.getSecret = jest.fn().mockReturnValueOnce(TEST_TOKEN);
-    mockGetGroupWebhook.mockResolvedValue(null);
-    webTrigger.getUrl = jest.fn().mockReturnValue('https://example.com');
-    mockRegisterGroupWebhook.mockResolvedValue(MOCK_WEBHOOK_ID);
+      expect(storage.set).not.toHaveBeenCalled();
+      expect(result).toBe(MOCK_WEBHOOK_ID);
+    });
 
-    const result = await setupAndValidateWebhook(MOCK_GROUP_ID);
+    it('setups new webhook', async () => {
+      storage.get = jest.fn().mockReturnValueOnce(undefined);
+      storage.getSecret = jest.fn().mockReturnValueOnce(TEST_TOKEN);
 
-    expect(storage.set).toHaveBeenNthCalledWith(1, MOCK_WEBHOOK_KEY, MOCK_WEBHOOK_ID);
-    expect(storage.set).toHaveBeenNthCalledWith(2, MOCK_WEBHOOK_SIGNATURE_KEY, expect.anything());
-    expect(result).toBe(MOCK_WEBHOOK_ID);
+      const result = await setupAndValidateWebhook(
+        MOCK_GROUP_ID,
+        GitLabRoles.MAINTAINER,
+        MOCK_WEBHOOK_ID,
+        MOCK_WEBHOOK_SIGNATURE_KEY,
+      );
+
+      expect(mockGetGroupWebhook).not.toHaveBeenCalled();
+      expect(mockRegisterGroupWebhook).not.toHaveBeenCalled();
+      expect(storage.set).toHaveBeenNthCalledWith(1, MOCK_WEBHOOK_KEY, MOCK_WEBHOOK_ID);
+      expect(storage.set).toHaveBeenNthCalledWith(2, MOCK_WEBHOOK_SIGNATURE_KEY, expect.anything());
+      expect(result).toBe(MOCK_WEBHOOK_ID);
+    });
   });
 });
