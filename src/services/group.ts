@@ -113,9 +113,6 @@ export const connectGroup = async (input: ConnectGroupInput): Promise<number> =>
   await storage.setSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`, token);
   await storage.set(`${STORAGE_KEYS.TOKEN_ROLE_PREFIX}${groupId}`, tokenRole);
 
-  // TODO: Remove this after testing.
-  console.log('groupId', groupId);
-
   return groupId;
 };
 

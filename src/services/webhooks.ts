@@ -100,8 +100,6 @@ export const setupAndValidateWebhook = async (
     const groupToken = groupTokenResult.value;
     const tokenRole: string = tokenRoleResult.value;
 
-    console.log('INFO: Setting up webhook', groupId, tokenRole, webhookId, webhookSecretToken);
-
     // Legacy integrations might not have the new tokenRole stored. These are treated as OWNER.
     if (!tokenRole || tokenRole === GitLabRoles.OWNER) {
       return setupAndValidateForOwnerToken(groupId, existingWebhook, groupToken);
