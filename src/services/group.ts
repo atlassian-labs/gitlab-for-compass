@@ -1,10 +1,6 @@
 import { Result, startsWith, storage } from '@forge/api';
 
-import {
-  ConnectGroupInput,
-  GitLabAccessLevels,
-  GitlabAPIGroup,
-  GitLabRoles,
+import { ConnectGroupInput, GitLabAccessLevels, GitlabAPIGroup, GitLabRoles,
   GroupAccessToken,
   TokenFetchResult,
 } from '../types';
@@ -112,6 +108,10 @@ export const connectGroup = async (input: ConnectGroupInput): Promise<number> =>
   await storage.set(`${STORAGE_KEYS.GROUP_NAME_KEY_PREFIX}${groupId}`, fetchedGroupName ?? groupName);
   await storage.setSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`, token);
   await storage.set(`${STORAGE_KEYS.TOKEN_ROLE_PREFIX}${groupId}`, tokenRole);
+
+  if (tokenRole === GitLabRoles.MAINTAINER) {
+    await storage.set(`${STORAGE_KEYS.WEBHOOK_SETUP_IN_PROGRESS}${groupId}`, groupId);
+  }
 
   return groupId;
 };

@@ -26,6 +26,7 @@ const clearStorageEntriesForGroup = async (groupId: string): Promise<void> => {
     `${STORAGE_KEYS.TOKEN_ROLE_PREFIX}${groupId}`,
     `${STORAGE_KEYS.WEBHOOK_KEY_PREFIX}${groupId}`,
     `${STORAGE_KEYS.WEBHOOK_SIGNATURE_PREFIX}${groupId}`,
+    `${STORAGE_KEYS.WEBHOOK_SETUP_IN_PROGRESS}${groupId}`,
   ];
 
   await deleteKeysFromStorageByChunks(groupKeys, CLEAR_STORAGE_CHUNK_SIZE, CLEAR_STORAGE_DELAY);

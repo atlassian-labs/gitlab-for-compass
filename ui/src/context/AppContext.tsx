@@ -1,4 +1,4 @@
-import { createContext, FunctionComponent, ReactNode, useEffect, useState } from 'react';
+import { createContext, FunctionComponent, ReactNode, useCallback, useEffect, useState } from 'react';
 
 import Spinner from '@atlaskit/spinner';
 
@@ -6,9 +6,10 @@ import { view } from '@forge/bridge';
 import { CenterWrapper } from '../components/styles';
 import { AuthErrorTypes, ErrorTypes, FeaturesList, GitlabAPIGroup } from '../resolverTypes';
 import { ApplicationState } from '../routes';
-import { getForgeAppId, connectedInfo } from '../services/invokes';
+import { connectedInfo, getForgeAppId, getWebhookSetupConfig } from '../services/invokes';
 import { DefaultErrorState } from '../components/DefaultErrorState';
 import { useFeatures } from '../hooks/useFeatures';
+import { WebhookSetupConfig } from '../types';
 
 type AppContextProviderProps = {
   children: ReactNode;
@@ -21,6 +22,8 @@ export type AppContextProps = {
   features: FeaturesList;
   moduleKey: string;
   appId: string;
+  webhookSetupConfig: WebhookSetupConfig;
+  refreshWebhookConfig: () => Promise<void>;
 };
 
 export const AppContext = createContext({} as AppContextProps);
@@ -28,12 +31,17 @@ export const AppContext = createContext({} as AppContextProps);
 export const AppContextProvider: FunctionComponent<AppContextProviderProps> = ({ children }) => {
   const [isGroupsLoading, setIsGroupsLoading] = useState<boolean>(false);
   const [isAppIdLoading, setIsAppIdLoading] = useState<boolean>(false);
+  const [isSetupConfigLoading, setSetupConfigLoading] = useState<boolean>(false);
   const [groups, setGroups] = useState<GitlabAPIGroup[]>();
   const [errorType, setErrorType] = useState<ErrorTypes>();
   const [initialRoute, setInitialRoute] = useState<ApplicationState>();
   const [features, isFeaturesLoading, featuresErrorType] = useFeatures();
   const [moduleKey, setModuleKey] = useState('');
   const [appId, setAppId] = useState('');
+  const [webhookSetupConfig, setWebhookSetupConfig] = useState<WebhookSetupConfig>({
+    webhookSetupInProgress: false,
+    triggerUrl: '',
+  });
 
   useEffect(() => {
     async function getContext() {
@@ -47,6 +55,7 @@ export const AppContextProvider: FunctionComponent<AppContextProviderProps> = ({
 
     setIsGroupsLoading(true);
     setIsAppIdLoading(true);
+    setSetupConfigLoading(true);
 
     getForgeAppId()
       .then(({ data, success, errors }) => {
@@ -85,6 +94,28 @@ export const AppContextProvider: FunctionComponent<AppContextProviderProps> = ({
         setIsGroupsLoading(false);
         setErrorType(AuthErrorTypes.UNEXPECTED_ERROR);
       });
+
+    getWebhookSetupConfig()
+      .then(({ data, success, errors }) => {
+        setSetupConfigLoading(false);
+
+        if (success && data) {
+          if (data.webhookSetupInProgress) {
+            setInitialRoute(ApplicationState.AUTH);
+            setWebhookSetupConfig(data);
+          }
+          return;
+        }
+
+        if (errors && errors.length > 0) {
+          setErrorType((errors && errors[0].errorType) || AuthErrorTypes.UNEXPECTED_ERROR);
+        }
+
+        setInitialRoute(ApplicationState.CONNECTED);
+      })
+      .catch(() => {
+        setErrorType(AuthErrorTypes.UNEXPECTED_ERROR);
+      });
   }, []);
 
   const getConnectedInfo = async (): Promise<GitlabAPIGroup[] | undefined> => {
@@ -115,11 +146,28 @@ export const AppContextProvider: FunctionComponent<AppContextProviderProps> = ({
     setGroups((prevGroups) => prevGroups?.filter((group) => group.id !== groupId));
   };
 
+  const refreshWebhookConfig = async () => {
+    try {
+      const { data, success, errors } = await getWebhookSetupConfig();
+
+      if (success && data) {
+        setWebhookSetupConfig(data);
+        return;
+      }
+
+      if (errors && errors.length > 0) {
+        setErrorType((errors && errors[0].errorType) || AuthErrorTypes.UNEXPECTED_ERROR);
+      }
+    } catch {
+      setErrorType(AuthErrorTypes.UNEXPECTED_ERROR);
+    }
+  };
+
   if (errorType || featuresErrorType) {
     return <DefaultErrorState errorType={errorType || featuresErrorType} />;
   }
 
-  if (isGroupsLoading || isFeaturesLoading || isAppIdLoading) {
+  if (isGroupsLoading || isFeaturesLoading || isAppIdLoading || isSetupConfigLoading) {
     return (
       <CenterWrapper>
         <Spinner size='large' />
@@ -128,7 +176,18 @@ export const AppContextProvider: FunctionComponent<AppContextProviderProps> = ({
   }
 
   return (
-    <AppContext.Provider value={{ initialRoute, getConnectedInfo, clearGroup, features, moduleKey, appId }}>
+    <AppContext.Provider
+      value={{
+        initialRoute,
+        getConnectedInfo,
+        clearGroup,
+        features,
+        moduleKey,
+        appId,
+        webhookSetupConfig,
+        refreshWebhookConfig,
+      }}
+    >
       {children}
     </AppContext.Provider>
   );

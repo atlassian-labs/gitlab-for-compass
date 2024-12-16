@@ -9,6 +9,7 @@ export const STORAGE_KEYS = {
   WEBHOOK_KEY_PREFIX: 'webhook-id-',
   TOKEN_ROLE_PREFIX: 'tokenRole-',
   WEBHOOK_SIGNATURE_PREFIX: 'webhook-sign-id-',
+  WEBHOOK_SETUP_IN_PROGRESS: 'webhook-setup-in-progress-',
   LAST_SYNC_TIME: 'lastSyncTime',
   CURRENT_IMPORT_TOTAL_PROJECTS: 'currentImportTotalProjects',
   CURRENT_IMPORT_QUEUE_JOB_IDS: 'currentImportQueueJobIds',

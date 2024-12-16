@@ -8,8 +8,8 @@ import { setupAndValidateWebhook } from '../services/webhooks';
 import { disconnectGroup } from '../services/disconnect-group';
 import { getForgeAppId } from '../utils/get-forge-app-id';
 import { getLastSyncTime } from '../services/last-sync-time';
-import { appId, connectedGroupsInfo, getFeatures, groupsAllExisting } from './shared-resolvers';
-import { ConnectGroupInput } from '../types';
+import { appId, connectedGroupsInfo, getFeatures, groupsAllExisting, webhookSetupConfig } from './shared-resolvers';
+import { ConnectGroupInput, GitLabRoles, WebhookSetupConfig } from '../types';
 
 const resolver = new Resolver();
 
@@ -35,9 +35,13 @@ resolver.define('groups/connectedInfo', async (): Promise<ResolverResponse<Gitla
   return connectedGroupsInfo();
 });
 
+resolver.define('webhooks/setupConfig', async (): Promise<ResolverResponse<WebhookSetupConfig>> => {
+  return webhookSetupConfig();
+});
+
 resolver.define('groups/connect', async (req): Promise<ResolverResponse> => {
   const {
-    payload: { groupToken, groupTokenName, groupRole, groupName, webhookId, webhookSecretToken },
+    payload: { groupToken, groupTokenName, groupRole, groupName },
     context: { cloudId },
   } = req;
   try {
@@ -46,12 +50,15 @@ resolver.define('groups/connect', async (req): Promise<ResolverResponse> => {
       tokenName: groupTokenName,
       tokenRole: groupRole,
       groupName,
-      webhookId,
-      webhookSecretToken,
     };
     const groupId = await connectGroup(input);
 
-    await setupAndValidateWebhook(groupId, webhookId, webhookSecretToken);
+    const skipWebhookSetup = groupRole === GitLabRoles.MAINTAINER;
+    if (skipWebhookSetup) {
+      return { success: true };
+    }
+
+    await setupAndValidateWebhook(groupId);
 
     await graphqlGateway.compass.asApp().synchronizeLinkAssociations({
       cloudId,
@@ -67,6 +74,35 @@ resolver.define('groups/connect', async (req): Promise<ResolverResponse> => {
       };
     }
 
+    return {
+      success: false,
+      errors: [{ message: e.message, errorType: AuthErrorTypes.UNEXPECTED_ERROR }],
+    };
+  }
+});
+
+resolver.define('webhooks/connectInProgress', async (req): Promise<ResolverResponse> => {
+  const {
+    payload: { groupId, webhookId, webhookSecretToken },
+    context: { cloudId },
+  } = req;
+  try {
+    if (!groupId) {
+      return {
+        success: false,
+        errors: [{ message: 'No webhook setup in progress.', errorType: AuthErrorTypes.UNEXPECTED_ERROR }],
+      };
+    }
+
+    await setupAndValidateWebhook(groupId, webhookId, webhookSecretToken);
+
+    await graphqlGateway.compass.asApp().synchronizeLinkAssociations({
+      cloudId,
+      forgeAppId: getForgeAppId(),
+    });
+
+    return { success: true };
+  } catch (e) {
     return {
       success: false,
       errors: [{ message: e.message, errorType: AuthErrorTypes.UNEXPECTED_ERROR }],

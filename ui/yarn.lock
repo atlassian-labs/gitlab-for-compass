@@ -87,6 +87,15 @@
     prop-types "^15.5.10"
     use-memo-one "^1.1.1"
 
+"@atlaskit/app-provider@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@atlaskit/app-provider/-/app-provider-0.4.0.tgz#33d9706bd81a8799b041ab36ecb2537f1b57b09c"
+  integrity sha512-ZvDVRSHD19rxKvx+YomWvekvtPzNbZEwYdHGXWG3QjdnP+1oBEeaVgkI9LnpWAoreunoQ8xUgmJ6g2qAYBjnoA==
+  dependencies:
+    "@atlaskit/tokens" "^1.28.0"
+    "@babel/runtime" "^7.0.0"
+    bind-event-listener "^2.1.1"
+
 "@atlaskit/app-provider@^1.3.0":
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/@atlaskit/app-provider/-/app-provider-1.3.0.tgz#277bdebc0c91fc9e7d5126a9472ac11b4c1e2a23"
@@ -132,7 +141,7 @@
     "@babel/runtime" "^7.0.0"
     "@emotion/react" "^11.7.1"
 
-"@atlaskit/button@^16.2.0", "@atlaskit/button@^16.2.2":
+"@atlaskit/button@^16.2.0":
   version "16.2.2"
   resolved "https://registry.yarnpkg.com/@atlaskit/button/-/button-16.2.2.tgz#8874b799f5f2c222b5e9e0dc887f87eb86d8a583"
   integrity sha512-78uo4aqs5elf41RxUHzuBHK246D/eQMRvuMA6bU60JXOMHhL4CxBTOUSQYi9leLblyG8hIc04muiVutO3S/tjg==
@@ -144,6 +153,25 @@
     "@atlaskit/tokens" "^0.9.0"
     "@babel/runtime" "^7.0.0"
     "@emotion/core" "^10.0.9"
+
+"@atlaskit/button@^16.2.2":
+  version "16.18.1"
+  resolved "https://registry.yarnpkg.com/@atlaskit/button/-/button-16.18.1.tgz#4bf7a265f5e5fd3956313d4904a6130fff5d6794"
+  integrity sha512-6RZCp2IUZAsgm2UFp+Ws6i3b+0uLbs2rmc6fWrhd4F0jvavDnOjivdFAPPVBcMM4pIOBrTv6QBXAgRhScec/Hw==
+  dependencies:
+    "@atlaskit/analytics-next" "^9.1.0"
+    "@atlaskit/ds-lib" "^2.2.0"
+    "@atlaskit/focus-ring" "^1.3.0"
+    "@atlaskit/icon" "^22.0.0"
+    "@atlaskit/interaction-context" "^2.1.0"
+    "@atlaskit/platform-feature-flags" "^0.2.0"
+    "@atlaskit/primitives" "^1.13.0"
+    "@atlaskit/spinner" "^16.0.0"
+    "@atlaskit/theme" "^12.6.0"
+    "@atlaskit/tokens" "^1.29.0"
+    "@atlaskit/visually-hidden" "^1.2.4"
+    "@babel/runtime" "^7.0.0"
+    "@emotion/react" "^11.7.1"
 
 "@atlaskit/button@^16.3.0":
   version "16.3.0"
@@ -292,6 +320,16 @@
     bind-event-listener "^3.0.0"
     react-uid "^2.2.0"
 
+"@atlaskit/ds-lib@^2.6.0":
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/@atlaskit/ds-lib/-/ds-lib-2.7.0.tgz#78ce94cea2132d8b90f2a555377a3c68363916ca"
+  integrity sha512-+U4aPE2dBRFUBYWCM9vkrwJGrLAYVcK30ZpEiQDNpM2D7K41223TfEijC8azaN4VM3tsCgwSKBWwniloNxqYbA==
+  dependencies:
+    "@atlaskit/platform-feature-flags" "^0.3.0"
+    "@babel/runtime" "^7.0.0"
+    bind-event-listener "^3.0.0"
+    react-uid "^2.2.0"
+
 "@atlaskit/ds-lib@^3.1.0":
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/@atlaskit/ds-lib/-/ds-lib-3.1.0.tgz#43955d06dee9c7ae8fcf1f5ff6695b9010751892"
@@ -338,6 +376,16 @@
     "@babel/runtime" "^7.0.0"
     "@emotion/core" "^10.0.9"
 
+"@atlaskit/focus-ring@^1.3.0":
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@atlaskit/focus-ring/-/focus-ring-1.7.0.tgz#ca9a8d3927863b15fb5bdefc650f4f09a14f92ac"
+  integrity sha512-k+Ix8mat1MiB3Pn35NcNQetQSPG4oxAW/TZlJ1yaawRqvS14ymfWRP+5Rh+A3vSYHAoWBamytbd+jd4A5j33yA==
+  dependencies:
+    "@atlaskit/tokens" "^2.0.0"
+    "@babel/runtime" "^7.0.0"
+    "@compiled/react" "^0.18.1"
+    "@emotion/react" "^11.7.1"
+
 "@atlaskit/focus-ring@^1.3.9":
   version "1.3.9"
   resolved "https://registry.yarnpkg.com/@atlaskit/focus-ring/-/focus-ring-1.3.9.tgz#9a728218c6e75e80b76ecb23bfac1a2a394ed8fa"
@@ -372,7 +420,7 @@
     "@babel/runtime" "^7.0.0"
     "@emotion/react" "^11.7.1"
 
-"@atlaskit/icon@^21.10.0", "@atlaskit/icon@^21.10.6":
+"@atlaskit/icon@^21.10.0":
   version "21.10.6"
   resolved "https://registry.yarnpkg.com/@atlaskit/icon/-/icon-21.10.6.tgz#bb8b7819ea88a3e222acb7ddd48cf2de30d54f79"
   integrity sha512-8yvXtx25T31WRKaItgxKOaxnrrbPMNEdRryTf+GXmb4w9cX3S8xOWGz6LVSIzPf5Tmq46J7/Qm9tvVz9oK+7Zw==
@@ -407,6 +455,16 @@
   integrity sha512-Au2xcpGAF8BPSjsOetc665co3hY8gPW+NuBB0FdMKqi4+riCi5/JE6hLuEF79cB8U24CKKt+ZgIjy8kg8DNvug==
   dependencies:
     "@atlaskit/tokens" "^1.38.0"
+    "@babel/runtime" "^7.0.0"
+    "@emotion/react" "^11.7.1"
+
+"@atlaskit/icon@^23.1.0":
+  version "23.1.0"
+  resolved "https://registry.yarnpkg.com/@atlaskit/icon/-/icon-23.1.0.tgz#1cc2e1345594b7c07523daa49f3261752b8d591e"
+  integrity sha512-E6fjtuqWvu6walwB4+glo/IafzFU4B/nUWDhWjYgshPUWvEMuDzplf0uB3ky8gL2yBIlpjtWTrB6zLQ5y60X0w==
+  dependencies:
+    "@atlaskit/platform-feature-flags" "^0.3.0"
+    "@atlaskit/tokens" "^2.4.0"
     "@babel/runtime" "^7.0.0"
     "@emotion/react" "^11.7.1"
 
@@ -625,6 +683,19 @@
   dependencies:
     "@atlaskit/theme" "^12.6.0"
     "@babel/runtime" "^7.0.0"
+
+"@atlaskit/primitives@^1.13.0":
+  version "1.20.0"
+  resolved "https://registry.yarnpkg.com/@atlaskit/primitives/-/primitives-1.20.0.tgz#c4865a03c1d878d4d5599d39755a16cd4a32a3a1"
+  integrity sha512-1c8ymPQN++II0rqVLsFRqHrucmBEn+sjwte6SYT9lfDyrDGeqEulcu+F8t+qDuZzaLuLPSy3StGoIIwprluOwg==
+  dependencies:
+    "@atlaskit/app-provider" "^0.4.0"
+    "@atlaskit/tokens" "^1.35.0"
+    "@babel/runtime" "^7.0.0"
+    "@emotion/react" "^11.7.1"
+    "@emotion/serialize" "^1.1.0"
+    bind-event-listener "^2.1.1"
+    tiny-invariant "^1.2.0"
 
 "@atlaskit/primitives@^12.1.0":
   version "12.1.0"
@@ -889,6 +960,18 @@
     "@babel/traverse" "^7.23.2"
     "@babel/types" "^7.20.0"
     bind-event-listener "^2.1.1"
+
+"@atlaskit/tokens@^1.29.0", "@atlaskit/tokens@^1.35.0":
+  version "1.61.0"
+  resolved "https://registry.yarnpkg.com/@atlaskit/tokens/-/tokens-1.61.0.tgz#101856f96be03daaaeb3a756d68a665af297de06"
+  integrity sha512-gRkBDZOaQffJHg9g+hYFgPjQ0Hz4XIDaK5WEttIGyhi2USsGsvDvUeED8liqcQNwssH/5UFxIFp3FmEwo0DoFA==
+  dependencies:
+    "@atlaskit/ds-lib" "^2.6.0"
+    "@atlaskit/platform-feature-flags" "^0.3.0"
+    "@babel/runtime" "^7.0.0"
+    "@babel/traverse" "^7.23.2"
+    "@babel/types" "^7.20.0"
+    bind-event-listener "^3.0.0"
 
 "@atlaskit/tokens@^1.29.1":
   version "1.29.2"
@@ -2239,6 +2322,13 @@
   version "0.17.3"
   resolved "https://packages.atlassian.com/api/npm/npm-remote/@compiled/react/-/react-0.17.3.tgz#56ec899386f166a731ea3dd00d96786fb64692c2"
   integrity sha512-aE7U1IGZrmxm/PNIWRcWjER9nYD4XsLoriSVXIFXXT9WMUUk5S82zjoGOwGQ7nirGNNOXgrCbuoS4JMfFVKqSg==
+  dependencies:
+    csstype "^3.1.2"
+
+"@compiled/react@^0.18.1":
+  version "0.18.1"
+  resolved "https://registry.yarnpkg.com/@compiled/react/-/react-0.18.1.tgz#d5d4be81e982e610f506f18763b7475b8f3f81f2"
+  integrity sha512-sL2UqrWaErILSPdnkg1Mt7CyVIET+j9+TArVSU609/wE/72KN3THFIUiMMmI1P8kX7CskPY7JdkcU6q70vPmVQ==
   dependencies:
     csstype "^3.1.2"
 
