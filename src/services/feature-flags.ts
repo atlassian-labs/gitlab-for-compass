@@ -11,7 +11,7 @@ const isDocumentComponentLinksDisabled = (defaultValue = false): boolean => {
   return process.env.DISABLE_DOCUMENT_COMPONENT_LINKS === 'true' || defaultValue;
 };
 
-const isGitlabMaintainerTokenEnabled = (defaultValue = false): boolean => {
+export const isGitlabMaintainerTokenEnabled = (defaultValue = false): boolean => {
   return process.env.ENABLE_GITLAB_MAINTAINER_TOKEN === 'true' || defaultValue;
 };
 

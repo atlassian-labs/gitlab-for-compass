@@ -22,7 +22,8 @@ const clearStorageEntriesForGroup = async (groupId: string): Promise<void> => {
   console.log('Clearing storage entries start');
 
   const groupKeys = [
-    `${STORAGE_KEYS.GROUP_KEY_PREFIX}${groupId}`,
+    `${STORAGE_KEYS.GROUP_NAME_KEY_PREFIX}${groupId}`,
+    `${STORAGE_KEYS.TOKEN_ROLE_PREFIX}${groupId}`,
     `${STORAGE_KEYS.WEBHOOK_KEY_PREFIX}${groupId}`,
     `${STORAGE_KEYS.WEBHOOK_SIGNATURE_PREFIX}${groupId}`,
   ];

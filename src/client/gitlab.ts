@@ -16,10 +16,12 @@ import {
   Deployment,
   Environment,
   GitlabPipelineStates,
+  GitLabAccessLevels,
 } from '../types';
 import { GitlabHttpMethodError, InvalidConfigFileError } from '../models/errors';
 import { INVALID_YAML_ERROR } from '../models/error-messages';
 import { queryParamsGenerator } from '../utils/url-utils';
+import { isGitlabMaintainerTokenEnabled } from '../services/feature-flags';
 
 export enum HttpMethod {
   GET = 'GET',
@@ -102,10 +104,12 @@ export const getGroupsData = async (
   groupAccessToken: string,
   owned?: string,
   minAccessLevel?: number,
+  name?: string,
 ): Promise<GitlabAPIGroup[]> => {
   const params = {
     ...(owned ? { owned } : {}),
     ...(minAccessLevel ? { min_access_level: minAccessLevel.toString() } : {}),
+    ...(name ? { search: name } : {}),
   };
 
   const queryParams = queryParamsGenerator(params);
@@ -285,12 +289,21 @@ export const getProjectBranch = async (
   return branch;
 };
 
-export const getOwnedProjectsBySearchCriteria = async (
+/**
+ * Get project data filtered by search criteria.
+ * @param search - search criteria i.e. project name
+ * @param groupToken - Gitlab access token
+ */
+export const getMaintainedProjectsBySearchCriteria = async (
   search: string,
   groupToken: string,
 ): Promise<GitlabAPIProject[]> => {
+  const roleFilter = isGitlabMaintainerTokenEnabled()
+    ? { min_access_level: GitLabAccessLevels.MAINTAINER.toString() }
+    : { owned: 'true' };
+
   const params = {
-    owned: 'true',
+    ...roleFilter,
     search,
   };
 

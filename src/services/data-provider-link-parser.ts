@@ -1,7 +1,7 @@
 import { storage } from '@forge/api';
 import parse from 'url-parse';
 
-import { getOwnedProjectsBySearchCriteria } from '../client/gitlab';
+import { getMaintainedProjectsBySearchCriteria } from '../client/gitlab';
 import { STORAGE_SECRETS } from '../constants';
 import { getGroupIds } from '../utils/storage-utils';
 import { GitlabAPIProject } from '../types';
@@ -52,7 +52,7 @@ export const getProjectDataFromUrl = async (
     const groupTokens = await getAllGroupTokens();
 
     const projectsPromiseResults = await Promise.allSettled(
-      groupTokens.map((token) => getOwnedProjectsBySearchCriteria(projectName, token)),
+      groupTokens.map((token) => getMaintainedProjectsBySearchCriteria(projectName, token)),
     );
     const projectsResult = projectsPromiseResults.reduce<{ projects: GitlabAPIProject[]; projectIndex: number | null }>(
       (result, currentProjectResult, index) => {

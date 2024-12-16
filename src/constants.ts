@@ -5,8 +5,9 @@ export const GITLAB_EVENT_WEBTRIGGER = 'gitlab-event-webtrigger';
 export const DEFAULT_COMPONENT_TYPE_ID = 'SERVICE';
 
 export const STORAGE_KEYS = {
-  GROUP_KEY_PREFIX: 'group-',
+  GROUP_NAME_KEY_PREFIX: 'group-',
   WEBHOOK_KEY_PREFIX: 'webhook-id-',
+  TOKEN_ROLE_PREFIX: 'tokenRole-',
   WEBHOOK_SIGNATURE_PREFIX: 'webhook-sign-id-',
   LAST_SYNC_TIME: 'lastSyncTime',
   CURRENT_IMPORT_TOTAL_PROJECTS: 'currentImportTotalProjects',

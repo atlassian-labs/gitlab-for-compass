@@ -1,6 +1,13 @@
 import { Result, startsWith, storage } from '@forge/api';
 
-import { GitLabAccessLevels, GitlabAPIGroup, GroupAccessToken } from '../types';
+import {
+  ConnectGroupInput,
+  GitLabAccessLevels,
+  GitlabAPIGroup,
+  GitLabRoles,
+  GroupAccessToken,
+  TokenFetchResult,
+} from '../types';
 import { getGroupAccessTokens, getGroupsData } from '../client/gitlab';
 import { REQUIRED_SCOPES, STORAGE_KEYS, STORAGE_SECRETS } from '../constants';
 import { AuthErrorTypes } from '../resolverTypes';
@@ -28,7 +35,47 @@ const validateGroupTokenScopes = (requiredScopes: string[], tokenScopes: string[
   return requiredScopes.every((requiredScope) => tokenScopes.includes(requiredScope));
 };
 
-export const connectGroup = async (token: string, tokenName: string): Promise<number> => {
+/**
+ * Connects a group given a token with maintainer role. It will list the
+ * group and check if the given groupName is fetched. If so, then it is deemed as
+ * matching. Skips checks for scopes and token validity as Maintainer role is not
+ * authorized to fetch tokens from Gitlab.
+ * @param token - Gitlab access token
+ * @param groupName - Gitlab group name
+ * @returns Matching verified Gitlab Group ID
+ */
+export const connectGroupAsMaintainer = async (token: string, groupName: string): Promise<number> => {
+  if (!groupName) {
+    throw new InvalidGroupTokenError(AuthErrorTypes.INVALID_GROUP_NAME);
+  }
+
+  let groups: GitlabAPIGroup[];
+  try {
+    groups = await getGroupsData(token, null, null, groupName);
+  } catch (e) {
+    throw new InvalidGroupTokenError(AuthErrorTypes.INVALID_GROUP_TOKEN);
+  }
+
+  for (const group of groups) {
+    if (group.name === groupName) {
+      return group.id;
+    }
+  }
+
+  throw new InvalidGroupTokenError(AuthErrorTypes.INVALID_GROUP_NAME);
+};
+
+/**
+ * Connects a group given a token with owner role. It will find the matching
+ * group given the token and validate the scopes.
+ * @param token - Gitlab access token
+ * @param tokenName - Gitlab access token name
+ * @returns Matching verified Gitlab Group's ID and name
+ */
+export const connectGroupAsOwner = async (
+  token: string,
+  tokenName: string,
+): Promise<{ groupName: string; groupId: number }> => {
   let groupId;
   let groupName;
   try {
@@ -48,34 +95,90 @@ export const connectGroup = async (token: string, tokenName: string): Promise<nu
     throw new InvalidGroupTokenError(AuthErrorTypes.INCORRECT_GROUP_TOKEN_SCOPES);
   }
 
-  await storage.set(`${STORAGE_KEYS.GROUP_KEY_PREFIX}${groupId}`, groupName);
+  return { groupId, groupName };
+};
+
+export const connectGroup = async (input: ConnectGroupInput): Promise<number> => {
+  const { token, tokenName, tokenRole, groupName } = input;
+
+  let groupId;
+  let fetchedGroupName;
+  if (tokenRole === GitLabRoles.MAINTAINER) {
+    groupId = await connectGroupAsMaintainer(token, groupName);
+  } else {
+    ({ groupId, groupName: fetchedGroupName } = await connectGroupAsOwner(token, tokenName));
+  }
+
+  await storage.set(`${STORAGE_KEYS.GROUP_NAME_KEY_PREFIX}${groupId}`, fetchedGroupName ?? groupName);
   await storage.setSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`, token);
+  await storage.set(`${STORAGE_KEYS.TOKEN_ROLE_PREFIX}${groupId}`, tokenRole);
 
   return groupId;
 };
 
+/**
+ * Fetches groups data given token. Performs different fetch flows based on
+ * role of the token i.e. Maintainer vs Owner.
+ * @param token - Gitlab access token
+ * @param groupId - Gitlab group ID
+ * @param owned - filter by owned groups
+ * @param minAccessLevel - filter by minAccessLevel
+ */
+const getGroupsWithToken = async (
+  token: string,
+  groupId: number,
+  owned?: string,
+  minAccessLevel?: number,
+): Promise<GitlabAPIGroup[]> => {
+  const tokenRole = await storage.get(`${STORAGE_KEYS.TOKEN_ROLE_PREFIX}${groupId}`);
+
+  if (tokenRole === GitLabRoles.OWNER) {
+    return getGroupsData(token, owned, minAccessLevel);
+  }
+
+  const groupName: string = await storage.get(`${STORAGE_KEYS.GROUP_NAME_KEY_PREFIX}${groupId}`);
+  const groups = await getGroupsData(token, null, null, groupName);
+
+  for (const group of groups) {
+    if (group.name === groupName) {
+      return [group];
+    }
+  }
+
+  return Promise.reject(new Error(`Error fetching groups data for group ${groupName} using Maintainer token.`));
+};
+
+/**
+ * Fetches groups data given filters.
+ * @param owned - filter by owned groups
+ * @param minAccessLevel - filter by minAccessLevel
+ * @returns List of GitlabAPIGroup objects
+ */
 const getGroups = async (owned?: string, minAccessLevel?: number): Promise<GitlabAPIGroup[]> => {
-  const response = storage.query().where('key', startsWith(STORAGE_KEYS.GROUP_KEY_PREFIX));
+  const response = storage.query().where('key', startsWith(STORAGE_KEYS.GROUP_NAME_KEY_PREFIX));
 
   const { results: groups } = await response.getMany();
 
   const tokensResult = await Promise.allSettled(
-    groups.map((group: Result) =>
-      storage.getSecret(
-        `${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${group.key.replace(STORAGE_KEYS.GROUP_KEY_PREFIX, '')}`,
-      ),
-    ),
+    groups.map(async (group: Result) => {
+      const groupId = Number(group.key.replace(STORAGE_KEYS.GROUP_NAME_KEY_PREFIX, ''));
+      const token = await storage.getSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`);
+      return { token, groupId };
+    }),
   );
 
   if (hasRejections(tokensResult)) {
     throw new Error(`Error getting tokens ${getFormattedErrors(tokensResult)}`);
   }
 
-  const tokens = tokensResult.map(
-    (tokenResult: PromiseSettledResult<string>) => (tokenResult as PromiseFulfilledResult<string>).value,
+  const tokensWithGroup = tokensResult.map(
+    (tokenResult: PromiseSettledResult<TokenFetchResult>) =>
+      (tokenResult as PromiseFulfilledResult<TokenFetchResult>).value,
   );
 
-  const groupPromises = tokens.map((token: string) => getGroupsData(token, owned, minAccessLevel));
+  const groupPromises = tokensWithGroup.map((fetchResult: TokenFetchResult) => {
+    return getGroupsWithToken(fetchResult.token, fetchResult.groupId, owned, minAccessLevel);
+  });
 
   // We need to remove revoked/invalid (on Gitlab side) tokens from storage
   const groupsResult = await Promise.allSettled(groupPromises);
@@ -93,7 +196,7 @@ const getGroups = async (owned?: string, minAccessLevel?: number): Promise<Gitla
         currentGroupResult.status === ALL_SETTLED_STATUS.REJECTED &&
         currentGroupResult.reason.toString().includes('Unauthorized')
       ) {
-        result.invalidGroupIds.push(groups[i].key.replace(STORAGE_KEYS.GROUP_KEY_PREFIX, ''));
+        result.invalidGroupIds.push(groups[i].key.replace(STORAGE_KEYS.GROUP_NAME_KEY_PREFIX, ''));
       }
       if (currentGroupResult.status === ALL_SETTLED_STATUS.FULFILLED) {
         if (minAccessLevel) {
