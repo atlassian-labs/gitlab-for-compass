@@ -21,6 +21,7 @@ import {
 import { GitlabHttpMethodError, InvalidConfigFileError } from '../models/errors';
 import { INVALID_YAML_ERROR } from '../models/error-messages';
 import { queryParamsGenerator } from '../utils/url-utils';
+import { isGitlabMaintainerTokenEnabled } from '../services/feature-flags';
 
 export enum HttpMethod {
   GET = 'GET',
@@ -289,7 +290,7 @@ export const getProjectBranch = async (
 };
 
 /**
- * Get project data that the token role is at least a maintainer of, filtered by search criteria.
+ * Get project data filtered by search criteria.
  * @param search - search criteria i.e. project name
  * @param groupToken - Gitlab access token
  */
@@ -297,8 +298,12 @@ export const getMaintainedProjectsBySearchCriteria = async (
   search: string,
   groupToken: string,
 ): Promise<GitlabAPIProject[]> => {
+  const roleFilter = isGitlabMaintainerTokenEnabled()
+    ? { min_access_level: GitLabAccessLevels.MAINTAINER.toString() }
+    : { owned: 'true' };
+
   const params = {
-    min_access_level: GitLabAccessLevels.MAINTAINER.toString(),
+    ...roleFilter,
     search,
   };
 
