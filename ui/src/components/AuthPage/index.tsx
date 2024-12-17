@@ -333,7 +333,7 @@ export const AuthPage = () => {
   );
 
   const WebhookSetupMessage = () => (
-    <SectionMessageWrapper>
+    <SectionMessageWrapper data-testid='webhooks-setup-message'>
       <h4>Finish setting up your webhook with Maintainer Token</h4>
       <p>
         To complete the setup, you need to manually create a webhook in your GitLab group following the steps below:
@@ -364,7 +364,7 @@ export const AuthPage = () => {
         <WebhookSetupMessage />
       ) : (
         <>
-          <SectionMessageWrapper>
+          <SectionMessageWrapper data-testid='token-setup-message'>
             <h4>Connect group with {selectedRole} Token</h4>
           </SectionMessageWrapper>
           <TokenRoleWrapper>
@@ -445,6 +445,7 @@ export const AuthPage = () => {
               appearance='primary'
               isLoading={isLoadingConnectGroup}
               alt='Connect project'
+              testId='connect-group-button'
             >
               {features.isGitlabMaintainerTokenEnabled && selectedRole === GitLabRoles.MAINTAINER ? 'Next' : 'Connect'}
             </LoadingButton>
@@ -500,6 +501,7 @@ export const AuthPage = () => {
                 appearance='warning'
                 isLoading={isLoadingDisconnect}
                 alt='Disconnect project'
+                testId='cancel-webhook-button'
               >
                 Cancel
               </LoadingButton>
@@ -511,6 +513,7 @@ export const AuthPage = () => {
                 appearance='primary'
                 isLoading={isLoadingConnectWebhook}
                 alt='Connect project webhook'
+                testId='connect-webhook-button'
               >
                 Connect
               </LoadingButton>

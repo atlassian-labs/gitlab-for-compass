@@ -21,6 +21,13 @@ export const defaultMocks: {
     success: true,
     data: 'app-id',
   },
+  'webhooks/setupConfig': {
+    success: true,
+    data: {
+      webhookSetupInProgress: false,
+      triggerUrl: '',
+    },
+  },
 };
 
 export const gitlabFFDisabledMocks: {

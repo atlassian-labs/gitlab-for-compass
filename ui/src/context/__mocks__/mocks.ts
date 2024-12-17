@@ -16,6 +16,20 @@ export const filledMocks: {
   },
 };
 
+export const webhookSetupInProgressMocks: {
+  [key: string]: unknown;
+} = {
+  ...defaultMocks,
+  'webhooks/setupConfig': {
+    success: true,
+    data: {
+      webhookSetupInProgress: true,
+      triggerUrl: 'https://test-url',
+      groupId: 7788234,
+    },
+  },
+};
+
 export const mocksWithError: {
   [key: string]: unknown;
 } = {

@@ -17,6 +17,7 @@ const mockDeleteGroupWebhook = mocked(deleteGroupWebhook);
 const MOCK_GROUP_ID = 123;
 const MOCK_WEBHOOK_KEY = `webhook-id-${MOCK_GROUP_ID}`;
 const MOCK_WEBHOOK_SIGNATURE_KEY = `webhook-sign-id-${MOCK_GROUP_ID}`;
+const MOCK_WEBHOOK_SETUP_IN_PROGRESS_KEY = `webhook-setup-in-progress-${MOCK_GROUP_ID}`;
 const MOCK_WEBHOOK_ID = 345;
 
 describe('setup webhook', () => {
@@ -104,6 +105,7 @@ describe('setup webhook', () => {
       expect(mockRegisterGroupWebhook).not.toHaveBeenCalled();
       expect(storage.set).toHaveBeenNthCalledWith(1, MOCK_WEBHOOK_KEY, MOCK_WEBHOOK_ID);
       expect(storage.set).toHaveBeenNthCalledWith(2, MOCK_WEBHOOK_SIGNATURE_KEY, expect.anything());
+      expect(storage.delete).toHaveBeenNthCalledWith(1, MOCK_WEBHOOK_SETUP_IN_PROGRESS_KEY);
       expect(result).toBe(MOCK_WEBHOOK_ID);
     });
   });

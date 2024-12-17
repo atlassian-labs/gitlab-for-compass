@@ -191,13 +191,18 @@ describe('Group service', () => {
           `${STORAGE_KEYS.TOKEN_ROLE_PREFIX}${MOCK_ANOTHER_GROUP_DATA.id}`,
           GitLabRoles.MAINTAINER,
         );
+        expect(storage.set).toHaveBeenNthCalledWith(
+          3,
+          `${STORAGE_KEYS.WEBHOOK_SETUP_IN_PROGRESS}${MOCK_ANOTHER_GROUP_DATA.id}`,
+          MOCK_ANOTHER_GROUP_DATA.id,
+        );
         expect(storage.setSecret).toHaveBeenCalledWith(
           `${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${MOCK_ANOTHER_GROUP_DATA.id}`,
           MOCK_TOKEN,
         );
 
         // Verify total number of calls
-        expect(storage.set).toHaveBeenCalledTimes(2);
+        expect(storage.set).toHaveBeenCalledTimes(3);
         expect(storage.setSecret).toHaveBeenCalledTimes(1);
 
         expect(result).toBe(MOCK_ANOTHER_GROUP_DATA.id);

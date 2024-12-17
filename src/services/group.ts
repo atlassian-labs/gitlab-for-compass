@@ -1,6 +1,10 @@
 import { Result, startsWith, storage } from '@forge/api';
 
-import { ConnectGroupInput, GitLabAccessLevels, GitlabAPIGroup, GitLabRoles,
+import {
+  ConnectGroupInput,
+  GitLabAccessLevels,
+  GitlabAPIGroup,
+  GitLabRoles,
   GroupAccessToken,
   TokenFetchResult,
 } from '../types';
