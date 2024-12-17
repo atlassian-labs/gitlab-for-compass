@@ -1,8 +1,9 @@
 import { AuthErrorTypes, DefaultErrorTypes, FeaturesList, GitlabAPIGroup, ResolverResponse } from '../resolverTypes';
 import { listFeatures } from '../services/feature-flags';
 import { getAllExistingGroups, getConnectedGroups } from '../services/group';
-import { setupAndValidateWebhook } from '../services/webhooks';
+import { getWebhookSetupConfig, setupAndValidateWebhook } from '../services/webhooks';
 import { getForgeAppId } from '../utils/get-forge-app-id';
+import { WebhookSetupConfig } from '../types';
 
 export const getFeatures = (): ResolverResponse<FeaturesList> => {
   try {
@@ -35,8 +36,9 @@ export const groupsAllExisting = async (): Promise<ResolverResponse<GitlabAPIGro
 export const connectedGroupsInfo = async (): Promise<ResolverResponse<GitlabAPIGroup[]>> => {
   try {
     const connectedGroups = await getConnectedGroups();
+    const setupConfig = await getWebhookSetupConfig();
 
-    if (connectedGroups.length) {
+    if (connectedGroups.length && !setupConfig.webhookSetupInProgress) {
       await setupAndValidateWebhook(connectedGroups[0].id);
     }
 
@@ -60,6 +62,21 @@ export const appId = (): ResolverResponse<string> => {
     return {
       success: false,
       errors: [{ message: e.message, errorType: DefaultErrorTypes.NO_APP_ID_VARIABLE_DEFINED }],
+    };
+  }
+};
+
+export const webhookSetupConfig = async (): Promise<ResolverResponse<WebhookSetupConfig>> => {
+  try {
+    const config = await getWebhookSetupConfig();
+    return {
+      success: true,
+      data: config,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      errors: [{ message: e.message, errorType: DefaultErrorTypes.UNEXPECTED_ERROR }],
     };
   }
 };

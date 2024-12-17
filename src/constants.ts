@@ -9,6 +9,7 @@ export const STORAGE_KEYS = {
   WEBHOOK_KEY_PREFIX: 'webhook-id-',
   TOKEN_ROLE_PREFIX: 'tokenRole-',
   WEBHOOK_SIGNATURE_PREFIX: 'webhook-sign-id-',
+  WEBHOOK_SETUP_IN_PROGRESS: 'webhook-setup-in-progress-',
   LAST_SYNC_TIME: 'lastSyncTime',
   CURRENT_IMPORT_TOTAL_PROJECTS: 'currentImportTotalProjects',
   CURRENT_IMPORT_QUEUE_JOB_IDS: 'currentImportQueueJobIds',
@@ -18,6 +19,9 @@ export const STORAGE_KEYS = {
 
 export const STORAGE_SECRETS = {
   GROUP_TOKEN_KEY_PREFIX: 'groupToken-',
+  WEBHOOK_SECRET_TOKEN_KEY_PREFIX: 'webhookSecretToken-',
+  TOKEN_ROLE_PREFIX: 'tokenRole-',
+  GROUP_NAME_PREFIX: 'groupName-',
 };
 
 export const REQUIRED_SCOPES = ['api', 'write_repository'];

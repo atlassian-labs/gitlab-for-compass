@@ -17,9 +17,9 @@ import {
   ImportFailedError,
   importProjects,
 } from '../services/import-projects';
-import { GroupProjectsResponse, TeamsWithMembershipStatus } from '../types';
+import { GroupProjectsResponse, TeamsWithMembershipStatus, WebhookSetupConfig } from '../types';
 import { getAllComponentTypeIds } from '../client/compass';
-import { appId, connectedGroupsInfo, getFeatures, groupsAllExisting } from './shared-resolvers';
+import { appId, connectedGroupsInfo, getFeatures, groupsAllExisting, webhookSetupConfig } from './shared-resolvers';
 import { getFirstPageOfTeamsWithMembershipStatus } from '../services/get-teams';
 import { getTeamOnboarding, setTeamOnboarding } from '../services/onboarding';
 
@@ -127,6 +127,10 @@ resolver.define('features', (): ResolverResponse<FeaturesList> => {
 
 resolver.define('appId', (): ResolverResponse<string> => {
   return appId();
+});
+
+resolver.define('webhooks/setupConfig', async (): Promise<ResolverResponse<WebhookSetupConfig>> => {
+  return webhookSetupConfig();
 });
 
 resolver.define('getAllCompassComponentTypes', async (req): Promise<ResolverResponse<CompassComponentTypeObject[]>> => {

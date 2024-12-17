@@ -1,4 +1,5 @@
 import { invoke as realInvoke, view } from '@forge/bridge';
+import { GitlabFeaturesEnum } from '../features';
 
 export const invoke: jest.Mock = realInvoke as jest.Mock;
 const getContext: jest.Mock = view.getContext as jest.Mock;
@@ -12,11 +13,32 @@ export const defaultMocks: {
   },
   features: {
     success: true,
-    data: {},
+    data: {
+      [GitlabFeaturesEnum.ENABLE_GITLAB_MAINTAINER_TOKEN]: true,
+    },
   },
   appId: {
     success: true,
     data: 'app-id',
+  },
+  'webhooks/setupConfig': {
+    success: true,
+    data: {
+      webhookSetupInProgress: false,
+      triggerUrl: '',
+    },
+  },
+};
+
+export const gitlabFFDisabledMocks: {
+  [key: string]: unknown;
+} = {
+  ...defaultMocks,
+  features: {
+    success: true,
+    data: {
+      [GitlabFeaturesEnum.ENABLE_GITLAB_MAINTAINER_TOKEN]: false,
+    },
   },
 };
 

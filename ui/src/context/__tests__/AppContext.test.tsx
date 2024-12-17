@@ -1,8 +1,7 @@
 import { render } from '@testing-library/react';
-import { view as realView } from '@forge/bridge';
 import { AppContextProvider } from '../AppContext';
 import { AppRouter } from '../../AppRouter';
-import { filledMocks, mocksWithError } from '../__mocks__/mocks';
+import { filledMocks, mocksWithError, webhookSetupInProgressMocks } from '../__mocks__/mocks';
 import { defaultMocks, mockInvoke, mockGetContext } from '../../helpers/mockHelpers';
 
 jest.mock('@forge/bridge', () => ({
@@ -30,7 +29,7 @@ describe('AppContext', () => {
     expect(container.children).toBeDefined();
   });
 
-  it('renders auth screen', async () => {
+  it('renders initial auth screen', async () => {
     mockInvoke(defaultMocks);
     mockGetContext('admin-page-ui');
 
@@ -41,6 +40,21 @@ describe('AppContext', () => {
     );
 
     expect(await findByTestId('gitlab-auth-page')).toBeDefined();
+    expect(await findByTestId('token-setup-message')).toBeDefined();
+  });
+
+  it('renders webhooks setup screen', async () => {
+    mockInvoke(webhookSetupInProgressMocks);
+    mockGetContext('admin-page-ui');
+
+    const { findByTestId } = render(
+      <AppContextProvider>
+        <AppRouter />
+      </AppContextProvider>,
+    );
+
+    expect(await findByTestId('gitlab-auth-page')).toBeDefined();
+    expect(await findByTestId('webhooks-setup-message')).toBeDefined();
   });
 
   it('renders connect screen', async () => {

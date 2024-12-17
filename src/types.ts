@@ -427,8 +427,8 @@ type BackfillData = {
 };
 
 enum GitLabRoles {
-  OWNER = 'owner',
-  MAINTAINER = 'maintainer',
+  OWNER = 'Owner',
+  MAINTAINER = 'Maintainer',
 }
 
 type ConnectGroupInput = {
@@ -436,13 +436,17 @@ type ConnectGroupInput = {
   tokenName: string;
   tokenRole: GitLabRoles;
   groupName?: string;
-  webhookId?: string;
-  webhookSecretToken?: string;
 };
 
 type TokenFetchResult = {
   token: string;
   groupId: number;
+};
+
+type WebhookSetupConfig = {
+  webhookSetupInProgress: boolean;
+  triggerUrl: string;
+  groupId?: number;
 };
 
 export type {
@@ -488,6 +492,7 @@ export type {
   CompareProjectWithExistingComponent,
   BackfillData,
   ConnectGroupInput,
+  WebhookSetupConfig,
   TokenFetchResult,
 };
 

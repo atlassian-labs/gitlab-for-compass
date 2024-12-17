@@ -1,10 +1,15 @@
-import { storage, webTrigger } from '@forge/api';
+import { Result, startsWith, storage, webTrigger } from '@forge/api';
 
 import { registerGroupWebhook, deleteGroupWebhook, getGroupWebhook } from '../client/gitlab';
 import { GITLAB_EVENT_WEBTRIGGER, STORAGE_KEYS, STORAGE_SECRETS } from '../constants';
 import { generateSignature } from '../utils/generate-signature-utils';
 import { ALL_SETTLED_STATUS, getFormattedErrors, hasRejections } from '../utils/promise-allsettled-helpers';
-import { GitLabRoles } from '../types';
+import { WebhookSetupConfig, GitLabRoles } from '../types';
+
+const getFormattedWebTriggerUrl = async (groupId: number): Promise<string> => {
+  const webtriggerURL = await webTrigger.getUrl(GITLAB_EVENT_WEBTRIGGER);
+  return `${webtriggerURL}?groupId=${groupId}`;
+};
 
 const setupAndValidateForOwnerToken = async (
   groupId: number,
@@ -20,8 +25,7 @@ const setupAndValidateForOwnerToken = async (
     return existingWebhook;
   }
 
-  const webtriggerURL = await webTrigger.getUrl(GITLAB_EVENT_WEBTRIGGER);
-  const webtriggerURLWithGroupId = `${webtriggerURL}?groupId=${groupId}`;
+  const webtriggerURLWithGroupId = await getFormattedWebTriggerUrl(groupId);
   const webhookSignature = generateSignature();
   const webhookId = await registerGroupWebhook({
     groupId,
@@ -64,6 +68,9 @@ const setupAndValidateForMaintainerToken = async (
   if (hasRejections(settledResult)) {
     throw new Error(`Error setting webhookId or webhookSignature: ${getFormattedErrors(settledResult)}`);
   }
+
+  // Mark in-progress webhook setup as completed.
+  await storage.delete(`${STORAGE_KEYS.WEBHOOK_SETUP_IN_PROGRESS}${groupId}`);
 
   console.log('Successfully created webhook with maintainer token role');
   return webhookId;
@@ -151,4 +158,32 @@ export const deleteWebhook = async (groupId: number): Promise<void> => {
     console.error('Error deleting webhook', e);
     throw new Error(`Error deleting webhook: ${e}`);
   }
+};
+
+/**
+ * Get webhook configuration details if this step is necessary for setup.
+ * Currently, this is applicable only for Maintainer token role as it requires manual setup.
+ *
+ * @returns {Promise<WebhookSetupConfig>} Webhook configuration details for first group in the in-progress list.
+ */
+export const getWebhookSetupConfig = async (): Promise<WebhookSetupConfig> => {
+  const result = storage.query().where('key', startsWith(STORAGE_KEYS.WEBHOOK_SETUP_IN_PROGRESS));
+
+  const { results: groups } = await result.getMany();
+  const groupsResult = await Promise.allSettled(groups.map((group: Result) => storage.get(group.key)));
+
+  if (hasRejections(groupsResult)) {
+    throw new Error(`Error getting groupIds with in-progress webhooks setup: ${getFormattedErrors(groupsResult)}`);
+  }
+
+  const groupIds = groupsResult.map((groupResult: PromiseFulfilledResult<number>) => groupResult.value);
+
+  const webhookSetupInProgress = groupIds.length > 0;
+  const triggerUrl = webhookSetupInProgress ? await getFormattedWebTriggerUrl(groupIds[0]) : '';
+
+  return {
+    webhookSetupInProgress,
+    triggerUrl,
+    groupId: webhookSetupInProgress ? groupIds[0] : null,
+  };
 };

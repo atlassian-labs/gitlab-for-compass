@@ -113,6 +113,10 @@ export const connectGroup = async (input: ConnectGroupInput): Promise<number> =>
   await storage.setSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`, token);
   await storage.set(`${STORAGE_KEYS.TOKEN_ROLE_PREFIX}${groupId}`, tokenRole);
 
+  if (tokenRole === GitLabRoles.MAINTAINER) {
+    await storage.set(`${STORAGE_KEYS.WEBHOOK_SETUP_IN_PROGRESS}${groupId}`, groupId);
+  }
+
   return groupId;
 };
 
