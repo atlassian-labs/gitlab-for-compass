@@ -21,7 +21,7 @@ export const ConnectedPage = () => {
   const [groups, setGroups] = useState<GitlabAPIGroup[]>();
 
   const navigate = useNavigate();
-  const { getConnectedInfo, clearGroup } = useAppContext();
+  const { features, getConnectedInfo, clearGroup } = useAppContext();
   const { isImportInProgress } = useImportContext();
 
   const handleDisconnectGroup = async (id: number) => {
@@ -70,7 +70,7 @@ export const ConnectedPage = () => {
       <h4>Connected group</h4>
       <p>You can connect only one GitLab group to Compass at a time, and you must be an owner of that group.</p>
       <br />
-      <IncomingWebhookSectionMessage />
+      <IncomingWebhookSectionMessage isMaintainerTokenEnabled={features.isGitlabMaintainerTokenEnabled} />
       <br />
       <ConnectInfoPanel
         connectedGroup={groups[0]}

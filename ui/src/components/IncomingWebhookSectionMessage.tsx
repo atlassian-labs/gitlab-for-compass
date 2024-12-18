@@ -3,13 +3,18 @@ import WebhookIcon from './assets/WebhookIcon.svg';
 import { ForgeLink } from './ForgeLink';
 import { INCOMING_WEBHOOK_SETTINGS_PAGE_LINK } from '../constants';
 
-export const IncomingWebhookSectionMessage = () => {
+type Props = {
+  isMaintainerTokenEnabled?: boolean;
+};
+
+export const IncomingWebhookSectionMessage = ({ isMaintainerTokenEnabled = false }: Props) => {
   return (
     <IncomingWebhookSectionWrapper>
       <IncomingWebhookIcon src={WebhookIcon} />
       <div>
         <p>
-          If you're not a group owner or use the self-managed version of GitLab, you can use{' '}
+          If you're not a group owner{isMaintainerTokenEnabled ? '/maintainer' : ''} or use the self-managed version of
+          GitLab, you can use{' '}
           <ForgeLink to={INCOMING_WEBHOOK_SETTINGS_PAGE_LINK} openInNewTab>
             incoming webhooks
           </ForgeLink>{' '}

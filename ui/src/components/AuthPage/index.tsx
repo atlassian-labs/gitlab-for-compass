@@ -21,14 +21,7 @@ import { AuthErrorTypes, ErrorTypes } from '../../resolverTypes';
 import { useAppContext } from '../../hooks/useAppContext';
 import { IncomingWebhookSectionMessage } from '../IncomingWebhookSectionMessage';
 import { GitLabRoles } from '../../types';
-import {
-  CopyIconWrapper,
-  FormWrapper,
-  ListItemContent,
-  ReloadButtonWrapper,
-  SectionMessageWrapper,
-  TokenRoleWrapper,
-} from './styles';
+import { CopyIconWrapper, FormWrapper, ReloadButtonWrapper, SectionMessageWrapper, TokenRoleWrapper } from './styles';
 
 const buildValidationMethod = (errorType: ErrorTypes) => {
   switch (errorType) {
@@ -260,6 +253,7 @@ export const AuthPage = () => {
   };
 
   const handleWebhookUrlCopy = useCallback(() => {
+    console.log('Copying webhook URL', webhookSetupConfig.triggerUrl);
     return navigator.clipboard
       .writeText(webhookSetupConfig.triggerUrl)
       .then(() => {
@@ -271,7 +265,7 @@ export const AuthPage = () => {
       .catch(() => {
         console.log('Error copying webhook URL');
       });
-  }, []);
+  }, [webhookSetupConfig]);
 
   const ConnectionMessage = () =>
     features.isGitlabMaintainerTokenEnabled && selectedRole === GitLabRoles.MAINTAINER ? (
@@ -324,11 +318,16 @@ export const AuthPage = () => {
       </SectionMessageWrapper>
     );
 
-  const WebhookCopyIcon = () => (
-    <Tooltip content={webhookCopyTooltipContent} testId='webhook-url-copy-tooltip'>
-      <CopyIconWrapper onClick={handleWebhookUrlCopy} data-testid='webhoook-url-copy-icon'>
-        <CopyIcon label='Copy webhook URL' />
-      </CopyIconWrapper>
+  const WebhookCopyButton = () => (
+    <Tooltip content={webhookCopyTooltipContent} testId='webhook-url-copy-tooltip' position='top-end'>
+      <Button
+        appearance='link'
+        spacing='compact'
+        onClick={handleWebhookUrlCopy}
+        iconAfter={<CopyIcon label='Copy webhook URL' />}
+      >
+        {webhookSetupConfig.triggerUrl}
+      </Button>
     </Tooltip>
   );
 
@@ -341,9 +340,7 @@ export const AuthPage = () => {
 
       <ul>
         <li>
-          <ListItemContent>
-            Create new webhook by copying the URL <WebhookCopyIcon />{' '}
-          </ListItemContent>
+          Create new webhook by copying the URL: <WebhookCopyButton />
         </li>
         <li>Add a secret token for webhook and input the same below</li>
         <li>
@@ -353,7 +350,10 @@ export const AuthPage = () => {
         <li>
           Ensure that <b>Enable SSL Verification</b> is checked
         </li>
-        <li>Webhook ID can be found as part of the URL when in edit mode</li>
+        <li>
+          Webhook ID can be found as part of the URL when in edit mode <br />
+          Example: https://gitlab.com/.../-/hooks/<b>webhook_id</b>/edit
+        </li>
       </ul>
     </SectionMessageWrapper>
   );
@@ -385,7 +385,7 @@ export const AuthPage = () => {
             )}
           </TokenRoleWrapper>
           <ConnectionMessage />
-          <IncomingWebhookSectionMessage />
+          <IncomingWebhookSectionMessage isMaintainerTokenEnabled={features.isGitlabMaintainerTokenEnabled} />
         </>
       )}
 
