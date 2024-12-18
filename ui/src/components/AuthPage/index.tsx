@@ -253,7 +253,6 @@ export const AuthPage = () => {
   };
 
   const handleWebhookUrlCopy = useCallback(() => {
-    console.log('Copying webhook URL', webhookSetupConfig.triggerUrl);
     return navigator.clipboard
       .writeText(webhookSetupConfig.triggerUrl)
       .then(() => {
