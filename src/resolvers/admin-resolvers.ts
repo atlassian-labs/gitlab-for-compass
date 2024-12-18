@@ -129,8 +129,12 @@ resolver.define('project/lastSyncTime', async (): Promise<ResolverResponse<strin
   }
 });
 
-resolver.define('features', (): ResolverResponse<FeaturesList> => {
-  return getFeatures();
+resolver.define('features', (req): ResolverResponse<FeaturesList> => {
+  const {
+    context: { cloudId },
+  } = req;
+
+  return getFeatures(cloudId);
 });
 
 resolver.define('appId', (): ResolverResponse<string> => {
