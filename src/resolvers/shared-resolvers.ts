@@ -5,9 +5,9 @@ import { getWebhookSetupConfig, setupAndValidateWebhook } from '../services/webh
 import { getForgeAppId } from '../utils/get-forge-app-id';
 import { WebhookSetupConfig } from '../types';
 
-export const getFeatures = (): ResolverResponse<FeaturesList> => {
+export const getFeatures = (cloudId: string): ResolverResponse<FeaturesList> => {
   try {
-    const features = listFeatures();
+    const features = listFeatures(cloudId);
     return {
       success: true,
       data: features,
