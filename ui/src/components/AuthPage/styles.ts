@@ -43,8 +43,3 @@ export const CopyIconWrapper = styled.button`
     color: ${token('color.icon')};
   }
 `;
-
-export const ListItemContent = styled.span`
-  display: flex;
-  align-items: center;
-`;
