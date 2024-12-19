@@ -937,18 +937,6 @@
     "@types/node-fetch" "^2.6.11"
     node-fetch "2.7.0"
 
-"@forge/api@3.9.2":
-  version "3.9.2"
-  resolved "https://packages.atlassian.com/api/npm/npm-remote/@forge/api/-/api-3.9.2.tgz#5b2634aae778201c0bd43d65e4a17ea46aeccc27"
-  integrity sha512-KyjmHkyZLumb2qcSble4A/gHrH0blx+Mn3Zrs+4JlBYgs+iUFp5HW3o2Ui8ITBN+xtnVwQg8KAz1D88foGtW8A==
-  dependencies:
-    "@forge/auth" "0.0.5"
-    "@forge/egress" "1.2.13"
-    "@forge/storage" "1.5.15"
-    "@forge/util" "1.4.4"
-    "@types/node-fetch" "^2.6.11"
-    node-fetch "2.7.0"
-
 "@forge/api@4.1.1", "@forge/api@^4.1.1":
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/@forge/api/-/api-4.1.1.tgz#7f6f03ea57d084e5824f132e0d6c4d55064d1fc8"
@@ -1179,14 +1167,14 @@
     lodash "^4.17.21"
     yaml "^2.3.4"
 
-"@forge/metrics@0.2.18":
-  version "0.2.18"
-  resolved "https://packages.atlassian.com/api/npm/npm-remote/@forge/metrics/-/metrics-0.2.18.tgz#bf5068459e9876510be1f2a7babf75f3e5fce326"
-  integrity sha512-L4dPf1Pb8RjGgbLvk2zA1+rww6Uxp8Pa4O5YrWSrvrKvsT/m6nWKv1xrl6Qk5OTeBhp6He2Sf3/3wwJURT3U2A==
+"@forge/metrics@0.2.21":
+  version "0.2.21"
+  resolved "https://registry.yarnpkg.com/@forge/metrics/-/metrics-0.2.21.tgz#d1b5d6a1f576e0f11654a7a4fc29e8062b5702cf"
+  integrity sha512-zSutJIED5ZXYe+XDmYqDS/icf3Liemt0cr3O0HKiZ1A9TVsinH6WdI6737BKvLoXeQZ0JxCqG8Tom4PhUelfdQ==
   dependencies:
-    "@forge/api" "3.9.2"
-    "@forge/runtime" "5.10.1"
-    "@forge/util" "1.4.4"
+    "@forge/api" "4.1.1"
+    "@forge/runtime" "5.10.3"
+    "@forge/util" "1.4.5"
 
 "@forge/resolver@^1.6.2":
   version "1.6.2"
@@ -1201,6 +1189,20 @@
   integrity sha512-YZQV2mOOhV9zxcsiQp1U+sDlYAUJVqexDMz1Mo4fHrZzb5LzliUtiNfuhNPKGkdJpfxCKsHeFIZoHNMEDxtpVA==
   dependencies:
     "@forge/util" "1.4.4"
+    fp-ts "^2.16.2"
+    io-ts "^2.2.21"
+    io-ts-reporters "^2.0.1"
+    node-fetch "2.7.0"
+    tslib "^2.6.2"
+    ws "^7.5.9"
+    yaml "^2.3.4"
+
+"@forge/runtime@5.10.3":
+  version "5.10.3"
+  resolved "https://registry.yarnpkg.com/@forge/runtime/-/runtime-5.10.3.tgz#ee1add5c3d7f888aa0432eab6e4715a9c9311d7f"
+  integrity sha512-6GmShkStTeEKC6ScH3VriW5IdGaMUDu1TiIfayktdSk7Zm1tL8deHP248CeRq3rbB1wV7yghrVxWEmSzFN51vw==
+  dependencies:
+    "@forge/util" "1.4.5"
     fp-ts "^2.16.2"
     io-ts "^2.2.21"
     io-ts-reporters "^2.0.1"
