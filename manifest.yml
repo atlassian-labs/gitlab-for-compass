@@ -64,7 +64,7 @@ modules:
         function: import-projects
         method: import
 app:
-  id: ari:cloud:ecosystem::app/e04e572c-d275-4782-95a5-b2084dda4e5f
+  id: ari:cloud:ecosystem::app/60787eba-aec5-49b4-979d-db8e77de32db
   runtime:
     name: nodejs18.x
   features:
