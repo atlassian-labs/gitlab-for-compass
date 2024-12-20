@@ -8,6 +8,12 @@ import {
 } from './types';
 import { FeaturesList } from './features';
 
+/*
+  TO EDIT THIS FILE, you must edit the file in the repo's src directory and running yarn ui:build or yarn ui:prebuild will generate the types in the ui/src directory.
+
+  This file contains types that are used in both of the directories and need to stay in sync. So, the ui/src types are gitignored
+ */
+
 export enum DefaultErrorTypes {
   UNEXPECTED_ERROR = 'UNEXPECTED_ERROR',
   NO_APP_ID_VARIABLE_DEFINED = 'NO_APP_ID_VARIABLE_DEFINED',

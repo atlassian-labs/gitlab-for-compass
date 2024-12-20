@@ -28,7 +28,7 @@ Set up the Custom UI Frontend
     # in a new tab
     yarn ui:install
    
-    # build the frontend 
+    # build the frontend. This will also duplicate several types files that are needed in the forge backend and ui, overwriting the versions in the ui
     yarn ui:build
     
     # watch the frontend
