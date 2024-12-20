@@ -49,7 +49,7 @@
   },
   "scripts": {
     "start": "SKIP_PREFLIGHT_CHECK=true BROWSER=none PORT=3001 react-scripts start",
-    "build": "SKIP_PREFLIGHT_CHECK=true react-scripts build",
+    "build": "yarn prebuild && SKIP_PREFLIGHT_CHECK=true react-scripts build",
     "test": "SKIP_PREFLIGHT_CHECK=true react-scripts test",
     "pretest": "node -p \"JSON.stringify({...require('@forge/bridge/package.json'), main: 'out/index.js'}, null, 2)\" > tmp.json && mv tmp.json node_modules/@forge/bridge/package.json",
     "eject": "react-scripts eject",
