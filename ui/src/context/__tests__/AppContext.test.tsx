@@ -1,7 +1,12 @@
 import { render } from '@testing-library/react';
 import { AppContextProvider } from '../AppContext';
 import { AppRouter } from '../../AppRouter';
-import { filledMocks, mocksWithError, webhookSetupInProgressMocks } from '../__mocks__/mocks';
+import {
+  filledMocks,
+  mocksWithError,
+  mockWithEnablindImportAllFF,
+  webhookSetupInProgressMocks,
+} from '../__mocks__/mocks';
 import { defaultMocks, mockInvoke, mockGetContext } from '../../helpers/mockHelpers';
 
 jest.mock('@forge/bridge', () => ({
@@ -68,6 +73,32 @@ describe('AppContext', () => {
     );
 
     expect(await findByTestId('gitlab-connected-page')).toBeDefined();
+  });
+
+  it('renders connected page with import all button, if FF_IMPORT_ALL_ENABLED ff is enabled', async () => {
+    mockInvoke(mockWithEnablindImportAllFF);
+    mockGetContext('admin-page-ui');
+
+    const { findByTestId } = render(
+      <AppContextProvider>
+        <AppRouter />
+      </AppContextProvider>,
+    );
+
+    expect(await findByTestId('import-all-repositories-btn')).toBeDefined();
+  });
+
+  it('renders connected page without import all button, if FF_IMPORT_ALL_ENABLED ff is disabled', () => {
+    mockInvoke(filledMocks);
+    mockGetContext('admin-page-ui');
+
+    const { queryByTestId } = render(
+      <AppContextProvider>
+        <AppRouter />
+      </AppContextProvider>,
+    );
+
+    expect(queryByTestId('import-all-repositories-btn')).toBeNull();
   });
 
   it('renders error', async () => {

@@ -1,3 +1,4 @@
+import { GitlabFeaturesEnum } from '../../features';
 import { defaultMocks } from '../../helpers/mockHelpers';
 
 export const filledMocks: {
@@ -13,6 +14,19 @@ export const filledMocks: {
         id: '1',
       },
     ],
+  },
+};
+
+export const mockWithEnablindImportAllFF: {
+  [key: string]: unknown;
+} = {
+  ...filledMocks,
+  features: {
+    success: true,
+    data: {
+      [GitlabFeaturesEnum.ENABLE_GITLAB_MAINTAINER_TOKEN]: true,
+      [GitlabFeaturesEnum.IMPORT_ALL]: true,
+    },
   },
 };
 

@@ -59,25 +59,29 @@ export const Description = styled.span`
   color: ${token('color.text', N900)};
 `;
 
-export const ImportButtonWrapper = styled.div`
-  margin-top: ${gridSize() * 2}px;
+export const StartImportButtonWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  gap: ${token('space.100', '8px')};
+  margin-top: ${token('space.200', '16px')};
+`;
 
-  > button {
-    margin-right: ${gridSize()}px;
-  }
-
-  time {
-    color: ${token('color.text.subtlest', N90)};
-    font-size: 11px;
-  }
+export const ImportButtonWrapper = styled.div<{ shouldShowImportAll: boolean }>`
+  width: ${(props) => props.shouldShowImportAll && 216}px;
 `;
 
 const disableLastHeaderCellStylingForSpotlight = css`
   th:last-child {
     padding: 0;
+  }
+`;
+
+export const LastSyncTimeWrapper = styled.div`
+  margin-top: ${token('space.050', '4px')};
+  time {
+    color: ${token('color.text.subtlest', N90)};
+    font-size: 11px;
   }
 `;
 
