@@ -71,12 +71,14 @@ export const getGroupProjects = (
   page: number,
   groupTokenId: number,
   search?: string,
+  perPage?: number,
 ): Promise<ResolverResponse<GroupProjectsResponse>> => {
   return invoke<ResolverResponse<GroupProjectsResponse>>('groups/projects', {
     groupId,
     page,
     groupTokenId,
     search,
+    perPage,
   });
 };
 

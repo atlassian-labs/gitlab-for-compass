@@ -1,9 +1,18 @@
-import { AuthErrorTypes, DefaultErrorTypes, FeaturesList, GitlabAPIGroup, ResolverResponse } from '../resolverTypes';
+import {
+  AuthErrorTypes,
+  DefaultErrorTypes,
+  FeaturesList,
+  GitlabAPIGroup,
+  ImportErrorTypes,
+  ResolverResponse,
+} from '../resolverTypes';
 import { listFeatures } from '../services/feature-flags';
 import { getAllExistingGroups, getConnectedGroups } from '../services/group';
 import { getWebhookSetupConfig, setupAndValidateWebhook } from '../services/webhooks';
 import { getForgeAppId } from '../utils/get-forge-app-id';
-import { WebhookSetupConfig } from '../types';
+import { GroupProjectsResponse, WebhookSetupConfig } from '../types';
+import { getGroupProjects } from '../services/fetch-projects';
+import { ImportFailedError, importProjects } from '../services/import-projects';
 
 export const getFeatures = (cloudId: string): ResolverResponse<FeaturesList> => {
   try {
@@ -77,6 +86,56 @@ export const webhookSetupConfig = async (): Promise<ResolverResponse<WebhookSetu
     return {
       success: false,
       errors: [{ message: e.message, errorType: DefaultErrorTypes.UNEXPECTED_ERROR }],
+    };
+  }
+};
+
+export const getGroupsProjects = async (req: any): Promise<ResolverResponse<GroupProjectsResponse>> => {
+  const {
+    payload: { groupId, page, groupTokenId, search, perPage },
+    context: { cloudId },
+  } = req;
+
+  try {
+    const { projects, total } = await getGroupProjects(cloudId, groupId, page, groupTokenId, search, perPage);
+
+    return { success: true, data: { projects, total } };
+  } catch (e) {
+    return {
+      success: false,
+      errors: [{ message: e.message, errorType: e.errorType }],
+    };
+  }
+};
+
+export const importProject = async (req: any): Promise<ResolverResponse> => {
+  const {
+    payload: { projectsReadyToImport, groupId },
+    context: { cloudId },
+  } = req;
+
+  console.log({
+    message: 'Begin importing projects',
+    count: projectsReadyToImport.length,
+    cloudId,
+  });
+
+  try {
+    await importProjects(cloudId, projectsReadyToImport, groupId);
+    return {
+      success: true,
+    };
+  } catch (e) {
+    if (e instanceof ImportFailedError) {
+      return {
+        success: false,
+        errors: [{ message: e.message, errorType: e.errorType }],
+      };
+    }
+
+    return {
+      success: false,
+      errors: [{ message: e.message, errorType: ImportErrorTypes.UNEXPECTED_ERROR }],
     };
   }
 };

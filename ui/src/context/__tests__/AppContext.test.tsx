@@ -1,4 +1,5 @@
-import { render } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
+import { getCallBridge as realGetCallBridge } from '@forge/bridge/out/bridge';
 import { AppContextProvider } from '../AppContext';
 import { AppRouter } from '../../AppRouter';
 import {
@@ -8,6 +9,8 @@ import {
   webhookSetupInProgressMocks,
 } from '../__mocks__/mocks';
 import { defaultMocks, mockInvoke, mockGetContext } from '../../helpers/mockHelpers';
+
+const MOCK_APP_ID = 'app-id';
 
 jest.mock('@forge/bridge', () => ({
   view: {
@@ -20,7 +23,27 @@ jest.mock('escape-string-regexp', () => ({
   escapeStringRegexp: jest.fn(),
 }));
 
+const mockedBridge = jest.fn();
+jest.mock('@forge/bridge/out/bridge', () => ({
+  getCallBridge: jest.fn(),
+}));
+
+const expectToSendAnalyticsEvent = (expectedAnalyticEvent: string) => {
+  expect(mockedBridge).toHaveBeenCalledWith('fireForgeAnalytic', {
+    forgeAppId: MOCK_APP_ID,
+    analyticEvent: expectedAnalyticEvent,
+  });
+};
+
+const getCallBridge: jest.Mock = realGetCallBridge as jest.Mock;
+
 describe('AppContext', () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+
+    getCallBridge.mockReturnValue(mockedBridge);
+  });
+
   it('renders application', async () => {
     mockInvoke(defaultMocks);
     mockGetContext('admin-page-ui');
@@ -85,7 +108,15 @@ describe('AppContext', () => {
       </AppContextProvider>,
     );
 
-    expect(await findByTestId('import-all-repositories-btn')).toBeDefined();
+    const importAllButton = await findByTestId('import-all-repositories-btn');
+
+    expect(importAllButton).toBeDefined();
+
+    importAllButton.click();
+
+    await waitFor(() => {
+      expectToSendAnalyticsEvent('importAllButton clicked');
+    });
   });
 
   it('renders connected page without import all button, if FF_IMPORT_ALL_ENABLED ff is disabled', () => {

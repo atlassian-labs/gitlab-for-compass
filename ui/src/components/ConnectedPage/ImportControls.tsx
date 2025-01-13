@@ -5,6 +5,8 @@ import Spinner from '@atlaskit/spinner';
 import InlineMessage from '@atlaskit/inline-message';
 import { router } from '@forge/bridge';
 
+import { getCallBridge } from '@forge/bridge/out/bridge';
+import { useNavigate } from 'react-router-dom';
 import { ImportProgressBar } from '../ImportProgressBar';
 import { useImportContext } from '../../hooks/useImportContext';
 import { getLastSyncTime } from '../../services/invokes';
@@ -12,6 +14,7 @@ import { formatLastSyncTime } from '../../helpers/time';
 import { ImportButtonWrapper, LastSyncTimeWrapper, StartImportButtonWrapper } from '../styles';
 import { useAppContext } from '../../hooks/useAppContext';
 import { Separator } from '../TooltipGenerator/styles';
+import { ApplicationState } from '../../routes';
 
 export const ImportControls = () => {
   const [lastSyncTime, setLastSyncTime] = useState<string | null>(null);
@@ -20,13 +23,22 @@ export const ImportControls = () => {
 
   const { isImportInProgress } = useImportContext();
   const { appId, features } = useAppContext();
+  const navigate = useNavigate();
 
   const handleImportNavigate = async () => {
     await router.navigate(`/compass/import/redirect/${encodeURIComponent(`ari:cloud:ecosystem::app/${appId}`)}`);
   };
 
   const handleImportAllButton = async () => {
-    // TODO: add import all logic
+    const actionSubject = 'importAllButton';
+    const action = 'clicked';
+
+    await getCallBridge()('fireForgeAnalytic', {
+      forgeAppId: appId,
+      analyticEvent: `${actionSubject} ${action}`,
+    });
+
+    navigate(`${ApplicationState.CONNECTED}/import-all`, { replace: true });
   };
 
   const fetchLastSyncTime = async () => {
