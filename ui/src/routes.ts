@@ -16,4 +16,7 @@ export const ROUTES = {
   ImportProgress: {
     path: `${ApplicationState.CONNECTED}/progress`,
   },
+  importAll: {
+    path: `${ApplicationState.CONNECTED}/import-all`,
+  },
 };

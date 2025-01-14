@@ -14,6 +14,8 @@ import {
 import { getProjectLabels } from './get-labels';
 import { ALL_SETTLED_STATUS, getFormattedErrors, hasRejections } from '../utils/promise-allsettled-helpers';
 
+const PER_PAGE = 10;
+
 const mapComponentLinks = (links: Link[] = []): CreateLinkInput[] =>
   links.map((link) => {
     return { url: link.url, type: link.type };
@@ -24,10 +26,10 @@ const fetchProjects = async (
   groupId: number,
   page: number,
   search?: string,
+  perPage = PER_PAGE,
 ): Promise<{ total: number; projects: Project[] }> => {
   try {
-    const PER_PAGE = 10;
-    const { data: projects, headers } = await getProjects(groupToken, groupId, page, PER_PAGE, search);
+    const { data: projects, headers } = await getProjects(groupToken, groupId, page, perPage, search);
 
     const generatedProjectsWithLanguagesResult = await Promise.allSettled(
       projects.map(async (project) => {
@@ -142,11 +144,12 @@ export const getGroupProjects = async (
   page: number,
   groupTokenId: number,
   search?: string,
+  perPage?: number,
 ): Promise<GroupProjectsResponse> => {
   try {
     const groupToken = await storage.getSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupTokenId}`);
 
-    const { projects, total } = await fetchProjects(groupToken, groupId, page, search);
+    const { projects, total } = await fetchProjects(groupToken, groupId, page, search, perPage);
 
     const checkedDataWithExistingComponentsResults = await Promise.allSettled(
       projects.map(({ id: projectId }) => {

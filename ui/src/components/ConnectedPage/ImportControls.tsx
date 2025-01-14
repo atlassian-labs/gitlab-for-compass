@@ -5,12 +5,16 @@ import Spinner from '@atlaskit/spinner';
 import InlineMessage from '@atlaskit/inline-message';
 import { router } from '@forge/bridge';
 
+import { getCallBridge } from '@forge/bridge/out/bridge';
+import { useNavigate } from 'react-router-dom';
 import { ImportProgressBar } from '../ImportProgressBar';
 import { useImportContext } from '../../hooks/useImportContext';
 import { getLastSyncTime } from '../../services/invokes';
 import { formatLastSyncTime } from '../../helpers/time';
-import { ImportButtonWrapper } from '../styles';
+import { ImportButtonWrapper, LastSyncTimeWrapper, StartImportButtonWrapper } from '../styles';
 import { useAppContext } from '../../hooks/useAppContext';
+import { Separator } from '../TooltipGenerator/styles';
+import { ApplicationState } from '../../routes';
 
 export const ImportControls = () => {
   const [lastSyncTime, setLastSyncTime] = useState<string | null>(null);
@@ -18,10 +22,23 @@ export const ImportControls = () => {
   const [lastSyncTimeErrorMessage, setLastSyncTimeAnErrorMessage] = useState<string>();
 
   const { isImportInProgress } = useImportContext();
-  const { appId } = useAppContext();
+  const { appId, features } = useAppContext();
+  const navigate = useNavigate();
 
   const handleImportNavigate = async () => {
     await router.navigate(`/compass/import/redirect/${encodeURIComponent(`ari:cloud:ecosystem::app/${appId}`)}`);
+  };
+
+  const handleImportAllButton = async () => {
+    const actionSubject = 'importAllButton';
+    const action = 'clicked';
+
+    await getCallBridge()('fireForgeAnalytic', {
+      forgeAppId: appId,
+      analyticEvent: `${actionSubject} ${action}`,
+    });
+
+    navigate(`${ApplicationState.CONNECTED}/import-all`, { replace: true });
   };
 
   const fetchLastSyncTime = async () => {
@@ -59,21 +76,46 @@ export const ImportControls = () => {
       {isImportInProgress ? (
         <ImportProgressBar />
       ) : (
-        <ImportButtonWrapper>
-          <Button appearance='primary' onClick={handleImportNavigate}>
-            Import
-          </Button>
-
-          {lastSyncTimeIsLoading && <Spinner data-testid='loading-spinner' />}
-          {lastSyncTimeErrorMessage && (
-            <InlineMessage testId='error-message' type='error' title={`Can't get last imported time`}>
-              <p>{lastSyncTimeErrorMessage}</p>
-            </InlineMessage>
+        <>
+          {features.isImportAllEnabled && (
+            <StartImportButtonWrapper>
+              <ImportButtonWrapper shouldShowImportAll={Boolean(features.isImportAllEnabled)}>
+                <Button
+                  shouldFitContainer
+                  testId='import-all-repositories-btn'
+                  appearance='primary'
+                  onClick={handleImportAllButton}
+                >
+                  Import all repositories
+                </Button>
+              </ImportButtonWrapper>
+            </StartImportButtonWrapper>
           )}
-          {!lastSyncTimeIsLoading && !lastSyncTimeErrorMessage && (
-            <time data-testid='last-import-time'>{lastSyncTimeMsg}</time>
-          )}
-        </ImportButtonWrapper>
+          {features.isImportAllEnabled && <Separator />}
+          <StartImportButtonWrapper>
+            <ImportButtonWrapper shouldShowImportAll={Boolean(features.isImportAllEnabled)}>
+              <Button
+                shouldFitContainer
+                testId='import-repositories-btn'
+                appearance={features.isImportAllEnabled ? 'default' : 'primary'}
+                onClick={handleImportNavigate}
+              >
+                Import
+              </Button>
+            </ImportButtonWrapper>
+          </StartImportButtonWrapper>
+          <LastSyncTimeWrapper>
+            {lastSyncTimeIsLoading && <Spinner data-testid='loading-spinner' />}
+            {lastSyncTimeErrorMessage && (
+              <InlineMessage testId='error-message' type='error' title={`Can't get last imported time`}>
+                <p>{lastSyncTimeErrorMessage}</p>
+              </InlineMessage>
+            )}
+            {!lastSyncTimeIsLoading && !lastSyncTimeErrorMessage && (
+              <time data-testid='last-import-time'>{lastSyncTimeMsg}</time>
+            )}
+          </LastSyncTimeWrapper>
+        </>
       )}
     </>
   );

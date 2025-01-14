@@ -19,7 +19,15 @@ import {
 } from '../services/import-projects';
 import { GroupProjectsResponse, TeamsWithMembershipStatus, WebhookSetupConfig } from '../types';
 import { getAllComponentTypeIds } from '../client/compass';
-import { appId, connectedGroupsInfo, getFeatures, groupsAllExisting, webhookSetupConfig } from './shared-resolvers';
+import {
+  appId,
+  connectedGroupsInfo,
+  getFeatures,
+  getGroupsProjects,
+  groupsAllExisting,
+  importProject,
+  webhookSetupConfig,
+} from './shared-resolvers';
 import { getFirstPageOfTeamsWithMembershipStatus } from '../services/get-teams';
 import { getTeamOnboarding, setTeamOnboarding } from '../services/onboarding';
 
@@ -34,53 +42,11 @@ resolver.define('groups/allExisting', async (): Promise<ResolverResponse<GitlabA
 });
 
 resolver.define('groups/projects', async (req): Promise<ResolverResponse<GroupProjectsResponse>> => {
-  const {
-    payload: { groupId, page, groupTokenId, search },
-    context: { cloudId },
-  } = req;
-
-  try {
-    const { projects, total } = await getGroupProjects(cloudId, groupId, page, groupTokenId, search);
-
-    return { success: true, data: { projects, total } };
-  } catch (e) {
-    return {
-      success: false,
-      errors: [{ message: e.message, errorType: e.errorType }],
-    };
-  }
+  return getGroupsProjects(req);
 });
 
 resolver.define('project/import', async (req): Promise<ResolverResponse> => {
-  const {
-    payload: { projectsReadyToImport, groupId },
-    context: { cloudId },
-  } = req;
-
-  console.log({
-    message: 'Begin importing projects',
-    count: projectsReadyToImport.length,
-    cloudId,
-  });
-
-  try {
-    await importProjects(cloudId, projectsReadyToImport, groupId);
-    return {
-      success: true,
-    };
-  } catch (e) {
-    if (e instanceof ImportFailedError) {
-      return {
-        success: false,
-        errors: [{ message: e.message, errorType: e.errorType }],
-      };
-    }
-
-    return {
-      success: false,
-      errors: [{ message: e.message, errorType: ImportErrorTypes.UNEXPECTED_ERROR }],
-    };
-  }
+  return importProject(req);
 });
 
 resolver.define('project/import/status', async (): Promise<ResolverResponse<ImportStatus>> => {

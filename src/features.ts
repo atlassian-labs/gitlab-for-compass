@@ -9,6 +9,7 @@ export enum GitlabFeaturesEnum {
   DATA_COMPONENT_TYPES = 'isDataComponentTypesEnabled',
   DISABLE_DOCUMENT_COMPONENT_LINKS = 'isDocumentComponentLinksDisabled',
   ENABLE_GITLAB_MAINTAINER_TOKEN = 'isGitlabMaintainerTokenEnabled',
+  IMPORT_ALL = 'isImportAllEnabled',
 }
 
 export type FeaturesList = { [key in GitlabFeaturesEnum]: boolean };

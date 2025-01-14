@@ -7,6 +7,7 @@ import { ImportProgressResultPage } from './components/ImportProgressResultPage'
 import { useAppContext } from './hooks/useAppContext';
 import { ApplicationState, ROUTES } from './routes';
 import { IMPORT_MODULE_KEY } from './constants';
+import { ImportAllPage } from './components/ImportAll';
 
 export const AppRouter = () => {
   const { initialRoute, moduleKey } = useAppContext();
@@ -29,6 +30,7 @@ export const AppRouter = () => {
           <Routes>
             <Route {...ROUTES[ApplicationState.AUTH]} element={<AuthPage />} />
             <Route {...ROUTES[ApplicationState.CONNECTED]} element={<ConnectedPage />} />
+            <Route {...ROUTES.importAll} element={<ImportAllPage />} />
             <Route {...ROUTES.Import} element={<SelectImportPage />} />
             <Route {...ROUTES.ImportProgress} element={<ImportProgressResultPage moduleKey={moduleKey} />} />
           </Routes>

@@ -24,6 +24,11 @@ export const getComponentTypeOption = (typeId?: string): CompassComponentTypeOpt
   return getComponentTypeOption(DEFAULT_COMPONENT_TYPE_ID);
 };
 
+export const sleep = (ms: number): Promise<void> => {
+  // eslint-disable-next-line no-promise-executor-return
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
+
 export const tooltipsText = {
   managed: {
     title: 'Managed',

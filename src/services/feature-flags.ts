@@ -22,11 +22,16 @@ export const isGitlabMaintainerTokenEnabled = (cloudId?: string, defaultValue = 
   return (process.env.ENABLE_GITLAB_MAINTAINER_TOKEN === 'true' && isEnabledForCloudId) || defaultValue;
 };
 
+const isImportAllEnabled = (defaultValue = false): boolean => {
+  return process.env.FF_IMPORT_ALL_ENABLED === 'true' || defaultValue;
+};
+
 export const listFeatures = (cloudId?: string): FeaturesList => {
   return {
     [GitlabFeaturesEnum.SEND_STAGING_EVENTS]: isSendStagingEventsEnabled(),
     [GitlabFeaturesEnum.DATA_COMPONENT_TYPES]: isDataComponentTypesEnabled(),
     [GitlabFeaturesEnum.DISABLE_DOCUMENT_COMPONENT_LINKS]: isDocumentComponentLinksDisabled(),
     [GitlabFeaturesEnum.ENABLE_GITLAB_MAINTAINER_TOKEN]: isGitlabMaintainerTokenEnabled(cloudId),
+    [GitlabFeaturesEnum.IMPORT_ALL]: isImportAllEnabled(),
   };
 };

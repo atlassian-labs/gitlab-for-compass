@@ -8,8 +8,16 @@ import { setupAndValidateWebhook } from '../services/webhooks';
 import { disconnectGroup } from '../services/disconnect-group';
 import { getForgeAppId } from '../utils/get-forge-app-id';
 import { getLastSyncTime } from '../services/last-sync-time';
-import { appId, connectedGroupsInfo, getFeatures, groupsAllExisting, webhookSetupConfig } from './shared-resolvers';
-import { ConnectGroupInput, GitLabRoles, WebhookSetupConfig } from '../types';
+import {
+  appId,
+  connectedGroupsInfo,
+  getFeatures,
+  getGroupsProjects,
+  groupsAllExisting,
+  importProject,
+  webhookSetupConfig,
+} from './shared-resolvers';
+import { ConnectGroupInput, GitLabRoles, GroupProjectsResponse, WebhookSetupConfig } from '../types';
 
 const resolver = new Resolver();
 
@@ -114,6 +122,10 @@ resolver.define('groups/allExisting', async (): Promise<ResolverResponse<GitlabA
   return groupsAllExisting();
 });
 
+resolver.define('groups/projects', async (req): Promise<ResolverResponse<GroupProjectsResponse>> => {
+  return getGroupsProjects(req);
+});
+
 resolver.define('project/lastSyncTime', async (): Promise<ResolverResponse<string | null>> => {
   try {
     const lastSyncTime = await getLastSyncTime();
@@ -127,6 +139,10 @@ resolver.define('project/lastSyncTime', async (): Promise<ResolverResponse<strin
       errors: [{ message: e.message, errorType: DefaultErrorTypes.UNEXPECTED_ERROR }],
     };
   }
+});
+
+resolver.define('project/import', async (req): Promise<ResolverResponse> => {
+  return importProject(req);
 });
 
 resolver.define('features', (req): ResolverResponse<FeaturesList> => {
