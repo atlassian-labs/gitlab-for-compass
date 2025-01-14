@@ -173,7 +173,9 @@ export const getWebhookSetupConfig = async (): Promise<WebhookSetupConfig> => {
   const groupsResult = await Promise.allSettled(groups.map((group: Result) => storage.get(group.key)));
 
   if (hasRejections(groupsResult)) {
-    throw new Error(`Error getting groupIds with in-progress webhooks setup: ${getFormattedErrors(groupsResult)}`);
+    const errorMsg = `Error getting groupIds with in-progress webhooks setup: ${getFormattedErrors(groupsResult)}`;
+    console.log(errorMsg);
+    throw new Error(errorMsg);
   }
 
   const groupIds = groupsResult.map((groupResult: PromiseFulfilledResult<number>) => groupResult.value);

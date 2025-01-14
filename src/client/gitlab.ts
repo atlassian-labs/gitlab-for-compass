@@ -82,6 +82,8 @@ export const callGitlab = async (
     body,
   });
 
+  console.log(`Gitlab response status: ${resp.status}`);
+
   if (resp.status === 204) {
     // no content, we can just return here
     return null;
@@ -105,20 +107,20 @@ export const getGroupsData = async (
   owned?: string,
   minAccessLevel?: number,
   name?: string,
+  pageSize = 100,
 ): Promise<GitlabAPIGroup[]> => {
   const params = {
     ...(owned ? { owned } : {}),
     ...(minAccessLevel ? { min_access_level: minAccessLevel.toString() } : {}),
     ...(name ? { search: name } : {}),
+    ...(pageSize ? { per_page: pageSize.toString() } : {}),
   };
 
   const queryParams = queryParamsGenerator(params);
 
-  const { data } = await callGitlab(
-    `getGroupsData - Query params: ${queryParams}`,
-    `/api/v4/groups?${queryParams}`,
-    groupAccessToken,
-  );
+  const { data } = await callGitlab(`getGroupsData`, `/api/v4/groups?${queryParams}`, groupAccessToken);
+
+  console.log('Number of groups fetched:', data.length);
 
   return data;
 };
