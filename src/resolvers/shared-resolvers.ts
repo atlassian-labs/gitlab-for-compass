@@ -43,6 +43,7 @@ export const groupsAllExisting = async (): Promise<ResolverResponse<GitlabAPIGro
 };
 
 export const connectedGroupsInfo = async (): Promise<ResolverResponse<GitlabAPIGroup[]>> => {
+  console.log('Fetching connected groups info');
   try {
     const connectedGroups = await getConnectedGroups();
     const setupConfig = await getWebhookSetupConfig();
@@ -53,6 +54,7 @@ export const connectedGroupsInfo = async (): Promise<ResolverResponse<GitlabAPIG
 
     return { success: true, data: connectedGroups };
   } catch (e) {
+    console.log('Error fetching connected groups info', e);
     return {
       success: false,
       errors: [{ message: 'Get connected groups failed.', errorType: AuthErrorTypes.UNEXPECTED_ERROR }],
@@ -76,6 +78,7 @@ export const appId = (): ResolverResponse<string> => {
 };
 
 export const webhookSetupConfig = async (): Promise<ResolverResponse<WebhookSetupConfig>> => {
+  console.log('Fetching webhook setup config');
   try {
     const config = await getWebhookSetupConfig();
     return {
@@ -83,6 +86,7 @@ export const webhookSetupConfig = async (): Promise<ResolverResponse<WebhookSetu
       data: config,
     };
   } catch (e) {
+    console.log('Error fetching webhook setup config', e);
     return {
       success: false,
       errors: [{ message: e.message, errorType: DefaultErrorTypes.UNEXPECTED_ERROR }],

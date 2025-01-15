@@ -51,8 +51,10 @@ export const connectGroupAsMaintainer = async (token: string, groupName: string)
 
   let groups: GitlabAPIGroup[];
   try {
+    console.log('Fetching groups data for Maintainer token role');
     groups = await getGroupsData(token, null, null, groupName);
   } catch (e) {
+    console.log('Error fetching groups data for Maintainer token role');
     throw new InvalidGroupTokenError(AuthErrorTypes.INVALID_GROUP_TOKEN);
   }
 
@@ -79,6 +81,7 @@ export const connectGroupAsOwner = async (
   let groupId;
   let groupName;
   try {
+    console.log('Fetching groups data for Owner token role');
     const [group] = await getGroupsData(token, 'true');
     ({ id: groupId, name: groupName } = group);
   } catch (e) {
