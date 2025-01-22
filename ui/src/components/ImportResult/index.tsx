@@ -15,7 +15,7 @@ import { useImportResult } from '../../hooks/useImportResult';
 import { CenterWrapper, SectionWrapper, TableWrapper } from '../styles';
 import { clearResult } from '../../services/invokes';
 import { ErrorTypes, ImportErrorTypes } from '../../resolverTypes';
-import { checkOnboardingRedirection } from '../utils';
+import { checkOnboardingRedirection } from '../onboarding-flow-context-helper';
 
 export const ImportResult: FunctionComponent = () => {
   const [error, setError] = useState<ErrorTypes | null>();

@@ -55,21 +55,3 @@ export const tooltipsText = {
     children: <EditorPanelIcon label='status-header-icon' />,
   },
 };
-
-export async function isRenderingInOnboardingFlow(): Promise<boolean> {
-  try {
-    const context = await view.getContext();
-    return context.extension.renderingLocation === 'onboardingFlow';
-  } catch (error) {
-    console.error('Error fetching onboarding flow context:', error);
-    return false;
-  }
-}
-
-export async function checkOnboardingRedirection(err?: string): Promise<void> {
-  const isInOnboardingFlow = await isRenderingInOnboardingFlow();
-  if (isInOnboardingFlow) {
-    const params = err ? { error: err } : {};
-    await getCallBridge()('redirectOnboardingTube', params);
-  }
-}

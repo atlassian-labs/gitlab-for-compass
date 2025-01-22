@@ -56,6 +56,7 @@ export const mockGetContext = (moduleKey: string) => {
   getContext.mockImplementation(async () => {
     return {
       moduleKey,
+      extension: {},
     };
   });
 };
