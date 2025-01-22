@@ -1,6 +1,4 @@
 import EditorPanelIcon from '@atlaskit/icon/glyph/editor/panel';
-import { getCallBridge } from '@forge/bridge/out/bridge';
-import { view } from '@forge/bridge';
 import { CompassComponentTypeOption } from '../services/types';
 import { StatusLabel } from './styles';
 import { DEFAULT_COMPONENT_TYPE_ID } from '../constants';
