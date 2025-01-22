@@ -1105,7 +1105,7 @@
 
 "@atlassian/forge-ui-types@^31.14.1":
   version "31.14.1"
-  resolved "https://registry.yarnpkg.com/api/npm/atlassian-npm/@atlassian/forge-ui-types/-/@atlassian/forge-ui-types-31.14.1.tgz#dcf623629f37e716d7978da7b65aacb01f7d0ab7"
+  resolved "https://registry.yarnpkg.com/@atlassian/forge-ui-types/-/forge-ui-types-31.14.1.tgz#dcf623629f37e716d7978da7b65aacb01f7d0ab7"
   integrity sha512-WwxuwAh4eGeeedgLrP5d8hFOL7r7Snaliaac1RErsPa2lkkAOfASPuExkRAxANJexqhx5JK6iWJMWYusgJHBLw==
   dependencies:
     "@babel/runtime" "^7.0.0"
