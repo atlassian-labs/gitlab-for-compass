@@ -1,22 +1,7 @@
-import { N0 } from '@atlaskit/theme/colors';
-import { token } from '@atlaskit/tokens';
+import { CompassComponentTypeObject } from '@atlassian/forge-graphql';
 
-import { ComponentIconBackground } from './component-icon-background';
-import { ComponentIconGlyph, ComponentIconGlyphProps } from './component-icon-glyph';
+export const ComponentTypeIcon = (props: Pick<CompassComponentTypeObject, 'name' | 'iconUrl'>) => {
+  const { name, iconUrl } = props;
 
-export type ComponentTypeIconProps = Omit<ComponentIconGlyphProps, 'primaryColor' | 'secondaryColor'>;
-
-export const ComponentTypeIcon = (props: ComponentTypeIconProps): JSX.Element => {
-  const { typeId, testId, size = 'medium', ...forwardProps } = props;
-
-  return (
-    <ComponentIconBackground testId={testId} typeId={typeId} size={size}>
-      <ComponentIconGlyph
-        typeId={typeId}
-        size={size}
-        primaryColor={token('color.icon.inverse', N0)}
-        {...forwardProps}
-      />
-    </ComponentIconBackground>
-  );
+  return iconUrl ? <img src={iconUrl} alt={name ?? ''} width={24} height={24} /> : null;
 };

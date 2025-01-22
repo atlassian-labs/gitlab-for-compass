@@ -4,7 +4,7 @@ import { RowType } from '@atlaskit/dynamic-table/dist/types/types';
 
 import { CompassComponentTypeOption, ComponentTypesResult, ProjectImportSelection } from '../../services/types';
 import { ForgeLink } from '../ForgeLink';
-import { getComponentTypeOption, tooltipsText } from '../utils';
+import { getComponentTypeOptionForBuiltInType, tooltipsText } from '../utils';
 import { TruncateDescription } from '../styles';
 import { TooltipGenerator } from '../TooltipGenerator';
 import { DropdownWrapper } from './styles';
@@ -132,7 +132,7 @@ export const buildTableBody = ({
                 isDisabled={isManaged || isCompassFilePrOpened || hasComponent}
                 selectedOption={typeOption}
                 onChange={(value) =>
-                  onChangeComponentType(id, value ?? getComponentTypeOption(DEFAULT_COMPONENT_TYPE_ID))
+                  onChangeComponentType(id, value ?? getComponentTypeOptionForBuiltInType(DEFAULT_COMPONENT_TYPE_ID))
                 }
               />
             </DropdownWrapper>

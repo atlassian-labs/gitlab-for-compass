@@ -3,7 +3,7 @@ import { ForgeLink } from '../ForgeLink';
 import { CompassComponentTypeOption, ComponentTypesResult, ProjectImportSelection } from '../../services/types';
 import ComponentTypeSelect from '../ComponentTypeSelect';
 import { DEFAULT_COMPONENT_TYPE_ID } from '../../constants';
-import { getComponentTypeOption } from '../utils';
+import { getComponentTypeOptionForBuiltInType } from '../utils';
 import { OwnerTeamSelect } from '../OwnerTeamSelect';
 import { SelectOwnerTeamOption } from '../OwnerTeamSelect/types';
 import { TeamsForImportResult } from '../../hooks/useTeamsForImport';
@@ -57,7 +57,10 @@ export const buildTableBody = ({
               isDisabled={project.isManaged || project.isCompassFilePrOpened || project.hasComponent}
               selectedOption={project.typeOption}
               onChange={(value) =>
-                onChangeComponentType(project.id, value ?? getComponentTypeOption(DEFAULT_COMPONENT_TYPE_ID))
+                onChangeComponentType(
+                  project.id,
+                  value ?? getComponentTypeOptionForBuiltInType(DEFAULT_COMPONENT_TYPE_ID),
+                )
               }
             />
           ),

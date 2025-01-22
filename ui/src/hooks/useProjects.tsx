@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { ProjectImportSelection } from '../services/types';
-import { getComponentTypeOption } from '../components/utils';
+import { getComponentTypeOptionForBuiltInType } from '../components/utils';
 
 type UseProjectsReturnType = {
   changedProjects: ProjectImportSelection[];
@@ -47,7 +47,7 @@ export const useProjects = (projects: ProjectImportSelection[]): UseProjectsRetu
             ...prevState,
             {
               ...project,
-              typeOption: project.typeOption || getComponentTypeOption(project.typeId),
+              typeOption: project.typeOption || getComponentTypeOptionForBuiltInType(project.typeId),
               ownerTeamOption: project.ownerTeamOption,
             },
           ]);

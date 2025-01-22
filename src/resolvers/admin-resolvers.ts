@@ -11,6 +11,7 @@ import { getLastSyncTime } from '../services/last-sync-time';
 import {
   appId,
   connectedGroupsInfo,
+  getAllComponentTypes,
   getFeatures,
   getGroupsProjects,
   groupsAllExisting,
@@ -156,5 +157,7 @@ resolver.define('features', (req): ResolverResponse<FeaturesList> => {
 resolver.define('appId', (): ResolverResponse<string> => {
   return appId();
 });
+
+resolver.define('getAllCompassComponentTypes', getAllComponentTypes);
 
 export default resolver.getDefinitions();

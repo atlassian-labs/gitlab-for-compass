@@ -18,8 +18,8 @@ import { ConfirmationScreen } from './screens/ConfirmationScreen';
 import { SelectorItem } from './screens/SelectProjectsScreen/buildGroupsSelectorOptions';
 import { useAppContext } from '../../hooks/useAppContext';
 import { useComponentTypes } from '../../hooks/useComponentTypes';
-import { getComponentTypeOption } from '../utils';
 import { checkOnboardingRedirection } from '../onboarding-flow-context-helper';
+import { getComponentTypeOptionForBuiltInType } from '../utils';
 import { getAvailableImportComponentTypes } from './utils';
 import { useProjects } from '../../hooks/useProjects';
 import { useTeamsForImport } from '../../hooks/useTeamsForImport';
@@ -124,7 +124,7 @@ export const SelectImportPage = () => {
             return {
               ...project,
               isSelected: Boolean(selectedProject?.isSelected),
-              typeOption: selectedProject?.typeOption ?? getComponentTypeOption(project?.typeId),
+              typeOption: selectedProject?.typeOption ?? getComponentTypeOptionForBuiltInType(project?.typeId),
               ownerTeamOption: selectedProject?.ownerTeamOption || null,
             };
           });

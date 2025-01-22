@@ -14,14 +14,14 @@ export const getComponentTypeIdLabel = (typeId: string) => {
   );
 };
 
-export const getComponentTypeOption = (typeId?: string): CompassComponentTypeOption => {
+export const getComponentTypeOptionForBuiltInType = (typeId?: string): CompassComponentTypeOption => {
   if (typeId) {
     return {
       label: getComponentTypeIdLabel(typeId),
       value: typeId,
     };
   }
-  return getComponentTypeOption(DEFAULT_COMPONENT_TYPE_ID);
+  return getComponentTypeOptionForBuiltInType(DEFAULT_COMPONENT_TYPE_ID);
 };
 
 export const sleep = (ms: number): Promise<void> => {

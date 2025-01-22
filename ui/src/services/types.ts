@@ -1,3 +1,4 @@
+import { CompassComponentTypeObject } from '@atlassian/forge-graphql';
 import { SelectOwnerTeamOption } from '../components/OwnerTeamSelect/types';
 import { ErrorTypes, ProjectReadyForImport } from '../resolverTypes';
 
@@ -12,12 +13,8 @@ export type ProjectImportSelection = ProjectReadyForImport & {
   ownerTeamOption: SelectOwnerTeamOption | null;
 };
 
-export type CompassComponentTypeId = {
-  id: string;
-};
-
 export type ComponentTypesResult = {
   componentTypesLoading: boolean;
   error: ErrorTypes | null | undefined;
-  componentTypes: CompassComponentTypeId[];
+  componentTypes: CompassComponentTypeObject[];
 };

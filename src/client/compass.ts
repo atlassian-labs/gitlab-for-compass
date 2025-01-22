@@ -165,9 +165,9 @@ export async function getComponent(input: GetComponentInput): Promise<ComponentP
   return data;
 }
 
-export const getAllComponentTypeIds = async (cloudId: string): Promise<CompassComponentTypeObject[]> => {
+export const getAllComponentTypes = async (cloudId: string): Promise<CompassComponentTypeObject[]> => {
   const { data, errors } = await graphqlGateway.compass.asApp().getAllComponentTypes({ cloudId });
-  throwIfErrors('getAllComponentTypeIds', errors);
+  throwIfErrors('getAllComponentTypes', errors);
   return data.componentTypes;
 };
 

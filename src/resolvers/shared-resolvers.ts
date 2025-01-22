@@ -1,3 +1,5 @@
+import { CompassComponentTypeObject } from '@atlassian/forge-graphql';
+import { Request } from '@forge/resolver';
 import {
   AuthErrorTypes,
   DefaultErrorTypes,
@@ -13,6 +15,7 @@ import { getForgeAppId } from '../utils/get-forge-app-id';
 import { GroupProjectsResponse, WebhookSetupConfig } from '../types';
 import { getGroupProjects } from '../services/fetch-projects';
 import { ImportFailedError, importProjects } from '../services/import-projects';
+import { getAllComponentTypes } from '../client/compass';
 
 export const getFeatures = (cloudId: string): ResolverResponse<FeaturesList> => {
   try {
@@ -140,6 +143,19 @@ export const importProject = async (req: any): Promise<ResolverResponse> => {
     return {
       success: false,
       errors: [{ message: e.message, errorType: ImportErrorTypes.UNEXPECTED_ERROR }],
+    };
+  }
+};
+
+export const getAllComponentTypes = async (req: Request): Promise<ResolverResponse<CompassComponentTypeObject[]>> => {
+  const { cloudId } = req.context;
+  try {
+    const componentTypes = await getAllComponentTypes(cloudId);
+    return { success: true, data: componentTypes };
+  } catch (e) {
+    return {
+      success: false,
+      errors: [{ message: e.message }],
     };
   }
 };
