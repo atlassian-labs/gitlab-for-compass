@@ -1,6 +1,5 @@
 import EditorPanelIcon from '@atlaskit/icon/glyph/editor/panel';
 import { getCallBridge } from '@forge/bridge/out/bridge';
-import { RenderingLocations } from '@atlassian/forge-ui-types';
 import { view } from '@forge/bridge';
 import { CompassComponentTypeOption } from '../services/types';
 import { StatusLabel } from './styles';
@@ -60,7 +59,7 @@ export const tooltipsText = {
 export async function isRenderingInOnboardingFlow(): Promise<boolean> {
   try {
     const context = await view.getContext();
-    return context.extension.renderingLocation === RenderingLocations.OnboardingFlow;
+    return context.extension.renderingLocation === 'onboardingFlow';
   } catch (error) {
     console.error('Error fetching onboarding flow context:', error);
     return false;
