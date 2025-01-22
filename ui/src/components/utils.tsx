@@ -1,4 +1,7 @@
 import EditorPanelIcon from '@atlaskit/icon/glyph/editor/panel';
+import { getCallBridge } from '@forge/bridge/out/bridge';
+import { RenderingLocations } from '@atlassian/forge-ui-types';
+import { view } from '@forge/bridge';
 import { CompassComponentTypeOption } from '../services/types';
 import { StatusLabel } from './styles';
 import { DEFAULT_COMPONENT_TYPE_ID } from '../constants';
@@ -53,3 +56,21 @@ export const tooltipsText = {
     children: <EditorPanelIcon label='status-header-icon' />,
   },
 };
+
+export async function isRenderingInOnboardingFlow(): Promise<boolean> {
+  try {
+    const context = await view.getContext();
+    return context.extension.renderingLocation === RenderingLocations.OnboardingFlow;
+  } catch (error) {
+    console.error('Error fetching onboarding flow context:', error);
+    return false;
+  }
+}
+
+export async function checkOnboardingRedirection(err?: string): Promise<void> {
+  const isInOnboardingFlow = await isRenderingInOnboardingFlow();
+  if (isInOnboardingFlow) {
+    const params = err ? { error: err } : {};
+    await getCallBridge()('redirectOnboardingTube', params);
+  }
+}

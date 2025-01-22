@@ -18,7 +18,7 @@ import { ConfirmationScreen } from './screens/ConfirmationScreen';
 import { SelectorItem } from './screens/SelectProjectsScreen/buildGroupsSelectorOptions';
 import { useAppContext } from '../../hooks/useAppContext';
 import { useComponentTypes } from '../../hooks/useComponentTypes';
-import { getComponentTypeOption } from '../utils';
+import { checkOnboardingRedirection, getComponentTypeOption } from '../utils';
 import { getAvailableImportComponentTypes } from './utils';
 import { useProjects } from '../../hooks/useProjects';
 import { useTeamsForImport } from '../../hooks/useTeamsForImport';
@@ -262,6 +262,9 @@ export const SelectImportPage = () => {
   };
 
   const handleNavigateToConnectedPage = async () => {
+    await checkOnboardingRedirection('CONFIGURATION_ERROR').catch((error) => {
+      console.error('Error checking if context is in onboarding flow:', error);
+    });
     await router.navigate('/compass/components');
   };
 

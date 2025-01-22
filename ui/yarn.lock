@@ -1103,6 +1103,13 @@
     path "^0.12.7"
     url-parse "^1.5.10"
 
+"@atlassian/forge-ui-types@^31.14.1":
+  version "31.14.1"
+  resolved "https://packages.atlassian.com/api/npm/atlassian-npm/@atlassian/forge-ui-types/-/@atlassian/forge-ui-types-31.14.1.tgz#dcf623629f37e716d7978da7b65aacb01f7d0ab7"
+  integrity sha512-WwxuwAh4eGeeedgLrP5d8hFOL7r7Snaliaac1RErsPa2lkkAOfASPuExkRAxANJexqhx5JK6iWJMWYusgJHBLw==
+  dependencies:
+    "@babel/runtime" "^7.0.0"
+
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.10.4", "@babel/code-frame@^7.12.13", "@babel/code-frame@^7.16.0", "@babel/code-frame@^7.16.7", "@babel/code-frame@^7.8.3":
   version "7.16.7"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.16.7.tgz#44416b6bd7624b998f5b1af5d470856c40138789"
