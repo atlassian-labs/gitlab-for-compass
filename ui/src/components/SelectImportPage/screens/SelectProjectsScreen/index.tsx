@@ -45,6 +45,7 @@ type Props = {
   selectProjectTeam: (id: number, ownerTeamOption: SelectOwnerTeamOption | null) => void;
   isSpotlightActive: boolean;
   finishOnboarding: () => void;
+  isOnboardingFlow: boolean;
 };
 
 export const SelectProjectsScreen = ({
@@ -70,6 +71,7 @@ export const SelectProjectsScreen = ({
   selectProjectTeam,
   isSpotlightActive,
   finishOnboarding,
+  isOnboardingFlow,
 }: Props) => {
   const groupSelectorOptions = useMemo(
     () => buildGroupsSelectorOptions(groups, locationGroupId),
@@ -113,6 +115,7 @@ export const SelectProjectsScreen = ({
         selectProjectTeam={selectProjectTeam}
         isSpotlightActive={isSpotlightActive}
         finishOnboarding={finishOnboarding}
+        isOnboardingFlow={isOnboardingFlow}
       />
       {projects.length !== 0 ? (
         <>

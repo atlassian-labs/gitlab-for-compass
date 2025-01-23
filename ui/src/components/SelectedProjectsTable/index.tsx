@@ -11,17 +11,19 @@ export const SelectedProjectsTable = ({
   importableComponentTypes,
   teamsResult,
   selectProjectTeam,
+  isOnboardingFlow,
 }: SelectedProjectsProps) => {
   return (
     <TableWrapper>
       <DynamicTableStateless
-        head={buildTableHead()}
+        head={buildTableHead({ isOnboardingFlow })}
         rows={buildTableBody({
           projectsReadyToImport,
           onChangeComponentType,
           importableComponentTypes,
           teamsResult,
           selectProjectTeam,
+          isOnboardingFlow,
         })}
       />
     </TableWrapper>
