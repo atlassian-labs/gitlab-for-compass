@@ -10,6 +10,7 @@ import { useImportContext } from '../../hooks/useImportContext';
 import { ApplicationState } from '../../routes';
 import { ImportProgressBar } from '../ImportProgressBar';
 import { ImportResult } from '../ImportResult';
+import { checkOnboardingRedirection } from '../onboarding-flow-context-helper';
 
 const DoneButtonWrapper = styled.div`
   margin-top: ${gridSize() * 2}px;
@@ -24,7 +25,11 @@ export const ImportProgressResultPage = ({ moduleKey }: Props) => {
 
   const navigate = useNavigate();
 
-  const handleNavigateWhenDone = async () => {
+  const handleNavigateWhenDone = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    await checkOnboardingRedirection().catch((err) => {
+      console.error('Error redirecting to onboarding:', err);
+    });
     if (moduleKey === IMPORT_MODULE_KEY) {
       await router.navigate('/compass/components?status=pending');
     } else {

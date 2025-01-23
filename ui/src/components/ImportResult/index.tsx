@@ -49,8 +49,6 @@ export const ImportResult: FunctionComponent = () => {
       try {
         if (failedProjects.length > 0) {
           await checkOnboardingRedirection('IMPORT_ERROR');
-        } else {
-          await checkOnboardingRedirection();
         }
       } catch (err) {
         console.error('Error checking if context is in onboarding flow:', err);

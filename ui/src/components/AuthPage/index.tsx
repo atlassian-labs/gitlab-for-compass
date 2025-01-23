@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { router } from '@forge/bridge';
 
@@ -133,6 +133,7 @@ export const AuthPage = () => {
       if (success) {
         await fireAppConfiguredAnalytic();
         await refreshWebhookConfig();
+        await checkOnboardingRedirection();
 
         if (features.isGitlabMaintainerTokenEnabled && selectedRole === GitLabRoles.OWNER) {
           handleNavigateToConnectedPage();
