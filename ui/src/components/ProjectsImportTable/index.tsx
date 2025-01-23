@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { DynamicTableStateless } from '@atlaskit/dynamic-table';
 
 import { buildTableBody } from './buildTableBody';
@@ -8,6 +8,7 @@ import { CompassComponentTypeOption, ComponentTypesResult, ProjectImportSelectio
 import { TableWrapper } from '../styles';
 import { SelectOwnerTeamOption } from '../OwnerTeamSelect/types';
 import { TeamsForImportResult } from '../../hooks/useTeamsForImport';
+import { isRenderingInOnboardingFlow } from '../onboarding-flow-context-helper';
 
 type Props = {
   projects: ProjectImportSelection[];
@@ -45,6 +46,19 @@ export const ProjectsImportTable = ({
     [projects, isLoading],
   );
 
+  const [isOnboardingFlow, setIsOnboardingFlow] = useState<boolean>(false);
+
+  useEffect(() => {
+    const processAsync = async () => {
+      const isOnbarding = await isRenderingInOnboardingFlow();
+      setIsOnboardingFlow(isOnbarding);
+    };
+
+    processAsync().catch((e) => {
+      console.error(`Failed to get onboarding state: ${e}`);
+    });
+  }, []);
+
   return (
     <>
       <TableWrapper>
@@ -57,6 +71,7 @@ export const ProjectsImportTable = ({
             isLoading,
             isSpotlightActive,
             finishOnboarding,
+            isOnboardingFlow,
           })}
           rows={buildTableBody({
             projects,
@@ -65,6 +80,7 @@ export const ProjectsImportTable = ({
             importableComponentTypes,
             teamsResult,
             selectProjectTeam,
+            isOnboardingFlow,
           })}
           loadingSpinnerSize={SPINNER_SIZE}
           isLoading={isLoading}

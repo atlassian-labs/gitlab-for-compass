@@ -17,6 +17,7 @@ type Params = {
   isLoading: boolean;
   isSpotlightActive: boolean;
   finishOnboarding: () => void;
+  isOnboardingFlow: boolean;
 };
 
 export const buildTableHead = ({
@@ -26,6 +27,7 @@ export const buildTableHead = ({
   projects,
   isSpotlightActive,
   finishOnboarding,
+  isOnboardingFlow,
 }: Params): HeadType => {
   return {
     cells: [
@@ -44,75 +46,83 @@ export const buildTableHead = ({
       {
         key: 'NAME',
         content: 'Name',
-        width: 10,
+        width: isOnboardingFlow ? 30 : 10,
         isSortable: false,
       },
       {
         key: 'GROUP_NAME',
         content: 'Group name',
-        width: 15,
+        width: isOnboardingFlow ? 10 : 15,
         isSortable: false,
       },
-      {
-        key: 'DESCRIPTION',
-        content: 'Description',
-        width: 30,
-        isSortable: false,
-      },
-      {
-        key: 'STATUS',
-        content: (
-          <StatusWrapper>
-            <p>Status</p>
-            <TooltipGenerator
-              title={tooltipsText.statusHeader.title}
-              description={tooltipsText.statusHeader.description}
-            >
-              {tooltipsText.statusHeader.children}
-            </TooltipGenerator>
-          </StatusWrapper>
-        ),
-        width: 10,
-        isSortable: false,
-      },
+      ...(!isOnboardingFlow
+        ? [
+            {
+              key: 'DESCRIPTION',
+              content: 'Description',
+              width: 30,
+              isSortable: false,
+            },
+            {
+              key: 'STATUS',
+              content: (
+                <StatusWrapper>
+                  <p>Status</p>
+                  <TooltipGenerator
+                    title={tooltipsText.statusHeader.title}
+                    description={tooltipsText.statusHeader.description}
+                  >
+                    {tooltipsText.statusHeader.children}
+                  </TooltipGenerator>
+                </StatusWrapper>
+              ),
+              width: 10,
+              isSortable: false,
+            },
+          ]
+        : [{}]),
       {
         key: 'COMPONENT_TYPE',
         content: 'Component type',
-        width: 15,
+        width: isOnboardingFlow ? 50 : 15,
       },
-      {
-        key: 'OWNER_TEAM',
-        content: (
-          <SpotlightManager blanketIsTinted={false}>
-            <SpotlightTarget name='teamonboarding'>
-              <OwnerTeamHeadWrapper>Owner team</OwnerTeamHeadWrapper>
-            </SpotlightTarget>
-            <SpotlightTransition>
-              {isSpotlightActive && !isLoading && (
-                <Spotlight
-                  actions={[
-                    {
-                      onClick: finishOnboarding,
-                      text: 'Okay',
-                    },
-                  ]}
-                  dialogWidth={315}
-                  heading='Select an owner team'
-                  target='teamonboarding'
-                  key='teamonboarding'
-                  dialogPlacement='left top'
-                  targetRadius={4}
-                  targetBgColor={token('color.icon.inverse', N0)}
-                >
-                  Select an owner team for the components you import and meet the criteria for your Service Readiness
-                  scorecard.
-                </Spotlight>
-              )}
-            </SpotlightTransition>
-          </SpotlightManager>
-        ),
-        width: 15,
-      },
+      ...(!isOnboardingFlow
+        ? [
+            {
+              key: 'OWNER_TEAM',
+              content: (
+                <SpotlightManager blanketIsTinted={false}>
+                  <SpotlightTarget name='teamonboarding'>
+                    <OwnerTeamHeadWrapper>Owner team</OwnerTeamHeadWrapper>
+                  </SpotlightTarget>
+                  <SpotlightTransition>
+                    {isSpotlightActive && !isLoading && (
+                      <Spotlight
+                        actions={[
+                          {
+                            onClick: finishOnboarding,
+                            text: 'Okay',
+                          },
+                        ]}
+                        dialogWidth={315}
+                        heading='Select an owner team'
+                        target='teamonboarding'
+                        key='teamonboarding'
+                        dialogPlacement='left top'
+                        targetRadius={4}
+                        targetBgColor={token('color.icon.inverse', N0)}
+                      >
+                        Select an owner team for the components you import and meet the criteria for your Service
+                        Readiness scorecard.
+                      </Spotlight>
+                    )}
+                  </SpotlightTransition>
+                </SpotlightManager>
+              ),
+              width: 15,
+            },
+          ]
+        : [{}]),
     ],
   };
 };
