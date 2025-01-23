@@ -22,7 +22,7 @@ import { useAppContext } from '../../hooks/useAppContext';
 import { IncomingWebhookSectionMessage } from '../IncomingWebhookSectionMessage';
 import { GitLabRoles } from '../../types';
 import { CopyIconWrapper, FormWrapper, ReloadButtonWrapper, SectionMessageWrapper, TokenRoleWrapper } from './styles';
-import { checkOnboardingRedirection, isRenderingInOnboardingFlow } from '../onboarding-flow-context-helper';
+import { checkOnboardingRedirection } from '../onboarding-flow-context-helper';
 
 const buildValidationMethod = (errorType: ErrorTypes) => {
   switch (errorType) {
