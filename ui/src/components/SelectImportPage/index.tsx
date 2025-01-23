@@ -19,7 +19,7 @@ import { SelectorItem } from './screens/SelectProjectsScreen/buildGroupsSelector
 import { useAppContext } from '../../hooks/useAppContext';
 import { useComponentTypes } from '../../hooks/useComponentTypes';
 import { getComponentTypeOption } from '../utils';
-import { checkOnboardingRedirection } from '../onboarding-flow-context-helper';
+import { checkOnboardingRedirection, isRenderingInOnboardingFlow } from '../onboarding-flow-context-helper';
 import { getAvailableImportComponentTypes } from './utils';
 import { useProjects } from '../../hooks/useProjects';
 import { useTeamsForImport } from '../../hooks/useTeamsForImport';
@@ -36,7 +36,7 @@ const DEFAULT_GROUP_ID = 0;
 export const SelectImportPage = () => {
   const navigate = useNavigate();
 
-  const { getConnectedInfo, features } = useAppContext();
+  const { getConnectedInfo } = useAppContext();
   const { setTotalSelectedRepos, setIsImportInProgress, setImportedRepositories } = useImportContext();
   const componentTypesResult = useComponentTypes();
   const teamsResult = useTeamsForImport();
@@ -315,6 +315,19 @@ export const SelectImportPage = () => {
       });
   };
 
+  const [isOnboardingFlow, setIsOnboardingFlow] = useState<boolean>(false);
+
+  useEffect(() => {
+    const processAsync = async () => {
+      const isOnboarding = await isRenderingInOnboardingFlow();
+      setIsOnboardingFlow(isOnboarding);
+    };
+
+    processAsync().catch((e) => {
+      console.error(`Failed to get onboarding state: ${e}`);
+    });
+  }, []);
+
   return (
     <>
       {screen === Screens.SELECT_PROJECT && (
@@ -341,6 +354,7 @@ export const SelectImportPage = () => {
           selectProjectTeam={onSelectProjectTeam}
           isSpotlightActive={isSpotlightActive}
           finishOnboarding={finishOnboarding}
+          isOnboardingFlow={isOnboardingFlow}
         />
       )}
       {screen === Screens.CONFIRMATION && (
@@ -356,6 +370,7 @@ export const SelectImportPage = () => {
           importableComponentTypes={importableComponentTypes}
           teamsResult={teamsResult}
           selectProjectTeam={onSelectProjectTeam}
+          isOnboardingFlow={isOnboardingFlow}
         />
       )}
     </>
