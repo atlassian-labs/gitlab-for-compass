@@ -135,7 +135,7 @@ export const SelectProjectsScreen = ({
                 onClick={handleNavigateToScreen}
                 isLoading={isProjectsImporting}
               >
-                Select
+                Selecttt
               </LoadingButton>
             </ButtonWrapper>
           </Inline>

@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { router } from '@forge/bridge';
 
@@ -22,7 +22,7 @@ import { useAppContext } from '../../hooks/useAppContext';
 import { IncomingWebhookSectionMessage } from '../IncomingWebhookSectionMessage';
 import { GitLabRoles } from '../../types';
 import { CopyIconWrapper, FormWrapper, ReloadButtonWrapper, SectionMessageWrapper, TokenRoleWrapper } from './styles';
-import { checkOnboardingRedirection } from '../onboarding-flow-context-helper';
+import { checkOnboardingRedirection, isRenderingInOnboardingFlow } from '../onboarding-flow-context-helper';
 
 const buildValidationMethod = (errorType: ErrorTypes) => {
   switch (errorType) {
@@ -99,11 +99,26 @@ export const AuthPage = () => {
   const [groupName, setGroupName] = useState<string>('');
   const [webhookId, setWebhookId] = useState<string>('');
   const { appId, features, webhookSetupConfig, refreshWebhookConfig, clearGroup } = useAppContext();
+  const [redirectUrl, setRedirectUrl] = useState<string>(`..${ApplicationState.CONNECTED}`);
 
   const isWebhookSetupInProgress =
     webhookSetupConfig.webhookSetupInProgress && webhookSetupConfig.groupId !== undefined;
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const getRedirectionUrl = async () => {
+      const isOnboardingFlow = await isRenderingInOnboardingFlow();
+      if (isOnboardingFlow) {
+        setRedirectUrl(`../onboarding/${ApplicationState.CONNECTED}`);
+      }
+    };
+
+    getRedirectionUrl().catch((e) => {
+      console.error('Error fetching onboarding flow context: ', e);
+      setRedirectUrl(`..${ApplicationState.CONNECTED}`);
+    });
+  }, []);
 
   const fireAppConfiguredAnalytic = async () => {
     const action = 'configured';
@@ -121,7 +136,7 @@ export const AuthPage = () => {
   };
 
   const handleNavigateToConnectedPage = () => {
-    navigate(`..${ApplicationState.CONNECTED}`, { replace: true });
+    navigate(redirectUrl, { replace: true }); // replace with redirectUrl
   };
 
   const handleConnectGroup = async (): Promise<void> => {

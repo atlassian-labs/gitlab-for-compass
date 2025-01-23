@@ -14,7 +14,7 @@ export async function isRenderingInOnboardingFlow(): Promise<boolean> {
 export async function checkOnboardingRedirection(err?: string): Promise<void> {
   const isInOnboardingFlow = await isRenderingInOnboardingFlow();
   if (isInOnboardingFlow) {
-    const params = err ? { error: err } : undefined;
+    const params = err ?? null;
     await getCallBridge()('redirectOnboardingTube', params);
   }
 }
