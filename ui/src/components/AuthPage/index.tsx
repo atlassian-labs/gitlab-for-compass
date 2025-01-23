@@ -99,26 +99,11 @@ export const AuthPage = () => {
   const [groupName, setGroupName] = useState<string>('');
   const [webhookId, setWebhookId] = useState<string>('');
   const { appId, features, webhookSetupConfig, refreshWebhookConfig, clearGroup } = useAppContext();
-  const [redirectUrl, setRedirectUrl] = useState<string>(`..${ApplicationState.CONNECTED}`);
 
   const isWebhookSetupInProgress =
     webhookSetupConfig.webhookSetupInProgress && webhookSetupConfig.groupId !== undefined;
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const getRedirectionUrl = async () => {
-      const isOnboardingFlow = await isRenderingInOnboardingFlow();
-      if (isOnboardingFlow) {
-        setRedirectUrl(`../onboarding/${ApplicationState.CONNECTED}`);
-      }
-    };
-
-    getRedirectionUrl().catch((e) => {
-      console.error('Error fetching onboarding flow context: ', e);
-      setRedirectUrl(`..${ApplicationState.CONNECTED}`);
-    });
-  }, []);
 
   const fireAppConfiguredAnalytic = async () => {
     const action = 'configured';
@@ -136,7 +121,7 @@ export const AuthPage = () => {
   };
 
   const handleNavigateToConnectedPage = () => {
-    navigate(redirectUrl, { replace: true }); // replace with redirectUrl
+    navigate(`..${ApplicationState.CONNECTED}`, { replace: true });
   };
 
   const handleConnectGroup = async (): Promise<void> => {
@@ -148,6 +133,7 @@ export const AuthPage = () => {
       if (success) {
         await fireAppConfiguredAnalytic();
         await refreshWebhookConfig();
+        await checkOnboardingRedirection();
 
         if (features.isGitlabMaintainerTokenEnabled && selectedRole === GitLabRoles.OWNER) {
           handleNavigateToConnectedPage();
