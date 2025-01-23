@@ -15,7 +15,7 @@ import { getForgeAppId } from '../utils/get-forge-app-id';
 import { GroupProjectsResponse, WebhookSetupConfig } from '../types';
 import { getGroupProjects } from '../services/fetch-projects';
 import { ImportFailedError, importProjects } from '../services/import-projects';
-import { getAllComponentTypes } from '../client/compass';
+import { getAllComponentTypes as getAllCompassComponentTypes } from '../client/compass';
 
 export const getFeatures = (cloudId: string): ResolverResponse<FeaturesList> => {
   try {
@@ -150,7 +150,7 @@ export const importProject = async (req: any): Promise<ResolverResponse> => {
 export const getAllComponentTypes = async (req: Request): Promise<ResolverResponse<CompassComponentTypeObject[]>> => {
   const { cloudId } = req.context;
   try {
-    const componentTypes = await getAllComponentTypes(cloudId);
+    const componentTypes = await getAllCompassComponentTypes(cloudId);
     return { success: true, data: componentTypes };
   } catch (e) {
     return {
