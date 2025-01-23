@@ -15,6 +15,7 @@ import { useImportResult } from '../../hooks/useImportResult';
 import { CenterWrapper, SectionWrapper, TableWrapper } from '../styles';
 import { clearResult } from '../../services/invokes';
 import { ErrorTypes, ImportErrorTypes } from '../../resolverTypes';
+import { checkOnboardingRedirection } from '../onboarding-flow-context-helper';
 
 export const ImportResult: FunctionComponent = () => {
   const [error, setError] = useState<ErrorTypes | null>();
@@ -42,6 +43,23 @@ export const ImportResult: FunctionComponent = () => {
       });
     }
   }, [failedProjects, totalProjects]);
+
+  useEffect(() => {
+    const redirectOnboarding = async () => {
+      try {
+        if (failedProjects.length > 0) {
+          await checkOnboardingRedirection('IMPORT_ERROR');
+        } else {
+          await checkOnboardingRedirection();
+        }
+      } catch (err) {
+        console.error('Error checking if context is in onboarding flow:', err);
+      }
+    };
+    redirectOnboarding().catch((e) => {
+      console.error('Error redirecting to onboarding:', e);
+    });
+  }, [failedProjects]);
 
   if (isLoading) {
     return (

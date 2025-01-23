@@ -22,6 +22,7 @@ import { useAppContext } from '../../hooks/useAppContext';
 import { IncomingWebhookSectionMessage } from '../IncomingWebhookSectionMessage';
 import { GitLabRoles } from '../../types';
 import { CopyIconWrapper, FormWrapper, ReloadButtonWrapper, SectionMessageWrapper, TokenRoleWrapper } from './styles';
+import { checkOnboardingRedirection } from '../onboarding-flow-context-helper';
 
 const buildValidationMethod = (errorType: ErrorTypes) => {
   switch (errorType) {
@@ -113,6 +114,12 @@ export const AuthPage = () => {
     });
   };
 
+  const handleOnboardingRedirectIfFailedAuth = async () => {
+    await checkOnboardingRedirection('CONFIGURATION_ERROR').catch((err) => {
+      console.error('Error checking if context is in onboarding flow:', err);
+    });
+  };
+
   const handleNavigateToConnectedPage = () => {
     navigate(`..${ApplicationState.CONNECTED}`, { replace: true });
   };
@@ -132,6 +139,7 @@ export const AuthPage = () => {
         }
       } else {
         setErrorType((errors && errors[0].errorType) || AuthErrorTypes.UNEXPECTED_ERROR);
+        await handleOnboardingRedirectIfFailedAuth();
       }
 
       setLoadingConnectGroup(false);
@@ -161,6 +169,7 @@ export const AuthPage = () => {
         handleNavigateToConnectedPage();
       } else {
         setErrorType((errors && errors[0].errorType) || AuthErrorTypes.UNEXPECTED_ERROR);
+        await handleOnboardingRedirectIfFailedAuth();
       }
 
       setLoadingConnectWebhook(false);
