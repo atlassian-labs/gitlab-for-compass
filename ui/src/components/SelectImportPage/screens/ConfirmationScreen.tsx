@@ -38,7 +38,7 @@ export const ConfirmationScreen = ({
 }: Props & SelectedProjectsProps) => {
   return (
     <>
-      <RootWrapper>
+      <RootWrapper isOnboardingFlow={isOnboardingFlow}>
         <h4>Set up configuration files</h4>
         <DescriptionWrapper>
           <p>
