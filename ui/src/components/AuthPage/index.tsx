@@ -22,7 +22,7 @@ import { useAppContext } from '../../hooks/useAppContext';
 import { IncomingWebhookSectionMessage } from '../IncomingWebhookSectionMessage';
 import { GitLabRoles } from '../../types';
 import { CopyIconWrapper, FormWrapper, ReloadButtonWrapper, SectionMessageWrapper, TokenRoleWrapper } from './styles';
-import { checkOnboardingRedirection } from '../onboarding-flow-context-helper';
+import { checkOnboardingRedirection, isRenderingInOnboardingFlow } from '../onboarding-flow-context-helper';
 
 const buildValidationMethod = (errorType: ErrorTypes) => {
   switch (errorType) {
@@ -99,6 +99,17 @@ export const AuthPage = () => {
   const [groupName, setGroupName] = useState<string>('');
   const [webhookId, setWebhookId] = useState<string>('');
   const { appId, features, webhookSetupConfig, refreshWebhookConfig, clearGroup } = useAppContext();
+  const [isOnboardingFlow, setIsOnboardingFlow] = useState<boolean>(false);
+
+  useEffect(() => {
+    const processAsync = async () => {
+      setIsOnboardingFlow(await isRenderingInOnboardingFlow());
+    };
+
+    processAsync().catch((e) => {
+      console.error(`Failed to get onboarding state: ${e}`);
+    });
+  }, []);
 
   const isWebhookSetupInProgress =
     webhookSetupConfig.webhookSetupInProgress && webhookSetupConfig.groupId !== undefined;
@@ -367,6 +378,12 @@ export const AuthPage = () => {
     </SectionMessageWrapper>
   );
 
+  const handleCancelClickIfOnboarding = async () => {
+    await checkOnboardingRedirection('SKIP').catch((e) => {
+      console.error('Error checking if context is in onboarding flow:', e);
+    });
+  };
+
   return (
     <div data-testid='gitlab-auth-page'>
       {isWebhookSetupInProgress ? (
@@ -447,17 +464,33 @@ export const AuthPage = () => {
           )}
 
           <FormFooter align='start'>
-            <LoadingButton
-              onClick={handleConnectGroup}
-              type='submit'
-              isDisabled={isConnectGroupBtnDisabled}
-              appearance='primary'
-              isLoading={isLoadingConnectGroup}
-              alt='Connect project'
-              testId='connect-group-button'
-            >
-              {features.isGitlabMaintainerTokenEnabled && selectedRole === GitLabRoles.MAINTAINER ? 'Next' : 'Connect'}
-            </LoadingButton>
+            <ButtonGroup>
+              {isOnboardingFlow && (
+                <LoadingButton
+                  onClick={handleCancelClickIfOnboarding}
+                  type='submit'
+                  appearance='subtle'
+                  isLoading={isLoadingDisconnect}
+                  alt='Disconnect project'
+                  testId='cancel-webhook-button'
+                >
+                  Cancel
+                </LoadingButton>
+              )}
+              <LoadingButton
+                onClick={handleConnectGroup}
+                type='submit'
+                isDisabled={isConnectGroupBtnDisabled}
+                appearance='primary'
+                isLoading={isLoadingConnectGroup}
+                alt='Connect project'
+                testId='connect-group-button'
+              >
+                {features.isGitlabMaintainerTokenEnabled && selectedRole === GitLabRoles.MAINTAINER
+                  ? 'Next'
+                  : 'Connect'}
+              </LoadingButton>
+            </ButtonGroup>
           </FormFooter>
         </FormWrapper>
       )}

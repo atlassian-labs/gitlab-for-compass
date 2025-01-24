@@ -75,7 +75,7 @@ export const buildTableBody = ({
                 key: 'team',
                 content: (
                   <OwnerTeamSelect
-                    isDisabled={false}
+                    isDisabled={isOnboardingFlow}
                     selectKey={project.id.toString()}
                     teams={teamsResult.teams}
                     selectedTeamOption={project.ownerTeamOption}
