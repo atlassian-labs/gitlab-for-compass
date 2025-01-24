@@ -51,7 +51,7 @@ export const ProjectsImportTable = ({
   useEffect(() => {
     const processAsync = async () => {
       if (!isLoading && projects.length === 0) {
-        await checkOnboardingRedirection('IMPORT_ERROR').catch((e) => {
+        await checkOnboardingRedirection('SKIP').catch((e) => {
           console.error(`Failed to redirect the onboarding tube: ${e}`);
         });
       }
