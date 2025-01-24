@@ -24,7 +24,7 @@ export const AppRouter = () => {
       }
     };
 
-    if (initialRoute === ApplicationState.CONNECTED) {
+    if (moduleKey !== IMPORT_MODULE_KEY && initialRoute === ApplicationState.CONNECTED) {
       processAsync().catch((e) => console.error(`Failed to get onboarding status: ${e}`));
     }
   }, [initialRoute]);
