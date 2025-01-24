@@ -5,12 +5,13 @@ import styled from 'styled-components';
 import { gridSize } from '@atlaskit/theme';
 
 import { router } from '@forge/bridge';
+import { useEffect, useState } from 'react';
 import { IMPORT_MODULE_KEY } from '../../constants';
 import { useImportContext } from '../../hooks/useImportContext';
 import { ApplicationState } from '../../routes';
 import { ImportProgressBar } from '../ImportProgressBar';
 import { ImportResult } from '../ImportResult';
-import { checkOnboardingRedirection } from '../onboarding-flow-context-helper';
+import { checkOnboardingRedirection, isRenderingInOnboardingFlow } from '../onboarding-flow-context-helper';
 
 const DoneButtonWrapper = styled.div`
   margin-top: ${gridSize() * 2}px;
@@ -22,6 +23,18 @@ type Props = {
 
 export const ImportProgressResultPage = ({ moduleKey }: Props) => {
   const { isImportInProgress } = useImportContext();
+  const [isOnboardingFlow, setOnboardingFlow] = useState<boolean>(false);
+
+  useEffect(() => {
+    const processAsync = async () => {
+      const isOnboarding = await isRenderingInOnboardingFlow();
+      setOnboardingFlow(isOnboarding);
+    };
+
+    processAsync().catch((e) => {
+      console.error(`Failed to get onboarding state: ${e}`);
+    });
+  }, []);
 
   const navigate = useNavigate();
 
@@ -43,7 +56,9 @@ export const ImportProgressResultPage = ({ moduleKey }: Props) => {
       {isImportInProgress ? <ImportProgressBar /> : <ImportResult />}
 
       <DoneButtonWrapper>
-        <Button onClick={handleNavigateWhenDone}>Done</Button>
+        <Button isDisabled={isOnboardingFlow && isImportInProgress} onClick={handleNavigateWhenDone}>
+          Done
+        </Button>
       </DoneButtonWrapper>
     </>
   );
