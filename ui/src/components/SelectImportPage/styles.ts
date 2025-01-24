@@ -44,10 +44,10 @@ export const DescriptionWrapper = styled.div`
   margin: 12px 0;
 `;
 
-export const RootWrapper = styled.div`
+export const RootWrapper = styled.div<{ isOnboardingFlow: boolean }>`
   display: flex;
   flex-direction: column;
-  max-width: 70%;
+  max-width: ${({ isOnboardingFlow }) => (isOnboardingFlow ? '100%' : '70%')};
 `;
 
 export const OptionContainer = styled.div`
