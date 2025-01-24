@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { DynamicTableStateless } from '@atlaskit/dynamic-table';
 
 import { buildTableBody } from './buildTableBody';
@@ -8,6 +8,7 @@ import { CompassComponentTypeOption, ComponentTypesResult, ProjectImportSelectio
 import { TableWrapper } from '../styles';
 import { SelectOwnerTeamOption } from '../OwnerTeamSelect/types';
 import { TeamsForImportResult } from '../../hooks/useTeamsForImport';
+import { checkOnboardingRedirection } from '../onboarding-flow-context-helper';
 
 type Props = {
   projects: ProjectImportSelection[];
@@ -46,6 +47,20 @@ export const ProjectsImportTable = ({
     () => (isLoading ? false : projects.every(({ isSelected, isManaged }) => isSelected || isManaged)),
     [projects, isLoading],
   );
+
+  useEffect(() => {
+    const processAsync = async () => {
+      if (!isLoading && projects.length === 0) {
+        await checkOnboardingRedirection('IMPORT_ERROR').catch((e) => {
+          console.error(`Failed to redirect the onboarding tube: ${e}`);
+        });
+      }
+    };
+
+    processAsync().catch((e) => {
+      console.error(`Failed to get onboarding state: ${e}`);
+    });
+  }, [projects, isLoading]);
 
   return (
     <>
