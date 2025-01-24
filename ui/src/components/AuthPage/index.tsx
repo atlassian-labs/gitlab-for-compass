@@ -465,18 +465,6 @@ export const AuthPage = () => {
 
           <FormFooter align='start'>
             <ButtonGroup>
-              {isOnboardingFlow && (
-                <LoadingButton
-                  onClick={handleCancelClickIfOnboarding}
-                  type='submit'
-                  appearance='subtle'
-                  isLoading={isLoadingDisconnect}
-                  alt='Disconnect project'
-                  testId='cancel-webhook-button'
-                >
-                  Cancel
-                </LoadingButton>
-              )}
               <LoadingButton
                 onClick={handleConnectGroup}
                 type='submit'
@@ -490,6 +478,18 @@ export const AuthPage = () => {
                   ? 'Next'
                   : 'Connect'}
               </LoadingButton>
+              {isOnboardingFlow && (
+                <LoadingButton
+                  onClick={handleCancelClickIfOnboarding}
+                  type='submit'
+                  appearance='subtle'
+                  isLoading={isLoadingDisconnect}
+                  alt='Disconnect project'
+                  testId='cancel-webhook-button'
+                >
+                  Cancel
+                </LoadingButton>
+              )}
             </ButtonGroup>
           </FormFooter>
         </FormWrapper>
