@@ -69,7 +69,7 @@ export const ComponentTypeSelect: React.FC<ComponentTypeSelector> = (
     return (
       <OptionContainer>
         <ComponentTypeIconWrapper>
-          <ComponentTypeIcon name={type.name ?? type.id} iconUrl={type.iconUrl} />
+          <ComponentTypeIcon iconUrl={type.iconUrl} />
         </ComponentTypeIconWrapper>
         <LabelContainer>{type.name}</LabelContainer>
       </OptionContainer>
