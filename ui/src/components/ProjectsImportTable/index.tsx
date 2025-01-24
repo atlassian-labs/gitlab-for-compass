@@ -48,20 +48,6 @@ export const ProjectsImportTable = ({
     [projects, isLoading],
   );
 
-  useEffect(() => {
-    const processAsync = async () => {
-      if (!isLoading && projects.length === 0) {
-        await checkOnboardingRedirection('SKIP').catch((e) => {
-          console.error(`Failed to redirect the onboarding tube: ${e}`);
-        });
-      }
-    };
-
-    processAsync().catch((e) => {
-      console.error(`Failed to get onboarding state: ${e}`);
-    });
-  }, [projects, isLoading]);
-
   return (
     <>
       <TableWrapper>

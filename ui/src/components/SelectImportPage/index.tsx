@@ -117,7 +117,7 @@ export const SelectImportPage = () => {
     setIsProjectsLoading(true);
 
     getGroupProjects(groupId, page, locationGroupId, search)
-      .then(({ data, success, errors }) => {
+      .then(async ({ data, success, errors }) => {
         if (success && data && data.projects.length) {
           const projectsForTable = data.projects.map((project: any) => {
             const selectedProject = changedProjects.find((selectedRepo) => selectedRepo.id === project.id);
@@ -132,8 +132,17 @@ export const SelectImportPage = () => {
           setProjects((prevState) => [...prevState, ...projectsForTable]);
         }
 
+        if (data?.projects.length === 0) {
+          await checkOnboardingRedirection('SKIP').catch((e) => {
+            console.error(`Failed to redirect onboarding tube: ${e}`);
+          });
+        }
+
         if (errors && errors[0].message) {
           setProjectsFetchingError(errors[0].message);
+          await checkOnboardingRedirection('IMPORT_ERROR').catch((e) => {
+            console.error(`Failed to redirect onboarding tube: ${e}`);
+          });
         }
       })
       .catch(() => {
