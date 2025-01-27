@@ -34,10 +34,11 @@ export const ConfirmationScreen = ({
   importableComponentTypes,
   teamsResult,
   selectProjectTeam,
+  isOnboardingFlow,
 }: Props & SelectedProjectsProps) => {
   return (
     <>
-      <RootWrapper>
+      <RootWrapper isOnboardingFlow={isOnboardingFlow}>
         <h4>Set up configuration files</h4>
         <DescriptionWrapper>
           <p>
@@ -81,6 +82,7 @@ export const ConfirmationScreen = ({
         importableComponentTypes={importableComponentTypes}
         teamsResult={teamsResult}
         selectProjectTeam={selectProjectTeam}
+        isOnboardingFlow={isOnboardingFlow}
       />
       {projectsImportingData?.errors && projectsImportingData.errors.length !== 0 && (
         <ErrorWrapper>

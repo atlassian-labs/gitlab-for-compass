@@ -21,6 +21,7 @@ type Props = {
   importableComponentTypes: ComponentTypesResult;
   teamsResult: TeamsForImportResult;
   selectProjectTeam: (id: number, ownerTeamOption: SelectOwnerTeamOption | null) => void;
+  isOnboardingFlow: boolean;
 };
 
 const mapStatus = (isManaged: boolean, isCompassFilePrOpened: boolean, hasComponent: boolean) => {
@@ -56,6 +57,7 @@ export const buildTableBody = ({
   importableComponentTypes,
   teamsResult,
   selectProjectTeam,
+  isOnboardingFlow,
 }: Props): RowType[] => {
   return projects.map((project) => {
     const {
@@ -109,18 +111,22 @@ export const buildTableBody = ({
             </Tooltip>
           ),
         },
-        {
-          key: 'description',
-          content: (
-            <Tooltip content={description || '-'} position='left-start'>
-              <TruncateDescription maxWidth='300'>{description || '-'}</TruncateDescription>
-            </Tooltip>
-          ),
-        },
-        {
-          key: 'status',
-          content: mapStatus(isManaged, isCompassFilePrOpened, hasComponent),
-        },
+        ...(!isOnboardingFlow
+          ? [
+              {
+                key: 'description',
+                content: (
+                  <Tooltip content={description || '-'} position='left-start'>
+                    <TruncateDescription maxWidth='300'>{description || '-'}</TruncateDescription>
+                  </Tooltip>
+                ),
+              },
+              {
+                key: 'status',
+                content: mapStatus(isManaged, isCompassFilePrOpened, hasComponent),
+              },
+            ]
+          : [{}]),
         {
           key: 'type',
           content: (
@@ -138,19 +144,23 @@ export const buildTableBody = ({
             </DropdownWrapper>
           ),
         },
-        {
-          key: 'team',
-          content: (
-            <OwnerTeamSelect
-              selectKey={id.toString()}
-              selectedTeamOption={ownerTeamOption}
-              isDisabled={isManaged || isCompassFilePrOpened}
-              teams={teamsResult.teams}
-              isLoadingTeams={teamsResult.isTeamsDataLoading}
-              selectTeam={selectTeam}
-            />
-          ),
-        },
+        ...(!isOnboardingFlow
+          ? [
+              {
+                key: 'team',
+                content: (
+                  <OwnerTeamSelect
+                    selectKey={id.toString()}
+                    selectedTeamOption={ownerTeamOption}
+                    isDisabled={isManaged || isCompassFilePrOpened}
+                    teams={teamsResult.teams}
+                    isLoadingTeams={teamsResult.isTeamsDataLoading}
+                    selectTeam={selectTeam}
+                  />
+                ),
+              },
+            ]
+          : [{}]),
       ],
     };
   });

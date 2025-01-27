@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { DynamicTableStateless } from '@atlaskit/dynamic-table';
 
 import { buildTableBody } from './buildTableBody';
@@ -8,6 +8,7 @@ import { CompassComponentTypeOption, ComponentTypesResult, ProjectImportSelectio
 import { TableWrapper } from '../styles';
 import { SelectOwnerTeamOption } from '../OwnerTeamSelect/types';
 import { TeamsForImportResult } from '../../hooks/useTeamsForImport';
+import { checkOnboardingRedirection } from '../onboarding-flow-context-helper';
 
 type Props = {
   projects: ProjectImportSelection[];
@@ -21,6 +22,7 @@ type Props = {
   selectProjectTeam: (id: number, ownerTeamOption: SelectOwnerTeamOption | null) => void;
   isSpotlightActive: boolean;
   finishOnboarding: () => void;
+  isOnboardingFlow: boolean;
 };
 
 const SPINNER_SIZE = 'large';
@@ -37,6 +39,7 @@ export const ProjectsImportTable = ({
   selectProjectTeam,
   isSpotlightActive,
   finishOnboarding,
+  isOnboardingFlow,
 }: Props) => {
   const emptyView = useMemo(() => buildEmptyView({ isProjectsExist: projects.length !== 0, error }), [projects, error]);
 
@@ -57,6 +60,7 @@ export const ProjectsImportTable = ({
             isLoading,
             isSpotlightActive,
             finishOnboarding,
+            isOnboardingFlow,
           })}
           rows={buildTableBody({
             projects,
@@ -65,6 +69,7 @@ export const ProjectsImportTable = ({
             importableComponentTypes,
             teamsResult,
             selectProjectTeam,
+            isOnboardingFlow,
           })}
           loadingSpinnerSize={SPINNER_SIZE}
           isLoading={isLoading}

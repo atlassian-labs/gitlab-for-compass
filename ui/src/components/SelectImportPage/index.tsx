@@ -18,8 +18,8 @@ import { ConfirmationScreen } from './screens/ConfirmationScreen';
 import { SelectorItem } from './screens/SelectProjectsScreen/buildGroupsSelectorOptions';
 import { useAppContext } from '../../hooks/useAppContext';
 import { useComponentTypes } from '../../hooks/useComponentTypes';
-import { checkOnboardingRedirection } from '../onboarding-flow-context-helper';
 import { getComponentTypeOptionForBuiltInType } from '../utils';
+import { checkOnboardingRedirection, isRenderingInOnboardingFlow } from '../onboarding-flow-context-helper';
 import { getAvailableImportComponentTypes } from './utils';
 import { useProjects } from '../../hooks/useProjects';
 import { useTeamsForImport } from '../../hooks/useTeamsForImport';
@@ -36,7 +36,7 @@ const DEFAULT_GROUP_ID = 0;
 export const SelectImportPage = () => {
   const navigate = useNavigate();
 
-  const { getConnectedInfo, features } = useAppContext();
+  const { getConnectedInfo } = useAppContext();
   const { setTotalSelectedRepos, setIsImportInProgress, setImportedRepositories } = useImportContext();
   const componentTypesResult = useComponentTypes();
   const teamsResult = useTeamsForImport();
@@ -117,7 +117,7 @@ export const SelectImportPage = () => {
     setIsProjectsLoading(true);
 
     getGroupProjects(groupId, page, locationGroupId, search)
-      .then(({ data, success, errors }) => {
+      .then(async ({ data, success, errors }) => {
         if (success && data && data.projects.length) {
           const projectsForTable = data.projects.map((project: any) => {
             const selectedProject = changedProjects.find((selectedRepo) => selectedRepo.id === project.id);
@@ -132,8 +132,17 @@ export const SelectImportPage = () => {
           setProjects((prevState) => [...prevState, ...projectsForTable]);
         }
 
+        if (data?.projects.length === 0) {
+          await checkOnboardingRedirection('SKIP').catch((e) => {
+            console.error(`Failed to redirect onboarding tube: ${e}`);
+          });
+        }
+
         if (errors && errors[0].message) {
           setProjectsFetchingError(errors[0].message);
+          await checkOnboardingRedirection('IMPORT_ERROR').catch((e) => {
+            console.error(`Failed to redirect onboarding tube: ${e}`);
+          });
         }
       })
       .catch(() => {
@@ -263,7 +272,7 @@ export const SelectImportPage = () => {
   };
 
   const handleNavigateToConnectedPage = async () => {
-    await checkOnboardingRedirection('CONFIGURATION_ERROR').catch((error) => {
+    await checkOnboardingRedirection().catch((error) => {
       console.error('Error checking if context is in onboarding flow:', error);
     });
     await router.navigate('/compass/components');
@@ -315,6 +324,19 @@ export const SelectImportPage = () => {
       });
   };
 
+  const [isOnboardingFlow, setIsOnboardingFlow] = useState<boolean>(false);
+
+  useEffect(() => {
+    const processAsync = async () => {
+      const isOnboarding = await isRenderingInOnboardingFlow();
+      setIsOnboardingFlow(isOnboarding);
+    };
+
+    processAsync().catch((e) => {
+      console.error(`Failed to get onboarding state: ${e}`);
+    });
+  }, []);
+
   return (
     <>
       {screen === Screens.SELECT_PROJECT && (
@@ -341,6 +363,7 @@ export const SelectImportPage = () => {
           selectProjectTeam={onSelectProjectTeam}
           isSpotlightActive={isSpotlightActive}
           finishOnboarding={finishOnboarding}
+          isOnboardingFlow={isOnboardingFlow}
         />
       )}
       {screen === Screens.CONFIRMATION && (
@@ -356,6 +379,7 @@ export const SelectImportPage = () => {
           importableComponentTypes={importableComponentTypes}
           teamsResult={teamsResult}
           selectProjectTeam={onSelectProjectTeam}
+          isOnboardingFlow={isOnboardingFlow}
         />
       )}
     </>

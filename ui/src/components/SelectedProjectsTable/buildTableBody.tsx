@@ -14,6 +14,7 @@ export interface SelectedProjectsProps {
   importableComponentTypes: ComponentTypesResult;
   teamsResult: TeamsForImportResult;
   selectProjectTeam: (id: number, ownerTeamOption: SelectOwnerTeamOption | null) => void;
+  isOnboardingFlow: boolean;
 }
 
 export const buildTableBody = ({
@@ -22,6 +23,7 @@ export const buildTableBody = ({
   importableComponentTypes,
   teamsResult,
   selectProjectTeam,
+  isOnboardingFlow,
 }: SelectedProjectsProps): RowType[] => {
   return projectsReadyToImport.map((project) => {
     const selectTeam = (selectedOwnerTeamOption: SelectOwnerTeamOption | null) => {
@@ -43,10 +45,15 @@ export const buildTableBody = ({
             </ForgeLink>
           ),
         },
-        {
-          key: 'description',
-          content: project.description,
-        },
+        ...(!isOnboardingFlow
+          ? [
+              {
+                key: 'description',
+                content: project.description,
+              },
+            ]
+          : [{}]),
+
         {
           key: 'type',
           content: (
@@ -65,19 +72,23 @@ export const buildTableBody = ({
             />
           ),
         },
-        {
-          key: 'team',
-          content: (
-            <OwnerTeamSelect
-              isDisabled={false}
-              selectKey={project.id.toString()}
-              teams={teamsResult.teams}
-              selectedTeamOption={project.ownerTeamOption}
-              isLoadingTeams={teamsResult.isTeamsDataLoading}
-              selectTeam={selectTeam}
-            />
-          ),
-        },
+        ...(!isOnboardingFlow
+          ? [
+              {
+                key: 'team',
+                content: (
+                  <OwnerTeamSelect
+                    isDisabled={false}
+                    selectKey={project.id.toString()}
+                    teams={teamsResult.teams}
+                    selectedTeamOption={project.ownerTeamOption}
+                    isLoadingTeams={teamsResult.isTeamsDataLoading}
+                    selectTeam={selectTeam}
+                  />
+                ),
+              },
+            ]
+          : [{}]),
       ],
     };
   });
