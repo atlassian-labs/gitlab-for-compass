@@ -37,6 +37,11 @@ modules:
   compass:preUninstall:
     - key: pre-uninstall-ep
       function: pre-uninstall
+  # This module is currently experimental and unpublished.
+  # Contact the Compass team if interested in building an app using this modu
+  compass:importRecentRepos:
+    - key: import-recent-repos
+      function: import-recent-repos-fn
   webtrigger:
     - key: gitlab-event-webtrigger
       function: process-gitlab-event
@@ -57,6 +62,8 @@ modules:
       handler: index.callback
     - key: config-validator-fn
       handler: index.configValidator
+    - key: import-recent-repos-fn
+      handler: index.importRecentRepos
   consumer:
     - key: import-consumer
       queue: import-queue
