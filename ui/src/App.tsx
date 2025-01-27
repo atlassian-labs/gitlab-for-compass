@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { AppRouter } from './AppRouter';
 import { AppContextProvider } from './context/AppContext';
 import { ImportContextProvider } from './context/ImportContext';
+import { ComponentTypesContextProvider } from './context/ComponentTypesContext';
 
 export const App = () => {
   const enableTheme = async () => {
@@ -17,9 +18,11 @@ export const App = () => {
 
   return (
     <AppContextProvider>
-      <ImportContextProvider>
-        <AppRouter />
-      </ImportContextProvider>
+      <ComponentTypesContextProvider>
+        <ImportContextProvider>
+          <AppRouter />
+        </ImportContextProvider>
+      </ComponentTypesContextProvider>
     </AppContextProvider>
   );
 };

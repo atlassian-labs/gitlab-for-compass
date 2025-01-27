@@ -2,9 +2,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { showFlag } from '@forge/bridge';
 import { useAppContext } from './useAppContext';
 import { getGroupProjects, importProjects } from '../services/invokes';
-import { getComponentTypeOption, sleep } from '../components/utils';
+import { getComponentTypeOptionForBuiltInType, sleep } from '../components/utils';
 import { ImportableProject } from '../types';
 import { DEFAULT_COMPONENT_TYPE_ID } from '../constants';
+import { useComponentTypes } from './useComponentTypes';
 
 const DELAY_BETWEEN_REPO_IMPORT_CALLS = 50;
 
@@ -31,7 +32,7 @@ export const useImportAll = (): {
   const [groupId, setGroupId] = useState<number>(DEFAULT_GROUP_ID);
   const [importedProjects, setImportedProjects] = useState<ImportProjectWithStates[]>([]);
   const [projectsFetchingError, setProjectsFetchingError] = useState<string>('');
-
+  const { componentTypes } = useComponentTypes();
   const { getConnectedInfo } = useAppContext();
 
   const updateProjectsToImport = (repository: ImportProjectWithStates, states: { state: IMPORT_STATE }) => {
@@ -77,12 +78,16 @@ export const useImportAll = (): {
 
         if (data && data.projects.length) {
           const projectsToImport = data.projects.map((project) => {
+            const componentType = componentTypes.find((t) => t.id === project.typeId);
+            const typeOption = componentType
+              ? { label: componentType.name, value: componentType.id }
+              : getComponentTypeOptionForBuiltInType();
             return {
               ...project,
               isSelected: false,
               ownerTeamOption: null,
               typeId: project.typeId || DEFAULT_COMPONENT_TYPE_ID,
-              typeOption: getComponentTypeOption(project?.typeId),
+              typeOption,
             };
           });
 

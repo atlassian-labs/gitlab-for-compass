@@ -3,16 +3,18 @@ import React, { PropsWithChildren } from 'react';
 import Spinner from '@atlaskit/spinner';
 import Select, { ActionMeta } from '@atlaskit/select';
 import InlineMessage from '@atlaskit/inline-message';
-import { Centered } from './styles';
-import { CompassComponentTypeId, CompassComponentTypeOption } from '../../services/types';
-import { FormatOptionLabel } from '../FormatOptionLabel';
+import { CompassComponentTypeObject } from '@atlassian/forge-graphql';
+import { Centered, ComponentTypeIconWrapper } from './styles';
+import { CompassComponentTypeOption } from '../../services/types';
 import { DEFAULT_COMPONENT_TYPE_ID } from '../../constants';
-import { getComponentTypeOption } from '../utils';
+import { getComponentTypeOptionForBuiltInType } from '../utils';
+import { LabelContainer, OptionContainer } from '../SelectImportPage/styles';
+import { ComponentTypeIcon } from '../component-type-icon';
 
 type ComponentTypeSelector = {
   loading: boolean;
   dropdownId: string;
-  componentTypes?: CompassComponentTypeId[];
+  componentTypes?: CompassComponentTypeObject[];
   isDisabled?: boolean | undefined;
   onChange?:
     | ((value: CompassComponentTypeOption | null, action: ActionMeta<CompassComponentTypeOption>) => void)
@@ -20,15 +22,15 @@ type ComponentTypeSelector = {
   selectedOption?: CompassComponentTypeOption | null;
 };
 
-const isComponentTypesEmpty = (componentTypes?: CompassComponentTypeId[]): boolean => {
+const isComponentTypesEmpty = (componentTypes?: CompassComponentTypeObject[]): boolean => {
   return !componentTypes || componentTypes.length === 0;
 };
 
-const getComponentTypeIdItems = (componentTypes?: CompassComponentTypeId[]): CompassComponentTypeOption[] => {
+const getComponentTypeIdItems = (componentTypes?: CompassComponentTypeObject[]): CompassComponentTypeOption[] => {
   if (!isComponentTypesEmpty(componentTypes)) {
     return (
       componentTypes?.map((componentTypeId) => {
-        return getComponentTypeOption(componentTypeId?.id);
+        return getComponentTypeOptionForBuiltInType(componentTypeId?.id);
       }) ?? []
     );
   }
@@ -58,15 +60,31 @@ export const ComponentTypeSelect: React.FC<ComponentTypeSelector> = (
     );
   }
 
-  const componentTypeIdOptions = getComponentTypeIdItems(componentTypes);
+  const formatOptionLabel = ({ value }: { value: string }) => {
+    const type = componentTypes?.find((t) => t.id === value);
+    if (!type || !type.iconUrl) {
+      return null;
+    }
+
+    return (
+      <OptionContainer>
+        <ComponentTypeIconWrapper>
+          <ComponentTypeIcon iconUrl={type.iconUrl} />
+        </ComponentTypeIconWrapper>
+        <LabelContainer>{type.name}</LabelContainer>
+      </OptionContainer>
+    );
+  };
+
+  const componentTypeIdOptions = (componentTypes ?? []).map((t) => ({ label: t.name ?? '', value: t.id }));
   return (
     <Select
       classNamePrefix={'type-selector'}
       isDisabled={isDisabled}
       styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
-      formatOptionLabel={FormatOptionLabel}
+      formatOptionLabel={formatOptionLabel}
       key={dropdownId}
-      value={selectedOption ?? getComponentTypeOption(DEFAULT_COMPONENT_TYPE_ID)}
+      value={selectedOption ?? getComponentTypeOptionForBuiltInType(DEFAULT_COMPONENT_TYPE_ID)}
       options={componentTypeIdOptions}
       onChange={onChange}
       menuPosition={'fixed'}

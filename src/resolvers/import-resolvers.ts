@@ -1,27 +1,13 @@
 import Resolver from '@forge/resolver';
 
-import { CompassComponentTypeObject } from '@atlassian/forge-graphql';
-import { getGroupProjects } from '../services/fetch-projects';
-import {
-  ImportErrorTypes,
-  GitlabAPIGroup,
-  ResolverResponse,
-  ProjectImportResult,
-  ImportStatus,
-  FeaturesList,
-} from '../resolverTypes';
-import {
-  clearImportResult,
-  getImportResult,
-  getImportStatus,
-  ImportFailedError,
-  importProjects,
-} from '../services/import-projects';
+import { GitlabAPIGroup, ResolverResponse, ProjectImportResult, ImportStatus, FeaturesList } from '../resolverTypes';
+import { clearImportResult, getImportResult, getImportStatus } from '../services/import-projects';
 import { GroupProjectsResponse, TeamsWithMembershipStatus, WebhookSetupConfig } from '../types';
-import { getAllComponentTypeIds } from '../client/compass';
+
 import {
   appId,
   connectedGroupsInfo,
+  getAllComponentTypes,
   getFeatures,
   getGroupsProjects,
   groupsAllExisting,
@@ -103,18 +89,7 @@ resolver.define('webhooks/setupConfig', async (): Promise<ResolverResponse<Webho
   return webhookSetupConfig();
 });
 
-resolver.define('getAllCompassComponentTypes', async (req): Promise<ResolverResponse<CompassComponentTypeObject[]>> => {
-  const { cloudId } = req.context;
-  try {
-    const componentTypes = await getAllComponentTypeIds(cloudId);
-    return { success: true, data: componentTypes };
-  } catch (e) {
-    return {
-      success: false,
-      errors: [{ message: e.message }],
-    };
-  }
-});
+resolver.define('getAllCompassComponentTypes', getAllComponentTypes);
 
 resolver.define(
   'getFirstPageOfTeamsWithMembershipStatus',
