@@ -69,7 +69,7 @@ const fetchProjects = async (
   }
 };
 
-const compareProjectWithExistingComponent = async (
+export const compareProjectWithExistingComponent = async (
   cloudId: string,
   projectId: number,
   groupToken: string,
