@@ -126,7 +126,7 @@ export const importRecentRepos = async ({
   numRepos = 20,
 }: ImportRecentReposPayload): Promise<ImportRecentReposReturn> => {
   try {
-    const connectedGroups = await getConnectedGroups(); // only groups where you are the owner, not maintainer
+    const connectedGroups = await getConnectedGroups();
 
     if (!connectedGroups || connectedGroups.length === 0) {
       console.error('No connected Gitlab groups found.');
