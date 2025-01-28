@@ -38,7 +38,7 @@ modules:
     - key: pre-uninstall-ep
       function: pre-uninstall
   # This module is currently experimental and unpublished.
-  # Contact the Compass team if interested in building an app using this modu
+  # Contact the Compass team if interested in building an app using this module.
   compass:importRecentRepos:
     - key: import-recent-repos
       function: import-recent-repos-fn

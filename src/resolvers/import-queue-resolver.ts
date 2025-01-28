@@ -88,10 +88,10 @@ resolver.define('import', async (req) => {
       }
 
       if ('err' in updatedComponent) {
-        internalMetrics.counter('compass.bitbucket.import.end.fail').incr();
+        internalMetrics.counter('compass.gitlab.import.end.fail').incr();
         await setFailedRepositoriesToStore(project);
       } else {
-        internalMetrics.counter('compass.bitbucket.import.end.success').incr();
+        internalMetrics.counter('compass.gitlab.import.end.success').incr();
         console.log(
           `GitLab project was imported.
         Compass component - ${updatedComponent.id} was updated.`,
@@ -99,7 +99,7 @@ resolver.define('import', async (req) => {
       }
     }
   } catch (err) {
-    internalMetrics.counter('compass.bitbucket.import.end.fail').incr();
+    internalMetrics.counter('compass.gitlab.import.end.fail').incr();
     console.error(`Failed to create or update compass component for project "${id}" after all retries`, err);
 
     await setFailedRepositoriesToStore(project);

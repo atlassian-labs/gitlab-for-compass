@@ -229,11 +229,13 @@ export const getProjects = async (
   page: number,
   perPage: number,
   search?: string,
+  orderBy?: string,
 ): Promise<{ data: GitlabAPIProject[]; headers: Headers }> => {
   const params = {
     include_subgroups: 'true',
     page: page.toString(),
     per_page: perPage.toString(),
+    ...(orderBy ? { order_by: orderBy } : {}),
     ...(search ? { search } : {}),
   };
 

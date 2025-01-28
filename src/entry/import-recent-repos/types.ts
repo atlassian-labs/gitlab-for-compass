@@ -1,4 +1,5 @@
 export type ImportRecentReposPayload = {
+  cloudId: string;
   numRepos: number;
 };
 
@@ -8,4 +9,9 @@ export type ImportRecentReposReturn = {
   response: {
     numReposImported: number;
   };
+};
+
+export type ImportResultsSummary = {
+  successfulImports: number;
+  failedImports: number;
 };
