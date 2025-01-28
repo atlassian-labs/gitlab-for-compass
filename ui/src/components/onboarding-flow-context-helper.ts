@@ -11,10 +11,9 @@ export async function isRenderingInOnboardingFlow(): Promise<boolean> {
   }
 }
 
-export async function checkOnboardingRedirection(err?: string): Promise<void> {
+export async function checkOnboardingRedirection(err?: string, repoCount?: number): Promise<void> {
   const isInOnboardingFlow = await isRenderingInOnboardingFlow();
   if (isInOnboardingFlow) {
-    const params = err ?? null;
-    await getCallBridge()('redirectOnboardingTube', params);
+    await getCallBridge()('redirectOnboardingTube', { error: err ?? null, numComponents: repoCount ?? null });
   }
 }
