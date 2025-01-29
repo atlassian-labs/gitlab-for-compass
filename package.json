@@ -36,9 +36,9 @@
   },
   "dependencies": {
     "@atlassian/forge-graphql": "13.17.6",
-    "@forge/api": "^4.1.1",
+    "@forge/api": "^4.2.0",
     "@forge/bridge": "^3.5.0",
-    "@forge/events": "^0.9.1",
+    "@forge/events": "^0.9.7",
     "@forge/metrics": "0.2.21",
     "@forge/resolver": "^1.6.2",
     "@forge/ui": "^1.1.0",
