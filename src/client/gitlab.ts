@@ -177,12 +177,25 @@ export const getGroupWebhook = async (
   }
 };
 
-export const getGroupAccessTokens = async (groupToken: string, groupId: number): Promise<GroupAccessToken[]> => {
+export const getGroupAccessTokens = async (
+  groupToken: string,
+  groupId: number,
+  state = 'active',
+  pageSize = 100,
+): Promise<GroupAccessToken[]> => {
+  const params = {
+    ...(state ? { state } : {}),
+    ...(pageSize ? { per_page: pageSize.toString() } : {}),
+  };
+  const queryParams = queryParamsGenerator(params);
+
   const { data: groupAccessTokenList } = await callGitlab(
     'get group access tokens',
-    `/api/v4/groups/${groupId}/access_tokens`,
+    `/api/v4/groups/${groupId}/access_tokens?${queryParams}`,
     groupToken,
   );
+
+  console.log('Number of active access tokens fetched:', groupAccessTokenList.length);
 
   return groupAccessTokenList;
 };
