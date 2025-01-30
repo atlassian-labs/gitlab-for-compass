@@ -411,7 +411,9 @@ export const AuthPage = () => {
             )}
           </TokenRoleWrapper>
           <ConnectionMessage />
-          <IncomingWebhookSectionMessage isMaintainerTokenEnabled={features.isGitlabMaintainerTokenEnabled} />
+          {!isOnboardingFlow && (
+            <IncomingWebhookSectionMessage isMaintainerTokenEnabled={features.isGitlabMaintainerTokenEnabled} />
+          )}
         </>
       )}
 
