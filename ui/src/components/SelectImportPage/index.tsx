@@ -272,7 +272,7 @@ export const SelectImportPage = () => {
   };
 
   const handleNavigateToConnectedPage = async () => {
-    await checkOnboardingRedirection().catch((error) => {
+    await checkOnboardingRedirection('SKIP').catch((error) => {
       console.error('Error checking if context is in onboarding flow:', error);
     });
     await router.navigate('/compass/components');
