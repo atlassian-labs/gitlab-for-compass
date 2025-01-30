@@ -1,13 +1,16 @@
 import ProgressBar from '@atlaskit/progress-bar';
 import SectionMessage from '@atlaskit/section-message';
 
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
+import { getCallBridge } from '@forge/bridge/out/bridge';
 import { useImportProgress } from '../../hooks/useImportProgress';
 import { ProgressDescriptionWrapper } from './styles';
 import { checkOnboardingRedirection } from '../onboarding-flow-context-helper';
+import { useAppContext } from '../../hooks/useAppContext';
 
 export const ImportProgressBar = () => {
   const { error, importedRepositories, totalSelectedRepos } = useImportProgress();
+  const { appId } = useAppContext();
 
   useEffect(() => {
     const redirect = async () => {
@@ -19,6 +22,22 @@ export const ImportProgressBar = () => {
       });
     }
   }, [error]);
+
+  useEffect(() => {
+    const fireImportProgressBarAnalytic = async () => {
+      const actionSubject = 'importProgressBar';
+      const action = 'viewed';
+
+      await getCallBridge()('fireForgeAnalytic', {
+        forgeAppId: appId,
+        analyticEvent: `${actionSubject} ${action}`,
+      });
+    };
+
+    fireImportProgressBarAnalytic().catch((e) => {
+      console.error(`Failed to fire import progress screen analytic: ${e}`);
+    });
+  }, []);
 
   if (error) {
     return (
