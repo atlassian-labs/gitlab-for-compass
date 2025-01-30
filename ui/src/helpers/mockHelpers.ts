@@ -52,11 +52,13 @@ export const mockInvoke = (mocks = defaultMocks) => {
   });
 };
 
-export const mockGetContext = (moduleKey: string) => {
+export const mockGetContext = (moduleKey: string, renderingLocation = 'appConfigurationPage') => {
   getContext.mockImplementation(async () => {
     return {
       moduleKey,
-      extension: {},
+      extension: {
+        renderingLocation,
+      },
     };
   });
 };

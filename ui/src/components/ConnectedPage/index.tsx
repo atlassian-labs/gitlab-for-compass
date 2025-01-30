@@ -14,15 +14,22 @@ import { AuthErrorTypes, ErrorTypes, GitlabAPIGroup } from '../../resolverTypes'
 import { useImportContext } from '../../hooks/useImportContext';
 import { ImportResult } from '../ImportResult';
 import { IncomingWebhookSectionMessage } from '../IncomingWebhookSectionMessage';
+import { isRenderingInOnboardingFlow } from '../onboarding-flow-context-helper';
 
 export const ConnectedPage = () => {
   const [isDisconnectGroupInProgress, setDisconnectGroupInProgress] = useState(false);
   const [errorType, setErrorType] = useState<ErrorTypes>();
   const [groups, setGroups] = useState<GitlabAPIGroup[]>();
+  const [isInOnboarding, setIsInOnboarding] = useState<boolean>(false);
 
   const navigate = useNavigate();
   const { features, getConnectedInfo, clearGroup } = useAppContext();
   const { isImportInProgress } = useImportContext();
+
+  const getIsInOnboarding = async () => {
+    const isInOnboardingFlow = await isRenderingInOnboardingFlow();
+    setIsInOnboarding(isInOnboardingFlow);
+  };
 
   const handleDisconnectGroup = async (id: number) => {
     setDisconnectGroupInProgress(true);
@@ -51,6 +58,8 @@ export const ConnectedPage = () => {
       .catch((e) => {
         console.error('Error while getting connected info', e);
       });
+
+    getIsInOnboarding().catch((e) => console.error(`Error fetching onboarding flow context: ${e}`));
   }, []);
 
   if (errorType) {
@@ -70,7 +79,9 @@ export const ConnectedPage = () => {
       <h4>Connected group</h4>
       <p>You can connect only one GitLab group to Compass at a time, and you must be an owner of that group.</p>
       <br />
-      <IncomingWebhookSectionMessage isMaintainerTokenEnabled={features.isGitlabMaintainerTokenEnabled} />
+      {!isInOnboarding && (
+        <IncomingWebhookSectionMessage isMaintainerTokenEnabled={features.isGitlabMaintainerTokenEnabled} />
+      )}
       <br />
       <ConnectInfoPanel
         connectedGroup={groups[0]}

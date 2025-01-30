@@ -9,7 +9,7 @@ type Props = {
 
 export const IncomingWebhookSectionMessage = ({ isMaintainerTokenEnabled = false }: Props) => {
   return (
-    <IncomingWebhookSectionWrapper>
+    <IncomingWebhookSectionWrapper data-testid='incoming-webhook-information'>
       <IncomingWebhookIcon src={WebhookIcon} />
       <div>
         <p>

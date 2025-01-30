@@ -69,6 +69,23 @@ describe('AppContext', () => {
 
     expect(await findByTestId('gitlab-auth-page')).toBeDefined();
     expect(await findByTestId('token-setup-message')).toBeDefined();
+    expect(await findByTestId('incoming-webhook-information')).toBeDefined();
+  });
+
+  it('renders initial auth screen in onboarding without incoming webhook message', async () => {
+    mockInvoke(defaultMocks);
+    mockGetContext('admin-page-ui', 'onboardingFlow');
+
+    const { findByTestId, queryByTestId } = render(
+      <AppContextProvider>
+        <AppRouter />
+      </AppContextProvider>,
+    );
+
+    expect(await findByTestId('gitlab-auth-page')).toBeDefined();
+    expect(await findByTestId('token-setup-message')).toBeDefined();
+
+    expect(queryByTestId('incoming-webhook-information')).toBeNull();
   });
 
   it('renders webhooks setup screen', async () => {
@@ -96,6 +113,22 @@ describe('AppContext', () => {
     );
 
     expect(await findByTestId('gitlab-connected-page')).toBeDefined();
+    expect(await findByTestId('incoming-webhook-information')).toBeDefined();
+  });
+
+  it('renders connect screen in the onboarding without incoming webhook message', async () => {
+    mockInvoke(filledMocks);
+    mockGetContext('admin-page-ui', 'onboardingFlow');
+
+    const { findByTestId, queryByTestId } = render(
+      <AppContextProvider>
+        <AppRouter />
+      </AppContextProvider>,
+    );
+
+    expect(await findByTestId('gitlab-connected-page')).toBeDefined();
+
+    expect(queryByTestId('incoming-webhook-information')).toBeNull();
   });
 
   it('renders connected page with import all button, if FF_IMPORT_ALL_ENABLED ff is enabled', async () => {
