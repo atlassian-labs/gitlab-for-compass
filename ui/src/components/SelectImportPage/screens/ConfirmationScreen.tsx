@@ -2,6 +2,8 @@ import { Checkbox } from '@atlaskit/checkbox';
 import SectionMessage from '@atlaskit/section-message';
 import Button, { LoadingButton } from '@atlaskit/button';
 
+import { useCallback } from 'react';
+import { getCallBridge } from '@forge/bridge/out/bridge';
 import { ForgeLink } from '../../ForgeLink';
 import { ButtonWrapper, DescriptionWrapper, ErrorWrapper, RootWrapper } from '../styles';
 import { SelectedProjectsTable, SelectedProjectsProps } from '../../SelectedProjectsTable';
@@ -9,6 +11,7 @@ import { ImportErrorTypes, ResolverResponse } from '../../../resolverTypes';
 import { ComponentTypesResult } from '../../../services/types';
 import { SelectOwnerTeamOption } from '../../OwnerTeamSelect/types';
 import { TeamsForImportResult } from '../../../hooks/useTeamsForImport';
+import { useAppContext } from '../../../hooks/useAppContext';
 
 type Props = {
   syncWithCompassYml: boolean;
@@ -36,6 +39,25 @@ export const ConfirmationScreen = ({
   selectProjectTeam,
   isOnboardingFlow,
 }: Props & SelectedProjectsProps) => {
+  const { appId } = useAppContext();
+
+  const handleSetupImportCaC = async (value: boolean) => {
+    const actionSubject = 'importSetupCaC';
+    const action = value ? 'enabled' : 'disabled';
+
+    await getCallBridge()('fireForgeAnalytic', {
+      forgeAppId: appId,
+      analyticEvent: `${actionSubject} ${action}`,
+    });
+  };
+
+  const handleChangeIsSelected = useCallback(async () => {
+    setSyncWithCompassYml(!syncWithCompassYml);
+    handleSetupImportCaC(!syncWithCompassYml).catch((e) => {
+      console.error(`Failed to fire analytic: ${e}`);
+    });
+  }, [syncWithCompassYml]);
+
   return (
     <>
       <RootWrapper isOnboardingFlow={isOnboardingFlow}>
@@ -60,7 +82,7 @@ export const ConfirmationScreen = ({
           <div data-testid='sync-with-compass-yml'>
             <Checkbox
               isChecked={syncWithCompassYml}
-              onChange={() => setSyncWithCompassYml(!syncWithCompassYml)}
+              onChange={handleChangeIsSelected}
               label='Set up configuration files for all projects during import'
             />
           </div>
