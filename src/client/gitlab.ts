@@ -408,10 +408,19 @@ export const getProjectDeploymentById = async (projectId: number, deploymentId: 
   return data;
 };
 
-export const getEnvironments = async (projectId: number, groupToken: string): Promise<Environment[]> => {
+export const getEnvironments = async (
+  projectId: number,
+  groupToken: string,
+  pageSize = 100,
+): Promise<Environment[]> => {
+  const params = {
+    ...(pageSize ? { per_page: pageSize.toString() } : {}),
+  };
+  const queryParams = queryParamsGenerator(params);
+
   const { data } = await callGitlab(
     "get project's environments",
-    `/api/v4/projects/${projectId}/environments`,
+    `/api/v4/projects/${projectId}/environments?${queryParams}`,
     groupToken,
   );
 
