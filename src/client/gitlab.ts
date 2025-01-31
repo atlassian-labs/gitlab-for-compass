@@ -424,6 +424,8 @@ export const getEnvironments = async (
     groupToken,
   );
 
+  console.log('Number of environments fetched:', data.length);
+
   return data;
 };
 
