@@ -25,12 +25,15 @@ export const ImportProgressBar = () => {
 
   useEffect(() => {
     const fireImportProgressBarAnalytic = async () => {
-      const actionSubject = 'importProgressBar';
-      const action = 'viewed';
+      const actionSubject = 'importProgress';
+      const action = 'started';
 
       await getCallBridge()('fireForgeAnalytic', {
         forgeAppId: appId,
         analyticEvent: `${actionSubject} ${action}`,
+        attributes: {
+          step: 'MANUAL_IMPORT',
+        },
       });
     };
 

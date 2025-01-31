@@ -41,21 +41,19 @@ export const ConfirmationScreen = ({
 }: Props & SelectedProjectsProps) => {
   const { appId } = useAppContext();
 
-  const handleSetupImportCaC = async (value: boolean) => {
-    const actionSubject = 'importSetupCaC';
-    const action = value ? 'enabled' : 'disabled';
+  const handleStartImportClick = useCallback(async () => {
+    const actionSubject = 'startImportButton';
+    const action = 'clicked';
 
     await getCallBridge()('fireForgeAnalytic', {
       forgeAppId: appId,
       analyticEvent: `${actionSubject} ${action}`,
+      attributes: {
+        isCaCEnabled: syncWithCompassYml,
+      },
     });
-  };
 
-  const handleChangeIsSelected = useCallback(async () => {
-    setSyncWithCompassYml(!syncWithCompassYml);
-    handleSetupImportCaC(!syncWithCompassYml).catch((e) => {
-      console.error(`Failed to fire analytic: ${e}`);
-    });
+    handleImportProjects();
   }, [syncWithCompassYml]);
 
   return (
@@ -82,7 +80,7 @@ export const ConfirmationScreen = ({
           <div data-testid='sync-with-compass-yml'>
             <Checkbox
               isChecked={syncWithCompassYml}
-              onChange={handleChangeIsSelected}
+              onChange={() => setSyncWithCompassYml(!syncWithCompassYml)}
               label='Set up configuration files for all projects during import'
             />
           </div>
@@ -122,7 +120,7 @@ export const ConfirmationScreen = ({
       )}
       <ButtonWrapper>
         <Button onClick={() => handleNavigateToScreen()}>Edit Selection</Button>
-        <LoadingButton appearance='primary' onClick={handleImportProjects} isLoading={isProjectsImporting}>
+        <LoadingButton appearance='primary' onClick={handleStartImportClick} isLoading={isProjectsImporting}>
           Start Import
         </LoadingButton>
       </ButtonWrapper>
