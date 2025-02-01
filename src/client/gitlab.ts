@@ -71,35 +71,43 @@ export const callGitlab = async (
   config?: CallGitLabConfig,
   body?: string,
 ): Promise<any> => {
-  console.log(`Calling gitlab to ${apiOperation}`);
-  const resp = await fetch(`${BASE_URL}${path}`, {
-    method: config?.method || HttpMethod.GET,
-    headers: {
-      'PRIVATE-TOKEN': authToken,
-      Accept: config?.contentType || GitLabContentType.JSON,
-      'Content-Type': config?.contentType || GitLabContentType.JSON,
-    },
-    body,
-  });
+  const startTime = performance.now();
 
-  console.log(`Gitlab response status: ${resp.status}`);
+  try {
+    console.log(`Calling gitlab to ${apiOperation}`);
+    const resp = await fetch(`${BASE_URL}${path}`, {
+      method: config?.method || HttpMethod.GET,
+      headers: {
+        'PRIVATE-TOKEN': authToken,
+        Accept: config?.contentType || GitLabContentType.JSON,
+        'Content-Type': config?.contentType || GitLabContentType.JSON,
+      },
+      body,
+    });
 
-  if (resp.status === 204) {
-    // no content, we can just return here
-    return null;
+    console.log(`Gitlab response status: ${resp.status}`);
+
+    if (resp.status === 204) {
+      // no content, we can just return here
+      return null;
+    }
+
+    if (resp.status >= 300) {
+      const msg = isTextBody(config) ? await resp.text() : JSON.stringify(await resp.json());
+      console.warn(`Gitlab client received a status code of ${resp.status} while making the request. Error: ${msg}`);
+      throw new GitlabHttpMethodError(resp.status, resp.statusText);
+    }
+
+    if (isTextBody(config)) {
+      return resp.text();
+    }
+
+    return { data: await resp.json(), headers: resp.headers };
+  } finally {
+    const endTime = performance.now();
+    const duration = endTime - startTime;
+    console.log(`GitLab API call to ${apiOperation} took ${duration.toFixed(2)} ms`);
   }
-
-  if (resp.status >= 300) {
-    const msg = isTextBody(config) ? await resp.text() : JSON.stringify(await resp.json());
-    console.warn(`Gitlab client received a status code of ${resp.status} while making the request. Error: ${msg}`);
-    throw new GitlabHttpMethodError(resp.status, resp.statusText);
-  }
-
-  if (isTextBody(config)) {
-    return resp.text();
-  }
-
-  return { data: await resp.json(), headers: resp.headers };
 };
 
 export const getGroupsData = async (
