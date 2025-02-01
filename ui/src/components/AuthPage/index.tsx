@@ -379,6 +379,14 @@ export const AuthPage = () => {
   );
 
   const handleCancelClickIfOnboarding = async () => {
+    const actionSubject = 'cancelConnectionButton';
+    const action = 'clicked';
+
+    await getCallBridge()('fireForgeAnalytic', {
+      forgeAppId: appId,
+      analyticEvent: `${actionSubject} ${action}`,
+    });
+
     await checkOnboardingRedirection('SKIP').catch((e) => {
       console.error('Error checking if context is in onboarding flow:', e);
     });

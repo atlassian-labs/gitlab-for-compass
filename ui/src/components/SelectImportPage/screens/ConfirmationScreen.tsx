@@ -2,6 +2,8 @@ import { Checkbox } from '@atlaskit/checkbox';
 import SectionMessage from '@atlaskit/section-message';
 import Button, { LoadingButton } from '@atlaskit/button';
 
+import { useCallback } from 'react';
+import { getCallBridge } from '@forge/bridge/out/bridge';
 import { ForgeLink } from '../../ForgeLink';
 import { ButtonWrapper, DescriptionWrapper, ErrorWrapper, RootWrapper } from '../styles';
 import { SelectedProjectsTable, SelectedProjectsProps } from '../../SelectedProjectsTable';
@@ -9,6 +11,7 @@ import { ImportErrorTypes, ResolverResponse } from '../../../resolverTypes';
 import { ComponentTypesResult } from '../../../services/types';
 import { SelectOwnerTeamOption } from '../../OwnerTeamSelect/types';
 import { TeamsForImportResult } from '../../../hooks/useTeamsForImport';
+import { useAppContext } from '../../../hooks/useAppContext';
 
 type Props = {
   syncWithCompassYml: boolean;
@@ -36,6 +39,23 @@ export const ConfirmationScreen = ({
   selectProjectTeam,
   isOnboardingFlow,
 }: Props & SelectedProjectsProps) => {
+  const { appId } = useAppContext();
+
+  const handleStartImportClick = useCallback(async () => {
+    const actionSubject = 'startImportButton';
+    const action = 'clicked';
+
+    await getCallBridge()('fireForgeAnalytic', {
+      forgeAppId: appId,
+      analyticEvent: `${actionSubject} ${action}`,
+      attributes: {
+        isCaCEnabled: syncWithCompassYml,
+      },
+    });
+
+    handleImportProjects();
+  }, [syncWithCompassYml]);
+
   return (
     <>
       <RootWrapper isOnboardingFlow={isOnboardingFlow}>
@@ -100,7 +120,7 @@ export const ConfirmationScreen = ({
       )}
       <ButtonWrapper>
         <Button onClick={() => handleNavigateToScreen()}>Edit Selection</Button>
-        <LoadingButton appearance='primary' onClick={handleImportProjects} isLoading={isProjectsImporting}>
+        <LoadingButton appearance='primary' onClick={handleStartImportClick} isLoading={isProjectsImporting}>
           Start Import
         </LoadingButton>
       </ButtonWrapper>
