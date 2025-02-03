@@ -4,6 +4,7 @@ import { AppRouter } from './AppRouter';
 import { AppContextProvider } from './context/AppContext';
 import { ImportContextProvider } from './context/ImportContext';
 import { ComponentTypesContextProvider } from './context/ComponentTypesContext';
+import { ImportAllCaCProvider } from './context/ImportAllCaCContext';
 
 export const App = () => {
   const enableTheme = async () => {
@@ -20,7 +21,9 @@ export const App = () => {
     <AppContextProvider>
       <ComponentTypesContextProvider>
         <ImportContextProvider>
-          <AppRouter />
+          <ImportAllCaCProvider>
+            <AppRouter />
+          </ImportAllCaCProvider>
         </ImportContextProvider>
       </ComponentTypesContextProvider>
     </AppContextProvider>

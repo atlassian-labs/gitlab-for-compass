@@ -13,7 +13,7 @@ import {
   ImportComponentStateWrapper,
   RepoName,
 } from './styled';
-import { mapStateToColor, mapStateToText } from './utils';
+import { mapStateToColor, mapStateToText, mapPRCreationStateToText, mapPRCreationStateToColor } from './utils';
 import { useAppContext } from '../../hooks/useAppContext';
 import { IMPORT_STATE, useImportAll } from '../../hooks/useImportAll';
 import { CenterWrapper } from '../styles';
@@ -128,6 +128,15 @@ export const ProgressScreen = ({
                   >
                     {mapStateToText(projectWithStatus.state)}
                   </Text>
+                  {projectWithStatus.createPRState && (
+                    <Text
+                      as='strong'
+                      color={mapPRCreationStateToColor(projectWithStatus.createPRState)}
+                      data-testId={`import-all.progress-screen.pr-status.${projectWithStatus.name}.${projectWithStatus.createPRState}`}
+                    >
+                      {mapPRCreationStateToText(projectWithStatus.createPRState)}
+                    </Text>
+                  )}
                 </Flex>
               );
             })}
