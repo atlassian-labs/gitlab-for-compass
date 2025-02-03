@@ -17,9 +17,9 @@ import { getGroupProjects } from '../services/fetch-projects';
 import { ImportFailedError, importProjects } from '../services/import-projects';
 import { getAllComponentTypes as getAllCompassComponentTypes } from '../client/compass';
 
-export const getFeatures = (cloudId: string): ResolverResponse<FeaturesList> => {
+export const getFeatures = (): ResolverResponse<FeaturesList> => {
   try {
-    const features = listFeatures(cloudId);
+    const features = listFeatures();
     return {
       success: true,
       data: features,
