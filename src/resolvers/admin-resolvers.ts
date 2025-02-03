@@ -146,12 +146,8 @@ resolver.define('project/import', async (req): Promise<ResolverResponse> => {
   return importProject(req);
 });
 
-resolver.define('features', (req): ResolverResponse<FeaturesList> => {
-  const {
-    context: { cloudId },
-  } = req;
-
-  return getFeatures(cloudId);
+resolver.define('features', (): ResolverResponse<FeaturesList> => {
+  return getFeatures();
 });
 
 resolver.define('appId', (): ResolverResponse<string> => {
