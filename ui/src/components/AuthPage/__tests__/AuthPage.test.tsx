@@ -2,12 +2,14 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 import '@testing-library/jest-dom/extend-expect';
 
+import { getCallBridge as realGetCallBridge } from '@forge/bridge/out/bridge';
 import { AppRouter } from '../../../AppRouter';
 import { AppContextProvider } from '../../../context/AppContext';
 import { ErrorMessages } from '../../../errorMessages';
 import { defaultMocks, mockInvoke, mockGetContext, gitlabFFDisabledMocks } from '../../../helpers/mockHelpers';
 import { AuthErrorTypes } from '../../../resolverTypes';
 import { webhookSetupInProgressMocks } from '../../../context/__mocks__/mocks';
+import * as onboardingFlowContextHelper from '../../onboarding-flow-context-helper';
 
 jest.mock('@forge/bridge', () => ({
   invoke: jest.fn(),
@@ -20,8 +22,15 @@ jest.mock('escape-string-regexp', () => ({
   escapeStringRegexp: jest.fn(),
 }));
 
+const mockedBridge = jest.fn();
+jest.mock('@forge/bridge/out/bridge', () => ({
+  getCallBridge: jest.fn(),
+}));
+const getCallBridge: jest.Mock = realGetCallBridge as jest.Mock;
+const MOCK_APP_ID = 'app-id';
+
 const setup = async () => {
-  const { findByText, findByTestId } = render(
+  const { findByTestId } = render(
     <AppContextProvider>
       <AppRouter />
     </AppContextProvider>,
@@ -37,6 +46,70 @@ const setup = async () => {
     fireEvent.click(await findByTestId('connect-group-button'));
   });
 };
+
+const expectToSendAnalyticsEvent = (expectedAnalyticEvent: string) => {
+  expect(mockedBridge).toHaveBeenCalledWith('fireForgeAnalytic', {
+    forgeAppId: MOCK_APP_ID,
+    analyticEvent: expectedAnalyticEvent,
+  });
+};
+
+describe('Auth flow in onboarding flow', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    getCallBridge.mockReturnValue(mockedBridge);
+  });
+
+  it('renders cancel button, fires analytic, and calls checkOnboardingRedirection with SKIP', async () => {
+    mockGetContext('admin-page-ui', 'onboardingFlow');
+    mockInvoke({
+      ...defaultMocks,
+    });
+    const isRenderingInOnboardingFlowMock = jest
+      .spyOn(onboardingFlowContextHelper, 'isRenderingInOnboardingFlow')
+      .mockResolvedValue(true);
+    const checkOnboardingRedirectionMock = jest.spyOn(onboardingFlowContextHelper, 'checkOnboardingRedirection');
+
+    const { findByTestId } = render(
+      <AppContextProvider>
+        <AppRouter />
+      </AppContextProvider>,
+    );
+
+    const cancelButton = await findByTestId('gitlab-cancel-auth-button');
+    expect(cancelButton).toBeDefined();
+    await act(async () => {
+      fireEvent.click(cancelButton);
+    });
+
+    expectToSendAnalyticsEvent('cancelConnectionButton clicked');
+    expect(checkOnboardingRedirectionMock).toHaveBeenCalledWith('SKIP');
+
+    isRenderingInOnboardingFlowMock.mockRestore();
+    checkOnboardingRedirectionMock.mockRestore();
+  });
+
+  it('should call checkOnboardingRedirection with CONFIUGRATION_ERROR if authentication fails', async () => {
+    mockGetContext('admin-page-ui', 'onboardingFlow');
+    mockInvoke({
+      ...defaultMocks,
+      'groups/connect': {
+        success: false,
+        errors: [{ message: 'Error', errorType: AuthErrorTypes.UNEXPECTED_ERROR }],
+      },
+    });
+    const isRenderingInOnboardingFlowMock = jest
+      .spyOn(onboardingFlowContextHelper, 'isRenderingInOnboardingFlow')
+      .mockResolvedValue(true);
+    const checkOnboardingRedirectionMock = jest.spyOn(onboardingFlowContextHelper, 'checkOnboardingRedirection');
+
+    await setup();
+
+    expect(checkOnboardingRedirectionMock).toHaveBeenCalledWith('CONFIGURATION_ERROR');
+    isRenderingInOnboardingFlowMock.mockRestore();
+    checkOnboardingRedirectionMock.mockRestore();
+  });
+});
 
 describe('Auth flow validation', () => {
   it('renders error in the case when group token invalid', async () => {
