@@ -25,7 +25,7 @@ export const ProgressScreen = ({
   handleRedirectToInfoScreen: () => void;
   handleRedirectToConnectedPage: () => void;
 }) => {
-  const { importedProjects, isImporting } = useImportAll();
+  const { importedProjects, isImporting, retryFailedProjects } = useImportAll();
   const { appId } = useAppContext();
 
   const isStartImportLoading = useMemo(() => importedProjects.length === 0, [importedProjects]);
@@ -111,6 +111,14 @@ export const ProgressScreen = ({
                   </Text>{' '}
                   components failed to import
                 </FailedReposTextWrapper>
+                <Button
+                  isDisabled={isImporting}
+                  onClick={() => retryFailedProjects(importedProjects)}
+                  appearance='subtle'
+                  spacing='compact'
+                >
+                  Retry
+                </Button>
               </FailedReposWrapper>
             )}
           </Box>

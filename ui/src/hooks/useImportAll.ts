@@ -33,6 +33,7 @@ export const useImportAll = (): {
   importedProjects: ImportProjectWithStates[];
   isImporting: boolean;
   projectsFetchingError: string;
+  retryFailedProjects: (projectsToImport: ImportProjectWithStates[]) => Promise<void>;
 } => {
   const [isImporting, setIsImporting] = useState<boolean>(false);
   const [locationGroupId, setLocationGroupId] = useState<number>(DEFAULT_GROUP_ID);
@@ -140,6 +141,20 @@ export const useImportAll = (): {
     }
   };
 
+  const retryFailedProjects = useCallback(
+    async (projectsToImport: ImportProjectWithStates[]) => {
+      setIsImporting(true);
+      setImportedProjects([]);
+
+      const failedImportedProjects = projectsToImport.filter((project) => project.state === IMPORT_STATE.FAILED);
+
+      await createComponentWithCaC(failedImportedProjects);
+
+      setIsImporting(false);
+    },
+    [setIsImporting, setImportedProjects],
+  );
+
   useEffect(() => {
     getConnectedInfo()
       .then((value) => {
@@ -180,5 +195,6 @@ export const useImportAll = (): {
     importedProjects,
     isImporting,
     projectsFetchingError,
+    retryFailedProjects,
   };
 };

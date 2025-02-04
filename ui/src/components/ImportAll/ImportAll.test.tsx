@@ -74,6 +74,7 @@ describe('ImportAll page', () => {
       importedProjects: [project],
       isImporting: false,
       projectsFetchingError: '',
+      retryFailedProjects: jest.fn(),
     }));
     jest.spyOn(useAppContextHook, 'useAppContext').mockImplementation(() => ({
       appId: MOCK_APP_ID,
@@ -138,6 +139,7 @@ describe('ImportAll page', () => {
       isImporting: false,
       importedProjects: [project],
       projectsFetchingError: '',
+      retryFailedProjects: jest.fn(),
     }));
     jest.spyOn(useAppContextHook, 'useAppContext').mockImplementation(() => ({
       appId: MOCK_APP_ID,
@@ -199,6 +201,7 @@ describe('ImportAll page', () => {
       isImporting: false,
       importedProjects: [project],
       projectsFetchingError: '',
+      retryFailedProjects: jest.fn(),
     }));
     jest.spyOn(useAppContextHook, 'useAppContext').mockImplementation(() => ({
       appId: MOCK_APP_ID,
