@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { showFlag } from '@forge/bridge';
 import { useAppContext } from './useAppContext';
-import { createMRWithCompassYML, createSingleComponent, getGroupProjects, importProjects } from '../services/invokes';
+import { createMRWithCompassYML, createSingleComponent, getGroupProjects } from '../services/invokes';
 import { getComponentTypeOptionForBuiltInType, sleep } from '../components/utils';
 import { ImportableProject } from '../types';
 import { DEFAULT_COMPONENT_TYPE_ID } from '../constants';
@@ -63,11 +63,17 @@ export const useImportAll = (): {
           if (isCaCEnabledForImportAll) {
             if (importResponse.success && importResponse.data) {
               try {
-                await createMRWithCompassYML(repositoryToImport, importResponse.data.id, groupId);
+                const { success } = await createMRWithCompassYML(repositoryToImport, importResponse.data.id, groupId);
 
+                if (success) {
+                  updateProjectsToImport(repositoryToImport, {
+                    state: IMPORT_STATE.SUCCESS,
+                    createPRState: CREATE_PR_STATE.SUCCESS,
+                  });
+                }
                 updateProjectsToImport(repositoryToImport, {
                   state: IMPORT_STATE.SUCCESS,
-                  createPRState: CREATE_PR_STATE.SUCCESS,
+                  createPRState: CREATE_PR_STATE.FAILED,
                 });
               } catch (e) {
                 updateProjectsToImport(repositoryToImport, {
