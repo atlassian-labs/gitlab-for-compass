@@ -1,4 +1,4 @@
-import { fireEvent, render } from '@testing-library/react';
+import { act, fireEvent, render } from '@testing-library/react';
 
 import { SelectProjectsScreen } from '../SelectProjectsScreen';
 import {
@@ -6,6 +6,7 @@ import {
   groupMock,
   componentTypesResultMock,
   componentTypesErrorResultMock,
+  teamsResult,
 } from '../__mocks__/mocks';
 import { GitlabAPIGroup } from '../../../../types';
 
@@ -19,27 +20,6 @@ jest.mock('react-router-dom', () => ({
     state: 123,
   }),
 }));
-
-const teamsResult = {
-  isTeamsDataLoading: false,
-  teams: {
-    teamsWithMembership: [
-      {
-        teamId: 'test',
-        displayName: 'test',
-        imageUrl: 'https://test.com',
-      },
-    ],
-    otherTeams: [
-      {
-        teamId: 'test-1',
-        displayName: 'test-1',
-        imageUrl: 'https://test-1.com',
-      },
-    ],
-  },
-  error: undefined,
-};
 
 describe('SelectProjectsScreen', () => {
   it('should render projects import table with load more button', async () => {
@@ -65,6 +45,9 @@ describe('SelectProjectsScreen', () => {
         locationGroupId={1}
         teamsResult={teamsResult}
         selectProjectTeam={jest.fn()}
+        isSpotlightActive={false}
+        finishOnboarding={jest.fn()}
+        isOnboardingFlow={false}
       />,
     );
 
@@ -95,6 +78,9 @@ describe('SelectProjectsScreen', () => {
         locationGroupId={1}
         teamsResult={teamsResult}
         selectProjectTeam={jest.fn()}
+        isSpotlightActive={false}
+        finishOnboarding={jest.fn()}
+        isOnboardingFlow={false}
       />,
     );
 
@@ -124,6 +110,9 @@ describe('SelectProjectsScreen', () => {
         locationGroupId={1}
         teamsResult={teamsResult}
         selectProjectTeam={jest.fn()}
+        isSpotlightActive={false}
+        finishOnboarding={jest.fn()}
+        isOnboardingFlow={false}
       />,
     );
 
@@ -153,6 +142,9 @@ describe('SelectProjectsScreen', () => {
         locationGroupId={1}
         teamsResult={teamsResult}
         selectProjectTeam={jest.fn()}
+        isSpotlightActive={false}
+        finishOnboarding={jest.fn()}
+        isOnboardingFlow={false}
       />,
     );
 
@@ -200,6 +192,9 @@ describe('SelectProjectsScreen', () => {
       importableComponentTypes: componentTypesResultMock,
       teamsResult,
       selectProjectTeam: jest.fn(),
+      isSpotlightActive: false,
+      finishOnboarding: jest.fn(),
+      isOnboardingFlow: false,
     };
 
     const { queryByTestId, rerender, queryByText } = render(
@@ -246,9 +241,57 @@ describe('SelectProjectsScreen', () => {
         locationGroupId={1}
         teamsResult={teamsResult}
         selectProjectTeam={jest.fn()}
+        isSpotlightActive={false}
+        finishOnboarding={jest.fn()}
+        isOnboardingFlow={false}
       />,
     );
 
     expect(await queryByText('Owner team')).toBeTruthy();
+  });
+
+  it('should call checkOnboardingRedirection with SKIP if cancel is pressed', async () => {
+    const mockCheckOnboardingRedirection = jest.fn();
+
+    const handleNavigateToConnectedPage = async () => {
+      await mockCheckOnboardingRedirection('SKIP');
+    };
+
+    const { findByTestId } = render(
+      <SelectProjectsScreen
+        projects={projectImportSelectionMock}
+        isProjectsLoading={false}
+        onSelectAllItems={jest.fn()}
+        onChangeComponentType={jest.fn()}
+        handleNavigateToConnectedPage={handleNavigateToConnectedPage}
+        projectsFetchingError=''
+        onSelectItem={jest.fn()}
+        selectedProjects={projectImportSelectionMock}
+        handleNavigateToScreen={jest.fn()}
+        isProjectsImporting
+        totalProjects={1}
+        setPage={jest.fn()}
+        groups={groupMock}
+        isGroupsLoading={false}
+        handleChangeGroup={jest.fn()}
+        handleSearchValue={jest.fn()}
+        importableComponentTypes={componentTypesErrorResultMock}
+        locationGroupId={1}
+        teamsResult={teamsResult}
+        selectProjectTeam={jest.fn()}
+        isSpotlightActive={false}
+        finishOnboarding={jest.fn()}
+        isOnboardingFlow={true}
+      />,
+    );
+
+    const cancelButton = await findByTestId('cancel-button');
+    expect(cancelButton).toBeDefined();
+    await act(async () => {
+      fireEvent.click(cancelButton);
+    });
+
+    expect(mockCheckOnboardingRedirection).toHaveBeenCalledWith('SKIP');
+    mockCheckOnboardingRedirection.mockRestore();
   });
 });

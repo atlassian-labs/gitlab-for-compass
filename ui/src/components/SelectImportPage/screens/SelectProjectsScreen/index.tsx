@@ -131,7 +131,9 @@ export const SelectProjectsScreen = ({
               </Button>
             ) : null}
             <ButtonWrapper>
-              <Button onClick={handleNavigateToConnectedPage}>Cancel</Button>
+              <Button onClick={handleNavigateToConnectedPage} testId='cancel-button'>
+                Cancel
+              </Button>
               <LoadingButton
                 appearance='primary'
                 isDisabled={selectedProjects.length === 0}

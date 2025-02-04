@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { DynamicTableStateless } from '@atlaskit/dynamic-table';
 
 import { buildTableBody } from './buildTableBody';
@@ -8,7 +8,6 @@ import { CompassComponentTypeOption, ComponentTypesResult, ProjectImportSelectio
 import { TableWrapper } from '../styles';
 import { SelectOwnerTeamOption } from '../OwnerTeamSelect/types';
 import { TeamsForImportResult } from '../../hooks/useTeamsForImport';
-import { checkOnboardingRedirection } from '../onboarding-flow-context-helper';
 
 type Props = {
   projects: ProjectImportSelection[];

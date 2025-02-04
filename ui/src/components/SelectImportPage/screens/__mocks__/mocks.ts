@@ -59,3 +59,24 @@ export const componentTypesErrorResultMock = {
   error: null,
   componentTypes: [],
 };
+
+export const teamsResult = {
+  isTeamsDataLoading: false,
+  teams: {
+    teamsWithMembership: [
+      {
+        teamId: 'test',
+        displayName: 'test',
+        imageUrl: 'https://test.com',
+      },
+    ],
+    otherTeams: [
+      {
+        teamId: 'test-1',
+        displayName: 'test-1',
+        imageUrl: 'https://test-1.com',
+      },
+    ],
+  },
+  error: undefined,
+};

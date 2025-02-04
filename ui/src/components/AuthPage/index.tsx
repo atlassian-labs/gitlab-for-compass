@@ -495,7 +495,7 @@ export const AuthPage = () => {
                   appearance='subtle'
                   isLoading={isLoadingDisconnect}
                   alt='Disconnect project'
-                  testId='cancel-webhook-button'
+                  testId='gitlab-cancel-auth-button'
                 >
                   Cancel
                 </LoadingButton>

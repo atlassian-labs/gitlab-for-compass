@@ -120,7 +120,12 @@ export const ConfirmationScreen = ({
       )}
       <ButtonWrapper>
         <Button onClick={() => handleNavigateToScreen()}>Edit Selection</Button>
-        <LoadingButton appearance='primary' onClick={handleStartImportClick} isLoading={isProjectsImporting}>
+        <LoadingButton
+          appearance='primary'
+          onClick={handleStartImportClick}
+          isLoading={isProjectsImporting}
+          testId='start-import-button'
+        >
           Start Import
         </LoadingButton>
       </ButtonWrapper>
