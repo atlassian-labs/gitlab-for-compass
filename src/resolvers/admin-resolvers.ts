@@ -1,6 +1,6 @@
 import Resolver from '@forge/resolver';
 
-import graphqlGateway from '@atlassian/forge-graphql';
+import graphqlGateway, { Component } from '@atlassian/forge-graphql';
 import { AuthErrorTypes, GitlabAPIGroup, ResolverResponse, DefaultErrorTypes, FeaturesList } from '../resolverTypes';
 import { connectGroup, InvalidGroupTokenError } from '../services/group';
 
@@ -15,10 +15,11 @@ import {
   getFeatures,
   getGroupsProjects,
   groupsAllExisting,
-  importProject,
   webhookSetupConfig,
 } from './shared-resolvers';
 import { ConnectGroupInput, GitLabRoles, GroupProjectsResponse, WebhookSetupConfig } from '../types';
+import { createMRWithCompassYML } from '../services/create-mr-with-compass-yml';
+import { createComponent } from '../client/compass';
 
 const resolver = new Resolver();
 
@@ -142,8 +143,24 @@ resolver.define('project/lastSyncTime', async (): Promise<ResolverResponse<strin
   }
 });
 
-resolver.define('project/import', async (req): Promise<ResolverResponse> => {
-  return importProject(req);
+resolver.define('createSingleComponent', async (req): Promise<ResolverResponse<Component>> => {
+  const {
+    payload: { projectToImport },
+    context: { cloudId },
+  } = req;
+  try {
+    const component = await createComponent(cloudId, projectToImport);
+
+    return {
+      success: true,
+      data: component,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      errors: [{ message: e.message, errorType: DefaultErrorTypes.UNEXPECTED_ERROR }],
+    };
+  }
 });
 
 resolver.define('features', (): ResolverResponse<FeaturesList> => {
@@ -155,5 +172,22 @@ resolver.define('appId', (): ResolverResponse<string> => {
 });
 
 resolver.define('getAllCompassComponentTypes', getAllComponentTypes);
+
+resolver.define('project/createMRWithCompassYML', async (req): Promise<ResolverResponse> => {
+  const { project, componentId, groupId } = req.payload;
+
+  try {
+    await createMRWithCompassYML(project, componentId, groupId);
+
+    return {
+      success: true,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      errors: [{ message: e.message }],
+    };
+  }
+});
 
 export default resolver.getDefinitions();

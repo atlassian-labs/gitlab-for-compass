@@ -7,6 +7,7 @@ import { router } from '@forge/bridge';
 
 import { getCallBridge } from '@forge/bridge/out/bridge';
 import { useNavigate } from 'react-router-dom';
+import { Checkbox } from '@atlaskit/checkbox';
 import { ImportProgressBar } from '../ImportProgressBar';
 import { useImportContext } from '../../hooks/useImportContext';
 import { getLastSyncTime } from '../../services/invokes';
@@ -15,6 +16,7 @@ import { ImportButtonWrapper, LastSyncTimeWrapper, StartImportButtonWrapper } fr
 import { useAppContext } from '../../hooks/useAppContext';
 import { Separator } from '../TooltipGenerator/styles';
 import { ApplicationState } from '../../routes';
+import { useImportAllCaCContext } from '../../hooks/useImportAllCaCContext';
 
 export const ImportControls = () => {
   const [lastSyncTime, setLastSyncTime] = useState<string | null>(null);
@@ -22,6 +24,7 @@ export const ImportControls = () => {
   const [lastSyncTimeErrorMessage, setLastSyncTimeAnErrorMessage] = useState<string>();
 
   const { isImportInProgress } = useImportContext();
+  const { isCaCEnabledForImportAll, setCaCEnabledForImportAll } = useImportAllCaCContext();
   const { appId, features } = useAppContext();
   const navigate = useNavigate();
 
@@ -39,6 +42,18 @@ export const ImportControls = () => {
     });
 
     navigate(`${ApplicationState.CONNECTED}/import-all`, { replace: true });
+  };
+
+  const handleSetupImportAllCaC = async (value: boolean) => {
+    setCaCEnabledForImportAll(value);
+
+    const actionSubject = 'importAllSetupCaC';
+    const action = value ? 'enabled' : 'disabled';
+
+    await getCallBridge()('fireForgeAnalytic', {
+      forgeAppId: appId,
+      analyticEvent: `${actionSubject} ${action}`,
+    });
   };
 
   const fetchLastSyncTime = async () => {
@@ -89,6 +104,15 @@ export const ImportControls = () => {
                   Import all repositories
                 </Button>
               </ImportButtonWrapper>
+              <Checkbox
+                isChecked={isCaCEnabledForImportAll}
+                label='Set up configuration file'
+                onChange={async () => {
+                  await handleSetupImportAllCaC(!isCaCEnabledForImportAll);
+                }}
+                name='setup-config-file'
+                testId='connected-page.setup-config-file'
+              />
             </StartImportButtonWrapper>
           )}
           {features.isImportAllEnabled && <Separator />}

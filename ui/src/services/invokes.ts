@@ -1,5 +1,5 @@
 import { invoke } from '@forge/bridge';
-import { CompassComponentTypeObject } from '@atlassian/forge-graphql';
+import { CompassComponentTypeObject, Component } from '@atlassian/forge-graphql';
 
 import {
   ImportableProject,
@@ -124,4 +124,22 @@ export const getTeamOnboarding = (): Promise<ResolverResponse<{ isTeamOnboarding
 
 export const setTeamOnboarding = (): Promise<ResolverResponse> => {
   return invoke<ResolverResponse>('onboarding/team/set');
+};
+
+export const createSingleComponent = (projectToImport: ImportableProject): Promise<ResolverResponse<Component>> => {
+  return invoke<ResolverResponse<Component>>('createSingleComponent', {
+    projectToImport,
+  });
+};
+
+export const createMRWithCompassYML = (
+  project: ImportableProject,
+  componentId: string,
+  groupId: number,
+): Promise<ResolverResponse> => {
+  return invoke<ResolverResponse>('project/createMRWithCompassYML', {
+    project,
+    componentId,
+    groupId,
+  });
 };

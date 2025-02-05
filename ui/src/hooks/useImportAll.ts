@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { showFlag } from '@forge/bridge';
 import { useAppContext } from './useAppContext';
-import { getGroupProjects, importProjects } from '../services/invokes';
+import { createMRWithCompassYML, createSingleComponent, getGroupProjects } from '../services/invokes';
 import { getComponentTypeOptionForBuiltInType, sleep } from '../components/utils';
 import { ImportableProject } from '../types';
 import { DEFAULT_COMPONENT_TYPE_ID } from '../constants';
 import { useComponentTypes } from './useComponentTypes';
+import { useImportAllCaCContext } from './useImportAllCaCContext';
 
 const DELAY_BETWEEN_REPO_IMPORT_CALLS = 50;
 
@@ -18,14 +19,21 @@ export enum IMPORT_STATE {
   ALREADY_IMPORTED = 'ALREADY_IMPORTED',
 }
 
+export enum CREATE_PR_STATE {
+  SUCCESS = 'SUCCESS',
+  FAILED = 'FAILED',
+}
+
 export type ImportProjectWithStates = ImportableProject & {
   state?: IMPORT_STATE;
+  createPRState?: CREATE_PR_STATE;
 };
 
 export const useImportAll = (): {
   importedProjects: ImportProjectWithStates[];
   isImporting: boolean;
   projectsFetchingError: string;
+  retryFailedProjects: (projectsToImport: ImportProjectWithStates[]) => Promise<void>;
 } => {
   const [isImporting, setIsImporting] = useState<boolean>(false);
   const [locationGroupId, setLocationGroupId] = useState<number>(DEFAULT_GROUP_ID);
@@ -34,8 +42,12 @@ export const useImportAll = (): {
   const [projectsFetchingError, setProjectsFetchingError] = useState<string>('');
   const { componentTypes } = useComponentTypes();
   const { getConnectedInfo } = useAppContext();
+  const { isCaCEnabledForImportAll } = useImportAllCaCContext();
 
-  const updateProjectsToImport = (repository: ImportProjectWithStates, states: { state: IMPORT_STATE }) => {
+  const updateProjectsToImport = (
+    repository: ImportProjectWithStates,
+    states: { state: IMPORT_STATE; createPRState?: CREATE_PR_STATE },
+  ) => {
     setImportedProjects((prevState) => [...prevState, { ...repository, ...states }]);
   };
 
@@ -47,16 +59,40 @@ export const useImportAll = (): {
         });
       } else {
         try {
-          const importResponse = await importProjects([repositoryToImport], groupId);
+          const importResponse = await createSingleComponent(repositoryToImport);
 
-          if (!importResponse.success && !importResponse.data) {
+          if (isCaCEnabledForImportAll) {
+            if (importResponse.success && importResponse.data) {
+              try {
+                const { success } = await createMRWithCompassYML(repositoryToImport, importResponse.data.id, groupId);
+
+                if (success) {
+                  updateProjectsToImport(repositoryToImport, {
+                    state: IMPORT_STATE.SUCCESS,
+                    createPRState: CREATE_PR_STATE.SUCCESS,
+                  });
+                }
+                updateProjectsToImport(repositoryToImport, {
+                  state: IMPORT_STATE.SUCCESS,
+                  createPRState: CREATE_PR_STATE.FAILED,
+                });
+              } catch (e) {
+                updateProjectsToImport(repositoryToImport, {
+                  state: IMPORT_STATE.SUCCESS,
+                  createPRState: CREATE_PR_STATE.FAILED,
+                });
+              }
+            }
+          } else {
+            if (!importResponse.success && !importResponse.data) {
+              updateProjectsToImport(repositoryToImport, {
+                state: IMPORT_STATE.FAILED,
+              });
+            }
             updateProjectsToImport(repositoryToImport, {
-              state: IMPORT_STATE.FAILED,
+              state: IMPORT_STATE.SUCCESS,
             });
           }
-          updateProjectsToImport(repositoryToImport, {
-            state: IMPORT_STATE.SUCCESS,
-          });
         } catch (e) {
           updateProjectsToImport(repositoryToImport, {
             state: IMPORT_STATE.FAILED,
@@ -105,6 +141,20 @@ export const useImportAll = (): {
     }
   };
 
+  const retryFailedProjects = useCallback(
+    async (projectsToImport: ImportProjectWithStates[]) => {
+      setIsImporting(true);
+      setImportedProjects([]);
+
+      const failedImportedProjects = projectsToImport.filter((project) => project.state === IMPORT_STATE.FAILED);
+
+      await createComponentWithCaC(failedImportedProjects);
+
+      setIsImporting(false);
+    },
+    [setIsImporting, setImportedProjects],
+  );
+
   useEffect(() => {
     getConnectedInfo()
       .then((value) => {
@@ -145,5 +195,6 @@ export const useImportAll = (): {
     importedProjects,
     isImporting,
     projectsFetchingError,
+    retryFailedProjects,
   };
 };

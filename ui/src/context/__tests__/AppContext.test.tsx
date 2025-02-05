@@ -9,6 +9,7 @@ import {
   webhookSetupInProgressMocks,
 } from '../__mocks__/mocks';
 import { defaultMocks, mockInvoke, mockGetContext } from '../../helpers/mockHelpers';
+import { ImportAllCaCProvider } from '../ImportAllCaCContext';
 
 const MOCK_APP_ID = 'app-id';
 
@@ -150,6 +151,27 @@ describe('AppContext', () => {
     await waitFor(() => {
       expectToSendAnalyticsEvent('importAllButton clicked');
     });
+  });
+
+  it('setup config-as-code checkbox sends analytic event', async () => {
+    mockInvoke(mockWithEnablindImportAllFF);
+    mockGetContext('admin-page-ui');
+
+    const { findByTestId } = render(
+      <AppContextProvider>
+        <ImportAllCaCProvider>
+          <AppRouter />
+        </ImportAllCaCProvider>
+      </AppContextProvider>,
+    );
+
+    const setupCaCWithImportAll = await findByTestId('connected-page.setup-config-file--checkbox-label');
+
+    setupCaCWithImportAll?.click();
+    expectToSendAnalyticsEvent('importAllSetupCaC enabled');
+
+    setupCaCWithImportAll?.click();
+    expectToSendAnalyticsEvent('importAllSetupCaC disabled');
   });
 
   it('renders connected page without import all button, if FF_IMPORT_ALL_ENABLED ff is disabled', () => {
