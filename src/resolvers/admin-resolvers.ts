@@ -185,7 +185,7 @@ resolver.define('project/createMRWithCompassYML', async (req): Promise<ResolverR
   } catch (e) {
     return {
       success: false,
-      errors: [{ message: e.message }],
+      errors: [{ message: e.statusText || e.message }],
     };
   }
 });
