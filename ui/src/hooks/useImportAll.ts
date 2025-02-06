@@ -51,58 +51,66 @@ export const useImportAll = (): {
     setImportedProjects((prevState) => [...prevState, { ...repository, ...states }]);
   };
 
-  const createComponentWithCaC = useCallback(async (repositoriesToImport: ImportProjectWithStates[]) => {
-    for (const repositoryToImport of repositoriesToImport) {
-      if (repositoryToImport.hasComponent || repositoryToImport.isCompassFilePrOpened || repositoryToImport.isManaged) {
-        updateProjectsToImport(repositoryToImport, {
-          state: IMPORT_STATE.ALREADY_IMPORTED,
-        });
-      } else {
-        try {
-          const importResponse = await createSingleComponent(repositoryToImport);
+  const createComponentWithCaC = useCallback(
+    async (repositoriesToImport: ImportProjectWithStates[]) => {
+      for (const repositoryToImport of repositoriesToImport) {
+        if (
+          repositoryToImport.hasComponent ||
+          repositoryToImport.isCompassFilePrOpened ||
+          repositoryToImport.isManaged
+        ) {
+          updateProjectsToImport(repositoryToImport, {
+            state: IMPORT_STATE.ALREADY_IMPORTED,
+          });
+        } else {
+          try {
+            const importResponse = await createSingleComponent(repositoryToImport);
 
-          if (isCaCEnabledForImportAll) {
-            if (importResponse.success && importResponse.data) {
-              try {
-                const { success } = await createMRWithCompassYML(repositoryToImport, importResponse.data.id, groupId);
+            if (isCaCEnabledForImportAll) {
+              if (importResponse.success && importResponse.data) {
+                try {
+                  const { success } = await createMRWithCompassYML(repositoryToImport, importResponse.data.id, groupId);
 
-                if (success) {
+                  if (success) {
+                    updateProjectsToImport(repositoryToImport, {
+                      state: IMPORT_STATE.SUCCESS,
+                      createPRState: CREATE_PR_STATE.SUCCESS,
+                    });
+                  } else {
+                    updateProjectsToImport(repositoryToImport, {
+                      state: IMPORT_STATE.SUCCESS,
+                      createPRState: CREATE_PR_STATE.FAILED,
+                    });
+                  }
+                } catch (e) {
                   updateProjectsToImport(repositoryToImport, {
                     state: IMPORT_STATE.SUCCESS,
-                    createPRState: CREATE_PR_STATE.SUCCESS,
+                    createPRState: CREATE_PR_STATE.FAILED,
                   });
                 }
+              }
+            } else {
+              if (!importResponse.success && !importResponse.data) {
                 updateProjectsToImport(repositoryToImport, {
-                  state: IMPORT_STATE.SUCCESS,
-                  createPRState: CREATE_PR_STATE.FAILED,
-                });
-              } catch (e) {
-                updateProjectsToImport(repositoryToImport, {
-                  state: IMPORT_STATE.SUCCESS,
-                  createPRState: CREATE_PR_STATE.FAILED,
+                  state: IMPORT_STATE.FAILED,
                 });
               }
-            }
-          } else {
-            if (!importResponse.success && !importResponse.data) {
               updateProjectsToImport(repositoryToImport, {
-                state: IMPORT_STATE.FAILED,
+                state: IMPORT_STATE.SUCCESS,
               });
             }
+          } catch (e) {
             updateProjectsToImport(repositoryToImport, {
-              state: IMPORT_STATE.SUCCESS,
+              state: IMPORT_STATE.FAILED,
             });
           }
-        } catch (e) {
-          updateProjectsToImport(repositoryToImport, {
-            state: IMPORT_STATE.FAILED,
-          });
         }
-      }
 
-      await sleep(DELAY_BETWEEN_REPO_IMPORT_CALLS);
-    }
-  }, []);
+        await sleep(DELAY_BETWEEN_REPO_IMPORT_CALLS);
+      }
+    },
+    [groupId],
+  );
 
   const fetchAndImportRepos = async () => {
     let page = 1;
