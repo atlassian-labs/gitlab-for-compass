@@ -5,7 +5,7 @@ import { useCallback, useEffect } from 'react';
 import { getCallBridge } from '@forge/bridge/out/bridge';
 import { useImportProgress } from '../../hooks/useImportProgress';
 import { ProgressDescriptionWrapper } from './styles';
-import { checkOnboardingRedirection } from '../onboarding-flow-context-helper';
+import { checkOnboardingRedirection, ScmErrorType } from '../onboarding-flow-context-helper';
 import { useAppContext } from '../../hooks/useAppContext';
 
 export const ImportProgressBar = () => {
@@ -14,7 +14,7 @@ export const ImportProgressBar = () => {
 
   useEffect(() => {
     const redirect = async () => {
-      await checkOnboardingRedirection('IMPORT_ERROR');
+      await checkOnboardingRedirection(ScmErrorType.IMPORT_ERROR);
     };
     if (error) {
       redirect().catch((e) => {

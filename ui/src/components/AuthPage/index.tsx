@@ -22,7 +22,11 @@ import { useAppContext } from '../../hooks/useAppContext';
 import { IncomingWebhookSectionMessage } from '../IncomingWebhookSectionMessage';
 import { GitLabRoles } from '../../types';
 import { CopyIconWrapper, FormWrapper, ReloadButtonWrapper, SectionMessageWrapper, TokenRoleWrapper } from './styles';
-import { checkOnboardingRedirection, isRenderingInOnboardingFlow } from '../onboarding-flow-context-helper';
+import {
+  checkOnboardingRedirection,
+  isRenderingInOnboardingFlow,
+  ScmErrorType,
+} from '../onboarding-flow-context-helper';
 
 const buildValidationMethod = (errorType: ErrorTypes) => {
   switch (errorType) {
@@ -126,7 +130,7 @@ export const AuthPage = () => {
   };
 
   const handleOnboardingRedirectIfFailedAuth = async () => {
-    await checkOnboardingRedirection('CONFIGURATION_ERROR').catch((err) => {
+    await checkOnboardingRedirection(ScmErrorType.CONFIGURATION_ERROR).catch((err) => {
       console.error('Error checking if context is in onboarding flow:', err);
     });
   };
@@ -387,7 +391,7 @@ export const AuthPage = () => {
       analyticEvent: `${actionSubject} ${action}`,
     });
 
-    await checkOnboardingRedirection('SKIP').catch((e) => {
+    await checkOnboardingRedirection(ScmErrorType.SKIP).catch((e) => {
       console.error('Error checking if context is in onboarding flow:', e);
     });
   };
