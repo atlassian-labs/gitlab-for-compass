@@ -19,7 +19,11 @@ import { SelectorItem } from './screens/SelectProjectsScreen/buildGroupsSelector
 import { useAppContext } from '../../hooks/useAppContext';
 import { useComponentTypes } from '../../hooks/useComponentTypes';
 import { getComponentTypeOptionForBuiltInType } from '../utils';
-import { checkOnboardingRedirection, isRenderingInOnboardingFlow } from '../onboarding-flow-context-helper';
+import {
+  checkOnboardingRedirection,
+  isRenderingInOnboardingFlow,
+  ScmErrorType,
+} from '../onboarding-flow-context-helper';
 import { getAvailableImportComponentTypes } from './utils';
 import { useProjects } from '../../hooks/useProjects';
 import { useTeamsForImport } from '../../hooks/useTeamsForImport';
@@ -133,14 +137,14 @@ export const SelectImportPage = () => {
         }
 
         if (data?.projects.length === 0) {
-          await checkOnboardingRedirection('SKIP').catch((e) => {
+          await checkOnboardingRedirection(ScmErrorType.SKIP).catch((e) => {
             console.error(`Failed to redirect onboarding tube: ${e}`);
           });
         }
 
         if (errors && errors[0].message) {
           setProjectsFetchingError(errors[0].message);
-          await checkOnboardingRedirection('IMPORT_ERROR').catch((e) => {
+          await checkOnboardingRedirection(ScmErrorType.IMPORT_ERROR).catch((e) => {
             console.error(`Failed to redirect onboarding tube: ${e}`);
           });
         }
@@ -272,7 +276,7 @@ export const SelectImportPage = () => {
   };
 
   const handleNavigateToConnectedPage = async () => {
-    await checkOnboardingRedirection('SKIP').catch((error) => {
+    await checkOnboardingRedirection(ScmErrorType.SKIP).catch((error) => {
       console.error('Error checking if context is in onboarding flow:', error);
     });
     await router.navigate('/compass/components');

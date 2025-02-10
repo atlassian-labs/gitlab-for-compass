@@ -15,7 +15,7 @@ import { useImportResult } from '../../hooks/useImportResult';
 import { CenterWrapper, SectionWrapper, TableWrapper } from '../styles';
 import { clearResult } from '../../services/invokes';
 import { ErrorTypes, ImportErrorTypes } from '../../resolverTypes';
-import { checkOnboardingRedirection } from '../onboarding-flow-context-helper';
+import { checkOnboardingRedirection, ScmErrorType } from '../onboarding-flow-context-helper';
 
 export const ImportResult: FunctionComponent = () => {
   const [error, setError] = useState<ErrorTypes | null>();
@@ -48,7 +48,7 @@ export const ImportResult: FunctionComponent = () => {
     const redirectOnboarding = async () => {
       try {
         if (failedProjects.length > 0) {
-          await checkOnboardingRedirection('IMPORT_ERROR');
+          await checkOnboardingRedirection(ScmErrorType.IMPORT_ERROR);
         }
       } catch (err) {
         console.error('Error checking if context is in onboarding flow:', err);
