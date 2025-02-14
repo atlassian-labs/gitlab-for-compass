@@ -59,7 +59,7 @@
 
 "@atlassian/forge-graphql@13.22.1":
   version "13.22.1"
-  resolved "https://packages.atlassian.com/api/npm/atlassian-npm/@atlassian/forge-graphql/-/@atlassian/forge-graphql-13.22.1.tgz#28c1c42ce28ab5407670760a51f436c93bfd3bd9"
+  resolved "https://registry.yarnpkg.com/@atlassian/forge-graphql/-/forge-graphql-13.22.1.tgz#28c1c42ce28ab5407670760a51f436c93bfd3bd9"
   integrity sha512-AUJhIKPHq0uXaBxzQFJPUy+YCpFpz0oKCrtUeLxRkQo5kaaHw2yXsAC7LRJwxIjXGrOcQs+PE3tAWQxLSCd+BQ==
   dependencies:
     "@forge/api" "^4.3.0"
