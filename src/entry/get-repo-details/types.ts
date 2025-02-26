@@ -1,8 +1,8 @@
-type GetProjectDetailsPayload = {
+type GetRepoDetailsPayload = {
   projectUrl: string;
 };
 
-type GetProjectDetailsResponse = {
+type GetRepoDetailsResponse = {
   success: boolean;
   statusCode: number;
   errorMessage?: string;
@@ -14,4 +14,4 @@ type GetProjectDetailsResponse = {
   };
 };
 
-export { GetProjectDetailsPayload, GetProjectDetailsResponse };
+export { GetRepoDetailsPayload, GetRepoDetailsResponse };

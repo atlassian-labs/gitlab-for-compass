@@ -52,7 +52,7 @@ function doesURLMatch(projectUrl: string, path: string, name: string) {
 
 export const getProjectDataFromUrl = async (
   url: string,
-): Promise<{ project: GitlabAPIProject; groupToken: string; groupId: number }> => {
+): Promise<{ project: GitlabAPIProject; groupToken: string; groupId: number } | null> => {
   try {
     const { projectName, pathName } = extractProjectInformation(url);
     const groupTokens = await getAllGroupTokens();
@@ -85,6 +85,6 @@ export const getProjectDataFromUrl = async (
     return { project, groupToken, groupId };
   } catch (e) {
     console.log('Data provider link parser failed', e.message);
-    throw e;
+    return null;
   }
 };

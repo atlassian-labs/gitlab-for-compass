@@ -1,7 +1,7 @@
 // https://docs.gitlab.com/api/repositories/#list-repository-tree
 import { ProjectFile } from '../../types';
 
-type ListFilesInPathPayload = {
+type GetTreeShallowPayload = {
   projectId: number;
   groupId: number;
   ref?: string;
@@ -11,11 +11,11 @@ type ListFilesInPathPayload = {
   recursive?: boolean;
 };
 
-type ListFilesInPathResponse = {
+type GetTreeShallowResponse = {
   success: boolean;
   statusCode: number;
   files?: ProjectFile[];
   errorMessage?: string;
 };
 
-export { ListFilesInPathPayload, ListFilesInPathResponse };
+export { GetTreeShallowPayload, GetTreeShallowResponse };

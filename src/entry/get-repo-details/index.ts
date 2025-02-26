@@ -1,15 +1,12 @@
-import { GetProjectDetailsPayload, GetProjectDetailsResponse } from './types';
+import { GetRepoDetailsPayload, GetRepoDetailsResponse } from './types';
 import { getProjectDataFromUrl } from '../../services/data-provider-link-parser';
 import { getProjectTrackingBranch } from '../../services/get-tracking-branch';
-import { GitlabAPIProject } from '../../types';
 
-export const getProjectDetails = async (payload: GetProjectDetailsPayload): Promise<GetProjectDetailsResponse> => {
+export const getRepoDetails = async (payload: GetRepoDetailsPayload): Promise<GetRepoDetailsResponse> => {
   try {
-    let projectDataResult;
-    try {
-      projectDataResult = await getProjectDataFromUrl(payload.projectUrl);
-    } catch (e) {
-      console.warn('Cannot get GitLab project data from provided url.');
+    const projectDataResult = await getProjectDataFromUrl(payload.projectUrl);
+    if (!projectDataResult) {
+      console.warn('GitLab project not found.');
       return {
         success: false,
         errorMessage: 'project not found',

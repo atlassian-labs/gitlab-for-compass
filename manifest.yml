@@ -42,15 +42,15 @@ modules:
   compass:importRecentRepos:
     - key: import-recent-repos
       function: import-recent-repos-fn
-  compass:getProjectDetails:
-    - key: get-project-details
-      function: get-project-details-fn
-  compass:getFileContent:
-    - key: get-file-content
-      function: get-file-content-fn
-  compass:listFilesInPath:
-    - key: list-files-in-path
-      function: list-files-in-path-fn
+  compass:getRepoDetails:
+    - key: get-repo-details
+      function: get-repo-details-fn
+  compass:getFileContents:
+    - key: get-file-contents
+      function: get-file-contents-fn
+  compass:getTreeShallow:
+    - key: get-tree-shallow
+      function: get-tree-shallow-fn
   webtrigger:
     - key: gitlab-event-webtrigger
       function: process-gitlab-event
@@ -73,12 +73,12 @@ modules:
       handler: index.configValidator
     - key: import-recent-repos-fn
       handler: index.importRecentRepos
-    - key: get-project-details-fn
-      handler: index.getProjectDetails
-    - key: get-file-content-fn
-      handler: index.getFileContent
-    - key: list-files-in-path-fn
-      handler: index.listFilesInPath
+    - key: get-repo-details-fn
+      handler: index.getRepoDetails
+    - key: get-file-contents-fn
+      handler: index.getFileContents
+    - key: get-tree-shallow-fn
+      handler: index.getTreeShallow
   consumer:
     - key: import-consumer
       queue: import-queue
@@ -86,7 +86,7 @@ modules:
         function: import-projects
         method: import
 app:
-  id: ari:cloud:ecosystem::app/2303c424-e131-44db-8f04-fc47710b8070
+  id: ari:cloud:ecosystem::app/60787eba-aec5-49b4-979d-db8e77de32db
   runtime:
     name: nodejs18.x
   features:

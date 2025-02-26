@@ -4,7 +4,7 @@ import { getRawFileContent } from '../../client/gitlab';
 import { STORAGE_SECRETS } from '../../constants';
 import { GitlabHttpMethodError } from '../../models/errors';
 
-export const getFileContent = async (payload: GetFileContentsPayload): Promise<GetFileContentsResponse> => {
+export const getFileContents = async (payload: GetFileContentsPayload): Promise<GetFileContentsResponse> => {
   try {
     const groupToken = await storage.getSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${payload.groupId}`);
     const contents = await getRawFileContent(groupToken, payload.projectId, payload.filePath, payload.ref);

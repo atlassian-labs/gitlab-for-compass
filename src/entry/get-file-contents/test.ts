@@ -3,7 +3,7 @@ import { storage, mockForgeApi } from '../../__tests__/helpers/forge-helper';
 /* eslint-disable import/first */
 mockForgeApi();
 
-import { getFileContent } from './index';
+import { getFileContents } from './index';
 import { getRawFileContent } from '../../client/gitlab';
 import { GitlabHttpMethodError } from '../../models/errors';
 
@@ -22,7 +22,7 @@ describe('getFileContent', () => {
     storage.getSecret.mockResolvedValue('mockToken');
     (getRawFileContent as jest.Mock).mockResolvedValue(mockContents);
 
-    const result = await getFileContent(mockPayload);
+    const result = await getFileContents(mockPayload);
     expect(result).toEqual({
       success: true,
       file: {
@@ -36,7 +36,7 @@ describe('getFileContent', () => {
     storage.getSecret.mockResolvedValue('mockToken');
     (getRawFileContent as jest.Mock).mockRejectedValue(new Error('Request failed'));
 
-    const result = await getFileContent(mockPayload);
+    const result = await getFileContents(mockPayload);
     expect(result).toEqual({
       success: false,
       errorMessage: 'Request failed',
@@ -48,7 +48,7 @@ describe('getFileContent', () => {
     storage.getSecret.mockResolvedValue('mockToken');
     (getRawFileContent as jest.Mock).mockRejectedValue(new GitlabHttpMethodError(404, 'Not found'));
 
-    const result = await getFileContent(mockPayload);
+    const result = await getFileContents(mockPayload);
     expect(result).toEqual({
       success: false,
       errorMessage: 'Not found',

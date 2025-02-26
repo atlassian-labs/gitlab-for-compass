@@ -3,12 +3,12 @@ import { storage, mockForgeApi } from '../../__tests__/helpers/forge-helper';
 /* eslint-disable import/first */
 mockForgeApi();
 
-import { listFilesInPath } from './index';
+import { getTreeShallow } from './index';
 import { listFiles } from '../../client/gitlab';
 
 jest.mock('../../client/gitlab');
 
-describe('listFilesInPath', () => {
+describe('getTreeShallow', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
@@ -27,7 +27,7 @@ describe('listFilesInPath', () => {
     storage.getSecret.mockResolvedValue('mockToken');
     (listFiles as jest.Mock).mockResolvedValue(mockFiles);
 
-    const result = await listFilesInPath(mockPayload);
+    const result = await getTreeShallow(mockPayload);
     expect(result).toEqual({
       success: true,
       files: mockFiles,
@@ -39,7 +39,7 @@ describe('listFilesInPath', () => {
     storage.getSecret.mockResolvedValue('mockToken');
     (listFiles as jest.Mock).mockRejectedValue(new Error('Request failed'));
 
-    const result = await listFilesInPath(mockPayload);
+    const result = await getTreeShallow(mockPayload);
     expect(result).toEqual({
       success: false,
       errorMessage: 'Request failed',

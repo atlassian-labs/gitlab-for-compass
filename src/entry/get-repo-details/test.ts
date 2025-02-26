@@ -1,16 +1,16 @@
 /* eslint-disable import/order */
-import { storage, mockForgeApi } from '../../__tests__/helpers/forge-helper';
+import { mockForgeApi } from '../../__tests__/helpers/forge-helper';
 /* eslint-disable import/first */
 mockForgeApi();
 
-import { getProjectDetails } from './index';
+import { getRepoDetails } from './index';
 import { getProjectDataFromUrl } from '../../services/data-provider-link-parser';
 import { getProjectTrackingBranch } from '../../services/get-tracking-branch';
 
 jest.mock('../../services/data-provider-link-parser');
 jest.mock('../../services/get-tracking-branch');
 
-describe('getProjectDetails', () => {
+describe('getRepoDetails', () => {
   const mockPayload = {
     projectUrl: 'https://gitlab.com/group/project',
   };
@@ -26,7 +26,7 @@ describe('getProjectDetails', () => {
       commit: { id: 'commit123' },
     });
 
-    const result = await getProjectDetails(mockPayload);
+    const result = await getRepoDetails(mockPayload);
     expect(result).toEqual({
       success: true,
       project: {
@@ -40,9 +40,9 @@ describe('getProjectDetails', () => {
   });
 
   it('returns an error message if project data is not found', async () => {
-    (getProjectDataFromUrl as jest.Mock).mockRejectedValue(new Error('Project not found'));
+    (getProjectDataFromUrl as jest.Mock).mockResolvedValue(null);
 
-    const result = await getProjectDetails(mockPayload);
+    const result = await getRepoDetails(mockPayload);
     expect(result).toEqual({
       success: false,
       errorMessage: 'project not found',
@@ -58,7 +58,7 @@ describe('getProjectDetails', () => {
     });
     (getProjectTrackingBranch as jest.Mock).mockResolvedValue(null);
 
-    const result = await getProjectDetails(mockPayload);
+    const result = await getRepoDetails(mockPayload);
     expect(result).toEqual({
       success: false,
       errorMessage: 'branch not found',
@@ -67,9 +67,9 @@ describe('getProjectDetails', () => {
   });
 
   it('returns a 500 error message if an unhandled exception is thrown', async () => {
-    (getProjectTrackingBranch as jest.Mock).mockRejectedValue(new Error('Request failed'));
+    (getProjectDataFromUrl as jest.Mock).mockRejectedValue(new Error('Request failed'));
 
-    const result = await getProjectDetails(mockPayload);
+    const result = await getRepoDetails(mockPayload);
     expect(result).toEqual({
       success: false,
       errorMessage: 'Request failed',
