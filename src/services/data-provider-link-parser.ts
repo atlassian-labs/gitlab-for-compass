@@ -4,7 +4,7 @@ import parse from 'url-parse';
 import { getMaintainedProjectsBySearchCriteria } from '../client/gitlab';
 import { STORAGE_SECRETS } from '../constants';
 import { getGroupIds } from '../utils/storage-utils';
-import { GitlabAPIProject } from '../types';
+import { GitlabAPIProject, TokenFetchResult } from '../types';
 import { getFormattedErrors, hasRejections } from '../utils/promise-allsettled-helpers';
 
 export const extractProjectInformation = (projectUrl: string): { projectName: string; pathName: string } | null => {
@@ -18,18 +18,24 @@ export const extractProjectInformation = (projectUrl: string): { projectName: st
   return { projectName: splitPath[splitPath.length - 1], pathName: parsedUrl.pathname };
 };
 
-export const getAllGroupTokens = async (): Promise<string[]> => {
+export const getAllGroupTokens = async (): Promise<TokenFetchResult[]> => {
   try {
     const groupIds = await getGroupIds();
+    // console.log(`[getAllGroupTokens] groupIds: ${groupIds}`);
     const groupTokensResult = await Promise.allSettled(
-      groupIds.map((groupId) => storage.getSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`)),
+      groupIds.map(async (groupId) => ({
+        token: await storage.getSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`),
+        groupId,
+      })),
     );
 
     if (hasRejections(groupTokensResult)) {
       throw new Error(`Error getting group tokens ${getFormattedErrors(groupTokensResult)}`);
     }
 
-    return groupTokensResult.map((groupTokenResult) => (groupTokenResult as PromiseFulfilledResult<string>).value);
+    return groupTokensResult.map(
+      (groupTokenResult) => (groupTokenResult as PromiseFulfilledResult<TokenFetchResult>).value,
+    );
   } catch (e) {
     throw new Error(`Error while getting all group tokens: ${e}`);
   }
@@ -46,13 +52,13 @@ function doesURLMatch(projectUrl: string, path: string, name: string) {
 
 export const getProjectDataFromUrl = async (
   url: string,
-): Promise<{ project: GitlabAPIProject; groupToken: string }> => {
+): Promise<{ project: GitlabAPIProject; groupToken: string; groupId: number }> => {
   try {
     const { projectName, pathName } = extractProjectInformation(url);
     const groupTokens = await getAllGroupTokens();
 
     const projectsPromiseResults = await Promise.allSettled(
-      groupTokens.map((token) => getMaintainedProjectsBySearchCriteria(projectName, token)),
+      groupTokens.map((groupToken) => getMaintainedProjectsBySearchCriteria(projectName, groupToken.token)),
     );
     const projectsResult = projectsPromiseResults.reduce<{ projects: GitlabAPIProject[]; projectIndex: number | null }>(
       (result, currentProjectResult, index) => {
@@ -70,16 +76,15 @@ export const getProjectDataFromUrl = async (
       { projects: [], projectIndex: null },
     );
 
-    const groupToken = groupTokens[projectsResult.projectIndex];
+    const { groupId, token: groupToken } = groupTokens[projectsResult.projectIndex];
     const project = projectsResult.projects.find(({ web_url: webUrl }) => doesURLMatch(webUrl, pathName, projectName));
 
     if (!groupToken || !project) {
       throw new Error('Project not found');
     }
-    console.log(`[getProjectDataFromUrl] project_id: ${project.id}`);
-    return { project, groupToken };
+    return { project, groupToken, groupId };
   } catch (e) {
     console.log('Data provider link parser failed', e.message);
-    return null;
+    throw e;
   }
 };

@@ -92,6 +92,7 @@ describe('dataProvider module', () => {
     projectDataSpy.mockResolvedValue({
       project: MOCK_PROJECT,
       groupToken: 'mock-group-token',
+      groupId: 123,
     });
 
     trackingBranchSpy.mockResolvedValue('branch');
@@ -118,6 +119,7 @@ describe('dataProvider module', () => {
     projectDataSpy.mockResolvedValue({
       project: MOCK_PROJECT,
       groupToken: 'mock-group-token',
+      groupId: 134,
     });
 
     trackingBranchSpy.mockResolvedValue('branch');
