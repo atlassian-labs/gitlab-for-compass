@@ -363,7 +363,7 @@ export const getMaintainedProjectsBySearchCriteria = async (
 ): Promise<GitlabAPIProject[]> => {
   const roleFilter = isGitlabMaintainerTokenEnabled()
     ? { min_access_level: GitLabAccessLevels.MAINTAINER.toString() }
-    : { min_access_level: GitLabAccessLevels.MAINTAINER.toString() }; // revert
+    : { owned: 'true' };
 
   const params = {
     ...roleFilter,
