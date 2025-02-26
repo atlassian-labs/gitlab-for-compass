@@ -21,7 +21,6 @@ export const extractProjectInformation = (projectUrl: string): { projectName: st
 export const getAllGroupTokens = async (): Promise<TokenFetchResult[]> => {
   try {
     const groupIds = await getGroupIds();
-    // console.log(`[getAllGroupTokens] groupIds: ${groupIds}`);
     const groupTokensResult = await Promise.allSettled(
       groupIds.map(async (groupId) => ({
         token: await storage.getSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`),
