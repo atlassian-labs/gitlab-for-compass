@@ -283,6 +283,16 @@ type ImportStatus = {
 
 type ProjectBranch = {
   name: string;
+  commit: {
+    id: string;
+  };
+};
+
+type ProjectFile = {
+  id: string;
+  name: string;
+  type: string;
+  path: string;
 };
 
 type Deployment = {
@@ -482,6 +492,7 @@ export type {
   ProjectImportResult,
   ImportStatus,
   ProjectBranch,
+  ProjectFile,
   Deployment,
   MetricsEventPayload,
   MergeRequest,

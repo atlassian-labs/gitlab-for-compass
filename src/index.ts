@@ -8,6 +8,9 @@ import { callback } from './entry/data-provider/callback';
 import preUninstall from './entry/extension-points/pre-uninstall';
 import { configValidator } from './entry/config-validator';
 import { importRecentRepos } from './entry/import-recent-repos';
+import { getRepoDetails } from './entry/get-repo-details';
+import { getTreeShallow } from './entry/get-tree-shallow';
+import { getFileContents } from './entry/get-file-contents';
 
 // extension points
 export { preUninstall };
@@ -21,3 +24,9 @@ export { dataProvider, callback };
 export { configValidator };
 // importRecentRepos
 export { importRecentRepos };
+// getRepoDetails
+export { getRepoDetails };
+// getTreeShallow
+export { getTreeShallow };
+// getFileContents
+export { getFileContents };

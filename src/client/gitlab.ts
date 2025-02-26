@@ -10,6 +10,7 @@ import {
   CompassYaml,
   GitlabAPIProject,
   ProjectBranch,
+  ProjectFile,
   MergeRequestState,
   MergeRequest,
   GitlabApiPipeline,
@@ -218,23 +219,60 @@ export const getCommitDiff = async (groupToken: string, projectId: number, sha: 
   return diff;
 };
 
+export const listFiles = async (
+  groupToken: string,
+  projectId: number,
+  path?: string,
+  ref?: string,
+  pageToken?: string,
+  pageSize?: number,
+  recursive?: boolean,
+): Promise<ProjectFile[]> => {
+  const params = {
+    pagination: 'keyset',
+    ...(pageSize ? { per_page: pageSize.toString() } : {}),
+    ...(pageToken ? { page_token: pageToken } : {}),
+    ...(recursive ? { recursive: recursive.toString() } : {}),
+    ...(ref ? { ref } : {}),
+    ...(path ? { path } : {}),
+  };
+
+  const queryParams = queryParamsGenerator(params);
+  const { data } = await callGitlab(
+    'list files in path',
+    `/api/v4/projects/${projectId}/repository/tree?${queryParams}`,
+    groupToken,
+  );
+
+  return data;
+};
+
+export const getRawFileContent = async (
+  groupToken: string,
+  projectId: number,
+  filePath: string,
+  ref?: string,
+): Promise<string> => {
+  const params = {
+    ...(ref ? { ref } : {}),
+  };
+
+  const queryParams = queryParamsGenerator(params);
+  return callGitlab(
+    'get file contents',
+    `/api/v4/projects/${projectId}/repository/files/${encodeURIComponent(filePath)}/raw?${queryParams}`,
+    groupToken,
+    { contentType: GitLabContentType.RAW },
+  );
+};
+
 export const getFileContent = async (
   groupToken: string,
   projectId: number,
   filePath: string,
   ref: string,
 ): Promise<CompassYaml> => {
-  const params = {
-    ref,
-  };
-
-  const queryParams = queryParamsGenerator(params);
-  const fileRaw = await callGitlab(
-    'get file contents',
-    `/api/v4/projects/${projectId}/repository/files/${encodeURIComponent(filePath)}/raw?${queryParams}`,
-    groupToken,
-    { contentType: GitLabContentType.RAW },
-  );
+  const fileRaw = await getRawFileContent(groupToken, projectId, filePath, ref);
 
   try {
     return yaml.load(fileRaw);

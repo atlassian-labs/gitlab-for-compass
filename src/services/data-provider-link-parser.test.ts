@@ -23,6 +23,8 @@ const projectName1Deleted = 'project1-deleted';
 const projectName2 = 'project2';
 const projectName3 = 'project3';
 const projectName4 = 'project4';
+const groupId1 = 1;
+const groupId2 = 2;
 
 describe('data-provider-link-parser', () => {
   beforeEach(() => {
@@ -53,7 +55,7 @@ describe('data-provider-link-parser', () => {
   it('should get project data from URL', async () => {
     const expectedProjectData = generateGitlabProject({ id: 4, name: projectName4, web_url: mockProjectUrl });
 
-    mockedGetGroupIds.mockResolvedValue([1, 2]);
+    mockedGetGroupIds.mockResolvedValue([groupId1, groupId2]);
 
     storage.getSecret.mockResolvedValueOnce(testToken1);
     storage.getSecret.mockResolvedValueOnce(testToken2);
@@ -69,7 +71,7 @@ describe('data-provider-link-parser', () => {
 
     const result = await getProjectDataFromUrl(mockProjectUrl);
 
-    const expectedResult = { project: expectedProjectData, groupToken: testToken2 };
+    const expectedResult = { project: expectedProjectData, groupToken: testToken2, groupId: groupId2 };
 
     expect(result).toEqual(expectedResult);
   });
@@ -80,7 +82,7 @@ describe('data-provider-link-parser', () => {
       name: projectName1,
       web_url: 'https://gitlab.com/test/repo-name',
     });
-    mockedGetGroupIds.mockResolvedValue([1]);
+    mockedGetGroupIds.mockResolvedValue([groupId1]);
     storage.getSecret.mockResolvedValueOnce(testToken1);
 
     mockedGetOwnedProjectsBySearchCriteria.mockResolvedValueOnce([
@@ -89,12 +91,12 @@ describe('data-provider-link-parser', () => {
     ]);
 
     const result = await getProjectDataFromUrl(mockProjectUrl);
-    const expectedResult = { project: expectedProjectData, groupToken: testToken1 };
+    const expectedResult = { project: expectedProjectData, groupToken: testToken1, groupId: groupId1 };
     expect(result).toEqual(expectedResult);
   });
 
   it('should return null if project not found', async () => {
-    mockedGetGroupIds.mockResolvedValue([1, 2]);
+    mockedGetGroupIds.mockResolvedValue([groupId1, groupId2]);
 
     storage.getSecret.mockResolvedValueOnce(testToken1);
     storage.getSecret.mockResolvedValueOnce(testToken2);

@@ -42,6 +42,15 @@ modules:
   compass:importRecentRepos:
     - key: import-recent-repos
       function: import-recent-repos-fn
+  compass:getRepoDetails:
+    - key: get-repo-details
+      function: get-repo-details-fn
+  compass:getFileContents:
+    - key: get-file-contents
+      function: get-file-contents-fn
+  compass:getTreeShallow:
+    - key: get-tree-shallow
+      function: get-tree-shallow-fn
   webtrigger:
     - key: gitlab-event-webtrigger
       function: process-gitlab-event
@@ -64,6 +73,12 @@ modules:
       handler: index.configValidator
     - key: import-recent-repos-fn
       handler: index.importRecentRepos
+    - key: get-repo-details-fn
+      handler: index.getRepoDetails
+    - key: get-file-contents-fn
+      handler: index.getFileContents
+    - key: get-tree-shallow-fn
+      handler: index.getTreeShallow
   consumer:
     - key: import-consumer
       queue: import-queue
