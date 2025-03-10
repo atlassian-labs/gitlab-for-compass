@@ -15,6 +15,10 @@ export const isGitlabMaintainerTokenEnabled = (defaultValue = false): boolean =>
   return process.env.ENABLE_GITLAB_MAINTAINER_TOKEN === 'true' || defaultValue;
 };
 
+export const isCompassPushEventEnabled = (defaultValue = false): boolean => {
+  return process.env.COMPASS_PUSH_EVENTS === 'true' || defaultValue;
+};
+
 const isImportAllEnabled = (defaultValue = false): boolean => {
   return process.env.FF_IMPORT_ALL_ENABLED === 'true' || defaultValue;
 };
@@ -26,5 +30,6 @@ export const listFeatures = (): FeaturesList => {
     [GitlabFeaturesEnum.DISABLE_DOCUMENT_COMPONENT_LINKS]: isDocumentComponentLinksDisabled(),
     [GitlabFeaturesEnum.ENABLE_GITLAB_MAINTAINER_TOKEN]: isGitlabMaintainerTokenEnabled(),
     [GitlabFeaturesEnum.IMPORT_ALL]: isImportAllEnabled(),
+    [GitlabFeaturesEnum.COMPASS_PUSH_EVENTS]: isCompassPushEventEnabled(),
   };
 };

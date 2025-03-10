@@ -1,5 +1,5 @@
 /* eslint-disable import/first, import/order */
-import { mockAgg, mockUnlinkComponent } from '../../../__tests__/helpers/mock-agg';
+import { mockAgg, mockCreateEvent, mockUnlinkComponent } from '../../../__tests__/helpers/mock-agg';
 
 mockAgg();
 
@@ -13,6 +13,7 @@ import { MOCK_CLOUD_ID, TEST_TOKEN } from '../../../__tests__/fixtures/gitlab-da
 import { ComponentSyncDetails } from '../../../types';
 import { EXTERNAL_SOURCE } from '../../../constants';
 import { ALL_SETTLED_STATUS, getFormattedErrors } from '../../../utils/promise-allsettled-helpers';
+import * as featureFlagService from '../../../services/feature-flags';
 
 jest.mock('../../../services/sync-component-with-file', () => {
   return {
@@ -37,6 +38,7 @@ describe('Gitlab push events', () => {
   });
   const syncs = mocked(syncComponent);
   const removals = mockUnlinkComponent;
+  const createEvent = mockCreateEvent;
   const findConfigChanges = mocked(findConfigAsCodeFileChanges);
   const getNonDefaultBranchNameMock = mocked(getTrackingBranchName);
 
@@ -230,5 +232,47 @@ describe('Gitlab push events', () => {
       'Error while handling push event',
       new Error(`Error removing components: ${getFormattedErrors([RejectedPromiseSettled])}`),
     );
+  });
+
+  it('sends push event to compass when pushEvent FF is true', async () => {
+    jest.spyOn(featureFlagService, 'isCompassPushEventEnabled').mockReturnValue(true);
+
+    getNonDefaultBranchNameMock.mockResolvedValue(event.project.default_branch);
+    findConfigChanges.mockResolvedValue({ componentsToCreate: [], componentsToUpdate: [], componentsToUnlink: [] });
+    await handlePushEvent(event, TEST_TOKEN, MOCK_CLOUD_ID);
+
+    expect(createEvent).toBeCalledWith([
+      {
+        cloudId: MOCK_CLOUD_ID,
+        event: {
+          push: {
+            pushEventProperties: {
+              id: event.commits[0].id,
+              branchName: 'main',
+              author: {
+                name: event.commits[0].author.name,
+                email: event.commits[0].author.email,
+              },
+            },
+            externalEventSourceId: event.project.id.toString(),
+            updateSequenceNumber: 1,
+            displayName: 'Commit on branch main',
+            url: event.commits[0].url,
+            description: event.commits[0].message,
+            lastUpdated: event.commits[0].timestamp,
+          },
+        },
+      },
+    ]);
+  });
+
+  it('does not send push event to compass when pushEvent FF is false', async () => {
+    jest.spyOn(featureFlagService, 'isCompassPushEventEnabled').mockReturnValue(false);
+
+    getNonDefaultBranchNameMock.mockResolvedValue(event.project.default_branch);
+    findConfigChanges.mockResolvedValue({ componentsToCreate: [], componentsToUpdate: [], componentsToUnlink: [] });
+    await handlePushEvent(event, TEST_TOKEN, MOCK_CLOUD_ID);
+
+    expect(createEvent).not.toBeCalled();
   });
 });

@@ -58,10 +58,18 @@ type PushEvent = BaseGitlabEvent & {
   ref: string;
   checkout_sha: string;
   commits: {
+    id: string;
+    message: string;
+    url: string;
+    author: {
+      name: string;
+      email: string;
+    };
     added: string[];
     modified: string[];
     removed: string[];
-  };
+    timestamp: string;
+  }[];
 };
 
 type MergeRequestEvent = BaseGitlabEvent & {
