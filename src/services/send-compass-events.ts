@@ -42,7 +42,7 @@ function gitlabCommitToCompassEvent(
       },
     };
   } catch (e) {
-    console.error('Error parsing Github push payload', e);
+    console.error('Error parsing Gitlab push payload', e);
     throw new Error();
   }
 }
