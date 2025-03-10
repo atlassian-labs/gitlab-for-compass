@@ -38,11 +38,21 @@ export const generatePushEvent = (overrideEvent: Partial<PushEvent> = {}): PushE
       default_branch: 'main',
       web_url: 'https://test',
     },
-    commits: {
-      added: [],
-      modified: [],
-      removed: [],
-    },
+    commits: [
+      {
+        id: 'commit-sha',
+        message: 'message',
+        url: 'https://commit-url',
+        author: {
+          name: 'John Doe',
+          email: 'jdoe@example.com',
+        },
+        added: [],
+        modified: [],
+        removed: [],
+        timestamp: '2023-01-01T00:00:00Z',
+      },
+    ],
     ...overrideEvent,
   };
 };

@@ -10,6 +10,7 @@ export const useFeatures = (): [FeaturesList, boolean, ErrorTypes | undefined] =
     [GitlabFeaturesEnum.DISABLE_DOCUMENT_COMPONENT_LINKS]: false,
     [GitlabFeaturesEnum.ENABLE_GITLAB_MAINTAINER_TOKEN]: false,
     [GitlabFeaturesEnum.IMPORT_ALL]: false,
+    [GitlabFeaturesEnum.COMPASS_PUSH_EVENTS]: false,
   });
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<ErrorTypes>();

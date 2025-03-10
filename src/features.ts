@@ -10,6 +10,7 @@ export enum GitlabFeaturesEnum {
   DISABLE_DOCUMENT_COMPONENT_LINKS = 'isDocumentComponentLinksDisabled',
   ENABLE_GITLAB_MAINTAINER_TOKEN = 'isGitlabMaintainerTokenEnabled',
   IMPORT_ALL = 'isImportAllEnabled',
+  COMPASS_PUSH_EVENTS = 'isCompassPushEventEnabled',
 }
 
 export type FeaturesList = { [key in GitlabFeaturesEnum]: boolean };
