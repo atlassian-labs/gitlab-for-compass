@@ -13,6 +13,7 @@ import { getProjectDataFromUrl } from '../../services/data-provider-link-parser'
 import { getTrackingBranchName } from '../../services/get-tracking-branch';
 import { getBackfillData } from '../../services/get-backfill-data';
 import { GitlabHttpMethodError } from '../../models/errors';
+import { isCompassPushEventEnabled } from '../../services/feature-flags';
 
 export const dataProvider = async (
   request: DataProviderPayload,
@@ -81,8 +82,13 @@ export const dataProvider = async (
     ).build();
   }
 
+  const supportedEventTypes = [DataProviderEventTypes.BUILDS, DataProviderEventTypes.DEPLOYMENTS];
+  if (isCompassPushEventEnabled()) {
+    supportedEventTypes.push(DataProviderEventTypes.PUSH);
+  }
+
   const response = new DataProviderResponse(projectId.toString(), {
-    eventTypes: [DataProviderEventTypes.BUILDS, DataProviderEventTypes.DEPLOYMENTS],
+    eventTypes: supportedEventTypes,
     builtInMetricDefinitions: [
       {
         name: BuiltinMetricDefinitions.WEEKLY_DEPLOYMENT_FREQUENCY_28D,

@@ -71,5 +71,8 @@ Object {
       },
     ],
   },
+  "pushes": Object {
+    "initialValues": null,
+  },
 }
 `;
