@@ -1091,10 +1091,10 @@
     "@babel/runtime" "^7.0.0"
     "@emotion/react" "^11.7.1"
 
-"@atlassian/forge-graphql@13.23.0":
-  version "13.23.0"
-  resolved "https://registry.yarnpkg.com/@atlassian/forge-graphql/-/forge-graphql-13.23.0.tgz#e9dda340575b57580848b9a1a2ea70e05d1070bb"
-  integrity sha512-ArgZmrjOhU1Zb8XFu9t1k80xWWnY8xw7X1nQIYRe7P8s05kjB+Y4Ye6YuXDaP7nGXoRypiOYgfZrJ7hpnWkXMg==
+"@atlassian/forge-graphql@13.23.2":
+  version "13.23.2"
+  resolved "https://registry.yarnpkg.com/@atlassian/forge-graphql/-/forge-graphql-13.23.2.tgz#0023bfa5a50c22b21555f2f613cec6193b833cf6"
+  integrity sha512-R780560Z/JJbbHmEi/tSXJvIcI6Ie+M+OQ6vUn9r980VMoNCh6yg4bQk+/eqR8Fmb+5utBaooEzeyiq1+Hgp9Q==
   dependencies:
     "@forge/api" "^5.0.0"
     "@forge/metrics" "0.2.25"
