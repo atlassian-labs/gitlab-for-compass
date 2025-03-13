@@ -1,17 +1,6 @@
 /* eslint-disable import/first, import/order */
 import { mockAgg } from '../../__tests__/helpers/mock-agg';
-
-mockAgg();
-
-import {
-  DataProviderBuildEvent,
-  DataProviderDeploymentEvent,
-  CompassBuildEventState,
-  CompassDeploymentEventEnvironmentCategory,
-  CompassDeploymentEventState,
-  DataProviderResult,
-  InvocationStatusCode,
-} from '@atlassian/forge-graphql';
+import { CompassEventType, DataProviderResult, InvocationStatusCode } from '@atlassian/forge-graphql';
 import { dataProvider } from './index';
 import * as getBackfillEvents from '../../services/get-backfill-data';
 import * as getProjectDataFromUrl from '../../services/data-provider-link-parser';
@@ -19,57 +8,14 @@ import * as getTrackingBranchName from '../../services/get-tracking-branch';
 import { GitlabAPIProject } from '../../types';
 import { GitlabHttpMethodError } from '../../models/errors';
 import * as featureFlagService from '../../services/feature-flags';
+import { MOCK_BACKFILL_RESPONSE, MOCK_EMPTY_BACKFILL_RESPONSE } from '../../services/__mocks__/mocks';
+
+mockAgg();
 
 const getEventsSpy = jest.spyOn(getBackfillEvents, 'getBackfillData');
 const projectDataSpy = jest.spyOn(getProjectDataFromUrl, 'getProjectDataFromUrl');
 const trackingBranchSpy = jest.spyOn(getTrackingBranchName, 'getTrackingBranchName');
 
-const MOCK_BUILD_EVENT: DataProviderBuildEvent = {
-  pipeline: {
-    pipelineId: 'pipeline-id',
-  },
-  startedAt: 'started-at',
-  completedAt: 'completed-at',
-  state: CompassBuildEventState.Successful,
-  description: 'mock description',
-  displayName: 'mock display name',
-  updateSequenceNumber: 1,
-  lastUpdated: 'updated',
-  url: 'url',
-};
-
-export const MOCK_DEPLOY_EVENT: DataProviderDeploymentEvent = {
-  displayName: 'name',
-  lastUpdated: 'mock',
-  updateSequenceNumber: '1',
-  url: 'url',
-  environment: {
-    category: CompassDeploymentEventEnvironmentCategory.Production,
-    displayName: 'prod',
-    environmentId: 'id',
-  },
-  pipeline: { pipelineId: '1', displayName: 'pipeline', url: 'url' },
-  sequenceNumber: 1,
-  state: CompassDeploymentEventState.Successful,
-};
-
-const MOCK_EVENTS_RESPONSE: {
-  builds: DataProviderBuildEvent[];
-  deployments: DataProviderDeploymentEvent[];
-  metrics: {
-    mrCycleTime: number;
-    buildDuration: number;
-    openMergeRequestsCount: number;
-  };
-} = {
-  builds: [MOCK_BUILD_EVENT],
-  deployments: [MOCK_DEPLOY_EVENT],
-  metrics: {
-    mrCycleTime: 1,
-    buildDuration: 2,
-    openMergeRequestsCount: 3,
-  },
-};
 const MOCK_PROJECT_URL = 'https://gitlab.com/test/repo-name?testParam=test';
 const MOCK_PROJECT: GitlabAPIProject = {
   id: 1,
@@ -90,7 +36,7 @@ const MOCK_PROJECT: GitlabAPIProject = {
 describe('dataProvider module', () => {
   it('successfully returns events and metrics in the expected format', async () => {
     jest.spyOn(featureFlagService, 'isCompassPushEventEnabled').mockReturnValue(true);
-    getEventsSpy.mockResolvedValue(MOCK_EVENTS_RESPONSE);
+    getEventsSpy.mockResolvedValue(MOCK_BACKFILL_RESPONSE);
     projectDataSpy.mockResolvedValue({
       project: MOCK_PROJECT,
       groupToken: 'mock-group-token',
@@ -117,9 +63,47 @@ describe('dataProvider module', () => {
     });
   });
 
+  it('successfully returns empty events when backfill response is empty', async () => {
+    jest.spyOn(featureFlagService, 'isCompassPushEventEnabled').mockReturnValue(true);
+    getEventsSpy.mockResolvedValue(MOCK_EMPTY_BACKFILL_RESPONSE);
+    projectDataSpy.mockResolvedValue({
+      project: MOCK_PROJECT,
+      groupToken: 'mock-group-token',
+      groupId: 123,
+    });
+
+    trackingBranchSpy.mockResolvedValue('branch');
+
+    const result = await dataProvider({
+      url: MOCK_PROJECT_URL,
+      ctx: {
+        cloudId: 'ari:cloud:compass:122345:component/12345/12345',
+        extensionId: 'mock-extension-id',
+      },
+      options: {
+        eventTypes: [CompassEventType.Push],
+      },
+    });
+
+    const dataProviderResult = result as DataProviderResult;
+
+    expect(dataProviderResult.externalSourceId).toEqual(MOCK_PROJECT.id.toString());
+    expect(dataProviderResult.events).toEqual({
+      pushes: {
+        initialValues: null,
+      },
+      deployments: {
+        initialValues: null,
+      },
+      builds: {
+        initialValues: null,
+      },
+    });
+  });
+
   it('when FF isCompassPushEventEnabled is false, push eventType is not returned', async () => {
     jest.spyOn(featureFlagService, 'isCompassPushEventEnabled').mockReturnValue(false);
-    getEventsSpy.mockResolvedValue(MOCK_EVENTS_RESPONSE);
+    getEventsSpy.mockResolvedValue(MOCK_BACKFILL_RESPONSE);
     projectDataSpy.mockResolvedValue({
       project: MOCK_PROJECT,
       groupToken: 'mock-group-token',

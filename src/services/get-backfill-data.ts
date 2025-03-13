@@ -1,32 +1,44 @@
+import { CompassEventType } from '@atlassian/forge-graphql';
 import {
   getDeploymentsForEnvironmentTiers,
   getMRCycleTime,
   getOpenMergeRequestsCount,
   getProjectBuildsFor28Days,
 } from './compute-event-and-metrics';
-import { hasDeploymentAfter28Days } from '../utils/has-deployment-after-28days';
 import { BackfillData, EnvironmentTier } from '../types';
 import { isSendStagingEventsEnabled } from './feature-flags';
 import { getFormattedErrors, hasRejections } from '../utils/promise-allsettled-helpers';
+
+export const shouldBackfillType = (eventType: CompassEventType, requestedTypes?: CompassEventType[]): boolean => {
+  return requestedTypes === null || requestedTypes === undefined || requestedTypes?.includes(eventType);
+};
 
 export const getBackfillData = async (
   groupToken: string,
   projectId: number,
   projectName: string,
   branchName: string,
+  eventTypes?: CompassEventType[],
 ): Promise<BackfillData> => {
   try {
     const backfillResults = await Promise.allSettled([
-      getProjectBuildsFor28Days(groupToken, projectId, projectName, branchName),
-      getMRCycleTime(groupToken, projectId, branchName),
-      getDeploymentsForEnvironmentTiers(
-        groupToken,
-        projectId,
-        projectName,
-        isSendStagingEventsEnabled ? [EnvironmentTier.PRODUCTION, EnvironmentTier.STAGING] : undefined,
-      ),
-      getOpenMergeRequestsCount(groupToken, projectId, branchName),
-      hasDeploymentAfter28Days(projectId, groupToken),
+      shouldBackfillType(CompassEventType.Build, eventTypes)
+        ? getProjectBuildsFor28Days(groupToken, projectId, projectName, branchName)
+        : [],
+      shouldBackfillType(CompassEventType.PullRequest, eventTypes)
+        ? getMRCycleTime(groupToken, projectId, branchName)
+        : null,
+      shouldBackfillType(CompassEventType.Deployment, eventTypes)
+        ? getDeploymentsForEnvironmentTiers(
+            groupToken,
+            projectId,
+            projectName,
+            isSendStagingEventsEnabled ? [EnvironmentTier.PRODUCTION, EnvironmentTier.STAGING] : undefined,
+          )
+        : [],
+      shouldBackfillType(CompassEventType.PullRequest, eventTypes)
+        ? getOpenMergeRequestsCount(groupToken, projectId, branchName)
+        : null,
     ]);
 
     if (hasRejections(backfillResults)) {
