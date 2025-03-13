@@ -61,7 +61,7 @@ export const dataProvider = async (
       builds,
       deployments,
       metrics: { mrCycleTime, openMergeRequestsCount },
-    } = await getBackfillData(groupToken, projectId, projectName, trackingBranch);
+    } = await getBackfillData(groupToken, projectId, projectName, trackingBranch, request.options?.eventTypes);
 
     backfillData.builds = builds;
     backfillData.deployments = deployments;

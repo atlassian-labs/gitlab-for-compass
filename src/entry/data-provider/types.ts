@@ -1,10 +1,13 @@
-import { DataProviderBuildEvent, DataProviderDeploymentEvent } from '@atlassian/forge-graphql';
+import { CompassEventType, DataProviderBuildEvent, DataProviderDeploymentEvent } from '@atlassian/forge-graphql';
 
 type DataProviderPayload = {
   url: string;
   ctx: {
     cloudId: string;
     extensionId: string;
+  };
+  options?: {
+    eventTypes?: CompassEventType[];
   };
 };
 
