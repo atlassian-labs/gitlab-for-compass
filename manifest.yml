@@ -54,6 +54,12 @@ modules:
   webtrigger:
     - key: gitlab-event-webtrigger
       function: process-gitlab-event
+    - key: test-trigger
+      function: data-provider-fn
+  scheduledTrigger:
+    - key: backfill
+      function: backfill-fn
+      interval: fiveMinute
   function:
     - key: admin-resolver
       handler: index.adminResolver
@@ -79,12 +85,21 @@ modules:
       handler: index.getFileContents
     - key: get-tree-shallow-fn
       handler: index.getTreeShallow
+    - key: backfill-fn
+      handler: index.dataProviderBackfill
+    - key: backfill-consumer-fn
+      handler: index.backfillQueueResolver
   consumer:
     - key: import-consumer
       queue: import-queue
       resolver:
         function: import-projects
         method: import
+    - key: backfill-consumer
+      queue: data-provider-backfill
+      resolver:
+        function: backfill-consumer-fn
+        method: dataProviderBackfill
 app:
   id: ari:cloud:ecosystem::app/60787eba-aec5-49b4-979d-db8e77de32db
   runtime:
