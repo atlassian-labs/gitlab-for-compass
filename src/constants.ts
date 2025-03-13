@@ -15,6 +15,7 @@ export const STORAGE_KEYS = {
   CURRENT_IMPORT_QUEUE_JOB_IDS: 'currentImportQueueJobIds',
   CURRENT_IMPORT_FAILED_PROJECT_PREFIX: 'currentImportFailedProject-',
   TEAM_ONBOARDING: 'isTeamOnboardingCompleted',
+  BACKFILL_PUSH_DATA_PROVIDER_VERSION: 'backfill-push-data-provider',
 };
 
 export const STORAGE_SECRETS = {

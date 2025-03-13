@@ -54,8 +54,6 @@ modules:
   webtrigger:
     - key: gitlab-event-webtrigger
       function: process-gitlab-event
-    - key: test-trigger
-      function: data-provider-fn
   scheduledTrigger:
     - key: backfill
       function: backfill-fn
