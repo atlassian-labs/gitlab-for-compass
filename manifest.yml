@@ -57,7 +57,7 @@ modules:
   scheduledTrigger:
     - key: backfill
       function: backfill-fn
-      interval: hour
+      interval: fiveMinute
   function:
     - key: admin-resolver
       handler: index.adminResolver
