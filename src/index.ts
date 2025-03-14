@@ -1,6 +1,7 @@
 import adminResolver from './resolvers/admin-resolvers';
 import importResolver from './resolvers/import-resolvers';
 import importQueueResolver from './resolvers/import-queue-resolver';
+import backfillQueueResolver from './resolvers/backfill-queue-resolver';
 
 import { processGitlabEvent } from './entry/webtriggers';
 import { dataProvider } from './entry/data-provider';
@@ -12,12 +13,16 @@ import { getRepoDetails } from './entry/get-repo-details';
 import { getTreeShallow } from './entry/get-tree-shallow';
 import { getFileContents } from './entry/get-file-contents';
 
+import dataProviderBackfill from './entry/scheduled-triggers/data-provider-backfill';
+
 // extension points
 export { preUninstall };
 // webtriggers
 export { processGitlabEvent };
+// scheduled triggers
+export { dataProviderBackfill };
 // resolvers
-export { adminResolver, importResolver, importQueueResolver };
+export { adminResolver, importResolver, importQueueResolver, backfillQueueResolver };
 // dataProvider
 export { dataProvider, callback };
 // configValidator
