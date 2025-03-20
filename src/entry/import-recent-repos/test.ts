@@ -100,6 +100,7 @@ const MOCK_THREE_PROJECTS = [
 describe('importRecentRepos module', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockCreateComponentSlug.mockResolvedValue(undefined);
   });
 
   it('should import recent projects successfully with only one connected group', async () => {
@@ -111,7 +112,6 @@ describe('importRecentRepos module', () => {
     mockCreateComponent.mockResolvedValueOnce({ id: 1, name: 'repo1' } as unknown as Component);
     mockCreateComponent.mockResolvedValueOnce({ id: 2, name: 'repo2' } as unknown as Component);
     mockCreateComponent.mockResolvedValueOnce({ id: 3, name: 'repo3' } as unknown as Component);
-    mockCreateComponentSlug.mockResolvedValue(undefined);
 
     const result = await importRecentRepos({ cloudId: MOCK_CLOUD_ID, numRepos: 3 });
     expect(getProjects).toHaveBeenCalledWith(MOCK_GROUP_TOKEN, MOCK_GROUP_ID_1, 1, 3, undefined, 'last_activity_at');

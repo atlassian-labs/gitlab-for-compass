@@ -151,7 +151,7 @@ resolver.define('createSingleComponent', async (req): Promise<ResolverResponse<C
   try {
     const component = await createComponent(cloudId, projectToImport);
 
-    if (component && component.id && projectToImport.name) {
+    if (component.id && projectToImport.name) {
       await createComponentSlug(component.id, projectToImport.name);
     }
 
