@@ -4,7 +4,7 @@ import { storage } from '@forge/api';
 import { internalMetrics } from '@forge/metrics';
 import { backOff, IBackOffOptions } from 'exponential-backoff';
 
-import { createComponent, updateComponent } from '../client/compass';
+import { createComponent, createComponentSlug, updateComponent } from '../client/compass';
 import { STORAGE_KEYS, BACK_OFF, IMPORT_LABEL, MAX_LABELS_LENGTH } from '../constants';
 import { appendLink } from '../utils/append-link';
 import { ImportableProject } from '../resolverTypes';
@@ -66,6 +66,10 @@ resolver.define('import', async (req) => {
       const component = await backOff(() => createComponent(cloudId, project), backOffConfig);
       console.log(`GitLab project ${id} was imported. Compass component was created - ${component.id}.`);
 
+      if (component.id && project.name) {
+        await createComponentSlug(component.id, project.name);
+      }
+
       if (shouldOpenMR) {
         await createMRWithCompassYML(project, component.id, groupId);
       }
@@ -82,6 +86,10 @@ resolver.define('import', async (req) => {
       };
 
       const updatedComponent = await backOff(() => updateComponent({ id: componentId, ...component }), backOffConfig);
+
+      if (updatedComponent.id && project.name && !updatedComponent.slug) {
+        await createComponentSlug(updatedComponent.id, project.name);
+      }
 
       if (shouldOpenMR) {
         await createMRWithCompassYML(project, updatedComponent.id, groupId);

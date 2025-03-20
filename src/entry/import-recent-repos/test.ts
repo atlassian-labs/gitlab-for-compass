@@ -7,7 +7,7 @@ mockForgeApi();
 import { importRecentRepos } from '../..';
 import { getProjects } from '../../client/gitlab';
 import { compareProjectWithExistingComponent } from '../../services/fetch-projects';
-import { createComponent } from '../../client/compass';
+import { createComponent, createComponentSlug } from '../../client/compass';
 import { GitlabAPIGroup, GitlabAPIProject } from '../../types';
 import { getConnectedGroups } from '../../services/group';
 
@@ -29,6 +29,7 @@ jest.mock('@forge/metrics', () => ({
 // Define mock implementations
 const mockStorageGet = jest.mocked(storage.getSecret);
 const mockCreateComponent = jest.mocked(createComponent);
+const mockCreateComponentSlug = jest.mocked(createComponentSlug);
 
 // Define constants and mock data
 const MOCK_GROUP_TOKEN = 'mock-group-token';
@@ -110,6 +111,7 @@ describe('importRecentRepos module', () => {
     mockCreateComponent.mockResolvedValueOnce({ id: 1, name: 'repo1' } as unknown as Component);
     mockCreateComponent.mockResolvedValueOnce({ id: 2, name: 'repo2' } as unknown as Component);
     mockCreateComponent.mockResolvedValueOnce({ id: 3, name: 'repo3' } as unknown as Component);
+    mockCreateComponentSlug.mockResolvedValue(undefined);
 
     const result = await importRecentRepos({ cloudId: MOCK_CLOUD_ID, numRepos: 3 });
     expect(getProjects).toHaveBeenCalledWith(MOCK_GROUP_TOKEN, MOCK_GROUP_ID_1, 1, 3, undefined, 'last_activity_at');
@@ -118,6 +120,7 @@ describe('importRecentRepos module', () => {
     expect(mockCreateComponent).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ name: 'repo1' }));
     expect(mockCreateComponent).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ name: 'repo2' }));
     expect(mockCreateComponent).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ name: 'repo3' }));
+    expect(mockCreateComponentSlug).toHaveBeenCalledTimes(3);
 
     expect(internalMetrics.counter).toHaveBeenCalledTimes(3);
     expect(internalMetrics.counter).toHaveBeenCalledWith('compass.gitlab.import.end.success');
@@ -144,6 +147,7 @@ describe('importRecentRepos module', () => {
     expect(mockCreateComponent).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ name: 'repo1' }));
     expect(mockCreateComponent).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ name: 'repo2' }));
     expect(mockCreateComponent).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ name: 'repo3' }));
+    expect(mockCreateComponentSlug).toHaveBeenCalledTimes(3);
 
     expect(internalMetrics.counter).toHaveBeenCalledTimes(3);
     expect(internalMetrics.counter).toHaveBeenCalledWith('compass.gitlab.import.end.success');
@@ -176,6 +180,7 @@ describe('importRecentRepos module', () => {
       expect.any(String),
       expect.objectContaining({ name: 'repo3' }),
     );
+    expect(mockCreateComponentSlug).toHaveBeenCalledTimes(2);
 
     expect(internalMetrics.counter).toHaveBeenCalledTimes(2);
     expect(internalMetrics.counter).toHaveBeenCalledWith('compass.gitlab.import.end.success');

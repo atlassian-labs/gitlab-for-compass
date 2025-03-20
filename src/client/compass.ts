@@ -22,6 +22,7 @@ import { getTenantContextQuery } from './get-tenat-context-query';
 import { aggQuery } from './agg';
 import { getTeamsQuery } from './get-teams-query';
 import { formatLabels } from '../utils/labels-utils';
+import { convertToCompassSlug } from '../utils/component-slug';
 
 const throwIfErrors = function throwIfSdkErrors(method: string, errors: SdkError[]) {
   // Checking if any invalid config errors to report.
@@ -64,6 +65,29 @@ export const createComponent = async (cloudId: string, project: ImportableProjec
   throwIfErrors('createComponent', errors);
 
   return data.component;
+};
+
+// Slug creation could fail if it is a duplicate, so do it in a separate call from component creation
+export const createComponentSlug = async (componentId: string, repoName: string): Promise<void> => {
+  const slug = convertToCompassSlug(repoName);
+  const input = {
+    id: componentId,
+    slug,
+  };
+
+  // Attempt 2 times to create a unique slug for this component, once with original slug and once with -1 appended
+  for (let i = 1; i <= 2; i += 1) {
+    try {
+      const { errors } = await graphqlGateway.compass.asApp().updateComponent(input);
+      if (!errors || errors.length === 0 || !errors[0].message.includes('Another component with the slug')) {
+        return;
+      }
+      input.slug = `${slug}-${i.toString()}`;
+    } catch (e) {
+      console.error(`Error encountered while creating slug: ${e.message}`);
+      break;
+    }
+  }
 };
 
 export async function updateComponent(input: UpdateComponentInput): Promise<Component | never> {
