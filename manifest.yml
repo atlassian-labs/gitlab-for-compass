@@ -54,10 +54,6 @@ modules:
   webtrigger:
     - key: gitlab-event-webtrigger
       function: process-gitlab-event
-  scheduledTrigger:
-    - key: backfill
-      function: backfill-fn
-      interval: fiveMinute
   function:
     - key: admin-resolver
       handler: index.adminResolver
