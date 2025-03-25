@@ -19,7 +19,7 @@ import {
 } from './shared-resolvers';
 import { ConnectGroupInput, GitLabRoles, GroupProjectsResponse, WebhookSetupConfig } from '../types';
 import { createMRWithCompassYML } from '../services/create-mr-with-compass-yml';
-import { createComponent } from '../client/compass';
+import { createComponent, createComponentSlug } from '../client/compass';
 
 const resolver = new Resolver();
 
@@ -150,6 +150,10 @@ resolver.define('createSingleComponent', async (req): Promise<ResolverResponse<C
   } = req;
   try {
     const component = await createComponent(cloudId, projectToImport);
+
+    if (component.id && projectToImport.name) {
+      await createComponentSlug(component.id, projectToImport.name);
+    }
 
     return {
       success: true,

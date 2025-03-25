@@ -2,7 +2,7 @@ import { internalMetrics } from '@forge/metrics';
 import { backOff } from 'exponential-backoff';
 import { storage } from '@forge/api';
 import { ALL_SETTLED_STATUS } from '@atlassian/forge-graphql';
-import { createComponent } from '../../client/compass';
+import { createComponent, createComponentSlug } from '../../client/compass';
 import { getConnectedGroups } from '../../services/group';
 import { getProjectLabels } from '../../services/get-labels';
 import { ImportRecentReposPayload, ImportRecentReposReturn, ImportResultsSummary } from './types';
@@ -97,6 +97,9 @@ const importReposToCompass = async (
         if ('err' in response) {
           await setFailedRepositoriesToStore(projectReadyForImport);
           return false;
+        }
+        if (response.id && projectReadyForImport.name) {
+          await createComponentSlug(response.id, projectReadyForImport.name);
         }
         internalMetrics.counter('compass.gitlab.import.end.success').incr();
         return true;
