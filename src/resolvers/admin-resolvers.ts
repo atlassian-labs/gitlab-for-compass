@@ -14,10 +14,17 @@ import {
   getAllComponentTypes,
   getFeatures,
   getGroupsProjects,
+  getProjectImportResult,
   groupsAllExisting,
   webhookSetupConfig,
 } from './shared-resolvers';
-import { ConnectGroupInput, GitLabRoles, GroupProjectsResponse, WebhookSetupConfig } from '../types';
+import {
+  ConnectGroupInput,
+  GitLabRoles,
+  GroupProjectsResponse,
+  ProjectImportResult,
+  WebhookSetupConfig,
+} from '../types';
 import { createMRWithCompassYML } from '../services/create-mr-with-compass-yml';
 import { createComponent, createComponentSlug } from '../client/compass';
 
@@ -192,6 +199,10 @@ resolver.define('project/createMRWithCompassYML', async (req): Promise<ResolverR
       errors: [{ message: e.statusText || e.message }],
     };
   }
+});
+
+resolver.define('project/import/result', async (): Promise<ResolverResponse<ProjectImportResult>> => {
+  return getProjectImportResult();
 });
 
 export default resolver.getDefinitions();

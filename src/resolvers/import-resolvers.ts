@@ -1,7 +1,7 @@
 import Resolver from '@forge/resolver';
 
 import { GitlabAPIGroup, ResolverResponse, ProjectImportResult, ImportStatus, FeaturesList } from '../resolverTypes';
-import { clearImportResult, getImportResult, getImportStatus } from '../services/import-projects';
+import { clearImportResult, getImportStatus } from '../services/import-projects';
 import { GroupProjectsResponse, TeamsWithMembershipStatus, WebhookSetupConfig } from '../types';
 
 import {
@@ -10,6 +10,7 @@ import {
   getAllComponentTypes,
   getFeatures,
   getGroupsProjects,
+  getProjectImportResult,
   groupsAllExisting,
   importProject,
   webhookSetupConfig,
@@ -48,15 +49,7 @@ resolver.define('project/import/status', async (): Promise<ResolverResponse<Impo
 });
 
 resolver.define('project/import/result', async (): Promise<ResolverResponse<ProjectImportResult>> => {
-  try {
-    const importResult = await getImportResult();
-    return { success: true, data: importResult };
-  } catch (e) {
-    return {
-      success: false,
-      errors: [{ message: e.message, errorType: e.errorType }],
-    };
-  }
+  return getProjectImportResult();
 });
 
 resolver.define('project/import/clear', async (): Promise<ResolverResponse> => {
