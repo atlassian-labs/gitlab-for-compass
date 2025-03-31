@@ -12,9 +12,9 @@ import { listFeatures } from '../services/feature-flags';
 import { getAllExistingGroups, getConnectedGroups } from '../services/group';
 import { getWebhookSetupConfig, setupAndValidateWebhook } from '../services/webhooks';
 import { getForgeAppId } from '../utils/get-forge-app-id';
-import { GroupProjectsResponse, WebhookSetupConfig } from '../types';
+import { GroupProjectsResponse, ProjectImportResult, WebhookSetupConfig } from '../types';
 import { getGroupProjects } from '../services/fetch-projects';
-import { ImportFailedError, importProjects } from '../services/import-projects';
+import { getImportResult, ImportFailedError, importProjects } from '../services/import-projects';
 import { getAllComponentTypes as getAllCompassComponentTypes } from '../client/compass';
 
 export const getFeatures = (): ResolverResponse<FeaturesList> => {
@@ -156,6 +156,18 @@ export const getAllComponentTypes = async (req: Request): Promise<ResolverRespon
     return {
       success: false,
       errors: [{ message: e.message }],
+    };
+  }
+};
+
+export const getProjectImportResult = async (): Promise<ResolverResponse<ProjectImportResult>> => {
+  try {
+    const importResult = await getImportResult();
+    return { success: true, data: importResult };
+  } catch (e) {
+    return {
+      success: false,
+      errors: [{ message: e.message, errorType: e.errorType }],
     };
   }
 };
