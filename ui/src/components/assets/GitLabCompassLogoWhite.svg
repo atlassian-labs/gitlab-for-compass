@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="240" height="240" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+  <!-- GitLab Logo (Left Side) -->
+  <g transform="translate(30,60) scale(0.8)">
+    <path fill="#FFFFFF" d="M120,90l-20-60L80,90"/>
+    <path fill="#FFFFFF" d="M120,90H80l20,60z"/>
+    <path fill="#FFFFFF" d="M80,90L65,45l-5,15L80,90z"/>
+    <path fill="#FFFFFF" d="M60,60L80,90,60,120z"/>
+    <path fill="#FFFFFF" d="M80,90,60,120l20,30,20-30L80,90z"/>
+  </g>
+  <!-- Compass Logo (Right Side) -->
+  <g transform="translate(120,60)">
+    <circle cx="50" cy="60" r="40" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="2"/>
+    <path d="M50,30 L65,80 L35,80 Z" fill="#000000"/>
+    <circle cx="50" cy="60" r="5" fill="#000000"/>
+  </g>
+</svg>
