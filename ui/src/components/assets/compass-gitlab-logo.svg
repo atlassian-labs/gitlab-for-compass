@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="240" height="80" viewBox="0 0 240 80" xmlns="http://www.w3.org/2000/svg">
+  <!-- Compass Logo (simplified compass needle) -->
+  <g transform="translate(20,20)">
+    <circle cx="20" cy="20" r="18" fill="#0052CC" />
+    <path d="M20,2 L26,38 L20,32 L14,38 L20,2" fill="white"/>
+  </g>
+  
+  <!-- Connection Line -->
+  <line x1="70" y1="40" x2="170" y2="40" stroke="#253858" stroke-width="2" stroke-dasharray="4"/>
+  
+  <!-- GitLab Logo -->
+  <g transform="translate(180,20)">
+    <path d="M20,0 L39,40 L1,40 L20,0" fill="#FC6D26"/>
+    <path d="M20,0 L1,40 L0,35 L8,15 L20,0" fill="#E24329"/>
+    <path d="M20,0 L39,40 L40,35 L32,15 L20,0" fill="#E24329"/>
+    <path d="M1,40 L0,35 L20,48 L1,40" fill="#FCA326"/>
+    <path d="M39,40 L40,35 L20,48 L39,40" fill="#FCA326"/>
+  </g>
+</svg>
