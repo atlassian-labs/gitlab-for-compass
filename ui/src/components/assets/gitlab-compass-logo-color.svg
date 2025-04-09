@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+    <!-- GitLab-Compass Combined Logo - Color Version -->
+    <defs>
+        <linearGradient id="gitlab-orange" x1="0%" y1="50%" x2="100%" y2="50%">
+            <stop offset="0%" style="stop-color:#FC6D26"/>
+            <stop offset="100%" style="stop-color:#E24329"/>
+        </linearGradient>
+        <linearGradient id="compass-blue" x1="0%" y1="50%" x2="100%" y2="50%">
+            <stop offset="0%" style="stop-color:#0052CC"/>
+            <stop offset="100%" style="stop-color:#2684FF"/>
+        </linearGradient>
+    </defs>
+    
+    <!-- GitLab Fox Head (Simplified) -->
+    <g transform="translate(48, 48)">
+        <path fill="url(#gitlab-orange)" d="M80 0L60 60H100L80 0z"/>
+        <path fill="#E24329" d="M20 60L40 0L0 60H20z"/>
+        <path fill="#FC6D26" d="M50 120L20 60H80L50 120z"/>
+    </g>
+    
+    <!-- Compass Needle -->
+    <g transform="translate(128, 128)">
+        <circle fill="url(#compass-blue)" cx="0" cy="0" r="60"/>
+        <path fill="white" d="M0-40L20 20L0 10L-20 20Z"/>
+    </g>
+</svg>

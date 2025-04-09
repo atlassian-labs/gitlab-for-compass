@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+    <!-- GitLab-Compass Combined Logo - White Version -->
+    
+    <!-- GitLab Fox Head (Simplified) -->
+    <g transform="translate(48, 48)">
+        <path fill="#FFFFFF" d="M80 0L60 60H100L80 0z"/>
+        <path fill="#FFFFFF" d="M20 60L40 0L0 60H20z"/>
+        <path fill="#FFFFFF" d="M50 120L20 60H80L50 120z"/>
+    </g>
+    
+    <!-- Compass Needle -->
+    <g transform="translate(128, 128)">
+        <circle fill="#FFFFFF" cx="0" cy="0" r="60"/>
+        <path fill="#000000" d="M0-40L20 20L0 10L-20 20Z"/>
+    </g>
+</svg>
