@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- GitLab Compass Icon -->
+  <g transform="translate(10, 10)">
+    <!-- Simplified Combined Icon -->
+    <path d="M50,80 L30,40 L70,40 Z" fill="#FC6D26"/>
+    <circle cx="50" cy="50" r="35" fill="none" stroke="#0052CC" stroke-width="6"/>
+    <path d="M50,30 L60,70 L50,60 L40,70 Z" fill="#0052CC"/>
+  </g>
+</svg>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="240" height="240" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+  <!-- GitLab Compass Monochrome Logo -->
+  <g transform="translate(20, 20)">
+    <!-- GitLab Logo Base -->
+    <path d="M100,160 L60,80 L140,80 Z" fill="#333333"/>
+    <path d="M60,80 L40,40 L80,40 Z" fill="#333333"/>
+    <path d="M140,80 L120,40 L160,40 Z" fill="#333333"/>
+    <!-- Compass Element -->
+    <circle cx="100" cy="100" r="60" fill="none" stroke="#333333" stroke-width="8"/>
+    <path d="M100,60 L115,140 L100,120 L85,140 Z" fill="#333333"/>
+  </g>
+</svg>
