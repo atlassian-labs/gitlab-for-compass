@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- GitLab fox head simplified -->
+  <path d="M64 120L38 95h52L64 120z" fill="#000"/>
+  <path d="M38 95L25 60l13 35h26L38 95z" fill="#000"/>
+  <path d="M90 95L103 60l-13 35H64l26 0z" fill="#000"/>
+  <path d="M25 60l13 35L51 60H25z" fill="#000"/>
+  <path d="M103 60l-13 35L77 60h26z" fill="#000"/>
+  <!-- Compass needle -->
+  <circle cx="64" cy="64" r="30" fill="none" stroke="#000" stroke-width="4"/>
+  <path d="M64 44v40M54 64h20" stroke="#000" stroke-width="4"/>
+  <circle cx="64" cy="64" r="4" fill="#000"/>
+</svg>
