@@ -19,6 +19,10 @@ export const isCompassPushEventEnabled = (defaultValue = false): boolean => {
   return process.env.COMPASS_PUSH_EVENTS === 'true' || defaultValue;
 };
 
+export const isPackageDependenciesM3Enabled = (defaultValue = false): boolean => {
+  return process.env.FF_PACKAGE_DEPENDENCIES_M3 === 'true' || defaultValue;
+};
+
 const isImportAllEnabled = (defaultValue = false): boolean => {
   return process.env.FF_IMPORT_ALL_ENABLED === 'true' || defaultValue;
 };
@@ -31,5 +35,6 @@ export const listFeatures = (): FeaturesList => {
     [GitlabFeaturesEnum.ENABLE_GITLAB_MAINTAINER_TOKEN]: isGitlabMaintainerTokenEnabled(),
     [GitlabFeaturesEnum.IMPORT_ALL]: isImportAllEnabled(),
     [GitlabFeaturesEnum.COMPASS_PUSH_EVENTS]: isCompassPushEventEnabled(),
+    [GitlabFeaturesEnum.PACKAGE_DEPENDENCIES_M3]: isPackageDependenciesM3Enabled(),
   };
 };

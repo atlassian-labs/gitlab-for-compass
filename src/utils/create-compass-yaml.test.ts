@@ -229,6 +229,7 @@ describe('formatLinks', () => {
       isGitlabMaintainerTokenEnabled: false,
       isImportAllEnabled: false,
       isCompassPushEventEnabled: false,
+      isPackageDependenciesM3Enabled: false,
     });
 
     const result = formatLinks(inputLinks);
@@ -248,6 +249,7 @@ describe('formatLinks', () => {
       isGitlabMaintainerTokenEnabled: false,
       isImportAllEnabled: false,
       isCompassPushEventEnabled: false,
+      isPackageDependenciesM3Enabled: false,
     });
 
     const result = formatLinks(null);
@@ -263,6 +265,7 @@ describe('formatLinks', () => {
       isGitlabMaintainerTokenEnabled: false,
       isImportAllEnabled: false,
       isCompassPushEventEnabled: false,
+      isPackageDependenciesM3Enabled: false,
     });
 
     const result = formatLinks(inputLinks);
