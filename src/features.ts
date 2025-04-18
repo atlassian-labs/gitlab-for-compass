@@ -11,6 +11,7 @@ export enum GitlabFeaturesEnum {
   ENABLE_GITLAB_MAINTAINER_TOKEN = 'isGitlabMaintainerTokenEnabled',
   IMPORT_ALL = 'isImportAllEnabled',
   COMPASS_PUSH_EVENTS = 'isCompassPushEventEnabled',
+  PACKAGE_DEPENDENCIES_M3 = 'isPackageDependenciesM3Enabled',
 }
 
 export type FeaturesList = { [key in GitlabFeaturesEnum]: boolean };
