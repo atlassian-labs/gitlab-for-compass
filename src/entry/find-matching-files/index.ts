@@ -5,8 +5,9 @@ import { listFiles } from '../../client/gitlab';
 import { isPackageDependenciesM3Enabled } from '../../services/feature-flags';
 
 const MAX_NUM_FILES_PER_PAGE = 100;
+const LEVELS_TO_SEARCH = 5;
 
-const getFiles = async (groupToken: string, projectId: number, path?: string) => {
+const callListFiles = async (groupToken: string, projectId: number, path?: string) => {
   let shouldContinue = true;
   let pageToken;
   const topLevelFiles: ProjectFile[] = [];
@@ -35,15 +36,16 @@ const getFiles = async (groupToken: string, projectId: number, path?: string) =>
   return topLevelFiles;
 };
 
-const getTreeProjectFiles = (files: ProjectFile[]) => {
+const getDirectories = (files: ProjectFile[]) => {
   return files.filter((file) => file.type === 'tree');
 };
 
-const getFileBlobs = (files: ProjectFile[]) => {
-  return files.filter((file) => file.type === 'blob');
+const getMatchingFiles = (files: ProjectFile[], containsOneOf: string[], equalsOneOf: string[]) => {
+  return files.filter(
+    (file) => file.type === 'blob' && (containsOneOf.includes(file.name) || equalsOneOf.includes(file.name)),
+  );
 };
 
-// Searches 2 levels deep for files
 export const findMatchingFiles = async (payload: FindMatchingFilesPayload): Promise<FindMatchingFilesResponse> => {
   if (!isPackageDependenciesM3Enabled()) {
     return {
@@ -75,26 +77,49 @@ export const findMatchingFiles = async (payload: FindMatchingFilesPayload): Prom
 
     const { project, groupToken } = projectData;
 
-    let allFiles: ProjectFile[] = [];
-    const topLevelProjectFiles = await getFiles(groupToken, project.id);
-    const topLevelProjectFileBlobs = getFileBlobs(topLevelProjectFiles);
-    const treeProjectFiles = getTreeProjectFiles(topLevelProjectFiles);
+    let foundMatchingFiles: ProjectFile[] = [];
+    let nextLevelDirectoriesToCheck: ProjectFile[] = [];
 
-    allFiles = [...topLevelProjectFileBlobs];
-
-    for (const file of treeProjectFiles) {
-      const files = await getFiles(groupToken, project.id, file.path);
-      const fileBlobs = getFileBlobs(files);
-      allFiles = [...allFiles, ...fileBlobs];
+    // Check top level first
+    const allTopLevelFiles = await callListFiles(groupToken, project.id);
+    const matchingTopLevelFiles = getMatchingFiles(
+      allTopLevelFiles,
+      payload.fileName.containsOneOf,
+      payload.fileName.equalsOneOf,
+    );
+    if (matchingTopLevelFiles.length > 0) {
+      console.log(`Found ${matchingTopLevelFiles.length} matching files in depth level 0`);
+      foundMatchingFiles = [...foundMatchingFiles, ...matchingTopLevelFiles];
     }
 
-    const matchingFiles = allFiles.filter(
-      (file) => payload.fileName.containsOneOf.includes(file.name) || payload.fileName.equalsOneOf.includes(file.name),
-    );
+    nextLevelDirectoriesToCheck = getDirectories(allTopLevelFiles);
+    for (let i = 0; i < LEVELS_TO_SEARCH - 1; i += 1) {
+      let tempNextLevelDirectoriesToCheck: ProjectFile[] = [];
+      console.log(`Searching ${nextLevelDirectoriesToCheck.length} directories in depth level ${i + 1}`);
+
+      for (const directory of nextLevelDirectoriesToCheck) {
+        const allProjectFiles = await callListFiles(groupToken, project.id, directory.path);
+        console.log(`Found ${allProjectFiles.length} project files in depth level ${i + 1}`);
+
+        const matchingFiles = getMatchingFiles(
+          allProjectFiles,
+          payload.fileName.containsOneOf,
+          payload.fileName.equalsOneOf,
+        );
+        if (matchingFiles.length > 0) {
+          console.log(`Found ${matchingFiles.length} matching files in depth level ${i + 1}`);
+          foundMatchingFiles = [...foundMatchingFiles, ...matchingFiles];
+        }
+
+        const directories = getDirectories(allProjectFiles);
+        tempNextLevelDirectoriesToCheck = [...tempNextLevelDirectoriesToCheck, ...directories];
+      }
+      nextLevelDirectoriesToCheck = tempNextLevelDirectoriesToCheck;
+    }
 
     return {
       success: true,
-      files: matchingFiles.map((file) => ({
+      files: foundMatchingFiles.map((file) => ({
         path: file.path,
         metadata: {},
       })),
