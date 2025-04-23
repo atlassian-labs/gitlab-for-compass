@@ -12,6 +12,7 @@ import { importRecentRepos } from './entry/import-recent-repos';
 import { getRepoDetails } from './entry/get-repo-details';
 import { getTreeShallow } from './entry/get-tree-shallow';
 import { getFileContents } from './entry/get-file-contents';
+import { findMatchingFiles } from './entry/find-matching-files';
 
 import dataProviderBackfill from './entry/scheduled-triggers/data-provider-backfill';
 
@@ -35,3 +36,5 @@ export { getRepoDetails };
 export { getTreeShallow };
 // getFileContents
 export { getFileContents };
+// findMatchingFiles
+export { findMatchingFiles };

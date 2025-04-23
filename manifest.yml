@@ -51,6 +51,11 @@ modules:
   compass:getTreeShallow:
     - key: get-tree-shallow
       function: get-tree-shallow-fn
+  compass:findMatchingFiles:
+    - key: find-matching-files
+      function: find-matching-files-fn
+      domains:
+        - 'gitlab.com'
   webtrigger:
     - key: gitlab-event-webtrigger
       function: process-gitlab-event
@@ -83,6 +88,8 @@ modules:
       handler: index.dataProviderBackfill
     - key: backfill-consumer-fn
       handler: index.backfillQueueResolver
+    - key: find-matching-files-fn
+      handler: index.findMatchingFiles
   consumer:
     - key: import-consumer
       queue: import-queue
