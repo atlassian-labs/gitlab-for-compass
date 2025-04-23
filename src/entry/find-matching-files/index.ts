@@ -105,7 +105,7 @@ export const findMatchingFiles = async (payload: FindMatchingFilesPayload): Prom
     return {
       success: false,
       errorMessage: e.message,
-      statusCode: e.cause ?? 500,
+      statusCode: 500,
       files: [],
     };
   }
