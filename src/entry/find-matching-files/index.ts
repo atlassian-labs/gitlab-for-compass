@@ -92,7 +92,6 @@ export const findMatchingFiles = async (payload: FindMatchingFilesPayload): Prom
       (file) => payload.fileName.containsOneOf.includes(file.name) || payload.fileName.equalsOneOf.includes(file.name),
     );
 
-    console.log('matchingFiles', matchingFiles);
     return {
       success: true,
       files: matchingFiles.map((file) => ({
