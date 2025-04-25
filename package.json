@@ -27,7 +27,6 @@
     "husky": "^7.0.4",
     "jest": "^27.5.1",
     "jest-fetch-mock": "^3.0.3",
-    "jest-mock": "^28.1.0",
     "lint-staged": "^12.3.5",
     "prettier": "^2.6.2",
     "react": "^17.0.2",
@@ -43,6 +42,7 @@
     "@forge/resolver": "^1.6.2",
     "@forge/ui": "^1.1.0",
     "exponential-backoff": "^3.1.0",
+    "jest-mock": "^28.1.0",
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
     "url-parse": "^1.5.10"
