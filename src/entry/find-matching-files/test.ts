@@ -7,7 +7,6 @@ import { findMatchingFiles } from './index';
 import { listFiles } from '../../client/gitlab';
 import { FindMatchingFilesPayload } from './types';
 import * as featureFlagService from '../../services/feature-flags';
-import { getGroupIds } from 'src/utils/storage-utils';
 import { mocked } from 'jest-mock';
 import { getProjectDataFromUrl } from '../../services/data-provider-link-parser';
 import { generateGitlabProject } from '../../__tests__/helpers/gitlab-helper';
@@ -39,7 +38,12 @@ describe('findMatchingFiles', () => {
     jest.resetAllMocks();
     jest.spyOn(featureFlagService, 'isPackageDependenciesM3Enabled').mockReturnValue(true);
     mockedGetProjectDataFromUrl.mockResolvedValue({
-      project: generateGitlabProject({ id: 3, name: 'projectName' }),
+      project: generateGitlabProject({
+        id: 3,
+        name: 'projectName',
+        web_url: 'https://gitlab.com/group1/group2/group3/projectName',
+        default_branch: 'main',
+      }),
       groupToken: 'mockToken',
       groupId: 1,
     });
@@ -52,11 +56,19 @@ describe('findMatchingFiles', () => {
 
     expect(result).toEqual({
       success: true,
-      files: [
-        { path: 'file/path/file1', metadata: {} },
-        { path: 'file/path/file2', metadata: {} },
-      ],
       statusCode: 200,
+      files: [
+        {
+          fullFilePath: 'https://gitlab.com/group1/group2/group3/projectName/blob/main/file/path/file1',
+          localFilePath: 'file/path/file1',
+          metadata: {},
+        },
+        {
+          fullFilePath: 'https://gitlab.com/group1/group2/group3/projectName/blob/main/file/path/file2',
+          localFilePath: 'file/path/file2',
+          metadata: {},
+        },
+      ],
     });
   });
 

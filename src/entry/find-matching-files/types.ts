@@ -12,7 +12,8 @@ export type FindMatchingFilesPayload = {
 };
 
 export type File = {
-  path: string;
+  fullFilePath: string;
+  localFilePath: string;
   metadata: {
     size?: number;
   };
