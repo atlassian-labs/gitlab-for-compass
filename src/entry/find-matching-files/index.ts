@@ -120,7 +120,8 @@ export const findMatchingFiles = async (payload: FindMatchingFilesPayload): Prom
     return {
       success: true,
       files: foundMatchingFiles.map((file) => ({
-        path: file.path,
+        fullFilePath: `${project.web_url}/blob/${project.default_branch}/${file.path}`,
+        localFilePath: file.path,
         metadata: {},
       })),
       statusCode: 200,
