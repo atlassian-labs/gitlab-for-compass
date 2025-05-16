@@ -1,13 +1,18 @@
-import { ConfigFileActions } from '@atlassian/forge-graphql-types';
+import {
+  CompassResyncRepoFileInput,
+  CompassResyncRepoFilesInput,
+  ConfigFileActions,
+} from '@atlassian/forge-graphql-types';
+import { getCommitDiff } from '../../../client/gitlab';
 import { findConfigAsCodeFileChanges, syncComponent } from '../../../services/sync-component-with-file';
 import { isEventForTrackingBranch } from '../../../utils/push-event-utils';
 import { ComponentSyncDetails, PushEvent } from '../../../types';
 import { getTrackingBranchName } from '../../../services/get-tracking-branch';
-import { unlinkComponentFromFile } from '../../../client/compass';
+import { unlinkComponentFromFile, resyncRepoFiles } from '../../../client/compass';
 import { EXTERNAL_SOURCE } from '../../../constants';
 import { hasRejections, getFormattedErrors } from '../../../utils/promise-allsettled-helpers';
 import { sendPushEventToCompass } from '../../../services/send-compass-events';
-import { isCompassPushEventEnabled } from '../../../services/feature-flags';
+import { isCompassPushEventEnabled, isPackageDependenciesM3Enabled } from '../../../services/feature-flags';
 
 export const handlePushEvent = async (event: PushEvent, groupToken: string, cloudId: string): Promise<void> => {
   try {
@@ -84,6 +89,52 @@ export const handlePushEvent = async (event: PushEvent, groupToken: string, clou
 
     if (isCompassPushEventEnabled()) {
       await sendPushEventToCompass(event, cloudId);
+    }
+
+    if (isPackageDependenciesM3Enabled()) {
+      const commitDiffs = await getCommitDiff(groupToken, event.project.id, event.checkout_sha);
+
+      if (commitDiffs.length === 0) {
+        console.log('No changes in commit, skipping resync of repo files');
+      } else {
+        const changedFiles = commitDiffs.map((diff) => {
+          // deleted_file -> DELETED, new_file -> CREATED, renamed_file -> UPDATED
+          let action: string;
+          if (diff.deleted_file) {
+            action = 'DELETED';
+          } else if (diff.new_file) {
+            action = 'CREATED';
+          } else {
+            action = 'UPDATED';
+          }
+
+          const currentFilePath = {
+            fullFilePath: `${event.project.web_url}/blob/${event.project.default_branch}/${diff.new_path}`,
+            localFilePath: diff.new_path,
+          };
+
+          const oldFilePath = {
+            fullFilePath: `${event.project.web_url}/blob/${event.project.default_branch}/${diff.old_path}`,
+            localFilePath: diff.old_path,
+          };
+
+          return {
+            currentFilePath,
+            // Don't set on an UPDATED action unless it was renamed
+            oldFilePath: action === 'UPDATED' && !diff.renamed_file ? undefined : oldFilePath,
+            action,
+          } as CompassResyncRepoFileInput;
+        });
+
+        const resyncRepoFilesInput: CompassResyncRepoFilesInput = {
+          cloudId,
+          repoId: event.project.id.toString(),
+          baseRepoUrl: event.project.web_url,
+          changedFiles,
+        };
+
+        await resyncRepoFiles(resyncRepoFilesInput);
+      }
     }
   } catch (e) {
     console.error('Error while handling push event', e);
