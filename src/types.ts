@@ -3,7 +3,7 @@ import {
   CustomFieldFromYAML,
   DataProviderBuildEvent,
   DataProviderDeploymentEvent,
-} from '@atlassian/forge-graphql';
+} from '@atlassian/forge-graphql-types';
 
 /*
   TO EDIT THIS FILE, you must edit the file in the repo's src directory and running yarn ui:build or yarn ui:prebuild will generate the types in the ui/src directory.

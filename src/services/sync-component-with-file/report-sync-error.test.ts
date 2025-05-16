@@ -3,7 +3,7 @@ import { mockAgg, mockUpdateComponentDataManager } from '../../__tests__/helpers
 
 mockAgg();
 
-import { ComponentSyncEventStatus } from '@atlassian/forge-graphql';
+import { ComponentSyncEventStatus } from '@atlassian/forge-graphql-types';
 import { AggClientError, InvalidConfigFileError } from '../../models/errors';
 import { reportSyncError } from './report-sync-error';
 

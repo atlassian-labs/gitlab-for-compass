@@ -1,4 +1,4 @@
-import { CompassComponent, CompassComponentType } from '@atlassian/forge-graphql';
+import { CompassComponent, CompassComponentType } from '@atlassian/forge-graphql-types';
 import { CommitFileDiff, MergeRequest } from '../../types';
 
 export const TEST_COMPONENT_ID =

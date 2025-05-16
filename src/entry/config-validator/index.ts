@@ -1,4 +1,5 @@
-import { ConfigValidatorResult, ConfigValidatorResponse } from '@atlassian/forge-graphql';
+import { ConfigValidatorResult } from '@atlassian/forge-graphql-types';
+import { ConfigValidatorResponse } from '@atlassian/forge-graphql';
 
 import { getConnectedGroups } from '../../services/group';
 

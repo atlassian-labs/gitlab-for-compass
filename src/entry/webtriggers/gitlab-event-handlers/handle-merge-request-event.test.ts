@@ -5,7 +5,7 @@ import { mockForgeApi } from '../../../__tests__/helpers/forge-helper';
 
 mockForgeApi();
 
-import { BuiltinMetricDefinitions } from '@atlassian/forge-graphql';
+import { BuiltinMetricDefinitions } from '@atlassian/forge-graphql-types';
 import { insertMetricValues } from '../../../services/insert-metric-values';
 import { getLastMergedMergeRequests, getOpenMergeRequests } from '../../../services/mergeRequest';
 import { getTrackingBranchName } from '../../../services/get-tracking-branch';

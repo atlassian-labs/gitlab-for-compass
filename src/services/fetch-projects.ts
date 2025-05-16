@@ -1,4 +1,4 @@
-import { CreateLinkInput, Link } from '@atlassian/forge-graphql';
+import { CreateLinkInput, Link } from '@atlassian/forge-graphql-types';
 import { storage } from '@forge/api';
 
 import { getComponentByExternalAlias } from '../client/compass';

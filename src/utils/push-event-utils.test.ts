@@ -1,5 +1,5 @@
 /* eslint-disable import/first */
-import { ComponentSyncEventStatus } from '@atlassian/forge-graphql';
+import { ComponentSyncEventStatus } from '@atlassian/forge-graphql-types';
 import { mockForgeApi } from '../__tests__/helpers/forge-helper';
 
 mockForgeApi();

@@ -1,4 +1,4 @@
-import { DataProviderBuildEvent } from '@atlassian/forge-graphql';
+import { DataProviderBuildEvent } from '@atlassian/forge-graphql-types';
 import { getProjectRecentPipelines } from '../../client/gitlab';
 import { gitlabApiPipelineToCompassDataProviderBuildEvent } from '../builds';
 import { getDateInThePast } from '../../utils/time-utils';

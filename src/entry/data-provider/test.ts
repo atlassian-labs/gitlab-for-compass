@@ -1,6 +1,6 @@
 /* eslint-disable import/first, import/order */
 import { mockAgg } from '../../__tests__/helpers/mock-agg';
-import { CompassEventType, DataProviderResult, InvocationStatusCode } from '@atlassian/forge-graphql';
+import { CompassEventType, DataProviderResult, InvocationStatusCode } from '@atlassian/forge-graphql-types';
 import { dataProvider } from './index';
 import * as getBackfillEvents from '../../services/get-backfill-data';
 import * as getProjectDataFromUrl from '../../services/data-provider-link-parser';

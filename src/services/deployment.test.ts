@@ -3,7 +3,7 @@ import { mockAgg } from '../__tests__/helpers/mock-agg';
 
 mockAgg();
 
-import { CompassDeploymentEventEnvironmentCategory, CompassDeploymentEventState } from '@atlassian/forge-graphql';
+import { CompassDeploymentEventEnvironmentCategory, CompassDeploymentEventState } from '@atlassian/forge-graphql-types';
 import {
   gitLabStateToCompassFormat,
   gitlabApiDeploymentToCompassDeploymentEvent,

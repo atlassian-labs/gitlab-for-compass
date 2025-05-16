@@ -151,7 +151,7 @@ export const findConfigAsCodeFileChanges = async (event: PushEvent, token: strin
     modifiedFilesResult.status === ALL_SETTLED_STATUS.REJECTED
   ) {
     throw new Error(
-      `Error addind or removed or modifying file: ${getFormattedErrors([
+      `Error adding, removing, or modifying file: ${getFormattedErrors([
         createPayloadResult,
         unlinkPayloadResult,
         modifiedFilesResult,

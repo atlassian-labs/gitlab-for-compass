@@ -1,4 +1,4 @@
-import { DataProviderDeploymentEvent } from '@atlassian/forge-graphql';
+import { DataProviderDeploymentEvent } from '@atlassian/forge-graphql-types';
 
 import { Deployment, EnvironmentTier } from '../../types';
 import { getRecentDeployments, gitlabAPiDeploymentToCompassDataProviderDeploymentEvent } from '../deployment';

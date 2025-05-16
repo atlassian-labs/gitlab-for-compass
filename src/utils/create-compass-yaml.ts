@@ -1,5 +1,5 @@
 import yaml from 'js-yaml';
-import { CompassLinkType, Component } from '@atlassian/forge-graphql';
+import { CompassLinkType, Component } from '@atlassian/forge-graphql-types';
 import {
   CompassYaml,
   ComponentLifecycleField,

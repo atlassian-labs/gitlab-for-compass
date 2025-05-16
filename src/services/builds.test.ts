@@ -4,7 +4,7 @@ import { mockForgeApi } from '../__tests__/helpers/forge-helper';
 
 mockForgeApi();
 
-import { CompassBuildEventState } from '@atlassian/forge-graphql';
+import { CompassBuildEventState } from '@atlassian/forge-graphql-types';
 import { pipelineLastUpdated, toCompassBuildState } from './builds';
 import { latestDate, pipelineWebhookFixture } from '../__tests__/fixtures/build-webhook-payload';
 

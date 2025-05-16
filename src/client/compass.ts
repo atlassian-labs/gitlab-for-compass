@@ -1,4 +1,4 @@
-import graphqlGateway, {
+import {
   CompassLinkType,
   CompassCreateEventInput,
   Component,
@@ -13,7 +13,9 @@ import graphqlGateway, {
   CompassComponentTypeObject,
   GetComponentInput,
   UnLinkComponentInput,
-} from '@atlassian/forge-graphql';
+  CompassResyncRepoFilesInput,
+} from '@atlassian/forge-graphql-types';
+import graphqlGateway from '@atlassian/forge-graphql';
 import { ImportableProject, COMPASS_GATEWAY_MESSAGES, Metric, Team } from '../types';
 import { EXTERNAL_SOURCE, IMPORT_LABEL, MAX_LABELS_LENGTH } from '../constants';
 import { UNKNOWN_EXTERNAL_ALIAS_ERROR_MESSAGE } from '../models/error-messages';
@@ -211,4 +213,10 @@ export const getTeams = async (
   const teamsQuery = getTeamsQuery(organizationId, cloudId, accountId, searchValue);
   const data = await aggQuery(teamsQuery);
   return data.team.teamSearchV2.nodes;
+};
+
+export const resyncRepoFiles = async (input: CompassResyncRepoFilesInput) => {
+  const { errors, data } = await graphqlGateway.compass.asApp().resyncRepoFiles(input);
+  throwIfErrors('resyncRepoFiles', errors);
+  return data;
 };

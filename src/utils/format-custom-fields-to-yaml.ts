@@ -8,7 +8,7 @@ import {
   CustomField,
   CustomFieldFromYAML,
   CustomFieldType,
-} from '@atlassian/forge-graphql';
+} from '@atlassian/forge-graphql-types';
 
 export const isCompassCustomTextField = (customField: CustomField): customField is CompassCustomTextField =>
   (customField as CompassCustomTextField).textValue !== undefined;

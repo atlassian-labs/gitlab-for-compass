@@ -7,7 +7,7 @@ import {
   DataProviderBuildEvent,
   DataProviderDeploymentEvent,
   Link,
-} from '@atlassian/forge-graphql';
+} from '@atlassian/forge-graphql-types';
 import { pipelineWebhookFixture } from '../fixtures/build-webhook-payload';
 import {
   CommitFileDiff,

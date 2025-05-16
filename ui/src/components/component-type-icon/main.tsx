@@ -1,4 +1,4 @@
-import { CompassComponentTypeObject } from '@atlassian/forge-graphql';
+import { CompassComponentTypeObject } from '@atlassian/forge-graphql-types';
 
 export const ComponentTypeIcon = (props: Pick<CompassComponentTypeObject, 'iconUrl'>) => {
   const { iconUrl } = props;

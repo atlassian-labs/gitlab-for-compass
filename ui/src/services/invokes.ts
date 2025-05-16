@@ -1,5 +1,5 @@
 import { invoke } from '@forge/bridge';
-import { CompassComponentTypeObject, Component } from '@atlassian/forge-graphql';
+import { CompassComponentTypeObject, Component } from '@atlassian/forge-graphql-types';
 
 import {
   ImportableProject,

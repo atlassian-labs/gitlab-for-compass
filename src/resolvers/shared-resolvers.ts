@@ -1,4 +1,4 @@
-import { CompassComponentTypeObject } from '@atlassian/forge-graphql';
+import { CompassComponentTypeObject } from '@atlassian/forge-graphql-types';
 import { Request } from '@forge/resolver';
 import {
   AuthErrorTypes,

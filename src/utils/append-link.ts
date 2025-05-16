@@ -1,4 +1,4 @@
-import { CompassLinkType } from '@atlassian/forge-graphql';
+import { CompassLinkType } from '@atlassian/forge-graphql-types';
 
 import { MAX_LINKS_OF_TYPE } from '../constants';
 import { YamlLink } from '../types';

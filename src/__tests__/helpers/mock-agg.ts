@@ -1,4 +1,4 @@
-import { ApiPayload } from '@atlassian/forge-graphql';
+import { ApiPayload } from '@atlassian/forge-graphql-types';
 import { mockForgeApi } from './forge-helper';
 
 const defaultImpl = async (): Promise<ApiPayload<any>> => ({
@@ -16,12 +16,13 @@ export const mockInsertMetricValueByExternalId = jest.fn(defaultImpl);
 export const mockSyncComponentWithFile = jest.fn(defaultImpl);
 export const mockGetComponentByExternalAlias = jest.fn(defaultImpl);
 export const mockUnlinkComponent = jest.fn(defaultImpl);
+export const mockResyncRepoFiles = jest.fn(defaultImpl);
 
 export function mockAgg() {
   mockForgeApi();
 
-  jest.mock('@atlassian/forge-graphql', () => ({
-    ...(jest.requireActual('@atlassian/forge-graphql') as any),
+  jest.mock('@atlassian/forge-graphql-types', () => ({
+    ...(jest.requireActual('@atlassian/forge-graphql-types') as any),
     compass: {
       asApp: () => ({
         deleteExternalAlias: mockDeleteExternalAlias,
@@ -31,6 +32,7 @@ export function mockAgg() {
         createEvent: mockCreateEvent,
         insertMetricValueByExternalId: mockInsertMetricValueByExternalId,
         getComponentByExternalAlias: mockGetComponentByExternalAlias,
+        resyncRepoFiles: mockResyncRepoFiles,
       }),
       configAsCode: {
         asApp: () => ({

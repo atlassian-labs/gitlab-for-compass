@@ -1,4 +1,4 @@
-import { CompassEventType, DataProviderBuildEvent, DataProviderDeploymentEvent } from '@atlassian/forge-graphql';
+import { CompassEventType, DataProviderBuildEvent, DataProviderDeploymentEvent } from '@atlassian/forge-graphql-types';
 
 type DataProviderPayload = {
   url: string;

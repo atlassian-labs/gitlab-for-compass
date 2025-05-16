@@ -1,5 +1,5 @@
 /* eslint-disable import/first */
-import { Component } from '@atlassian/forge-graphql/dist/src/compound-types';
+import { Component } from '@atlassian/forge-graphql-types';
 import { internalMetrics } from '@forge/metrics';
 import { mockForgeApi, storage } from '../../__tests__/helpers/forge-helper';
 

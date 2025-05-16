@@ -1,12 +1,11 @@
 import {
   BuiltinMetricDefinitions,
   DataProviderEventTypes,
-  DataProviderResponse,
   DataProviderResult,
   ForgeInvocationError,
-  ForgeInvocationErrorResponse,
   InvocationStatusCode,
-} from '@atlassian/forge-graphql';
+} from '@atlassian/forge-graphql-types';
+import { DataProviderResponse, ForgeInvocationErrorResponse } from '@atlassian/forge-graphql';
 
 import { BackfillData, DataProviderPayload } from './types';
 import { getProjectDataFromUrl } from '../../services/data-provider-link-parser';

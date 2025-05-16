@@ -102,7 +102,7 @@ modules:
         function: backfill-consumer-fn
         method: dataProviderBackfill
 app:
-  id: ari:cloud:ecosystem::app/60787eba-aec5-49b4-979d-db8e77de32db
+  id: ari:cloud:ecosystem::app/116c3ef4-fa29-4f22-80f7-b510686a10c8
   runtime:
     name: nodejs18.x
   features:

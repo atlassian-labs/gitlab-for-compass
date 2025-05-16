@@ -10,7 +10,7 @@ import {
   ConfigFileActions,
   ConfigFileMetadata,
   ComponentSyncEventStatus,
-} from '@atlassian/forge-graphql';
+} from '@atlassian/forge-graphql-types';
 import { mocked } from 'jest-mock';
 import yaml from 'js-yaml';
 

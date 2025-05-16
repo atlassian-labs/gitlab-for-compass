@@ -3,7 +3,7 @@ import React, { PropsWithChildren } from 'react';
 import Spinner from '@atlaskit/spinner';
 import Select, { ActionMeta } from '@atlaskit/select';
 import InlineMessage from '@atlaskit/inline-message';
-import { CompassComponentTypeObject } from '@atlassian/forge-graphql';
+import { CompassComponentTypeObject } from '@atlassian/forge-graphql-types';
 import { Centered, ComponentTypeIconWrapper } from './styles';
 import { CompassComponentTypeOption } from '../../services/types';
 import { DEFAULT_COMPONENT_TYPE_ID } from '../../constants';

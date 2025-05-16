@@ -1,4 +1,4 @@
-import { CompassEventType } from '@atlassian/forge-graphql';
+import { CompassEventType } from '@atlassian/forge-graphql-types';
 import { getBackfillData } from './get-backfill-data';
 
 import * as getProjectBuildsFor28Days from './compute-event-and-metrics/get-recent-builds';

@@ -1,6 +1,6 @@
 /* eslint-disable max-classes-per-file */
 
-import { SdkError } from '@atlassian/forge-graphql';
+import { SdkError } from '@atlassian/forge-graphql-types';
 
 export class AggClientError extends Error {
   errors: string[];

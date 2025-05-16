@@ -1,4 +1,4 @@
-import { CompassComponentTypeObject } from '@atlassian/forge-graphql';
+import { CompassComponentTypeObject } from '@atlassian/forge-graphql-types';
 import { SelectOwnerTeamOption } from '../components/OwnerTeamSelect/types';
 import { ErrorTypes, ProjectReadyForImport } from '../resolverTypes';
 

@@ -3,7 +3,7 @@ import {
   CompassDeploymentEventEnvironmentCategory,
   CompassDeploymentEventState,
   DataProviderDeploymentEvent,
-} from '@atlassian/forge-graphql';
+} from '@atlassian/forge-graphql-types';
 
 import { getProjectDeploymentById, getProjectRecentDeployments } from '../client/gitlab';
 import { Deployment, DeploymentEvent, EnvironmentTier } from '../types';
