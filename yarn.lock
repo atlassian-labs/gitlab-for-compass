@@ -57,12 +57,7 @@
     "@babel/types" "^7.20.0"
     bind-event-listener "^2.1.1"
 
-"@atlassian/forge-graphql-types@4.1.0":
-  version "4.1.0"
-  resolved "https://packages.atlassian.com/api/npm/atlassian-npm/@atlassian/forge-graphql-types/-/@atlassian/forge-graphql-types-4.1.0.tgz#ae776d942f2cf299a3edb52f735b646559db7b6c"
-  integrity sha512-30YLjlC0dInsUJnvFKThjGEa0JtkYalglNpvgKDQQ27tHrOZDSyGso7joRbSeNigPp6b6EqZng9EnemgW/fMyw==
-
-"@atlassian/forge-graphql-types@^4.1.0":
+"@atlassian/forge-graphql-types@4.2.0", "@atlassian/forge-graphql-types@^4.1.0":
   version "4.2.0"
   resolved "https://packages.atlassian.com/api/npm/atlassian-npm/@atlassian/forge-graphql-types/-/@atlassian/forge-graphql-types-4.2.0.tgz#c5a3529fe3440d84fdc20977137b32e667776a51"
   integrity sha512-VqOa/Qpb447q3rxch2NIKWd5a9RHOzi3+1tnSWJKQITTAbx2GDn32j1Q02ApKOi/bcDaWNyzKKVXrcRp4KyPog==
@@ -9903,6 +9898,7 @@ word-wrap@^1.2.3, word-wrap@~1.2.3:
   integrity sha512-Hz/mrNwitNRh/HUAtM/VT/5VH+ygD6DV7mYKZAtHOrbs8U7lvPS6xf7EJKMF0uW1KJCl0H701g3ZGus+muE5vQ==
 
 "wrap-ansi-cjs@npm:wrap-ansi@^7.0.0", wrap-ansi@^7.0.0:
+  name wrap-ansi-cjs
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
   integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
