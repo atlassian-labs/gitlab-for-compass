@@ -237,7 +237,7 @@ export const getAllExistingGroups = async (): Promise<GitlabAPIGroup[]> => {
   return getGroups(null, GitLabAccessLevels.OWNER);
 };
 
-export const getGroupById = async (groupId: number): Promise<GitlabAPIGroup> => {
+export const getGroupById = async (groupId: number): Promise<GitlabAPIGroup> | undefined => {
   const groups = await getGroups(null);
   return groups.find((group) => groupId === group.id);
 };
