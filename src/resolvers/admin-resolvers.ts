@@ -1,6 +1,7 @@
 import Resolver from '@forge/resolver';
 
-import graphqlGateway, { Component } from '@atlassian/forge-graphql';
+import graphqlGateway from '@atlassian/forge-graphql';
+import { Component } from '@atlassian/forge-graphql-types';
 import { AuthErrorTypes, GitlabAPIGroup, ResolverResponse, DefaultErrorTypes, FeaturesList } from '../resolverTypes';
 import { connectGroup, InvalidGroupTokenError } from '../services/group';
 
