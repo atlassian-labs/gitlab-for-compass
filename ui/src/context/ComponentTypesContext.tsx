@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import Spinner from '@atlaskit/spinner';
-import { CompassComponentTypeObject } from '@atlassian/forge-graphql';
+import { CompassComponentTypeObject } from '@atlassian/forge-graphql-types';
 import { getAllCompassComponentTypes } from '../services/invokes';
 
 export type ComponentTypesContextValue = {
