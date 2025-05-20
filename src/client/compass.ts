@@ -1,4 +1,4 @@
-import graphqlGateway, {
+import {
   CompassLinkType,
   CompassCreateEventInput,
   Component,
@@ -13,7 +13,8 @@ import graphqlGateway, {
   CompassComponentTypeObject,
   GetComponentInput,
   UnLinkComponentInput,
-} from '@atlassian/forge-graphql';
+} from '@atlassian/forge-graphql-types';
+import graphqlGateway from '@atlassian/forge-graphql';
 import { ImportableProject, COMPASS_GATEWAY_MESSAGES, Metric, Team } from '../types';
 import { EXTERNAL_SOURCE, IMPORT_LABEL, MAX_LABELS_LENGTH } from '../constants';
 import { UNKNOWN_EXTERNAL_ALIAS_ERROR_MESSAGE } from '../models/error-messages';
