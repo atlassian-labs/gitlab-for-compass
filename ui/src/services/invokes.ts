@@ -9,9 +9,9 @@ import {
   ProjectImportResult,
   FeaturesList,
   GroupProjectsResponse,
-} from 'insert-name-here/src/resolverTypes';
+} from '../../../src/resolverTypes';
 
-import { GitLabRoles, TeamsWithMembershipStatus, WebhookSetupConfig } from 'insert-name-here/src/types';
+import { GitLabRoles, TeamsWithMembershipStatus, WebhookSetupConfig } from '../../../src/types';
 
 export const disconnectGroup = (id: number): Promise<ResolverResponse> => {
   return invoke<ResolverResponse>('groups/disconnect', {
