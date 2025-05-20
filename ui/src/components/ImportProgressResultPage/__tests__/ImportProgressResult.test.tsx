@@ -1,7 +1,7 @@
 import { fireEvent, render } from '@testing-library/react';
 import { useNavigate } from 'react-router-dom';
 import { getCallBridge as realGetCallBridge } from '@forge/bridge/out/bridge';
-import { CompassComponentType, Link } from '@atlassian/forge-graphql';
+import { CompassComponentType, Link } from '@atlassian/forge-graphql-types';
 import { ImportProgressResultPage } from '..';
 import * as useImportContextHook from '../../../hooks/useImportContext';
 import * as useImportResultHook from '../../../hooks/useImportResult';
