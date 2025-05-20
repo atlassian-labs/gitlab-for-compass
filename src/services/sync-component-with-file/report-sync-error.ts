@@ -1,4 +1,4 @@
-import { ComponentSyncEventStatus } from '@atlassian/forge-graphql';
+import { ComponentSyncEventStatus } from '@atlassian/forge-graphql-types';
 import { updateDataManager } from '../../client/compass';
 
 import { AggClientError, InvalidConfigFileError } from '../../models/errors';

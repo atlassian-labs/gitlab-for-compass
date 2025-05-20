@@ -1,4 +1,4 @@
-import { ConfigFileActions } from '@atlassian/forge-graphql';
+import { ConfigFileActions } from '@atlassian/forge-graphql-types';
 import { findConfigAsCodeFileChanges, syncComponent } from '../../../services/sync-component-with-file';
 import { isEventForTrackingBranch } from '../../../utils/push-event-utils';
 import { ComponentSyncDetails, PushEvent } from '../../../types';

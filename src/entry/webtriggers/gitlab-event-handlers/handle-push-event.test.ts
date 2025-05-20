@@ -3,7 +3,7 @@ import { mockAgg, mockCreateEvent, mockUnlinkComponent } from '../../../__tests_
 
 mockAgg();
 
-import { ConfigFileActions, UnLinkComponentInput } from '@atlassian/forge-graphql';
+import { ConfigFileActions, UnLinkComponentInput } from '@atlassian/forge-graphql-types';
 import { mocked } from 'jest-mock';
 import { generatePushEvent } from '../../../__tests__/helpers/gitlab-helper';
 import { handlePushEvent } from './handle-push-event';

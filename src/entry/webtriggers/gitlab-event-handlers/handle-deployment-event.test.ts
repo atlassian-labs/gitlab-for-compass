@@ -8,7 +8,7 @@ import {
   CompassCreateEventInput,
   CompassDeploymentEventEnvironmentCategory,
   CompassDeploymentEventState,
-} from '@atlassian/forge-graphql';
+} from '@atlassian/forge-graphql-types';
 import { generateDeploymentEvent, generateEnvironmentEvent } from '../../../__tests__/helpers/gitlab-helper';
 import { MOCK_CLOUD_ID, TEST_TOKEN } from '../../../__tests__/fixtures/gitlab-data';
 import { getEnvironments } from '../../../client/gitlab';

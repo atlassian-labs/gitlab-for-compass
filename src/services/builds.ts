@@ -1,4 +1,8 @@
-import { CompassBuildEventState, CompassCreateEventInput, DataProviderBuildEvent } from '@atlassian/forge-graphql';
+import {
+  CompassBuildEventState,
+  CompassCreateEventInput,
+  DataProviderBuildEvent,
+} from '@atlassian/forge-graphql-types';
 import { max } from 'lodash';
 import { truncateProjectNameString } from '../utils/event-mapping';
 

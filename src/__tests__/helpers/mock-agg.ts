@@ -1,4 +1,4 @@
-import { ApiPayload } from '@atlassian/forge-graphql';
+import { ApiPayload } from '@atlassian/forge-graphql-types';
 import { mockForgeApi } from './forge-helper';
 
 const defaultImpl = async (): Promise<ApiPayload<any>> => ({

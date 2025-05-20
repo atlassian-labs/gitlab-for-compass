@@ -1,4 +1,4 @@
-import { CompassLinkType, Component, ConfigFileMetadata } from '@atlassian/forge-graphql';
+import { CompassLinkType, Component, ConfigFileMetadata } from '@atlassian/forge-graphql-types';
 import yaml from 'js-yaml';
 import { ComponentSyncDetails, ComponentSyncPayload, PushEvent } from '../../types';
 import { reportSyncError } from './report-sync-error';

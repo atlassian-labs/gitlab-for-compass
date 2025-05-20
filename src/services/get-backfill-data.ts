@@ -1,4 +1,4 @@
-import { CompassEventType } from '@atlassian/forge-graphql';
+import { CompassEventType } from '@atlassian/forge-graphql-types';
 import {
   getDeploymentsForEnvironmentTiers,
   getMRCycleTime,
