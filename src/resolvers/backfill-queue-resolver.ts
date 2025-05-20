@@ -1,5 +1,6 @@
 import Resolver from '@forge/resolver';
-import graphqlGateway, { CompassEventType } from '@atlassian/forge-graphql';
+import graphqlGateway from '@atlassian/forge-graphql';
+import { CompassEventType } from '@atlassian/forge-graphql-types';
 import { storage } from '@forge/api';
 import { STORAGE_KEYS } from '../constants';
 import { CURRENT_BACKFILL_VERSION } from '../entry/scheduled-triggers/data-provider-backfill';
