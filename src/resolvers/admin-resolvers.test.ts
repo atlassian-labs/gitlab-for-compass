@@ -130,7 +130,7 @@ describe('adminResolvers', () => {
       });
     });
 
-    test('gracefully handles getGroupById returning no group', async () => {
+    test('groups/connect gracefully handles getGroupById returning no group', async () => {
       (graphqlGateway as any).compass = {
         asApp: jest.fn(() => ({
           synchronizeLinkAssociations: synchronizeLinkAssociationsMock,
@@ -268,7 +268,7 @@ describe('adminResolvers', () => {
       });
     });
 
-    test('gracefully handles getGroupById returning no group', async () => {
+    test('webhooks/connectInProgress gracefully handles getGroupById returning no group', async () => {
       (graphqlGateway as any).compass = {
         asApp: jest.fn(() => ({
           synchronizeLinkAssociations: synchronizeLinkAssociationsMock,
