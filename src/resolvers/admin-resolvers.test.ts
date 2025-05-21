@@ -34,23 +34,19 @@ describe('adminResolvers', () => {
   jest.mock('../services/group');
   jest.mock('../services/webhooks');
 
+  let synchronizeLinkAssociationsMock: jest.Mock<Promise<{ success: boolean }>>;
+
   beforeEach(() => {
-    jest.clearAllMocks();
+    synchronizeLinkAssociationsMock = jest.fn().mockResolvedValue({ success: true });
   });
+
   afterEach(() => {
+    jest.clearAllMocks();
     jest.restoreAllMocks();
   });
 
   describe('groups/connect', () => {
-    beforeEach(() => {
-      jest.clearAllMocks();
-    });
-    afterEach(() => {
-      jest.restoreAllMocks();
-    });
-
     test('successfully connects group without webhook setup for Maintainer role', async () => {
-      const synchronizeLinkAssociationsMock = jest.fn().mockResolvedValue({ success: true });
       (graphqlGateway as any).compass = {
         asApp: jest.fn(() => ({
           synchronizeLinkAssociations: synchronizeLinkAssociationsMock,
@@ -87,7 +83,6 @@ describe('adminResolvers', () => {
     });
 
     test('successfully connects group for Owner role', async () => {
-      const synchronizeLinkAssociationsMock = jest.fn().mockResolvedValue({ success: true });
       (graphqlGateway as any).compass = {
         asApp: jest.fn(() => ({
           synchronizeLinkAssociations: synchronizeLinkAssociationsMock,
@@ -136,7 +131,6 @@ describe('adminResolvers', () => {
     });
 
     test('gracefully handles getGroupById returning no group', async () => {
-      const synchronizeLinkAssociationsMock = jest.fn().mockResolvedValue({ success: true });
       (graphqlGateway as any).compass = {
         asApp: jest.fn(() => ({
           synchronizeLinkAssociations: synchronizeLinkAssociationsMock,
@@ -183,7 +177,6 @@ describe('adminResolvers', () => {
     });
 
     test('not successful when group function throws error', async () => {
-      const synchronizeLinkAssociationsMock = jest.fn().mockResolvedValue({ success: true });
       (graphqlGateway as any).compass = {
         asApp: jest.fn(() => ({
           synchronizeLinkAssociations: synchronizeLinkAssociationsMock,
@@ -232,28 +225,7 @@ describe('adminResolvers', () => {
   });
 
   describe('webhooks/connectInProgress', () => {
-    jest.mock('@atlassian/forge-graphql', () => ({
-      graphqlGateway: {
-        compass: {
-          asApp: jest.fn(() => ({
-            synchronizeLinkAssociations: jest.fn(),
-          })),
-        },
-      },
-    }));
-    jest.mock('../utils/get-forge-app-id');
-    jest.mock('../services/group');
-    jest.mock('../services/webhooks');
-
-    beforeEach(() => {
-      jest.clearAllMocks();
-    });
-    afterEach(() => {
-      jest.restoreAllMocks();
-    });
-
     test('successfully connects webhook in progress', async () => {
-      const synchronizeLinkAssociationsMock = jest.fn().mockResolvedValue({ success: true });
       (graphqlGateway as any).compass = {
         asApp: jest.fn(() => ({
           synchronizeLinkAssociations: synchronizeLinkAssociationsMock,
@@ -297,7 +269,6 @@ describe('adminResolvers', () => {
     });
 
     test('gracefully handles getGroupById returning no group', async () => {
-      const synchronizeLinkAssociationsMock = jest.fn().mockResolvedValue({ success: true });
       (graphqlGateway as any).compass = {
         asApp: jest.fn(() => ({
           synchronizeLinkAssociations: synchronizeLinkAssociationsMock,
@@ -339,7 +310,6 @@ describe('adminResolvers', () => {
     });
 
     test('not successful if error is thrown', async () => {
-      const synchronizeLinkAssociationsMock = jest.fn().mockResolvedValue({ success: true });
       (graphqlGateway as any).compass = {
         asApp: jest.fn(() => ({
           synchronizeLinkAssociations: synchronizeLinkAssociationsMock,
