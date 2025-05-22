@@ -4,7 +4,7 @@ import {
   CompassDeploymentEventState,
   DataProviderBuildEvent,
   DataProviderDeploymentEvent,
-} from '@atlassian/forge-graphql';
+} from '@atlassian/forge-graphql-types';
 import { BackfillData } from '../../entry/data-provider/types';
 
 export const MOCK_BUILD_EVENT: DataProviderBuildEvent = {

@@ -1,5 +1,5 @@
 import { invoke } from '@forge/bridge';
-import { CompassComponentTypeObject, Component } from '@atlassian/forge-graphql';
+import { CompassComponentTypeObject, Component } from '@atlassian/forge-graphql-types';
 
 import {
   ImportableProject,
@@ -10,6 +10,7 @@ import {
   FeaturesList,
   GroupProjectsResponse,
 } from '../resolverTypes';
+
 import { GitLabRoles, TeamsWithMembershipStatus, WebhookSetupConfig } from '../types';
 
 export const disconnectGroup = (id: number): Promise<ResolverResponse> => {

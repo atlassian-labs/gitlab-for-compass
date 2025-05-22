@@ -1,4 +1,4 @@
-import { CreateLinkInput } from '@atlassian/forge-graphql';
+import { CreateLinkInput } from '@atlassian/forge-graphql-types';
 import Resolver from '@forge/resolver';
 import { storage } from '@forge/api';
 import { internalMetrics } from '@forge/metrics';

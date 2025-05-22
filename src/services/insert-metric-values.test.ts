@@ -5,7 +5,7 @@ mockAgg();
 import { insertMetricValues } from './insert-metric-values';
 import { MOCK_CLOUD_ID } from '../__tests__/fixtures/gitlab-data';
 import { generateMetric, generateMetricInput } from '../__tests__/helpers/gitlab-helper';
-import { BuiltinMetricDefinitions } from '@atlassian/forge-graphql';
+import { BuiltinMetricDefinitions } from '@atlassian/forge-graphql-types';
 
 const MOCK_METRIC_INPUT = generateMetricInput([
   generateMetric(BuiltinMetricDefinitions.WEEKLY_DEPLOYMENT_FREQUENCY_28D),

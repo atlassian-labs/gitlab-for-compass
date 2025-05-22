@@ -3,7 +3,14 @@ import { mockForgeApi } from '../__tests__/helpers/forge-helper';
 
 mockForgeApi();
 
-import { CompassLinkType, Component, CustomField, CustomFields, CustomFieldType, Link } from '@atlassian/forge-graphql';
+import {
+  CompassLinkType,
+  Component,
+  CustomField,
+  CustomFields,
+  CustomFieldType,
+  Link,
+} from '@atlassian/forge-graphql-types';
 import { CompassYaml, ImportableProject, YamlLink } from '../types';
 import { formatLinks, generateCompassYamlData } from './create-compass-yaml';
 import { DEFAULT_CONFIG_VERSION } from '../constants';

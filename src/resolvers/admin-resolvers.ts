@@ -1,8 +1,9 @@
 import Resolver from '@forge/resolver';
 
-import graphqlGateway, { Component } from '@atlassian/forge-graphql';
+import graphqlGateway from '@atlassian/forge-graphql';
+import { Component } from '@atlassian/forge-graphql-types';
 import { AuthErrorTypes, GitlabAPIGroup, ResolverResponse, DefaultErrorTypes, FeaturesList } from '../resolverTypes';
-import { connectGroup, InvalidGroupTokenError } from '../services/group';
+import { connectGroup, getGroupById, InvalidGroupTokenError } from '../services/group';
 
 import { setupAndValidateWebhook } from '../services/webhooks';
 import { disconnectGroup } from '../services/disconnect-group';
@@ -77,9 +78,14 @@ resolver.define('groups/connect', async (req): Promise<ResolverResponse> => {
 
     await setupAndValidateWebhook(groupId);
 
+    const group = await getGroupById(groupId);
+
     await graphqlGateway.compass.asApp().synchronizeLinkAssociations({
       cloudId,
       forgeAppId: getForgeAppId(),
+      options: {
+        ...(group && { urlFilterRegex: `.*gitlab.com/.*${group.path}.*` }),
+      },
     });
 
     return { success: true };
@@ -113,9 +119,14 @@ resolver.define('webhooks/connectInProgress', async (req): Promise<ResolverRespo
 
     await setupAndValidateWebhook(groupId, webhookId, webhookSecretToken);
 
+    const group = await getGroupById(groupId);
+
     await graphqlGateway.compass.asApp().synchronizeLinkAssociations({
       cloudId,
       forgeAppId: getForgeAppId(),
+      options: {
+        ...(group && { urlFilterRegex: `.*gitlab.com/.*${group.path}.*` }),
+      },
     });
 
     return { success: true };

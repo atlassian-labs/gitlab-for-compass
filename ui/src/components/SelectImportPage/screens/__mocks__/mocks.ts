@@ -1,5 +1,4 @@
-import { CompassComponentType } from '@atlassian/forge-graphql/dist/src/graphql-types';
-import { Link } from '@atlassian/forge-graphql';
+import { CompassComponentType, Link } from '@atlassian/forge-graphql-types';
 import { DEFAULT_COMPONENT_TYPE_ID } from '../../../../constants';
 
 export const groupMock = [

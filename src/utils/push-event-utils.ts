@@ -1,4 +1,4 @@
-import { DataManagerInput, UpdateCompassComponentDataManagerMetadataInput } from '@atlassian/forge-graphql';
+import { DataManagerInput, UpdateCompassComponentDataManagerMetadataInput } from '@atlassian/forge-graphql-types';
 import { CommitFileDiff, DiffsByChangeType, PushEvent } from '../types';
 
 const CONFIG_AS_CODE_FILE_REGEX = /(\/compass\.yml$)|^compass\.yml$|(\/compass\.yaml$)|^compass\.yaml$/;

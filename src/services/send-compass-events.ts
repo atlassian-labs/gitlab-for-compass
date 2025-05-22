@@ -1,4 +1,4 @@
-import { CompassCreateEventInput } from '@atlassian/forge-graphql';
+import { CompassCreateEventInput } from '@atlassian/forge-graphql-types';
 import { sendEvents } from '../client/compass';
 import { PushEvent } from '../types';
 

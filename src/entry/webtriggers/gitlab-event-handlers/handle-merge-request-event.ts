@@ -1,4 +1,4 @@
-import { BuiltinMetricDefinitions } from '@atlassian/forge-graphql';
+import { BuiltinMetricDefinitions } from '@atlassian/forge-graphql-types';
 import { getTrackingBranchName } from '../../../services/get-tracking-branch';
 import { MergeRequestEvent } from '../../../types';
 import { insertMetricValues } from '../../../services/insert-metric-values';
