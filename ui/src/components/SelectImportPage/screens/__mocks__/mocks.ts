@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import { CompassComponentType, Link } from '@atlassian/forge-graphql-types';
-=======
-import { Link, CompassComponentType } from '@atlassian/forge-graphql-types';
->>>>>>> c2d0344 (COMPASS-25847 Resync repo files on push event, upgrade forge-graphql package version)
 import { DEFAULT_COMPONENT_TYPE_ID } from '../../../../constants';
 
 export const groupMock = [

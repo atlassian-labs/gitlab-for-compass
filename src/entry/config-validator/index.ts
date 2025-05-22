@@ -1,10 +1,5 @@
-<<<<<<< HEAD
 import { ConfigValidatorResponse } from '@atlassian/forge-graphql';
 import { ConfigValidatorResult } from '@atlassian/forge-graphql-types';
-=======
-import { ConfigValidatorResult } from '@atlassian/forge-graphql-types';
-import { ConfigValidatorResponse } from '@atlassian/forge-graphql';
->>>>>>> c2d0344 (COMPASS-25847 Resync repo files on push event, upgrade forge-graphql package version)
 
 import { getConnectedGroups } from '../../services/group';
 

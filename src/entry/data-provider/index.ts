@@ -7,10 +7,6 @@ import {
   ForgeInvocationError,
   InvocationStatusCode,
 } from '@atlassian/forge-graphql-types';
-<<<<<<< HEAD
-=======
-import { DataProviderResponse, ForgeInvocationErrorResponse } from '@atlassian/forge-graphql';
->>>>>>> c2d0344 (COMPASS-25847 Resync repo files on push event, upgrade forge-graphql package version)
 
 import { BackfillData, DataProviderPayload } from './types';
 import { getProjectDataFromUrl } from '../../services/data-provider-link-parser';
