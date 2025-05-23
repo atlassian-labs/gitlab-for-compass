@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- GitLab fox face combined with compass needle -->
+  <path d="M64 16L84 48L64 80L44 48L64 16Z" fill="#FC6D26"/>
+  <path d="M64 80L84 48H104L64 112L24 48H44L64 80Z" fill="#E24329"/>
+  <path d="M24 48L64 112L44 48H24Z" fill="#FCA326"/>
+  <path d="M104 48L64 112L84 48H104Z" fill="#FCA326"/>
+  <!-- Compass circle -->
+  <circle cx="64" cy="64" r="60" stroke="#2684FF" stroke-width="4" fill="none"/>
+  <!-- Compass cardinal points -->
+  <text x="64" y="24" text-anchor="middle" fill="#2684FF" font-size="12">N</text>
+  <text x="64" y="108" text-anchor="middle" fill="#2684FF" font-size="12">S</text>
+  <text x="108" y="68" text-anchor="middle" fill="#2684FF" font-size="12">E</text>
+  <text x="20" y="68" text-anchor="middle" fill="#2684FF" font-size="12">W</text>
+</svg>

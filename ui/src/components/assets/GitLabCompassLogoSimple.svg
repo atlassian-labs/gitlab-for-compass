@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Simplified version for smaller sizes -->
+  <path d="M32 8L42 24L32 40L22 24L32 8Z" fill="#FC6D26"/>
+  <path d="M32 40L42 24H52L32 56L12 24H22L32 40Z" fill="#E24329"/>
+  <circle cx="32" cy="32" r="30" stroke="#2684FF" stroke-width="2" fill="none"/>
+  <!-- Simplified compass needle -->
+  <path d="M32 12L36 32L32 52L28 32L32 12Z" fill="#2684FF"/>
+</svg>

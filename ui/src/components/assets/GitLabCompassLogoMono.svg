@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Monochrome version for dark themes -->
+  <path d="M64 16L84 48L64 80L44 48L64 16Z" fill="#FFFFFF"/>
+  <path d="M64 80L84 48H104L64 112L24 48H44L64 80Z" fill="#FFFFFF"/>
+  <path d="M24 48L64 112L44 48H24Z" fill="#FFFFFF"/>
+  <path d="M104 48L64 112L84 48H104Z" fill="#FFFFFF"/>
+  <circle cx="64" cy="64" r="60" stroke="#FFFFFF" stroke-width="4" fill="none"/>
+  <text x="64" y="24" text-anchor="middle" fill="#FFFFFF" font-size="12">N</text>
+  <text x="64" y="108" text-anchor="middle" fill="#FFFFFF" font-size="12">S</text>
+  <text x="108" y="68" text-anchor="middle" fill="#FFFFFF" font-size="12">E</text>
+  <text x="20" y="68" text-anchor="middle" fill="#FFFFFF" font-size="12">W</text>
+</svg>
