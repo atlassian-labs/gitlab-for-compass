@@ -84,7 +84,7 @@ resolver.define('groups/connect', async (req): Promise<ResolverResponse> => {
       cloudId,
       forgeAppId: getForgeAppId(),
       options: {
-        ...(group && { urlFilterRegex: `.*gitlab\\.com/.*${group.path}.*` }), // eslint-disable-line no-useless-escape
+        ...(group && { urlFilterRegex: `.*gitlab\.com/.*${group.path}.*` }), // eslint-disable-line no-useless-escape
       },
     });
 
@@ -125,7 +125,7 @@ resolver.define('webhooks/connectInProgress', async (req): Promise<ResolverRespo
       cloudId,
       forgeAppId: getForgeAppId(),
       options: {
-        ...(group && { urlFilterRegex: `.*gitlab\\.com/.*${group.path}.*` }), // eslint-disable-line no-useless-escape
+        ...(group && { urlFilterRegex: `.*gitlab\.com/.*${group.path}.*` }), // eslint-disable-line no-useless-escape
       },
     });
 
