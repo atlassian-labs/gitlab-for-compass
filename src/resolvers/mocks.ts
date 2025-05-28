@@ -14,4 +14,4 @@ export const MOCK_GROUP = {
   id: MOCK_GROUP_ID,
   path: MOCK_GROUP_PATH,
 };
-export const MOCK_URL_REGEX = `.*gitlab.com/.*${MOCK_GROUP_PATH}.*`;
+export const MOCK_URL_REGEX = `.*gitlab\.com/.*${MOCK_GROUP_PATH}.*`; // eslint-disable-line no-useless-escape
