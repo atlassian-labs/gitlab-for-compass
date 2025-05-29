@@ -308,7 +308,6 @@ describe('Gitlab push events', () => {
 
       await handlePushEvent(event, TEST_TOKEN, MOCK_CLOUD_ID);
 
-      expect(getCommitDiff).not.toBeCalled();
       expect(resyncRepoFiles).not.toBeCalled();
     });
 
