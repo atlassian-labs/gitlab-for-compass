@@ -6,7 +6,7 @@ import {
 import { getCommitDiff } from '../../../client/gitlab';
 import { findConfigAsCodeFileChanges, syncComponent } from '../../../services/sync-component-with-file';
 import { isEventForTrackingBranch } from '../../../utils/push-event-utils';
-import { ComponentSyncDetails, PushEvent } from '../../../types';
+import { CommitFileDiff, ComponentSyncDetails, PushEvent } from '../../../types';
 import { getTrackingBranchName } from '../../../services/get-tracking-branch';
 import { unlinkComponentFromFile, resyncRepoFiles } from '../../../client/compass';
 import { EXTERNAL_SOURCE } from '../../../constants';
@@ -25,9 +25,21 @@ export const handlePushEvent = async (event: PushEvent, groupToken: string, clou
 
     console.log('Received push event for tracking branch. Processing event');
 
+    let commitDiffs: CommitFileDiff[] = [];
+    try {
+      commitDiffs = await getCommitDiff(groupToken, event.project.id, event.checkout_sha);
+    } catch (e) {
+      console.error({
+        message: 'Error with commits diff request',
+        error: e,
+      });
+      throw e;
+    }
+
     const { componentsToCreate, componentsToUpdate, componentsToUnlink } = await findConfigAsCodeFileChanges(
       event,
       groupToken,
+      commitDiffs,
     );
 
     if (componentsToCreate.length === 0 && componentsToUpdate.length === 0 && componentsToUnlink.length === 0) {
@@ -92,8 +104,6 @@ export const handlePushEvent = async (event: PushEvent, groupToken: string, clou
     }
 
     if (isPackageDependenciesM3Enabled()) {
-      const commitDiffs = await getCommitDiff(groupToken, event.project.id, event.checkout_sha);
-
       if (commitDiffs.length === 0) {
         console.log('No changes in commit, skipping resync of repo files');
       } else {
@@ -133,7 +143,12 @@ export const handlePushEvent = async (event: PushEvent, groupToken: string, clou
           changedFiles,
         };
 
+        const startTime = Date.now();
         await resyncRepoFiles(resyncRepoFilesInput);
+        console.log({
+          message: 'Resyncing repo files finished',
+          duration: Date.now() - startTime,
+        });
       }
     }
   } catch (e) {

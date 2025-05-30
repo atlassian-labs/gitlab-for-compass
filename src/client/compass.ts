@@ -216,7 +216,20 @@ export const getTeams = async (
 };
 
 export const resyncRepoFiles = async (input: CompassResyncRepoFilesInput) => {
-  const { errors, data } = await graphqlGateway.compass.asApp().resyncRepoFiles(input);
-  throwIfErrors('resyncRepoFiles', errors);
-  return data;
+  const { errors } = await graphqlGateway.compass.asApp().resyncRepoFiles(input);
+  const clientErrors = errors.filter((e) => e?.statusCode === 400);
+  if (clientErrors.length > 0) {
+    console.error({
+      message: 'invalid request error',
+      method: 'resyncRepoFiles',
+      errors: clientErrors.map((e) => e.message),
+    });
+  }
+  if (errors.length > 0) {
+    console.error({
+      message: 'GraphqlGateway request error',
+      method: 'resyncRepoFiles',
+      errors: errors.map((e) => e.message),
+    });
+  }
 };

@@ -113,18 +113,11 @@ const getModifiedFiles = async (
     .map((result) => (result as PromiseFulfilledResult<ModifiedFilePayload>).value);
 };
 
-export const findConfigAsCodeFileChanges = async (event: PushEvent, token: string): Promise<ComponentChanges> => {
-  let filesDiffs: CommitFileDiff[] = [];
-  try {
-    filesDiffs = await getCommitDiff(token, event.project.id, event.checkout_sha);
-  } catch (e) {
-    console.error({
-      message: 'Error with commits diff request',
-      error: e,
-    });
-    throw e;
-  }
-
+export const findConfigAsCodeFileChanges = async (
+  event: PushEvent,
+  token: string,
+  filesDiffs: CommitFileDiff[],
+): Promise<ComponentChanges> => {
   const { added, removed, modified } = groupDiffsByChangeType(filesDiffs);
 
   if (added.length === 0 && removed.length === 0 && modified.length === 0) {
