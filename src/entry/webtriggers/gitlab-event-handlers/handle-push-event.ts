@@ -143,7 +143,12 @@ export const handlePushEvent = async (event: PushEvent, groupToken: string, clou
           changedFiles,
         };
 
+        const startTime = Date.now();
         await resyncRepoFiles(resyncRepoFilesInput);
+        console.log({
+          message: 'Resyncing repo files finished',
+          duration: Date.now() - startTime,
+        });
       }
     }
   } catch (e) {
