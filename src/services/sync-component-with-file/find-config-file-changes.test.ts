@@ -50,8 +50,6 @@ const mockMovedDiffAsRename = (fileBefore: CompassYaml, fileAfter: CompassYaml) 
     new_path: 'folder/compass.yml',
   });
 
-  // getCommitDiffMock.mockResolvedValue([commitFileDiff]);
-
   return [commitFileDiff];
 };
 
@@ -68,8 +66,6 @@ const mockMovedDiffAsAddedAndDeleted = (fileBefore: CompassYaml, fileAfter: Comp
   });
 
   return [commitFileDiffAdded, commitFileDiffDeleted];
-
-  // getCommitDiffMock.mockResolvedValue([commitFileDiffAdded, commitFileDiffDeleted]);
 };
 
 describe('findConfigAsCodeFileChanges', () => {
@@ -123,7 +119,6 @@ describe('findConfigAsCodeFileChanges', () => {
       old_path: 'compass.yml',
       new_path: 'compass.yml',
     });
-    // getCommitDiffMock.mockResolvedValue([commitFileDiffRemoved]);
     const expectedResult: ComponentChanges = {
       componentsToCreate: [],
       componentsToUpdate: [],
