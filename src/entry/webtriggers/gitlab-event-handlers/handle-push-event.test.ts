@@ -308,7 +308,6 @@ describe('Gitlab push events', () => {
 
       await handlePushEvent(event, TEST_TOKEN, MOCK_CLOUD_ID);
 
-      expect(getCommitDiff).not.toBeCalled();
       expect(resyncRepoFiles).not.toBeCalled();
     });
 
@@ -449,6 +448,13 @@ describe('Gitlab push events', () => {
           },
         ],
       });
+    });
+
+    it('does not throw when resyncing repo files fails', async () => {
+      jest.spyOn(featureFlagService, 'isPackageDependenciesM3Enabled').mockReturnValue(true);
+      resyncRepoFiles.mockRejectedValue(MOCK_ERROR);
+
+      await expect(handlePushEvent(event, TEST_TOKEN, MOCK_CLOUD_ID)).resolves.not.toThrow();
     });
   });
 });

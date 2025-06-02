@@ -40,7 +40,7 @@ const mockModifiedDiff = (fileBefore: CompassYaml, fileAfter: CompassYaml) => {
     new_path: 'compass.yml',
   });
 
-  getCommitDiffMock.mockResolvedValue([commitFileDiff]);
+  return [commitFileDiff];
 };
 
 const mockMovedDiffAsRename = (fileBefore: CompassYaml, fileAfter: CompassYaml) => {
@@ -50,7 +50,7 @@ const mockMovedDiffAsRename = (fileBefore: CompassYaml, fileAfter: CompassYaml) 
     new_path: 'folder/compass.yml',
   });
 
-  getCommitDiffMock.mockResolvedValue([commitFileDiff]);
+  return [commitFileDiff];
 };
 
 const mockMovedDiffAsAddedAndDeleted = (fileBefore: CompassYaml, fileAfter: CompassYaml) => {
@@ -65,7 +65,7 @@ const mockMovedDiffAsAddedAndDeleted = (fileBefore: CompassYaml, fileAfter: Comp
     new_path: 'folder/compass.yml',
   });
 
-  getCommitDiffMock.mockResolvedValue([commitFileDiffAdded, commitFileDiffDeleted]);
+  return [commitFileDiffAdded, commitFileDiffDeleted];
 };
 
 describe('findConfigAsCodeFileChanges', () => {
@@ -84,7 +84,7 @@ describe('findConfigAsCodeFileChanges', () => {
       componentsToUnlink: [],
     };
 
-    const result = await findConfigAsCodeFileChanges(baseEvent, 'token');
+    const result = await findConfigAsCodeFileChanges(baseEvent, 'token', []);
     expect(result).toEqual(expectedResult);
   });
 
@@ -95,7 +95,6 @@ describe('findConfigAsCodeFileChanges', () => {
       old_path: 'compass.yml',
       new_path: 'compass.yml',
     });
-    getCommitDiffMock.mockResolvedValue([commitFileDiffAdded]);
     const expectedResult: ComponentChanges = {
       componentsToCreate: [
         {
@@ -108,7 +107,7 @@ describe('findConfigAsCodeFileChanges', () => {
       componentsToUnlink: [],
     };
 
-    const result = await findConfigAsCodeFileChanges(baseEvent, 'token');
+    const result = await findConfigAsCodeFileChanges(baseEvent, 'token', [commitFileDiffAdded]);
 
     expect(result).toEqual(expectedResult);
   });
@@ -120,7 +119,6 @@ describe('findConfigAsCodeFileChanges', () => {
       old_path: 'compass.yml',
       new_path: 'compass.yml',
     });
-    getCommitDiffMock.mockResolvedValue([commitFileDiffRemoved]);
     const expectedResult: ComponentChanges = {
       componentsToCreate: [],
       componentsToUpdate: [],
@@ -133,7 +131,7 @@ describe('findConfigAsCodeFileChanges', () => {
       ],
     };
 
-    const result = await findConfigAsCodeFileChanges(baseEvent, 'token');
+    const result = await findConfigAsCodeFileChanges(baseEvent, 'token', [commitFileDiffRemoved]);
 
     expect(result).toEqual(expectedResult);
   });
@@ -141,7 +139,6 @@ describe('findConfigAsCodeFileChanges', () => {
   it('updates component', async () => {
     const compassYamlBefore = { id: 'id', description: 'desc1' };
     const compassYamlAfter = { id: 'id', description: 'desc2' };
-    mockModifiedDiff(compassYamlBefore, compassYamlAfter);
 
     const expectedResult: ComponentChanges = {
       componentsToCreate: [],
@@ -156,7 +153,11 @@ describe('findConfigAsCodeFileChanges', () => {
       componentsToUnlink: [],
     };
 
-    const result = await findConfigAsCodeFileChanges(baseEvent, 'token');
+    const result = await findConfigAsCodeFileChanges(
+      baseEvent,
+      'token',
+      mockModifiedDiff(compassYamlBefore, compassYamlAfter),
+    );
 
     expect(result).toEqual(expectedResult);
   });
@@ -164,7 +165,6 @@ describe('findConfigAsCodeFileChanges', () => {
   it('updates component when the config file moved with minimum changes and treated by Gitlab as rename', async () => {
     const compassYamlBefore = { id: 'id' };
     const compassYamlAfter = { id: 'id' };
-    mockMovedDiffAsRename(compassYamlBefore, compassYamlAfter);
 
     const expectedResult: ComponentChanges = {
       componentsToCreate: [],
@@ -179,7 +179,11 @@ describe('findConfigAsCodeFileChanges', () => {
       componentsToUnlink: [],
     };
 
-    const result = await findConfigAsCodeFileChanges(baseEvent, 'token');
+    const result = await findConfigAsCodeFileChanges(
+      baseEvent,
+      'token',
+      mockMovedDiffAsRename(compassYamlBefore, compassYamlAfter),
+    );
 
     expect(result).toEqual(expectedResult);
   });
@@ -187,7 +191,6 @@ describe('findConfigAsCodeFileChanges', () => {
   it('updates component when the config file moved with minimum changes and treated by Gitlab as two files - deleted and added', async () => {
     const compassYamlBefore = { id: 'id' };
     const compassYamlAfter = { id: 'id' };
-    mockMovedDiffAsAddedAndDeleted(compassYamlBefore, compassYamlAfter);
 
     const expectedResult: ComponentChanges = {
       componentsToCreate: [],
@@ -202,7 +205,11 @@ describe('findConfigAsCodeFileChanges', () => {
       componentsToUnlink: [],
     };
 
-    const result = await findConfigAsCodeFileChanges(baseEvent, 'token');
+    const result = await findConfigAsCodeFileChanges(
+      baseEvent,
+      'token',
+      mockMovedDiffAsAddedAndDeleted(compassYamlBefore, compassYamlAfter),
+    );
 
     expect(result).toEqual(expectedResult);
   });
@@ -210,7 +217,6 @@ describe('findConfigAsCodeFileChanges', () => {
   it('unlinks component and adds new one when the id changed', async () => {
     const compassYamlBefore = { id: 'id1' };
     const compassYamlAfter = { id: 'id2' };
-    mockModifiedDiff(compassYamlBefore, compassYamlAfter);
     const expectedResult: ComponentChanges = {
       componentsToCreate: [
         {
@@ -231,7 +237,11 @@ describe('findConfigAsCodeFileChanges', () => {
       ],
     };
 
-    const result = await findConfigAsCodeFileChanges(baseEvent, 'token');
+    const result = await findConfigAsCodeFileChanges(
+      baseEvent,
+      'token',
+      mockModifiedDiff(compassYamlBefore, compassYamlAfter),
+    );
 
     expect(result).toEqual(expectedResult);
   });
@@ -247,7 +257,6 @@ describe('findConfigAsCodeFileChanges', () => {
     test('updates component when the id added and the name is the same', async () => {
       const compassYamlBefore = { name: 'name' };
       const compassYamlAfter = { name: 'name', id: 'id' };
-      mockModifiedDiff(compassYamlBefore, compassYamlAfter);
 
       const expectedResult: ComponentChanges = {
         componentsToCreate: [],
@@ -262,7 +271,11 @@ describe('findConfigAsCodeFileChanges', () => {
         componentsToUnlink: [],
       };
 
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(
+        event,
+        'token',
+        mockModifiedDiff(compassYamlBefore, compassYamlAfter),
+      );
 
       expect(result).toEqual(expectedResult);
     });
@@ -270,7 +283,6 @@ describe('findConfigAsCodeFileChanges', () => {
     test('updates component when the id added and the name is changed', async () => {
       const compassYamlBefore = { name: 'name' };
       const compassYamlAfter = { name: 'name-2', id: 'id' };
-      mockModifiedDiff(compassYamlBefore, compassYamlAfter);
 
       const expectedResult: ComponentChanges = {
         componentsToCreate: [],
@@ -284,7 +296,11 @@ describe('findConfigAsCodeFileChanges', () => {
         ],
         componentsToUnlink: [],
       };
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(
+        event,
+        'token',
+        mockModifiedDiff(compassYamlBefore, compassYamlAfter),
+      );
 
       expect(result).toEqual(expectedResult);
     });
@@ -292,7 +308,6 @@ describe('findConfigAsCodeFileChanges', () => {
     test('updates component when the config file moved with minimum changes, same name, added id and moved with minimum changes that treated by Gitlab as rename', async () => {
       const compassYamlBefore = { name: 'name' };
       const compassYamlAfter = { name: 'name', id: 'id' };
-      mockMovedDiffAsRename(compassYamlBefore, compassYamlAfter);
 
       const expectedResult: ComponentChanges = {
         componentsToCreate: [],
@@ -306,7 +321,11 @@ describe('findConfigAsCodeFileChanges', () => {
         ],
         componentsToUnlink: [],
       };
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(
+        event,
+        'token',
+        mockMovedDiffAsRename(compassYamlBefore, compassYamlAfter),
+      );
 
       expect(result).toEqual(expectedResult);
     });
@@ -314,7 +333,6 @@ describe('findConfigAsCodeFileChanges', () => {
     test('updates component when the config file moved with major changes same name, added id and moved with major changes that treated by Gitlab as two files - deleted and added', async () => {
       const compassYamlBefore = { name: 'name' };
       const compassYamlAfter = { name: 'name', id: 'id' };
-      mockMovedDiffAsAddedAndDeleted(compassYamlBefore, compassYamlAfter);
 
       const expectedResult: ComponentChanges = {
         componentsToCreate: [],
@@ -328,7 +346,11 @@ describe('findConfigAsCodeFileChanges', () => {
         ],
         componentsToUnlink: [],
       };
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(
+        event,
+        'token',
+        mockMovedDiffAsAddedAndDeleted(compassYamlBefore, compassYamlAfter),
+      );
 
       expect(result).toEqual(expectedResult);
     });
@@ -336,7 +358,6 @@ describe('findConfigAsCodeFileChanges', () => {
     test('unlinks component and adds the new one when the id removed and the name is the same', async () => {
       const compassYamlBefore = { name: 'name', id: 'id' };
       const compassYamlAfter = { name: 'name' };
-      mockModifiedDiff(compassYamlBefore, compassYamlAfter);
 
       const expectedResult: ComponentChanges = {
         componentsToCreate: [
@@ -357,7 +378,11 @@ describe('findConfigAsCodeFileChanges', () => {
           },
         ],
       };
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(
+        event,
+        'token',
+        mockModifiedDiff(compassYamlBefore, compassYamlAfter),
+      );
 
       expect(result).toEqual(expectedResult);
     });
@@ -365,7 +390,6 @@ describe('findConfigAsCodeFileChanges', () => {
     test('unlinks component and adds the new one when the name changed and id removed', async () => {
       const compassYamlBefore = { name: 'name', id: 'id' };
       const compassYamlAfter = { name: 'name-2' };
-      mockModifiedDiff(compassYamlBefore, compassYamlAfter);
 
       const expectedResult: ComponentChanges = {
         componentsToCreate: [
@@ -386,7 +410,11 @@ describe('findConfigAsCodeFileChanges', () => {
           },
         ],
       };
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(
+        event,
+        'token',
+        mockModifiedDiff(compassYamlBefore, compassYamlAfter),
+      );
 
       expect(result).toEqual(expectedResult);
     });
@@ -395,8 +423,6 @@ describe('findConfigAsCodeFileChanges', () => {
       const compassYamlBefore = { name: 'name', description: 'desc1' };
       const compassYamlAfter = { name: 'name', description: 'desc2' };
 
-      mockModifiedDiff(compassYamlBefore, compassYamlAfter);
-
       const expectedResult: ComponentChanges = {
         componentsToCreate: [],
         componentsToUpdate: [
@@ -409,7 +435,11 @@ describe('findConfigAsCodeFileChanges', () => {
         ],
         componentsToUnlink: [],
       };
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(
+        event,
+        'token',
+        mockModifiedDiff(compassYamlBefore, compassYamlAfter),
+      );
 
       expect(result).toEqual(expectedResult);
     });
@@ -417,7 +447,6 @@ describe('findConfigAsCodeFileChanges', () => {
     test('updates component when the name changed', async () => {
       const compassYamlBefore = { name: 'name' };
       const compassYamlAfter = { name: 'name2' };
-      mockModifiedDiff(compassYamlBefore, compassYamlAfter);
 
       const expectedResult: ComponentChanges = {
         componentsToCreate: [],
@@ -431,7 +460,11 @@ describe('findConfigAsCodeFileChanges', () => {
         ],
         componentsToUnlink: [],
       };
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(
+        event,
+        'token',
+        mockModifiedDiff(compassYamlBefore, compassYamlAfter),
+      );
 
       expect(result).toEqual(expectedResult);
     });
@@ -450,7 +483,6 @@ describe('findConfigAsCodeFileChanges', () => {
           renamed_file: false,
           deleted_file: false,
         };
-        getCommitDiffMock.mockResolvedValue([commitFileDiff]);
 
         const expectedResult: ComponentChanges = {
           componentsToCreate: [],
@@ -464,7 +496,7 @@ describe('findConfigAsCodeFileChanges', () => {
           ],
           componentsToUnlink: [],
         };
-        const result = await findConfigAsCodeFileChanges(event, 'token');
+        const result = await findConfigAsCodeFileChanges(event, 'token', [commitFileDiff]);
 
         expect(result).toEqual(expectedResult);
       });
@@ -482,7 +514,6 @@ describe('findConfigAsCodeFileChanges', () => {
           renamed_file: false,
           deleted_file: false,
         };
-        getCommitDiffMock.mockResolvedValue([commitFileDiff]);
 
         const expectedResult: ComponentChanges = {
           componentsToCreate: [],
@@ -496,7 +527,7 @@ describe('findConfigAsCodeFileChanges', () => {
           ],
           componentsToUnlink: [],
         };
-        const result = await findConfigAsCodeFileChanges(event, 'token');
+        const result = await findConfigAsCodeFileChanges(event, 'token', [commitFileDiff]);
 
         expect(result).toEqual(expectedResult);
       });
@@ -512,14 +543,13 @@ describe('findConfigAsCodeFileChanges', () => {
           renamed_file: false,
           deleted_file: false,
         };
-        getCommitDiffMock.mockResolvedValue([commitFileDiff]);
 
         const expectedResult: ComponentChanges = {
           componentsToCreate: [],
           componentsToUpdate: [],
           componentsToUnlink: [],
         };
-        const result = await findConfigAsCodeFileChanges(event, 'token');
+        const result = await findConfigAsCodeFileChanges(event, 'token', [commitFileDiff]);
 
         expect(result).toEqual(expectedResult);
       });
@@ -535,14 +565,13 @@ describe('findConfigAsCodeFileChanges', () => {
           renamed_file: false,
           deleted_file: true,
         };
-        getCommitDiffMock.mockResolvedValue([commitFileDiff]);
 
         const expectedResult: ComponentChanges = {
           componentsToCreate: [],
           componentsToUpdate: [],
           componentsToUnlink: [],
         };
-        const result = await findConfigAsCodeFileChanges(event, 'token');
+        const result = await findConfigAsCodeFileChanges(event, 'token', [commitFileDiff]);
 
         expect(result).toEqual(expectedResult);
       });
@@ -551,7 +580,6 @@ describe('findConfigAsCodeFileChanges', () => {
     test('updates component by name when the config file moved with minimum changes and treated by Gitlab as rename', async () => {
       const compassYamlBefore = { name: 'name' };
       const compassYamlAfter = { name: 'name' };
-      mockMovedDiffAsRename(compassYamlBefore, compassYamlAfter);
 
       const expectedResult: ComponentChanges = {
         componentsToCreate: [],
@@ -565,7 +593,11 @@ describe('findConfigAsCodeFileChanges', () => {
         ],
         componentsToUnlink: [],
       };
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(
+        event,
+        'token',
+        mockMovedDiffAsRename(compassYamlBefore, compassYamlAfter),
+      );
 
       expect(result).toEqual(expectedResult);
     });
@@ -573,7 +605,6 @@ describe('findConfigAsCodeFileChanges', () => {
     test('updates component by name when the config file moved with major changes and treated by Gitlab as two files - deleted and added', async () => {
       const compassYamlBefore = { name: 'name' };
       const compassYamlAfter = { name: 'name' };
-      mockMovedDiffAsAddedAndDeleted(compassYamlBefore, compassYamlAfter);
 
       const expectedResult: ComponentChanges = {
         componentsToCreate: [],
@@ -587,7 +618,11 @@ describe('findConfigAsCodeFileChanges', () => {
         ],
         componentsToUnlink: [],
       };
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(
+        event,
+        'token',
+        mockMovedDiffAsAddedAndDeleted(compassYamlBefore, compassYamlAfter),
+      );
 
       expect(result).toEqual(expectedResult);
     });
@@ -595,7 +630,6 @@ describe('findConfigAsCodeFileChanges', () => {
     test('updates component by id when the config file moved with minimum changes and treated by Gitlab as rename', async () => {
       const compassYamlBefore = { id: 'id' };
       const compassYamlAfter = { id: 'id' };
-      mockMovedDiffAsRename(compassYamlBefore, compassYamlAfter);
 
       const expectedResult: ComponentChanges = {
         componentsToCreate: [],
@@ -609,7 +643,11 @@ describe('findConfigAsCodeFileChanges', () => {
         ],
         componentsToUnlink: [],
       };
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(
+        event,
+        'token',
+        mockMovedDiffAsRename(compassYamlBefore, compassYamlAfter),
+      );
 
       expect(result).toEqual(expectedResult);
     });
@@ -617,7 +655,6 @@ describe('findConfigAsCodeFileChanges', () => {
     test('updates component by id when the config file moved with major changes and treated by Gitlab as two files - deleted and added', async () => {
       const compassYamlBefore = { id: 'id' };
       const compassYamlAfter = { id: 'id' };
-      mockMovedDiffAsAddedAndDeleted(compassYamlBefore, compassYamlAfter);
 
       const expectedResult: ComponentChanges = {
         componentsToCreate: [],
@@ -631,7 +668,11 @@ describe('findConfigAsCodeFileChanges', () => {
         ],
         componentsToUnlink: [],
       };
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(
+        event,
+        'token',
+        mockMovedDiffAsAddedAndDeleted(compassYamlBefore, compassYamlAfter),
+      );
 
       expect(result).toEqual(expectedResult);
     });
@@ -639,7 +680,6 @@ describe('findConfigAsCodeFileChanges', () => {
     test('unlinks component and adds the new one when the config file has changed name and moved with minimum changes, that treated by Gitlab as rename', async () => {
       const compassYamlBefore = { name: 'name' };
       const compassYamlAfter = { name: 'name2' };
-      mockMovedDiffAsRename(compassYamlBefore, compassYamlAfter);
 
       const expectedResult: ComponentChanges = {
         componentsToCreate: [
@@ -660,7 +700,11 @@ describe('findConfigAsCodeFileChanges', () => {
           },
         ],
       };
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(
+        event,
+        'token',
+        mockMovedDiffAsRename(compassYamlBefore, compassYamlAfter),
+      );
 
       expect(result).toEqual(expectedResult);
     });
@@ -668,7 +712,6 @@ describe('findConfigAsCodeFileChanges', () => {
     test('unlinks component and adds the new one when the config file has changed name and moved with major changes, that treated by Gitlab as two files - deleted and added', async () => {
       const compassYamlBefore = { name: 'name' };
       const compassYamlAfter = { name: 'name2' };
-      mockMovedDiffAsAddedAndDeleted(compassYamlBefore, compassYamlAfter);
 
       const expectedResult: ComponentChanges = {
         componentsToCreate: [
@@ -687,7 +730,11 @@ describe('findConfigAsCodeFileChanges', () => {
           },
         ],
       };
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(
+        event,
+        'token',
+        mockMovedDiffAsAddedAndDeleted(compassYamlBefore, compassYamlAfter),
+      );
 
       expect(result).toEqual(expectedResult);
     });
@@ -695,7 +742,6 @@ describe('findConfigAsCodeFileChanges', () => {
     test('unlinks component and adds the new one when the config file has same name, removed id and moved with minimum changes that treated by Gitlab as rename', async () => {
       const compassYamlBefore = { name: 'name', id: 'id' };
       const compassYamlAfter = { name: 'name' };
-      mockMovedDiffAsRename(compassYamlBefore, compassYamlAfter);
 
       const expectedResult: ComponentChanges = {
         componentsToCreate: [
@@ -716,7 +762,11 @@ describe('findConfigAsCodeFileChanges', () => {
           },
         ],
       };
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(
+        event,
+        'token',
+        mockMovedDiffAsRename(compassYamlBefore, compassYamlAfter),
+      );
 
       expect(result).toEqual(expectedResult);
     });
@@ -724,7 +774,6 @@ describe('findConfigAsCodeFileChanges', () => {
     test('unlinks component and adds the new one when the config file has same name, removed id and moved with major changes that treated by Gitlab as two files - deleted and added', async () => {
       const compassYamlBefore = { name: 'name', id: 'id' };
       const compassYamlAfter = { name: 'name' };
-      mockMovedDiffAsAddedAndDeleted(compassYamlBefore, compassYamlAfter);
 
       const expectedResult: ComponentChanges = {
         componentsToCreate: [
@@ -743,7 +792,11 @@ describe('findConfigAsCodeFileChanges', () => {
           },
         ],
       };
-      const result = await findConfigAsCodeFileChanges(event, 'token');
+      const result = await findConfigAsCodeFileChanges(
+        event,
+        'token',
+        mockMovedDiffAsAddedAndDeleted(compassYamlBefore, compassYamlAfter),
+      );
 
       expect(result).toEqual(expectedResult);
     });
