@@ -128,15 +128,17 @@ describe('findMatchingFiles', () => {
     });
   });
 
-  it('should return 405 if the feature is not enabled', async () => {
+  it('should return 200 and empty files array if the feature is not enabled', async () => {
     jest.spyOn(featureFlagService, 'isPackageDependenciesM3Enabled').mockReturnValue(false);
 
     const result = await findMatchingFiles(mockPayload);
 
+    expect(mockedGetProjectDataFromUrl).not.toHaveBeenCalled();
+    expect(listFiles).not.toHaveBeenCalled();
+
     expect(result).toEqual({
-      success: false,
-      errorMessage: 'Feature not implemented.',
-      statusCode: 405,
+      success: true,
+      statusCode: 200,
       files: [],
     });
   });

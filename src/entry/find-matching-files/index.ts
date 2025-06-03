@@ -49,9 +49,8 @@ const getMatchingFiles = (files: ProjectFile[], containsOneOf: string[], equalsO
 export const findMatchingFiles = async (payload: FindMatchingFilesPayload): Promise<FindMatchingFilesResponse> => {
   if (!isPackageDependenciesM3Enabled()) {
     return {
-      success: false,
-      errorMessage: 'Feature not implemented.',
-      statusCode: 405,
+      success: true,
+      statusCode: 200,
       files: [],
     };
   }
