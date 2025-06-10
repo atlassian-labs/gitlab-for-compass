@@ -34,7 +34,11 @@ export enum ImportErrorTypes {
   FAILED_CLEAR_IMPORT_RESULT = 'FAILED_CLEAR_IMPORT_RESULT',
 }
 
-type ErrorTypes = AuthErrorTypes | ImportErrorTypes | DefaultErrorTypes;
+export enum ResyncErrorTypes {
+  RESYNC_TIME_LIMIT = 'RESYNC_CAC_TIME_LIMIT',
+}
+
+type ErrorTypes = AuthErrorTypes | ImportErrorTypes | DefaultErrorTypes | ResyncErrorTypes;
 
 type ResponseError = { message: string; errorType?: ErrorTypes };
 

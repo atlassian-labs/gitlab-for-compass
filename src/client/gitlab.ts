@@ -18,6 +18,7 @@ import {
   Environment,
   GitlabPipelineStates,
   GitLabAccessLevels,
+  BlobFileSearchResult,
 } from '../types';
 import { GitlabHttpMethodError, InvalidConfigFileError } from '../models/errors';
 import { INVALID_YAML_ERROR } from '../models/error-messages';
@@ -126,6 +127,8 @@ export const getGroupsData = async (
   };
 
   const queryParams = queryParamsGenerator(params);
+
+  console.log(groupAccessToken, 'groupAccessToken');
 
   const { data } = await callGitlab(`getGroupsData`, `/api/v4/groups?${queryParams}`, groupAccessToken);
 
@@ -555,4 +558,28 @@ export const createMergeRequest = async (
   );
 
   return data;
+};
+
+export const searchGroupFiles: GitlabPaginatedFetch<
+  BlobFileSearchResult,
+  {
+    groupId: number;
+    search: string;
+  }
+> = async (page, perPage, fetchParameters) => {
+  const { groupId, groupToken, search } = fetchParameters;
+  const params = {
+    scope: 'blobs',
+    search,
+    page: page.toString(),
+    per_page: perPage.toString(),
+  };
+
+  const queryParams = queryParamsGenerator(params);
+
+  const path = `/api/v4/groups/${groupId}/search?${queryParams}`;
+
+  const { data, headers } = await callGitlab("search group's files", path, groupToken);
+
+  return { data, headers };
 };
