@@ -2,6 +2,7 @@ import adminResolver from './resolvers/admin-resolvers';
 import importResolver from './resolvers/import-resolvers';
 import importQueueResolver from './resolvers/import-queue-resolver';
 import backfillQueueResolver from './resolvers/backfill-queue-resolver';
+import resyncConfigAsCodeResolver from './resolvers/resync-cac-queue-resolver';
 
 import { processGitlabEvent } from './entry/webtriggers';
 import { dataProvider } from './entry/data-provider';
@@ -23,7 +24,7 @@ export { processGitlabEvent };
 // scheduled triggers
 export { dataProviderBackfill };
 // resolvers
-export { adminResolver, importResolver, importQueueResolver, backfillQueueResolver };
+export { adminResolver, importResolver, importQueueResolver, backfillQueueResolver, resyncConfigAsCodeResolver };
 // dataProvider
 export { dataProvider, callback };
 // configValidator

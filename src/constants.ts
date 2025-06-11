@@ -16,6 +16,7 @@ export const STORAGE_KEYS = {
   CURRENT_IMPORT_FAILED_PROJECT_PREFIX: 'currentImportFailedProject-',
   TEAM_ONBOARDING: 'isTeamOnboardingCompleted',
   BACKFILL_PUSH_DATA_PROVIDER_VERSION: 'backfill-push-data-provider',
+  CAC_MANUAL_SYNC_PREFIX: 'cac_manual_sync_',
 };
 
 export const STORAGE_SECRETS = {

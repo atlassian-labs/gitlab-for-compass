@@ -213,6 +213,7 @@ type DiffsByChangeType = {
 
 enum Queues {
   IMPORT = 'import-queue',
+  RESYNC_CAC = 'resync-cac-queue',
 }
 
 enum COMPASS_GATEWAY_MESSAGES {
@@ -473,6 +474,24 @@ type WebhookSetupConfig = {
   groupId?: number;
 };
 
+type BlobFileSearchResult = {
+  basename: string;
+  data: string;
+  path: string;
+  filename: string;
+  id: string | null;
+  ref: string;
+  startline: number;
+  project_id: number;
+};
+
+type FileData = {
+  path: string;
+  projectId: number;
+  groupId: number;
+  ref: string;
+};
+
 export type {
   WebtriggerRequest,
   WebtriggerResponse,
@@ -519,6 +538,8 @@ export type {
   ConnectGroupInput,
   WebhookSetupConfig,
   TokenFetchResult,
+  BlobFileSearchResult,
+  FileData,
 };
 
 export {

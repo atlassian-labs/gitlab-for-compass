@@ -2,7 +2,15 @@ import Resolver from '@forge/resolver';
 
 import graphqlGateway from '@atlassian/forge-graphql';
 import { Component } from '@atlassian/forge-graphql-types';
-import { AuthErrorTypes, GitlabAPIGroup, ResolverResponse, DefaultErrorTypes, FeaturesList } from '../resolverTypes';
+import { storage } from '@forge/api';
+import {
+  AuthErrorTypes,
+  GitlabAPIGroup,
+  ResolverResponse,
+  DefaultErrorTypes,
+  FeaturesList,
+  ResyncErrorTypes,
+} from '../resolverTypes';
 import { connectGroup, getGroupById, InvalidGroupTokenError } from '../services/group';
 
 import { setupAndValidateWebhook } from '../services/webhooks';
@@ -21,6 +29,7 @@ import {
 } from './shared-resolvers';
 import {
   ConnectGroupInput,
+  FileData,
   GitLabRoles,
   GroupProjectsResponse,
   ProjectImportResult,
@@ -28,6 +37,11 @@ import {
 } from '../types';
 import { createMRWithCompassYML } from '../services/create-mr-with-compass-yml';
 import { createComponent, createComponentSlug } from '../client/compass';
+import { STORAGE_KEYS } from '../constants';
+import { minutesToMilliseconds } from '../utils/time-utils';
+import { getAllGroupCaCFiles } from '../services/files';
+import { checkCaCFilename } from '../utils/cac-filename-check';
+import { resyncConfigAsCode } from '../services/resync-cac';
 
 const resolver = new Resolver();
 
@@ -144,6 +158,71 @@ resolver.define('groups/allExisting', async (): Promise<ResolverResponse<GitlabA
 
 resolver.define('groups/projects', async (req): Promise<ResolverResponse<GroupProjectsResponse>> => {
   return getGroupsProjects(req);
+});
+
+resolver.define('group/resyncCaC', async (req): Promise<ResolverResponse> => {
+  const {
+    payload: { groupId },
+    context: { cloudId },
+  } = req;
+
+  const MINUTES_LOCK = 60;
+
+  try {
+    const lastUpdate = await storage.get(`${STORAGE_KEYS.CAC_MANUAL_SYNC_PREFIX}${cloudId}_${groupId}`);
+
+    const dateNowInMs = Date.now();
+
+    if (!lastUpdate) {
+      await storage.set(`${STORAGE_KEYS.CAC_MANUAL_SYNC_PREFIX}${cloudId}_${groupId}`, dateNowInMs);
+    }
+
+    if (lastUpdate && dateNowInMs - lastUpdate > minutesToMilliseconds(MINUTES_LOCK)) {
+      await storage.set(`${STORAGE_KEYS.CAC_MANUAL_SYNC_PREFIX}${cloudId}_${groupId}`, dateNowInMs);
+    }
+
+    if (lastUpdate && dateNowInMs - lastUpdate <= minutesToMilliseconds(MINUTES_LOCK)) {
+      return {
+        success: true,
+        errors: [
+          {
+            message: `A resync of the config-as-code files in ${groupId} is already underway.`,
+            errorType: ResyncErrorTypes.RESYNC_TIME_LIMIT,
+          },
+        ],
+      };
+    }
+
+    const yamlFiles = await getAllGroupCaCFiles({ groupId });
+
+    console.log(`Fetched  ${yamlFiles.length} config-as-code-files for group: ${groupId}`);
+
+    const yamlFilesData: FileData[] = [];
+
+    if (yamlFiles.length > 0) {
+      for (const yamlFile of yamlFiles) {
+        if (checkCaCFilename) {
+          yamlFilesData.push({
+            path: yamlFile.path,
+            projectId: yamlFile.project_id,
+            groupId,
+            ref: yamlFile.ref,
+          });
+        }
+      }
+
+      await resyncConfigAsCode(cloudId, yamlFilesData);
+    }
+
+    return {
+      success: true,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      errors: [{ message: e.message }],
+    };
+  }
 });
 
 resolver.define('project/lastSyncTime', async (): Promise<ResolverResponse<string | null>> => {

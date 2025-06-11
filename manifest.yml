@@ -88,9 +88,16 @@ modules:
       handler: index.dataProviderBackfill
     - key: backfill-consumer-fn
       handler: index.backfillQueueResolver
+    - key: resync-cac-consumer-fn
+      handler: index.resyncConfigAsCodeResolver
     - key: find-matching-files-fn
       handler: index.findMatchingFiles
   consumer:
+    - key: resync-cac-consumer
+      queue: resync-cac-queue
+      resolver:
+        function: resync-cac-consumer-fn
+        method: resyncConfigAsCode
     - key: import-consumer
       queue: import-queue
       resolver:
