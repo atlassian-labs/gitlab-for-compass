@@ -6,7 +6,6 @@ import {
   getProjectBuildsFor28Days,
 } from './compute-event-and-metrics';
 import { BackfillData, EnvironmentTier } from '../types';
-import { isSendStagingEventsEnabled } from './feature-flags';
 import { getFormattedErrors, hasRejections } from '../utils/promise-allsettled-helpers';
 
 export const shouldBackfillType = (eventType: CompassEventType, requestedTypes?: CompassEventType[]): boolean => {
@@ -29,12 +28,13 @@ export const getBackfillData = async (
         ? getMRCycleTime(groupToken, projectId, branchName)
         : null,
       shouldBackfillType(CompassEventType.Deployment, eventTypes)
-        ? getDeploymentsForEnvironmentTiers(
-            groupToken,
-            projectId,
-            projectName,
-            isSendStagingEventsEnabled ? [EnvironmentTier.PRODUCTION, EnvironmentTier.STAGING] : undefined,
-          )
+        ? getDeploymentsForEnvironmentTiers(groupToken, projectId, projectName, [
+            EnvironmentTier.PRODUCTION,
+            EnvironmentTier.STAGING,
+            EnvironmentTier.DEVELOPMENT,
+            EnvironmentTier.TESTING,
+            EnvironmentTier.OTHER,
+          ])
         : [],
       shouldBackfillType(CompassEventType.PullRequest, eventTypes)
         ? getOpenMergeRequestsCount(groupToken, projectId, branchName)
