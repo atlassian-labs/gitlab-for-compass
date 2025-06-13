@@ -237,6 +237,7 @@ describe('formatLinks', () => {
       isImportAllEnabled: false,
       isCompassPushEventEnabled: false,
       isPackageDependenciesM3Enabled: false,
+      isResyncConfigAsCodeEnabled: false,
     });
 
     const result = formatLinks(inputLinks);
@@ -257,6 +258,7 @@ describe('formatLinks', () => {
       isImportAllEnabled: false,
       isCompassPushEventEnabled: false,
       isPackageDependenciesM3Enabled: false,
+      isResyncConfigAsCodeEnabled: false,
     });
 
     const result = formatLinks(null);
@@ -273,6 +275,7 @@ describe('formatLinks', () => {
       isImportAllEnabled: false,
       isCompassPushEventEnabled: false,
       isPackageDependenciesM3Enabled: false,
+      isResyncConfigAsCodeEnabled: false,
     });
 
     const result = formatLinks(inputLinks);

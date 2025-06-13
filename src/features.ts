@@ -12,6 +12,7 @@ export enum GitlabFeaturesEnum {
   IMPORT_ALL = 'isImportAllEnabled',
   COMPASS_PUSH_EVENTS = 'isCompassPushEventEnabled',
   PACKAGE_DEPENDENCIES_M3 = 'isPackageDependenciesM3Enabled',
+  RESYNC_CAC = 'isResyncConfigAsCodeEnabled',
 }
 
 export type FeaturesList = { [key in GitlabFeaturesEnum]: boolean };

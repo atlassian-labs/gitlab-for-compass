@@ -27,6 +27,10 @@ const isImportAllEnabled = (defaultValue = false): boolean => {
   return process.env.FF_IMPORT_ALL_ENABLED === 'true' || defaultValue;
 };
 
+const isResyncConfigAsCodeEnabled = (defaultValue = false): boolean => {
+  return process.env.FF_RESYNC_CAC_ENABLED === 'true' || defaultValue;
+};
+
 export const listFeatures = (): FeaturesList => {
   return {
     [GitlabFeaturesEnum.SEND_STAGING_EVENTS]: isSendStagingEventsEnabled(),
@@ -36,5 +40,6 @@ export const listFeatures = (): FeaturesList => {
     [GitlabFeaturesEnum.IMPORT_ALL]: isImportAllEnabled(),
     [GitlabFeaturesEnum.COMPASS_PUSH_EVENTS]: isCompassPushEventEnabled(),
     [GitlabFeaturesEnum.PACKAGE_DEPENDENCIES_M3]: isPackageDependenciesM3Enabled(),
+    [GitlabFeaturesEnum.RESYNC_CAC]: isResyncConfigAsCodeEnabled(),
   };
 };
