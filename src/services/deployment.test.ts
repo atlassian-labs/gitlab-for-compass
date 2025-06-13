@@ -176,17 +176,40 @@ describe('getDeploymentAfter28Days', () => {
     expect(mockedGetProjectRecentDeployments).toHaveBeenCalledTimes(2);
   });
 
-  it('ignores all non-production project environments', async () => {
+  it('process all non-production project environments', async () => {
     mockedGetEnvironments.mockResolvedValue([
       generateEnvironmentEvent(EnvironmentTier.STAGING, 'staging'),
       generateEnvironmentEvent(EnvironmentTier.TESTING, 'testing'),
       generateEnvironmentEvent(EnvironmentTier.DEVELOPMENT, 'development'),
     ]);
 
-    expect(await getDeploymentAfter28Days('123', 1, '2021-01-20T00:32:51.059Z', '2022-01-20T00:32:51.059Z')).toEqual(
-      [],
-    );
-    expect(mockedGetProjectRecentDeployments).not.toHaveBeenCalled();
+    const stagingDeployment = generateDeployment({ environment: { name: 'staging', id: 1 } });
+    const testingDeployment = generateDeployment({ environment: { name: 'testing', id: 2 } });
+    const developmentDeployment = generateDeployment({ environment: { name: 'development', id: 3 } });
+
+    mockedGetProjectRecentDeployments.mockImplementation((page, perPage, fetchFnParameters) => {
+      const getData = (environmentName: string) => {
+        switch (environmentName) {
+          case 'staging':
+            return stagingDeployment;
+          case 'testing':
+            return testingDeployment;
+          case 'development':
+          default:
+            return developmentDeployment;
+        }
+      };
+      return new Promise((resolve) => {
+        resolve({ data: [getData(fetchFnParameters.environmentName)], headers: new Headers() });
+      });
+    });
+
+    expect(await getDeploymentAfter28Days('123', 1, '2021-01-20T00:32:51.059Z', '2022-01-20T00:32:51.059Z')).toEqual([
+      stagingDeployment,
+      testingDeployment,
+      developmentDeployment,
+    ]);
+    expect(mockedGetProjectRecentDeployments).toHaveBeenCalledTimes(3);
   });
 
   describe('when isSendStagingEventsEnabled', () => {
@@ -234,17 +257,40 @@ describe('getDeploymentAfter28Days', () => {
       expect(mockedGetProjectRecentDeployments).toHaveBeenCalledTimes(3);
     });
 
-    it('ignores non-production, non-staging environments', async () => {
+    it('process non-production, non-staging environments', async () => {
       mockedGetEnvironments.mockResolvedValue([
         generateEnvironmentEvent(EnvironmentTier.DEVELOPMENT, 'development'),
         generateEnvironmentEvent(EnvironmentTier.TESTING, 'testing'),
         generateEnvironmentEvent(EnvironmentTier.OTHER, 'other'),
       ]);
 
-      expect(await getDeploymentAfter28Days('123', 1, '2021-01-20T00:32:51.059Z', '2021-01-20T00:32:51.059Z')).toEqual(
-        [],
-      );
-      expect(mockedGetProjectRecentDeployments).toHaveBeenCalledTimes(0);
+      const developmentDeployment = generateDeployment({ environment: { name: 'development', id: 1 } });
+      const testingDeployment = generateDeployment({ environment: { name: 'testing', id: 2 } });
+      const otherDeployment = generateDeployment({ environment: { name: 'other', id: 3 } });
+
+      mockedGetProjectRecentDeployments.mockImplementation((page, perPage, fetchFnParameters) => {
+        const getData = (environmentName: string) => {
+          switch (environmentName) {
+            case 'development':
+              return developmentDeployment;
+            case 'testing':
+              return testingDeployment;
+            case 'other':
+            default:
+              return otherDeployment;
+          }
+        };
+        return new Promise((resolve) => {
+          resolve({ data: [getData(fetchFnParameters.environmentName)], headers: new Headers() });
+        });
+      });
+
+      expect(await getDeploymentAfter28Days('123', 1, '2021-01-20T00:32:51.059Z', '2021-01-20T00:32:51.059Z')).toEqual([
+        developmentDeployment,
+        testingDeployment,
+        otherDeployment,
+      ]);
+      expect(mockedGetProjectRecentDeployments).toHaveBeenCalledTimes(3);
     });
   });
 });

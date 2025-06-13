@@ -96,13 +96,16 @@ describe('GitLab deployment event', () => {
     expect(mockedSendEventsToCompass).toHaveBeenCalledWith(MOCK_DEPLOYMENT_EVENT_INPUT);
   });
 
-  it('do not send deployment event when environment is not production', async () => {
+  it('send deployment event when environment is not production or staging', async () => {
     const MOCK_STAGING_ENVIRONMENTS_EVENT = generateEnvironmentEvent(EnvironmentTier.STAGING);
+    const MOCK_DEPLOYMENT_EVENT_INPUT = generateMockDeploymentInput(CompassDeploymentEventEnvironmentCategory.Staging);
+
     mockedGetEnvironments.mockResolvedValue([MOCK_STAGING_ENVIRONMENTS_EVENT]);
+    mockedGetDeployment.mockResolvedValue(MOCK_DEPLOYMENT_EVENT_INPUT);
 
     await handleDeploymentEvent(MOCK_DEPLOYMENT_EVENT, TEST_TOKEN, MOCK_CLOUD_ID);
 
-    expect(mockedSendEventsToCompass).not.toHaveBeenCalled();
+    expect(mockedSendEventsToCompass).toHaveBeenCalledWith(MOCK_DEPLOYMENT_EVENT_INPUT);
   });
 
   it('throws error when event environment not found in project environments', async () => {
@@ -154,15 +157,18 @@ describe('GitLab deployment event', () => {
       expect(mockedSendEventsToCompass).toHaveBeenCalledWith(MOCK_STAGING_DEPLOYMENT_EVENT_INPUT);
     });
 
-    it('ignores deployment events when environment is not production or staging', async () => {
+    it('process deployment events when environment is not production or staging', async () => {
       const MOCK_TESTING_ENVIRONMENTS_EVENT = generateEnvironmentEvent(EnvironmentTier.TESTING, 'testing');
       const MOCK_TESTING_DEPLOYMENT_EVENT = generateDeploymentEvent({ environment: 'testing' });
+      const MOCK_TESTING_DEPLOYMENT_EVENT_INPUT = generateMockDeploymentInput(
+        CompassDeploymentEventEnvironmentCategory.Testing,
+      );
       mockedGetEnvironments.mockResolvedValue([MOCK_TESTING_ENVIRONMENTS_EVENT]);
+      mockedGetDeployment.mockResolvedValue(MOCK_TESTING_DEPLOYMENT_EVENT_INPUT);
 
       await handleDeploymentEvent(MOCK_TESTING_DEPLOYMENT_EVENT, TEST_TOKEN, MOCK_CLOUD_ID);
 
-      expect(mockedGetDeployment).not.toHaveBeenCalled();
-      expect(mockedSendEventsToCompass).not.toHaveBeenCalled();
+      expect(mockedSendEventsToCompass).toHaveBeenCalledWith(MOCK_TESTING_DEPLOYMENT_EVENT_INPUT);
     });
   });
 });
