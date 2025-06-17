@@ -12,6 +12,7 @@ export const useFeatures = (): [FeaturesList, boolean, ErrorTypes | undefined] =
     [GitlabFeaturesEnum.IMPORT_ALL]: false,
     [GitlabFeaturesEnum.COMPASS_PUSH_EVENTS]: false,
     [GitlabFeaturesEnum.PACKAGE_DEPENDENCIES_M3]: false,
+    [GitlabFeaturesEnum.RESYNC_CAC]: false,
   });
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<ErrorTypes>();

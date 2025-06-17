@@ -3,24 +3,62 @@ import { useNavigate } from 'react-router-dom';
 
 import Spinner from '@atlaskit/spinner';
 
-import { disconnectGroup } from '../../services/invokes';
+import { FlagType, showFlag } from '@forge/bridge/out/flag/flag';
+import { disconnectGroup, resyncConfigAsCode } from '../../services/invokes';
 import { ConnectInfoPanel } from './ConnectInfoPanel';
 import { ImportControls } from './ImportControls';
 import { CenterWrapper } from '../styles';
 import { DefaultErrorState } from '../DefaultErrorState';
 import { ApplicationState } from '../../routes';
 import { useAppContext } from '../../hooks/useAppContext';
-import { AuthErrorTypes, ErrorTypes, GitlabAPIGroup } from '../../resolverTypes';
+import { AuthErrorTypes, ErrorTypes, GitlabAPIGroup, ResyncErrorTypes } from '../../resolverTypes';
 import { useImportContext } from '../../hooks/useImportContext';
 import { ImportResult } from '../ImportResult';
 import { IncomingWebhookSectionMessage } from '../IncomingWebhookSectionMessage';
 import { isRenderingInOnboardingFlow } from '../onboarding-flow-context-helper';
+
+const showReSyncCaCFlag = (flagType: FlagType, groupName?: string, isResyncTimeLimitError?: boolean) => {
+  if (flagType === 'success') {
+    showFlag({
+      id: 'success-sync-cac-flag',
+      title: 'Config-as-code files being processed',
+      type: 'success',
+      // eslint-disable-next-line max-len
+      description: `Your config-as-code files are being processed in the background. Wait a couple minutes for changes to be reflected on your components`,
+      actions: [],
+      isAutoDismiss: false,
+    });
+  }
+
+  if (flagType === 'error') {
+    showFlag({
+      id: 'error-sync-cac-flag',
+      title: "Couldn't sync CaC files",
+      type: 'error',
+      // eslint-disable-next-line max-len
+      description: `We couldn't sync your config-as-code files for the ${groupName} group. Try again in a few seconds.`,
+      actions: [],
+      isAutoDismiss: false,
+    });
+  }
+
+  if (flagType === 'info' && isResyncTimeLimitError) {
+    showFlag({
+      id: 'info-sync-cac-time-limit-flag',
+      title: 'Re-sync time limit',
+      type: 'info',
+      description: `A resync of the config-as-code files in ${groupName} is already underway.`,
+      isAutoDismiss: false,
+    });
+  }
+};
 
 export const ConnectedPage = () => {
   const [isDisconnectGroupInProgress, setDisconnectGroupInProgress] = useState(false);
   const [errorType, setErrorType] = useState<ErrorTypes>();
   const [groups, setGroups] = useState<GitlabAPIGroup[]>();
   const [isInOnboarding, setIsInOnboarding] = useState<boolean>(false);
+  const [isResyncLoading, setIsResyncLoading] = useState(false);
 
   const navigate = useNavigate();
   const { features, getConnectedInfo, clearGroup } = useAppContext();
@@ -74,6 +112,37 @@ export const ConnectedPage = () => {
     );
   }
 
+  const handleCacResync = async (): Promise<void> => {
+    setIsResyncLoading(true);
+    try {
+      const { success, errors } = await resyncConfigAsCode(groups[0].id);
+
+      if (errors?.length || !success) {
+        console.error(`Error while syncing config-as-code file for the ${groups[0].name}:`, JSON.stringify(errors));
+
+        const isResyncTimeLimitError =
+          errors?.length && errors.some((error) => error.errorType === ResyncErrorTypes.RESYNC_TIME_LIMIT);
+
+        setIsResyncLoading(false);
+
+        if (!isResyncTimeLimitError) {
+          showReSyncCaCFlag('error', groups[0].name);
+        } else {
+          showReSyncCaCFlag('info', groups[0].name, true);
+        }
+        return;
+      }
+    } catch (e) {
+      console.error('There was an error syncing CaC files for the group, please try again.', e);
+      setIsResyncLoading(false);
+      showReSyncCaCFlag('error', groups[0].name);
+      return;
+    }
+
+    setIsResyncLoading(false);
+    showReSyncCaCFlag('success');
+  };
+
   return (
     <div data-testid='gitlab-connected-page'>
       <h4>Connected group</h4>
@@ -87,6 +156,9 @@ export const ConnectedPage = () => {
         connectedGroup={groups[0]}
         handleDisconnectGroup={handleDisconnectGroup}
         isDisconnectGroupInProgress={isDisconnectGroupInProgress}
+        isLoadingResync={isResyncLoading}
+        handleResyncCaC={handleCacResync}
+        isResyncConfigAsCodeEnabled={features.isResyncConfigAsCodeEnabled}
       />
 
       <ImportControls />

@@ -31,9 +31,19 @@ type Props = {
   connectedGroup: GitlabAPIGroup;
   handleDisconnectGroup: (id: number) => void;
   isDisconnectGroupInProgress: boolean;
+  isLoadingResync: boolean;
+  handleResyncCaC: () => Promise<void>;
+  isResyncConfigAsCodeEnabled?: boolean;
 };
 
-export const ConnectInfoPanel = ({ connectedGroup, handleDisconnectGroup, isDisconnectGroupInProgress }: Props) => {
+export const ConnectInfoPanel = ({
+  connectedGroup,
+  handleDisconnectGroup,
+  isDisconnectGroupInProgress,
+  isLoadingResync,
+  handleResyncCaC,
+  isResyncConfigAsCodeEnabled,
+}: Props) => {
   return (
     <ConnectedGroupWrapper>
       <IconTitleGroupWrapper>
@@ -42,6 +52,11 @@ export const ConnectInfoPanel = ({ connectedGroup, handleDisconnectGroup, isDisc
           <strong>{connectedGroup.name}</strong>
         </ConnectedText>
       </IconTitleGroupWrapper>
+      {isResyncConfigAsCodeEnabled && (
+        <LoadingButton isLoading={isLoadingResync} onClick={handleResyncCaC}>
+          Resync
+        </LoadingButton>
+      )}
       <LoadingButton onClick={() => handleDisconnectGroup(connectedGroup.id)} isLoading={isDisconnectGroupInProgress}>
         Disconnect
       </LoadingButton>
