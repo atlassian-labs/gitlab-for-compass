@@ -9,7 +9,6 @@ import { getProjectDeploymentById, getProjectRecentDeployments } from '../client
 import { Deployment, DeploymentEvent, EnvironmentTier } from '../types';
 import { fetchPaginatedData } from '../utils/fetchPaginatedData';
 import { getProjectEnvironments } from './environment';
-import { isSendStagingEventsEnabled } from './feature-flags';
 import { truncateProjectNameString } from '../utils/event-mapping';
 import { getFormattedErrors, hasRejections } from '../utils/promise-allsettled-helpers';
 
@@ -134,20 +133,15 @@ export const getDeploymentAfter28Days = async (
   const environments = await getProjectEnvironments(projectId, groupToken);
   const getDeploymentsPromises = environments.reduce<Promise<{ data: Deployment[]; headers: Headers }>[]>(
     (deploymentsPromises, currentEnvironment) => {
-      if (
-        currentEnvironment.tier === EnvironmentTier.PRODUCTION ||
-        (isSendStagingEventsEnabled() && currentEnvironment.tier === EnvironmentTier.STAGING)
-      ) {
-        deploymentsPromises.push(
-          getProjectRecentDeployments(PAGE, PER_PAGE, {
-            groupToken,
-            projectId,
-            environmentName: currentEnvironment.name,
-            dateAfter,
-            dateBefore,
-          }),
-        );
-      }
+      deploymentsPromises.push(
+        getProjectRecentDeployments(PAGE, PER_PAGE, {
+          groupToken,
+          projectId,
+          environmentName: currentEnvironment.name,
+          dateAfter,
+          dateBefore,
+        }),
+      );
 
       return deploymentsPromises;
     },

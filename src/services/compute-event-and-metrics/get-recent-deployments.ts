@@ -4,7 +4,6 @@ import { Deployment, EnvironmentTier } from '../../types';
 import { getRecentDeployments, gitlabAPiDeploymentToCompassDataProviderDeploymentEvent } from '../deployment';
 import { getProjectEnvironments } from '../environment';
 import { getDateInThePast } from '../../utils/time-utils';
-import { isSendStagingEventsEnabled } from '../feature-flags';
 import { getFormattedErrors, hasRejections } from '../../utils/promise-allsettled-helpers';
 
 const newGetDeploymentsForEnvironments = async (
@@ -55,7 +54,7 @@ export const getDeploymentsForEnvironmentTiers = async (
   projectName: string,
   environmentTiers?: EnvironmentTier[],
 ): Promise<DataProviderDeploymentEvent[]> => {
-  if (isSendStagingEventsEnabled() && environmentTiers) {
+  if (environmentTiers) {
     return newGetDeploymentsForEnvironments(groupToken, projectId, projectName, environmentTiers);
   }
 
