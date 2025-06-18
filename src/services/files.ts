@@ -1,17 +1,35 @@
 import { storage } from '@forge/api';
 import { STORAGE_SECRETS } from '../constants';
-import { fetchPaginatedData } from '../utils/fetchPaginatedData';
-import { searchGroupFiles } from '../client/gitlab';
+import { GitLabHeaders, searchGroupFiles } from '../client/gitlab';
 
-export const getAllGroupCaCFiles = async ({ groupId }: { groupId: number }) => {
+export const getGroupCaCFiles = async ({
+  groupId,
+  page,
+  perPage,
+}: {
+  groupId: number;
+  page: number;
+  perPage: number;
+}) => {
   const searchQuery = 'file:compass.yml|compass.yaml';
 
   try {
     const groupToken = await storage.getSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`);
 
-    const yamlFiles = await fetchPaginatedData(searchGroupFiles, { groupToken, groupId, search: searchQuery });
+    const { data, headers } = await searchGroupFiles({
+      groupToken,
+      groupId,
+      page,
+      perPage,
+      search: searchQuery,
+    });
 
-    return yamlFiles;
+    const hasNextPage = headers.get(GitLabHeaders.PAGINATION_NEXT_PAGE) !== undefined;
+
+    return {
+      data,
+      hasNextPage,
+    };
   } catch (e) {
     console.error(`Error while searching yaml files in the group: ${groupId}:`, e);
 
