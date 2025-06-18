@@ -111,7 +111,7 @@ modules:
 app:
   id: ari:cloud:ecosystem::app/60787eba-aec5-49b4-979d-db8e77de32db
   runtime:
-    name: nodejs18.x
+    name: nodejs20.x
   features:
     autoUserConsent: true
 resources:
