@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Spinner from '@atlaskit/spinner';
 
 import { FlagType, showFlag } from '@forge/bridge/out/flag/flag';
+import { getCallBridge } from '@forge/bridge/out/bridge';
 import { disconnectGroup, resyncConfigAsCode } from '../../services/invokes';
 import { ConnectInfoPanel } from './ConnectInfoPanel';
 import { ImportControls } from './ImportControls';
@@ -61,7 +62,7 @@ export const ConnectedPage = () => {
   const [isResyncLoading, setIsResyncLoading] = useState(false);
 
   const navigate = useNavigate();
-  const { features, getConnectedInfo, clearGroup } = useAppContext();
+  const { features, getConnectedInfo, clearGroup, appId } = useAppContext();
   const { isImportInProgress } = useImportContext();
 
   const getIsInOnboarding = async () => {
@@ -113,6 +114,10 @@ export const ConnectedPage = () => {
   }
 
   const handleCacResync = async (): Promise<void> => {
+    const actionSubject = 'configAsCodeResync';
+    const successAction = 'completed';
+    const failedAction = 'failed';
+
     setIsResyncLoading(true);
     let hasNextPage = true;
     let currentPage = 1;
@@ -126,6 +131,14 @@ export const ConnectedPage = () => {
 
           const isResyncTimeLimitError =
             errors?.length && errors.some((error) => error.errorType === ResyncErrorTypes.RESYNC_TIME_LIMIT);
+
+          await getCallBridge()('fireForgeAnalytic', {
+            forgeAppId: appId,
+            analyticEvent: `${actionSubject} ${isResyncTimeLimitError ? successAction : failedAction}`,
+            attributes: {
+              orgName: groups[0].name,
+            },
+          });
 
           setIsResyncLoading(false);
 
@@ -146,11 +159,25 @@ export const ConnectedPage = () => {
         console.error('There was an error syncing CaC files for the group, please try again.', e);
         setIsResyncLoading(false);
         showReSyncCaCFlag('error', groups[0].name);
+        await getCallBridge()('fireForgeAnalytic', {
+          forgeAppId: appId,
+          analyticEvent: `${actionSubject} ${failedAction}`,
+          attributes: {
+            orgName: groups[0].name,
+          },
+        });
         return;
       }
 
       setIsResyncLoading(false);
       showReSyncCaCFlag('success');
+      await getCallBridge()('fireForgeAnalytic', {
+        forgeAppId: appId,
+        analyticEvent: `${actionSubject} ${successAction}`,
+        attributes: {
+          orgName: groups[0].name,
+        },
+      });
     }
   };
 
