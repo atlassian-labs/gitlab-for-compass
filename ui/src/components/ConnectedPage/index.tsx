@@ -114,33 +114,44 @@ export const ConnectedPage = () => {
 
   const handleCacResync = async (): Promise<void> => {
     setIsResyncLoading(true);
-    try {
-      const { success, errors } = await resyncConfigAsCode(groups[0].id);
+    let hasNextPage = true;
+    let currentPage = 1;
 
-      if (errors?.length || !success) {
-        console.error(`Error while syncing config-as-code file for the ${groups[0].name}:`, JSON.stringify(errors));
+    while (hasNextPage) {
+      try {
+        const { success, errors, data } = await resyncConfigAsCode(groups[0].id, currentPage);
 
-        const isResyncTimeLimitError =
-          errors?.length && errors.some((error) => error.errorType === ResyncErrorTypes.RESYNC_TIME_LIMIT);
+        if (errors?.length || !success) {
+          console.error(`Error while syncing config-as-code file for the ${groups[0].name}:`, JSON.stringify(errors));
 
-        setIsResyncLoading(false);
+          const isResyncTimeLimitError =
+            errors?.length && errors.some((error) => error.errorType === ResyncErrorTypes.RESYNC_TIME_LIMIT);
 
-        if (!isResyncTimeLimitError) {
-          showReSyncCaCFlag('error', groups[0].name);
-        } else {
-          showReSyncCaCFlag('info', groups[0].name, true);
+          setIsResyncLoading(false);
+
+          if (!isResyncTimeLimitError) {
+            showReSyncCaCFlag('error', groups[0].name);
+          } else {
+            showReSyncCaCFlag('info', groups[0].name, true);
+          }
+          return;
         }
+
+        if (data && data.hasNextPage) {
+          currentPage += 1;
+        } else {
+          hasNextPage = false;
+        }
+      } catch (e) {
+        console.error('There was an error syncing CaC files for the group, please try again.', e);
+        setIsResyncLoading(false);
+        showReSyncCaCFlag('error', groups[0].name);
         return;
       }
-    } catch (e) {
-      console.error('There was an error syncing CaC files for the group, please try again.', e);
-      setIsResyncLoading(false);
-      showReSyncCaCFlag('error', groups[0].name);
-      return;
-    }
 
-    setIsResyncLoading(false);
-    showReSyncCaCFlag('success');
+      setIsResyncLoading(false);
+      showReSyncCaCFlag('success');
+    }
   };
 
   return (

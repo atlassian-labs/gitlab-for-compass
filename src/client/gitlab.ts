@@ -19,6 +19,7 @@ import {
   GitlabPipelineStates,
   GitLabAccessLevels,
   BlobFileSearchResult,
+  SearchGroupFilesPayload,
 } from '../types';
 import { GitlabHttpMethodError, InvalidConfigFileError } from '../models/errors';
 import { INVALID_YAML_ERROR } from '../models/error-messages';
@@ -44,6 +45,7 @@ type CallGitLabConfig = {
 
 export enum GitLabHeaders {
   PAGINATION_TOTAL = 'x-total',
+  PAGINATION_NEXT_PAGE = 'x-next-page',
 }
 
 export type GitlabPaginatedFetch<D, P> = (
@@ -560,14 +562,13 @@ export const createMergeRequest = async (
   return data;
 };
 
-export const searchGroupFiles: GitlabPaginatedFetch<
-  BlobFileSearchResult,
-  {
-    groupId: number;
-    search: string;
-  }
-> = async (page, perPage, fetchParameters) => {
-  const { groupId, groupToken, search } = fetchParameters;
+export const searchGroupFiles = async ({
+  groupToken,
+  groupId,
+  page,
+  perPage,
+  search,
+}: SearchGroupFilesPayload): Promise<{ data: BlobFileSearchResult[]; headers: Headers }> => {
   const params = {
     scope: 'blobs',
     search,

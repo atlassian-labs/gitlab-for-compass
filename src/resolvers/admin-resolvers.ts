@@ -28,6 +28,7 @@ import {
   webhookSetupConfig,
 } from './shared-resolvers';
 import {
+  BlobFileSearchResult,
   ConnectGroupInput,
   FileData,
   GitLabRoles,
@@ -39,7 +40,7 @@ import { createMRWithCompassYML } from '../services/create-mr-with-compass-yml';
 import { createComponent, createComponentSlug } from '../client/compass';
 import { STORAGE_KEYS } from '../constants';
 import { minutesToMilliseconds } from '../utils/time-utils';
-import { getAllGroupCaCFiles } from '../services/files';
+import { getGroupCaCFiles } from '../services/files';
 import { checkCaCFilename } from '../utils/cac-filename-check';
 import { resyncConfigAsCode } from '../services/resync-cac';
 
@@ -160,13 +161,14 @@ resolver.define('groups/projects', async (req): Promise<ResolverResponse<GroupPr
   return getGroupsProjects(req);
 });
 
-resolver.define('group/resyncCaC', async (req): Promise<ResolverResponse> => {
+resolver.define('group/resyncCaC', async (req): Promise<ResolverResponse<{ hasNextPage: boolean }>> => {
   const {
-    payload: { groupId },
+    payload: { groupId, page },
     context: { cloudId },
   } = req;
 
   const MINUTES_LOCK = 60;
+  const MAX_FILES = 20;
 
   try {
     const lastUpdate = await storage.get(`${STORAGE_KEYS.CAC_MANUAL_SYNC_PREFIX}${cloudId}_${groupId}`);
@@ -193,9 +195,19 @@ resolver.define('group/resyncCaC', async (req): Promise<ResolverResponse> => {
       };
     }
 
-    const yamlFiles = await getAllGroupCaCFiles({ groupId });
+    let yamlFiles: BlobFileSearchResult[] = [];
 
-    console.log(`Fetched  ${yamlFiles.length} config-as-code-files for group: ${groupId}`);
+    console.log(`Fetching page ${page} of config-as-code files for group: ${groupId}.`);
+
+    const { data, hasNextPage } = await getGroupCaCFiles({
+      groupId,
+      page,
+      perPage: MAX_FILES,
+    });
+
+    yamlFiles = data;
+
+    console.log(`Fetched ${yamlFiles.length} config-as-code-files for group: ${groupId}`);
 
     const yamlFilesData: FileData[] = [];
 
@@ -216,6 +228,9 @@ resolver.define('group/resyncCaC', async (req): Promise<ResolverResponse> => {
 
     return {
       success: true,
+      data: {
+        hasNextPage,
+      },
     };
   } catch (e) {
     return {

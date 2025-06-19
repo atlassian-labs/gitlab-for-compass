@@ -196,6 +196,14 @@ type RegisterWebhookPayload = {
   token: string;
 };
 
+type SearchGroupFilesPayload = {
+  groupToken: string;
+  groupId: number;
+  page: number;
+  perPage: number;
+  search: string;
+};
+
 type CommitFileDiff = {
   diff: string;
   old_path: string;
@@ -540,6 +548,7 @@ export type {
   TokenFetchResult,
   BlobFileSearchResult,
   FileData,
+  SearchGroupFilesPayload,
 };
 
 export {

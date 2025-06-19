@@ -31,8 +31,8 @@ export const getWebhookSetupConfig = (): Promise<ResolverResponse<WebhookSetupCo
   return invoke<ResolverResponse<WebhookSetupConfig>>('webhooks/setupConfig');
 };
 
-export const resyncConfigAsCode = (groupId: number): Promise<ResolverResponse> => {
-  return invoke<ResolverResponse>('group/resyncCaC', { groupId });
+export const resyncConfigAsCode = (groupId: number, page = 1): Promise<ResolverResponse<{ hasNextPage: boolean }>> => {
+  return invoke<ResolverResponse<{ hasNextPage: boolean }>>('group/resyncCaC', { groupId, page });
 };
 
 export const connectGroup = (
