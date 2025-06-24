@@ -39,7 +39,7 @@ export const ImportantText = styled.strong`
 `;
 
 export const StatusLabel = styled.span`
-  color: ${token('color.text.inverse', N200)};
+  color: ${token('color.text', N200)};
   cursor: pointer;
   &:hover {
     text-decoration: underline;
