@@ -20,7 +20,7 @@ const ConnectedGroupWrapper = styled.div`
 const IconTitleGroupWrapper = styled.div`
   display: flex;
   align-items: center;
-  width: 80%;
+  width: 70%;
 `;
 
 const ConnectedText = styled.p`
@@ -34,6 +34,8 @@ type Props = {
   isLoadingResync: boolean;
   handleResyncCaC: () => Promise<void>;
   isResyncConfigAsCodeEnabled?: boolean;
+  rotateWebTrigger: () => Promise<void>;
+  isRotatingWebtriggerLoading: boolean;
 };
 
 export const ConnectInfoPanel = ({
@@ -43,6 +45,8 @@ export const ConnectInfoPanel = ({
   isLoadingResync,
   handleResyncCaC,
   isResyncConfigAsCodeEnabled,
+  rotateWebTrigger,
+  isRotatingWebtriggerLoading,
 }: Props) => {
   return (
     <ConnectedGroupWrapper>
@@ -57,6 +61,13 @@ export const ConnectInfoPanel = ({
           Resync
         </LoadingButton>
       )}
+      <LoadingButton
+        testId={`rotate-web-trigger-${connectedGroup.id}`}
+        onClick={rotateWebTrigger}
+        isLoading={isRotatingWebtriggerLoading}
+      >
+        Rotate webhook
+      </LoadingButton>
       <LoadingButton onClick={() => handleDisconnectGroup(connectedGroup.id)} isLoading={isDisconnectGroupInProgress}>
         Disconnect
       </LoadingButton>
