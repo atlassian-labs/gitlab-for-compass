@@ -189,3 +189,22 @@ export const getWebhookSetupConfig = async (): Promise<WebhookSetupConfig> => {
     groupId: webhookSetupInProgress ? groupIds[0] : null,
   };
 };
+
+export const rotateWebhook = async (groupId: number): Promise<void> => {
+  console.log('Start rotating webhook');
+
+  try {
+    const webtriggerURL = await webTrigger.getUrl(GITLAB_EVENT_WEBTRIGGER);
+
+    await deleteWebhook(groupId);
+    await webTrigger.deleteUrl(webtriggerURL);
+    await storage.delete(`${STORAGE_KEYS.WEBHOOK_KEY_PREFIX}${groupId}`);
+
+    await setupAndValidateWebhook(groupId);
+
+    console.log('Finish rotating webhook');
+  } catch (e) {
+    console.error('Error rotating webhook', e);
+    throw new Error(`Error rotating webhook: ${e}`);
+  }
+};
