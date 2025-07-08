@@ -1,0 +1,22 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Compass circle base -->
+  <circle cx="60" cy="60" r="50" fill="none" stroke="#0052CC" stroke-width="3"/>
+  
+  <!-- Compass needle pointing to GitLab node -->
+  <line x1="60" y1="60" x2="60" y2="25" stroke="#0052CC" stroke-width="4" stroke-linecap="round"/>
+  <polygon points="60,20 65,30 55,30" fill="#0052CC"/>
+  
+  <!-- GitLab integration nodes -->
+  <circle cx="60" cy="25" r="8" fill="#FC6D26"/>
+  <circle cx="95" cy="60" r="6" fill="#FC6D26" opacity="0.8"/>
+  <circle cx="25" cy="60" r="6" fill="#FC6D26" opacity="0.8"/>
+  <circle cx="60" cy="95" r="6" fill="#FC6D26" opacity="0.6"/>
+  
+  <!-- Connection lines -->
+  <line x1="60" y1="33" x2="89" y2="60" stroke="#FC6D26" stroke-width="2" opacity="0.6"/>
+  <line x1="60" y1="33" x2="31" y2="60" stroke="#FC6D26" stroke-width="2" opacity="0.6"/>
+  <line x1="60" y1="33" x2="60" y2="87" stroke="#FC6D26" stroke-width="2" opacity="0.4"/>
+  
+  <!-- Center hub -->
+  <circle cx="60" cy="60" r="4" fill="#0052CC"/>
+</svg>

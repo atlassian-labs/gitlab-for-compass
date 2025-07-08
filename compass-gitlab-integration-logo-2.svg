@@ -1,0 +1,21 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Bridge/connection concept -->
+  <path d="M20 60 Q40 30 60 60 Q80 90 100 60" fill="none" stroke="#0052CC" stroke-width="4" stroke-linecap="round"/>
+  
+  <!-- Data flow elements -->
+  <circle cx="25" cy="58" r="8" fill="#0052CC"/>
+  <circle cx="95" cy="62" r="8" fill="#FC6D26"/>
+  
+  <!-- Flowing data points -->
+  <circle cx="40" cy="45" r="3" fill="#0052CC" opacity="0.7"/>
+  <circle cx="50" cy="52" r="2" fill="#FC6D26" opacity="0.8"/>
+  <circle cx="70" cy="68" r="3" fill="#0052CC" opacity="0.6"/>
+  <circle cx="80" cy="75" r="2" fill="#FC6D26" opacity="0.7"/>
+  
+  <!-- Integration symbol -->
+  <rect x="55" y="55" width="10" height="10" rx="2" fill="#6B7280" opacity="0.8"/>
+  
+  <!-- Compass direction indicators -->
+  <polygon points="60,35 63,45 57,45" fill="#0052CC" opacity="0.5"/>
+  <polygon points="85,60 75,57 75,63" fill="#FC6D26" opacity="0.5"/>
+</svg>

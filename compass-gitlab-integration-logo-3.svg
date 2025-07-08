@@ -1,0 +1,27 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Minimalist compass rose -->
+  <g transform="translate(60,60)">
+    <!-- Main compass needle -->
+    <line x1="0" y1="-35" x2="0" y2="35" stroke="#0052CC" stroke-width="3"/>
+    <line x1="-35" y1="0" x2="35" y2="0" stroke="#0052CC" stroke-width="3"/>
+    
+    <!-- Compass point -->
+    <polygon points="0,-40 4,-30 -4,-30" fill="#0052CC"/>
+    
+    <!-- GitLab integration network -->
+    <circle cx="-25" cy="-25" r="5" fill="#FC6D26"/>
+    <circle cx="25" cy="-25" r="5" fill="#FC6D26"/>
+    <circle cx="25" cy="25" r="5" fill="#FC6D26"/>
+    <circle cx="-25" cy="25" r="5" fill="#FC6D26"/>
+    
+    <!-- Connection mesh -->
+    <line x1="-25" y1="-25" x2="25" y2="-25" stroke="#FC6D26" stroke-width="1.5" opacity="0.6"/>
+    <line x1="25" y1="-25" x2="25" y2="25" stroke="#FC6D26" stroke-width="1.5" opacity="0.6"/>
+    <line x1="25" y1="25" x2="-25" y2="25" stroke="#FC6D26" stroke-width="1.5" opacity="0.6"/>
+    <line x1="-25" y1="25" x2="-25" y2="-25" stroke="#FC6D26" stroke-width="1.5" opacity="0.6"/>
+    
+    <!-- Central integration hub -->
+    <circle cx="0" cy="0" r="6" fill="#6B7280"/>
+    <circle cx="0" cy="0" r="3" fill="#FFFFFF"/>
+  </g>
+</svg>
