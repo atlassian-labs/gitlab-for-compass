@@ -1,0 +1,33 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Minimalist compass arrow with branching paths -->
+  <defs>
+    <linearGradient id="arrowGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#0052CC;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FC6D26;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Main compass arrow -->
+  <path d="M60 15 L70 50 L60 55 L50 50 Z" fill="url(#arrowGradient)"/>
+  
+  <!-- Branching paths representing Git workflows and integration -->
+  <path d="M60 55 L60 75" stroke="#0052CC" stroke-width="3" fill="none"/>
+  
+  <!-- Left branch -->
+  <path d="M60 75 Q45 85 30 95" stroke="#0052CC" stroke-width="2" fill="none"/>
+  <circle cx="30" cy="95" r="4" fill="#0052CC"/>
+  
+  <!-- Right branch -->
+  <path d="M60 75 Q75 85 90 95" stroke="#FC6D26" stroke-width="2" fill="none"/>
+  <circle cx="90" cy="95" r="4" fill="#FC6D26"/>
+  
+  <!-- Center branch (straight) -->
+  <path d="M60 75 L60 95" stroke="#6B7280" stroke-width="2" fill="none"/>
+  <circle cx="60" cy="95" r="4" fill="#6B7280"/>
+  
+  <!-- Central hub -->
+  <circle cx="60" cy="75" r="6" fill="#0052CC" stroke="#FC6D26" stroke-width="2"/>
+  
+  <!-- Compass direction indicators -->
+  <circle cx="60" cy="60" r="25" fill="none" stroke="#0052CC" stroke-width="1" opacity="0.3"/>
+</svg>

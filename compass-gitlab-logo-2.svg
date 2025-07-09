@@ -1,0 +1,28 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Abstract bridge/connection design -->
+  <defs>
+    <linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#0052CC;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FC6D26;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Left platform (Compass) -->
+  <rect x="15" y="45" width="25" height="30" rx="5" fill="#0052CC"/>
+  
+  <!-- Right platform (GitLab) -->
+  <rect x="80" y="45" width="25" height="30" rx="5" fill="#FC6D26"/>
+  
+  <!-- Bridge/connection with flowing data -->
+  <path d="M40 52 Q60 35 80 52" fill="none" stroke="url(#flowGradient)" stroke-width="4"/>
+  <path d="M40 60 L80 60" fill="none" stroke="url(#flowGradient)" stroke-width="6"/>
+  <path d="M40 68 Q60 85 80 68" fill="none" stroke="url(#flowGradient)" stroke-width="4"/>
+  
+  <!-- Data flow indicators -->
+  <circle cx="50" cy="60" r="3" fill="#0052CC" opacity="0.8">
+    <animate attributeName="cx" values="50;70;50" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="65" cy="52" r="2" fill="#FC6D26" opacity="0.6">
+    <animate attributeName="cx" values="65;45;65" dur="2.5s" repeatCount="indefinite"/>
+  </circle>
+</svg>

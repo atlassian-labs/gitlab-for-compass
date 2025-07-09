@@ -1,0 +1,20 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Compass circle base -->
+  <circle cx="60" cy="60" r="50" fill="none" stroke="#0052CC" stroke-width="3"/>
+  
+  <!-- Compass needle pointing to connected nodes -->
+  <path d="M60 20 L65 55 L60 60 L55 55 Z" fill="#0052CC"/>
+  
+  <!-- GitLab-inspired connected nodes representing integration -->
+  <circle cx="85" cy="35" r="8" fill="#FC6D26"/>
+  <circle cx="95" cy="60" r="6" fill="#FC6D26" opacity="0.8"/>
+  <circle cx="85" cy="85" r="8" fill="#FC6D26"/>
+  
+  <!-- Connection lines showing data flow -->
+  <path d="M70 45 Q80 40 85 35" fill="none" stroke="#0052CC" stroke-width="2" opacity="0.6"/>
+  <path d="M70 60 L95 60" fill="none" stroke="#0052CC" stroke-width="2" opacity="0.6"/>
+  <path d="M70 75 Q80 80 85 85" fill="none" stroke="#0052CC" stroke-width="2" opacity="0.6"/>
+  
+  <!-- Center dot -->
+  <circle cx="60" cy="60" r="4" fill="#0052CC"/>
+</svg>
