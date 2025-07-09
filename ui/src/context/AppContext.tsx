@@ -4,12 +4,12 @@ import Spinner from '@atlaskit/spinner';
 
 import { view } from '@forge/bridge';
 import { CenterWrapper } from '../components/styles';
-import { AuthErrorTypes, ErrorTypes, FeaturesList, GitlabAPIGroup } from '../resolverTypes';
+import { AuthErrorTypes, DefaultErrorTypes, ErrorTypes, FeaturesList, GitlabAPIGroup } from '../resolverTypes';
 import { ApplicationState } from '../routes';
-import { connectedInfo, getForgeAppId, getWebhookSetupConfig } from '../services/invokes';
+import { connectedInfo, getForgeAppId, getRole, getWebhookSetupConfig } from '../services/invokes';
 import { DefaultErrorState } from '../components/DefaultErrorState';
 import { useFeatures } from '../hooks/useFeatures';
-import { WebhookSetupConfig } from '../types';
+import { GitLabRoles, WebhookSetupConfig } from '../types';
 
 type AppContextProviderProps = {
   children: ReactNode;
@@ -24,6 +24,7 @@ export type AppContextProps = {
   appId: string;
   webhookSetupConfig: WebhookSetupConfig;
   refreshWebhookConfig: () => Promise<void>;
+  isOwnerRole: boolean | undefined;
 };
 
 export const AppContext = createContext({} as AppContextProps);
@@ -42,6 +43,7 @@ export const AppContextProvider: FunctionComponent<AppContextProviderProps> = ({
     webhookSetupInProgress: false,
     triggerUrl: '',
   });
+  const [isOwnerRole, setIsOwnerRole] = useState<boolean>();
 
   useEffect(() => {
     async function getContext() {
@@ -118,6 +120,36 @@ export const AppContextProvider: FunctionComponent<AppContextProviderProps> = ({
       });
   }, []);
 
+  const getRoles = async (groupId: number): Promise<GitLabRoles | undefined> => {
+    try {
+      const { data, success, errors } = await getRole(groupId);
+
+      if (success && data) {
+        return data;
+      }
+
+      if (errors && errors.length > 0) {
+        setErrorType((errors && errors[0].errorType) || DefaultErrorTypes.UNEXPECTED_ERROR);
+      }
+    } catch {
+      setErrorType(DefaultErrorTypes.UNEXPECTED_ERROR);
+    }
+
+    return undefined;
+  };
+
+  useEffect(() => {
+    if (groups?.length) {
+      getRoles(groups[0].id)
+        .then((role) => {
+          if (role) {
+            setIsOwnerRole(role === GitLabRoles.OWNER);
+          }
+        })
+        .catch((e) => console.error('Error while getting roles', e));
+    }
+  }, [groups]);
+
   const getConnectedInfo = async (): Promise<GitlabAPIGroup[] | undefined> => {
     if (groups && groups?.length > 0) {
       return groups;
@@ -186,6 +218,7 @@ export const AppContextProvider: FunctionComponent<AppContextProviderProps> = ({
         appId,
         webhookSetupConfig,
         refreshWebhookConfig,
+        isOwnerRole,
       }}
     >
       {children}

@@ -119,6 +119,23 @@ resolver.define('groups/connect', async (req): Promise<ResolverResponse> => {
   }
 });
 
+resolver.define('group/getRole', async (req): Promise<ResolverResponse<GitLabRoles>> => {
+  const { groupId } = req.payload;
+  try {
+    const role = await storage.get(`${STORAGE_KEYS.TOKEN_ROLE_PREFIX}${groupId}`);
+
+    return {
+      success: true,
+      data: role,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      errors: [{ message: e.message, errorType: DefaultErrorTypes.UNEXPECTED_ERROR }],
+    };
+  }
+});
+
 resolver.define('webhooks/connectInProgress', async (req): Promise<ResolverResponse> => {
   const {
     payload: { groupId, webhookId, webhookSecretToken },

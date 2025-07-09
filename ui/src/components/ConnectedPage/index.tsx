@@ -65,7 +65,7 @@ export const ConnectedPage = () => {
   const [isRotatingWebtriggerLoading, setRotatingWebtriggerLoading] = useState(false);
 
   const navigate = useNavigate();
-  const { features, getConnectedInfo, clearGroup, appId } = useAppContext();
+  const { features, getConnectedInfo, clearGroup, appId, isOwnerRole } = useAppContext();
   const { isImportInProgress } = useImportContext();
 
   const getIsInOnboarding = async () => {
@@ -256,6 +256,7 @@ export const ConnectedPage = () => {
         isResyncConfigAsCodeEnabled={features.isResyncConfigAsCodeEnabled}
         isRotatingWebtriggerLoading={isRotatingWebtriggerLoading}
         rotateWebTrigger={rotateWebTrigger}
+        isOwnerRole={isOwnerRole}
       />
 
       <ImportControls />

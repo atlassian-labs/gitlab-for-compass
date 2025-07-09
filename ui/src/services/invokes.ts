@@ -41,6 +41,12 @@ export const rotateWebhook = (groupId: number): Promise<ResolverResponse<void>> 
   });
 };
 
+export const getRole = (groupId: number) => {
+  return invoke<ResolverResponse<GitLabRoles>>('group/getRole', {
+    groupId,
+  });
+};
+
 export const connectGroup = (
   groupToken: string,
   groupTokenName: string,
