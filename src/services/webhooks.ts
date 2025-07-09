@@ -194,6 +194,12 @@ export const rotateWebhook = async (groupId: number): Promise<void> => {
   console.log('Start rotating webhook');
 
   try {
+    const tokenRole = await storage.get(`${STORAGE_KEYS.TOKEN_ROLE_PREFIX}${groupId}`);
+
+    if (tokenRole === GitLabRoles.MAINTAINER) {
+      console.log('Skipping webhook rotation since the Maintainer token role');
+      return;
+    }
     const webtriggerURL = await webTrigger.getUrl(GITLAB_EVENT_WEBTRIGGER);
 
     await deleteWebhook(groupId);

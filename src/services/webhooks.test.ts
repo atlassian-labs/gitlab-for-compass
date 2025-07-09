@@ -21,7 +21,6 @@ const MOCK_WEBHOOK_SETUP_IN_PROGRESS_KEY = `webhook-setup-in-progress-${MOCK_GRO
 const MOCK_WEBHOOK_ID = 345;
 
 const mockConsoleLog = jest.spyOn(console, 'log');
-const mockConsoleError = jest.spyOn(console, 'error');
 
 describe('setup webhook', () => {
   beforeEach(() => {
@@ -155,6 +154,7 @@ describe('rotate webhook', () => {
 
   it('should rotate webhook', async () => {
     // delete webtrigger
+    storage.get = jest.fn().mockResolvedValueOnce(GitLabRoles.OWNER); // tokenRole
     webTrigger.getUrl = jest.fn().mockReturnValue('https://example.com');
     webTrigger.deleteUrl.mockImplementationOnce(() => Promise.resolve());
 
@@ -178,5 +178,15 @@ describe('rotate webhook', () => {
 
     await rotateWebhook(MOCK_GROUP_ID);
     expect(mockConsoleLog).toHaveBeenCalledWith('Finish rotating webhook');
+  });
+
+  it('should not rotate webhook if maintainer token role', async () => {
+    storage.get = jest.fn().mockReturnValueOnce(GitLabRoles.MAINTAINER);
+
+    await rotateWebhook(MOCK_GROUP_ID);
+
+    expect(mockDeleteGroupWebhook).toBeCalledTimes(0);
+    expect(mockRegisterGroupWebhook).toBeCalledTimes(0);
+    expect(mockConsoleLog).toBeCalledWith('Skipping webhook rotation since the Maintainer token role');
   });
 });
