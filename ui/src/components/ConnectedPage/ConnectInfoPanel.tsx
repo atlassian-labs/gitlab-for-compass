@@ -17,10 +17,10 @@ const ConnectedGroupWrapper = styled.div`
   padding: ${gridSize() * 2}px;
 `;
 
-const IconTitleGroupWrapper = styled.div`
+const IconTitleGroupWrapper = styled.div<{ isOwnerRole?: boolean }>`
   display: flex;
   align-items: center;
-  width: 80%;
+  width: ${(props) => (props.isOwnerRole ? 70 : 80)}%;
 `;
 
 const ConnectedText = styled.p`
@@ -34,6 +34,9 @@ type Props = {
   isLoadingResync: boolean;
   handleResyncCaC: () => Promise<void>;
   isResyncConfigAsCodeEnabled?: boolean;
+  rotateWebTrigger: () => Promise<void>;
+  isRotatingWebtriggerLoading: boolean;
+  isOwnerRole: boolean | undefined;
 };
 
 export const ConnectInfoPanel = ({
@@ -43,18 +46,31 @@ export const ConnectInfoPanel = ({
   isLoadingResync,
   handleResyncCaC,
   isResyncConfigAsCodeEnabled,
+  rotateWebTrigger,
+  isRotatingWebtriggerLoading,
+  isOwnerRole,
 }: Props) => {
   return (
     <ConnectedGroupWrapper>
-      <IconTitleGroupWrapper>
+      <IconTitleGroupWrapper isOwnerRole={isOwnerRole}>
         <CheckCircleIcon label='check' primaryColor={token('color.icon.success', 'green')} />
         <ConnectedText>
           <strong>{connectedGroup.name}</strong>
         </ConnectedText>
       </IconTitleGroupWrapper>
+
       {isResyncConfigAsCodeEnabled && (
         <LoadingButton isLoading={isLoadingResync} onClick={handleResyncCaC}>
           Resync
+        </LoadingButton>
+      )}
+      {isOwnerRole && (
+        <LoadingButton
+          testId={`rotate-web-trigger-${connectedGroup.id}`}
+          onClick={rotateWebTrigger}
+          isLoading={isRotatingWebtriggerLoading}
+        >
+          Rotate webhook
         </LoadingButton>
       )}
       <LoadingButton onClick={() => handleDisconnectGroup(connectedGroup.id)} isLoading={isDisconnectGroupInProgress}>
