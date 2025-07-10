@@ -1,5 +1,6 @@
 import { CompassComponentTypeObject } from '@atlassian/forge-graphql-types';
 import { Request } from '@forge/resolver';
+import { storage } from '@forge/api';
 import {
   AuthErrorTypes,
   DefaultErrorTypes,
@@ -12,10 +13,11 @@ import { listFeatures } from '../services/feature-flags';
 import { getAllExistingGroups, getConnectedGroups } from '../services/group';
 import { getWebhookSetupConfig, setupAndValidateWebhook } from '../services/webhooks';
 import { getForgeAppId } from '../utils/get-forge-app-id';
-import { GroupProjectsResponse, ProjectImportResult, WebhookSetupConfig } from '../types';
+import { GitLabRoles, GroupProjectsResponse, ProjectImportResult, WebhookSetupConfig } from '../types';
 import { getGroupProjects } from '../services/fetch-projects';
 import { getImportResult, ImportFailedError, importProjects } from '../services/import-projects';
 import { getAllComponentTypes as getAllCompassComponentTypes } from '../client/compass';
+import { STORAGE_KEYS } from '../constants';
 
 export const getFeatures = (): ResolverResponse<FeaturesList> => {
   try {
@@ -168,6 +170,23 @@ export const getProjectImportResult = async (): Promise<ResolverResponse<Project
     return {
       success: false,
       errors: [{ message: e.message, errorType: e.errorType }],
+    };
+  }
+};
+
+export const getRole = async (req: Request): Promise<ResolverResponse<GitLabRoles>> => {
+  const { groupId } = req.payload;
+  try {
+    const role = await storage.get(`${STORAGE_KEYS.TOKEN_ROLE_PREFIX}${groupId}`);
+
+    return {
+      success: true,
+      data: role,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      errors: [{ message: e.message, errorType: DefaultErrorTypes.UNEXPECTED_ERROR }],
     };
   }
 };

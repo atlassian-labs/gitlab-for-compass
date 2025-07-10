@@ -24,6 +24,7 @@ import {
   getFeatures,
   getGroupsProjects,
   getProjectImportResult,
+  getRole,
   groupsAllExisting,
   webhookSetupConfig,
 } from './shared-resolvers';
@@ -117,6 +118,10 @@ resolver.define('groups/connect', async (req): Promise<ResolverResponse> => {
       errors: [{ message: e.message, errorType: AuthErrorTypes.UNEXPECTED_ERROR }],
     };
   }
+});
+
+resolver.define('group/getRole', async (req): Promise<ResolverResponse<GitLabRoles>> => {
+  return getRole(req);
 });
 
 resolver.define('webhooks/connectInProgress', async (req): Promise<ResolverResponse> => {
