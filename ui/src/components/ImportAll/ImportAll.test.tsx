@@ -96,7 +96,6 @@ describe('ImportAll page', () => {
         triggerUrl: '',
         webhookSetupInProgress: false,
       },
-      isOwnerRole: true,
     }));
 
     const { queryByTestId } = render(
@@ -165,7 +164,6 @@ describe('ImportAll page', () => {
         triggerUrl: '',
         webhookSetupInProgress: false,
       },
-      isOwnerRole: true,
     }));
 
     const { queryByTestId } = render(
@@ -231,7 +229,6 @@ describe('ImportAll page', () => {
         triggerUrl: '',
         webhookSetupInProgress: false,
       },
-      isOwnerRole: true,
     }));
 
     const { queryByTestId } = render(

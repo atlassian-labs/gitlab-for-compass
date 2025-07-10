@@ -10,7 +10,6 @@ import {
 } from '../__mocks__/mocks';
 import { defaultMocks, mockInvoke, mockGetContext } from '../../helpers/mockHelpers';
 import { ImportAllCaCProvider } from '../ImportAllCaCContext';
-import { GitLabRoles } from '../../types';
 
 const MOCK_APP_ID = 'app-id';
 
@@ -152,42 +151,6 @@ describe('AppContext', () => {
     await waitFor(() => {
       expectToSendAnalyticsEvent('importAllButton clicked');
     });
-  });
-
-  it('should render Rotate webhook button if token role is Owner', async () => {
-    mockInvoke(filledMocks);
-    mockGetContext('admin-page-ui');
-
-    const { findByTestId } = render(
-      <AppContextProvider>
-        <AppRouter />
-      </AppContextProvider>,
-    );
-
-    const rotateWebhookButton = await findByTestId('rotate-web-trigger-1');
-
-    expect(rotateWebhookButton).toBeDefined();
-  });
-
-  it('should not render Rotate webhook button if token role is Maintainer', async () => {
-    mockInvoke({
-      ...filledMocks,
-      'group/getRole': {
-        success: true,
-        data: GitLabRoles.MAINTAINER,
-      },
-    });
-    mockGetContext('admin-page-ui');
-
-    const { queryByTestId } = render(
-      <AppContextProvider>
-        <AppRouter />
-      </AppContextProvider>,
-    );
-
-    const rotateWebhookButton = queryByTestId('rotate-web-trigger-1');
-
-    expect(rotateWebhookButton).toBeNull();
   });
 
   it('setup config-as-code checkbox sends analytic event', async () => {

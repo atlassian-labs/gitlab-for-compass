@@ -5,8 +5,7 @@ import Spinner from '@atlaskit/spinner';
 
 import { FlagType, showFlag } from '@forge/bridge/out/flag/flag';
 import { getCallBridge } from '@forge/bridge/out/bridge';
-import { Modal } from '@forge/bridge';
-import { disconnectGroup, resyncConfigAsCode, rotateWebhook } from '../../services/invokes';
+import { disconnectGroup, resyncConfigAsCode } from '../../services/invokes';
 import { ConnectInfoPanel } from './ConnectInfoPanel';
 import { ImportControls } from './ImportControls';
 import { CenterWrapper } from '../styles';
@@ -18,7 +17,6 @@ import { useImportContext } from '../../hooks/useImportContext';
 import { ImportResult } from '../ImportResult';
 import { IncomingWebhookSectionMessage } from '../IncomingWebhookSectionMessage';
 import { isRenderingInOnboardingFlow } from '../onboarding-flow-context-helper';
-import { ROTATE_WEB_TRIGGER_MODAL } from '../../constants';
 
 const showReSyncCaCFlag = (flagType: FlagType, groupName?: string, isResyncTimeLimitError?: boolean) => {
   if (flagType === 'success') {
@@ -62,10 +60,9 @@ export const ConnectedPage = () => {
   const [groups, setGroups] = useState<GitlabAPIGroup[]>();
   const [isInOnboarding, setIsInOnboarding] = useState<boolean>(false);
   const [isResyncLoading, setIsResyncLoading] = useState(false);
-  const [isRotatingWebtriggerLoading, setRotatingWebtriggerLoading] = useState(false);
 
   const navigate = useNavigate();
-  const { features, getConnectedInfo, clearGroup, appId, isOwnerRole } = useAppContext();
+  const { features, getConnectedInfo, clearGroup, appId } = useAppContext();
   const { isImportInProgress } = useImportContext();
 
   const getIsInOnboarding = async () => {
@@ -184,60 +181,6 @@ export const ConnectedPage = () => {
     }
   };
 
-  const rotateWebTrigger = async (): Promise<void> => {
-    const { id: groupId, name: groupName } = groups[0];
-    try {
-      const onClose = async (shouldRotateWebTrigger?: boolean) => {
-        if (!shouldRotateWebTrigger) {
-          return;
-        }
-        try {
-          setRotatingWebtriggerLoading(true);
-
-          const { success: rotateSuccess, errors: rotateErrors } = await rotateWebhook(groupId);
-
-          if (!rotateSuccess && rotateErrors) {
-            throw new Error(rotateErrors[0].message);
-          }
-
-          setRotatingWebtriggerLoading(false);
-          showFlag({
-            id: 'success-rotate-web-trigger-flag',
-            title: 'Webhook rotated',
-            type: 'success',
-            description: `The webhook URL for the ${groupName} Gitlab group was successfully 
-            rotated.`,
-            actions: [],
-            isAutoDismiss: false,
-          });
-        } catch (e) {
-          setRotatingWebtriggerLoading(false);
-          showFlag({
-            id: 'error-rotate-web-trigger-flag',
-            title: "Couldn't rotate webhook",
-            type: 'error',
-            description: `We couldn't rotate the webhook URL for the ${groupName} Gitlab group.
-             Try again in a few seconds.`,
-            actions: [],
-            isAutoDismiss: false,
-          });
-        }
-      };
-
-      const modal = new Modal({
-        size: 'small',
-        context: {
-          groupName: groups[0].name,
-          renderComponent: ROTATE_WEB_TRIGGER_MODAL,
-        },
-        onClose,
-      });
-      await modal.open();
-    } catch (e) {
-      console.error('There was an error rotating the web trigger for the group, please try again.', e);
-    }
-  };
-
   return (
     <div data-testid='gitlab-connected-page'>
       <h4>Connected group</h4>
@@ -254,9 +197,6 @@ export const ConnectedPage = () => {
         isLoadingResync={isResyncLoading}
         handleResyncCaC={handleCacResync}
         isResyncConfigAsCodeEnabled={features.isResyncConfigAsCodeEnabled}
-        isRotatingWebtriggerLoading={isRotatingWebtriggerLoading}
-        rotateWebTrigger={rotateWebTrigger}
-        isOwnerRole={isOwnerRole}
       />
 
       <ImportControls />
