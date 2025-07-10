@@ -35,18 +35,6 @@ export const resyncConfigAsCode = (groupId: number, page = 1): Promise<ResolverR
   return invoke<ResolverResponse<{ hasNextPage: boolean }>>('group/resyncCaC', { groupId, page });
 };
 
-export const rotateWebhook = (groupId: number): Promise<ResolverResponse<void>> => {
-  return invoke<ResolverResponse<void>>('group/rotateWebhook', {
-    groupId,
-  });
-};
-
-export const getRole = (groupId: number) => {
-  return invoke<ResolverResponse<GitLabRoles>>('group/getRole', {
-    groupId,
-  });
-};
-
 export const connectGroup = (
   groupToken: string,
   groupTokenName: string,

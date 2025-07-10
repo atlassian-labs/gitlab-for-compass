@@ -5,7 +5,7 @@ import { storage, mockForgeApi, webTrigger } from '../__tests__/helpers/forge-he
 mockForgeApi();
 
 import { getGroupWebhook, registerGroupWebhook, deleteGroupWebhook } from '../client/gitlab';
-import { deleteWebhook, rotateWebhook, setupAndValidateWebhook } from './webhooks';
+import { deleteWebhook, setupAndValidateWebhook } from './webhooks';
 import { TEST_TOKEN } from '../__tests__/fixtures/gitlab-data';
 import { GitLabRoles } from '../types';
 
@@ -19,8 +19,6 @@ const MOCK_WEBHOOK_KEY = `webhook-id-${MOCK_GROUP_ID}`;
 const MOCK_WEBHOOK_SIGNATURE_KEY = `webhook-sign-id-${MOCK_GROUP_ID}`;
 const MOCK_WEBHOOK_SETUP_IN_PROGRESS_KEY = `webhook-setup-in-progress-${MOCK_GROUP_ID}`;
 const MOCK_WEBHOOK_ID = 345;
-
-const mockConsoleLog = jest.spyOn(console, 'log');
 
 describe('setup webhook', () => {
   beforeEach(() => {
@@ -144,49 +142,5 @@ describe('delete webhook', () => {
     await deleteWebhook(MOCK_GROUP_ID);
 
     expect(deleteGroupWebhook).not.toHaveBeenCalled();
-  });
-});
-
-describe('rotate webhook', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it('should rotate webhook', async () => {
-    // delete webtrigger
-    storage.get = jest.fn().mockResolvedValueOnce(GitLabRoles.OWNER); // tokenRole
-    webTrigger.getUrl = jest.fn().mockReturnValue('https://example.com');
-    webTrigger.deleteUrl.mockImplementationOnce(() => Promise.resolve());
-
-    storage.delete = jest.fn().mockResolvedValueOnce(() => Promise.resolve());
-
-    const MOCK_TOKEN = 'test-token';
-
-    storage.get = jest
-      .fn()
-      .mockResolvedValueOnce(MOCK_WEBHOOK_ID) // webhookId
-      .mockResolvedValueOnce(GitLabRoles.OWNER); // tokenRole
-    storage.getSecret = jest.fn().mockResolvedValue(MOCK_TOKEN);
-
-    mockDeleteGroupWebhook.mockImplementationOnce(() => Promise.resolve());
-    // create webtrigger
-
-    storage.get = jest.fn().mockReturnValueOnce(undefined).mockReturnValueOnce(GitLabRoles.OWNER);
-    storage.getSecret = jest.fn().mockReturnValueOnce(TEST_TOKEN);
-    webTrigger.getUrl = jest.fn().mockReturnValue('https://example.com');
-    mockRegisterGroupWebhook.mockResolvedValueOnce(MOCK_WEBHOOK_ID);
-
-    await rotateWebhook(MOCK_GROUP_ID);
-    expect(mockConsoleLog).toHaveBeenCalledWith('Finish rotating webhook');
-  });
-
-  it('should not rotate webhook if maintainer token role', async () => {
-    storage.get = jest.fn().mockReturnValueOnce(GitLabRoles.MAINTAINER);
-
-    await rotateWebhook(MOCK_GROUP_ID);
-
-    expect(mockDeleteGroupWebhook).toBeCalledTimes(0);
-    expect(mockRegisterGroupWebhook).toBeCalledTimes(0);
-    expect(mockConsoleLog).toBeCalledWith('Skipping webhook rotation since the Maintainer token role');
   });
 });

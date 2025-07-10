@@ -1,6 +1,5 @@
 import { invoke as realInvoke, view } from '@forge/bridge';
 import { GitlabFeaturesEnum } from '../features';
-import { GitLabRoles } from '../types';
 
 export const invoke: jest.Mock = realInvoke as jest.Mock;
 const getContext: jest.Mock = view.getContext as jest.Mock;
@@ -21,10 +20,6 @@ export const defaultMocks: {
   appId: {
     success: true,
     data: 'app-id',
-  },
-  'group/getRole': {
-    success: true,
-    data: GitLabRoles.OWNER,
   },
   'webhooks/setupConfig': {
     success: true,

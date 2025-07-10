@@ -13,7 +13,7 @@ import {
 } from '../resolverTypes';
 import { connectGroup, getGroupById, InvalidGroupTokenError } from '../services/group';
 
-import { rotateWebhook, setupAndValidateWebhook } from '../services/webhooks';
+import { setupAndValidateWebhook } from '../services/webhooks';
 import { disconnectGroup } from '../services/disconnect-group';
 import { getForgeAppId } from '../utils/get-forge-app-id';
 import { getLastSyncTime } from '../services/last-sync-time';
@@ -119,23 +119,6 @@ resolver.define('groups/connect', async (req): Promise<ResolverResponse> => {
   }
 });
 
-resolver.define('group/getRole', async (req): Promise<ResolverResponse<GitLabRoles>> => {
-  const { groupId } = req.payload;
-  try {
-    const role = await storage.get(`${STORAGE_KEYS.TOKEN_ROLE_PREFIX}${groupId}`);
-
-    return {
-      success: true,
-      data: role,
-    };
-  } catch (e) {
-    return {
-      success: false,
-      errors: [{ message: e.message, errorType: DefaultErrorTypes.UNEXPECTED_ERROR }],
-    };
-  }
-});
-
 resolver.define('webhooks/connectInProgress', async (req): Promise<ResolverResponse> => {
   const {
     payload: { groupId, webhookId, webhookSecretToken },
@@ -166,22 +149,6 @@ resolver.define('webhooks/connectInProgress', async (req): Promise<ResolverRespo
     return {
       success: false,
       errors: [{ message: e.message, errorType: AuthErrorTypes.UNEXPECTED_ERROR }],
-    };
-  }
-});
-
-resolver.define('group/rotateWebhook', async (req): Promise<ResolverResponse<void>> => {
-  const { groupId } = req.payload;
-
-  try {
-    await rotateWebhook(groupId);
-    return {
-      success: true,
-    };
-  } catch (e) {
-    return {
-      success: false,
-      errors: [{ message: `rotateWebhook call could not complete: ${e.message}` }],
     };
   }
 });
