@@ -19,6 +19,7 @@ export const startsWith = jest.fn().mockImplementation(() => {
 
 export const webTrigger = {
   getUrl: jest.fn(),
+  deleteUrl: jest.fn(),
 };
 
 // This function is used to mock Forge's fetch API by using the mocked version
