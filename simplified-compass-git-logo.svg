@@ -1,0 +1,23 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer compass ring -->
+  <circle cx="60" cy="60" r="45" fill="none" stroke="#0052CC" stroke-width="2" opacity="0.3"/>
+  
+  <!-- Main compass circle -->
+  <circle cx="60" cy="60" r="25" fill="none" stroke="#0052CC" stroke-width="3"/>
+  
+  <!-- Compass directions (simplified) -->
+  <line x1="60" y1="35" x2="60" y2="42" stroke="#0052CC" stroke-width="2"/>
+  <line x1="60" y1="78" x2="60" y2="85" stroke="#0052CC" stroke-width="2"/>
+  <line x1="35" y1="60" x2="42" y2="60" stroke="#0052CC" stroke-width="2"/>
+  <line x1="78" y1="60" x2="85" y2="60" stroke="#0052CC" stroke-width="2"/>
+  
+  <!-- Git branch-like elements -->
+  <path d="M60 60 L75 45" stroke="#FC6D26" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M60 60 L75 75" stroke="#FC6D26" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="75" cy="45" r="4" fill="#FC6D26"/>
+  <circle cx="75" cy="75" r="4" fill="#FC6D26"/>
+  
+  <!-- Central point -->
+  <circle cx="60" cy="60" r="5" fill="#0052CC"/>
+  <circle cx="60" cy="60" r="2" fill="#FFFFFF"/>
+</svg>

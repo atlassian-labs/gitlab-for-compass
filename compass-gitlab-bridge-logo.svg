@@ -1,0 +1,23 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="60" cy="60" r="58" fill="none" stroke="#E8E8E8" stroke-width="2"/>
+  
+  <!-- Compass base -->
+  <circle cx="45" cy="60" r="18" fill="#0052CC" opacity="0.1"/>
+  <circle cx="45" cy="60" r="18" fill="none" stroke="#0052CC" stroke-width="2"/>
+  
+  <!-- Compass needle -->
+  <path d="M45 48 L50 60 L45 72 L40 60 Z" fill="#0052CC"/>
+  <circle cx="45" cy="60" r="3" fill="#FFFFFF"/>
+  
+  <!-- GitLab node -->
+  <circle cx="75" cy="60" r="12" fill="#FC6D26"/>
+  
+  <!-- Connection bridge -->
+  <path d="M63 60 Q69 54 69 60 Q69 66 75 60" fill="none" stroke="#0052CC" stroke-width="2" opacity="0.7"/>
+  <path d="M63 60 Q69 66 69 60 Q69 54 75 60" fill="none" stroke="#FC6D26" stroke-width="2" opacity="0.7"/>
+  
+  <!-- Small connecting dots -->
+  <circle cx="66" cy="57" r="1.5" fill="#0052CC"/>
+  <circle cx="72" cy="63" r="1.5" fill="#FC6D26"/>
+</svg>

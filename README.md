@@ -1,5 +1,9 @@
 # Compass GitLab Integration
 
+<img src="compass-gitlab-bridge-logo.svg" alt="Compass GitLab Integration Logo - Bridge" width="120" height="120">
+<img src="geometric-integration-logo.svg" alt="Compass GitLab Integration Logo - Geometric" width="120" height="120">
+<img src="simplified-compass-git-logo.svg" alt="Compass GitLab Integration Logo - Simplified" width="120" height="120">
+
 [![Atlassian license](https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=flat-square)](LICENSE) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](CONTRIBUTING.md)
 
 This Forge app seamlessly integrates Compass with GitLab, a web-based Git repository that provides free open and private repositories, issue-following capabilities, and wikis. The integration currently supports the following operations:

@@ -1,0 +1,18 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Left geometric shape (Compass) -->
+  <path d="M30 60 L45 40 L60 60 L45 80 Z" fill="#0052CC" opacity="0.8"/>
+  <circle cx="45" cy="60" r="8" fill="#FFFFFF"/>
+  <circle cx="45" cy="60" r="3" fill="#0052CC"/>
+  
+  <!-- Right geometric shape (GitLab) -->
+  <path d="M75 45 L90 60 L75 75 L90 60 L105 45 L90 60 L105 75 Z" fill="none" stroke="#FC6D26" stroke-width="3" stroke-linejoin="round"/>
+  <circle cx="90" cy="60" r="6" fill="#FC6D26"/>
+  
+  <!-- Integration flow -->
+  <path d="M60 60 L75 60" stroke="#0052CC" stroke-width="2" opacity="0.6"/>
+  <path d="M65 55 L70 60 L65 65" fill="none" stroke="#0052CC" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+  
+  <!-- Subtle background elements -->
+  <circle cx="60" cy="30" r="2" fill="#E8E8E8"/>
+  <circle cx="60" cy="90" r="2" fill="#E8E8E8"/>
+</svg>
