@@ -357,6 +357,12 @@ type MergeRequest = {
   created_at: string;
 };
 
+enum WebhookAlertStatus {
+  EXECUTABLE = 'executable',
+  DISABLED = 'disabled',
+  TEMPORARILY_DISABLED = 'temporarily_disabled',
+}
+
 enum MergeRequestState {
   OPENED = 'opened',
   CLOSED = 'closed',
@@ -561,4 +567,5 @@ export {
   GitLabAccessLevels,
   WebhookTypes,
   GitLabRoles,
+  WebhookAlertStatus,
 };

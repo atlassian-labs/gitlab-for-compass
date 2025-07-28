@@ -4,7 +4,7 @@ import { registerGroupWebhook, deleteGroupWebhook, getGroupWebhook } from '../cl
 import { GITLAB_EVENT_WEBTRIGGER, STORAGE_KEYS, STORAGE_SECRETS } from '../constants';
 import { generateSignature } from '../utils/generate-signature-utils';
 import { ALL_SETTLED_STATUS, getFormattedErrors, hasRejections } from '../utils/promise-allsettled-helpers';
-import { WebhookSetupConfig, GitLabRoles } from '../types';
+import { WebhookSetupConfig, GitLabRoles, WebhookAlertStatus } from '../types';
 
 const getFormattedWebTriggerUrl = async (groupId: number): Promise<string> => {
   const webtriggerURL = await webTrigger.getUrl(GITLAB_EVENT_WEBTRIGGER);
@@ -212,5 +212,33 @@ export const rotateWebhook = async (groupId: number): Promise<void> => {
   } catch (e) {
     console.error('Error rotating webhook', e);
     throw new Error(`Error rotating webhook: ${e}`);
+  }
+};
+
+export const getWebhookStatus = async (groupId: number): Promise<WebhookAlertStatus> => {
+  try {
+    const [webhookIdResult, groupTokenResult] = await Promise.allSettled([
+      storage.get(`${STORAGE_KEYS.WEBHOOK_KEY_PREFIX}${groupId}`),
+      storage.getSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`),
+    ]);
+
+    if (
+      webhookIdResult.status === ALL_SETTLED_STATUS.REJECTED ||
+      groupTokenResult.status === ALL_SETTLED_STATUS.REJECTED
+    ) {
+      throw new Error(
+        `Error getting webhookId or groupToken: ${getFormattedErrors([webhookIdResult, groupTokenResult])}`,
+      );
+    }
+
+    const webhookId = webhookIdResult.value;
+    const groupToken = groupTokenResult.value;
+
+    const webhook = await getGroupWebhook(groupId, webhookId, groupToken);
+
+    return webhook.alert_status;
+  } catch (e) {
+    console.error('Error getting webhook status', e);
+    throw new Error(`Error getting webhook status: ${e}`);
   }
 };

@@ -5,9 +5,10 @@ import { storage, mockForgeApi, webTrigger } from '../__tests__/helpers/forge-he
 mockForgeApi();
 
 import { getGroupWebhook, registerGroupWebhook, deleteGroupWebhook } from '../client/gitlab';
-import { deleteWebhook, rotateWebhook, setupAndValidateWebhook } from './webhooks';
+import { deleteWebhook, getWebhookStatus, rotateWebhook, setupAndValidateWebhook } from './webhooks';
 import { TEST_TOKEN } from '../__tests__/fixtures/gitlab-data';
-import { GitLabRoles } from '../types';
+import { GitLabRoles, WebhookAlertStatus } from '../types';
+import { MOCK_GROUP_TOKEN } from '../resolvers/mocks';
 
 jest.mock('../client/gitlab');
 const mockGetGroupWebhook = mocked(getGroupWebhook);
@@ -31,7 +32,7 @@ describe('setup webhook', () => {
     it('returns existing webhook from storage', async () => {
       storage.get = jest.fn().mockReturnValueOnce(MOCK_WEBHOOK_ID).mockReturnValueOnce(GitLabRoles.OWNER);
       storage.getSecret = jest.fn().mockReturnValueOnce(TEST_TOKEN);
-      mockGetGroupWebhook.mockResolvedValue({ id: 456 });
+      mockGetGroupWebhook.mockResolvedValue({ id: 456, alert_status: WebhookAlertStatus.EXECUTABLE });
 
       const result = await setupAndValidateWebhook(123);
 
@@ -86,7 +87,7 @@ describe('setup webhook', () => {
     it('returns existing webhook from storage', async () => {
       storage.get = jest.fn().mockReturnValueOnce(MOCK_WEBHOOK_ID).mockReturnValueOnce(GitLabRoles.MAINTAINER);
       storage.getSecret = jest.fn().mockReturnValueOnce(TEST_TOKEN);
-      mockGetGroupWebhook.mockResolvedValue({ id: 456 });
+      mockGetGroupWebhook.mockResolvedValue({ id: 456, alert_status: WebhookAlertStatus.EXECUTABLE });
 
       const result = await setupAndValidateWebhook(MOCK_GROUP_ID);
 
@@ -188,5 +189,41 @@ describe('rotate webhook', () => {
     expect(mockDeleteGroupWebhook).toBeCalledTimes(0);
     expect(mockRegisterGroupWebhook).toBeCalledTimes(0);
     expect(mockConsoleLog).toBeCalledWith('Skipping webhook rotation since the Maintainer token role');
+  });
+});
+
+describe('get webhook status', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should return webhook EXECUTABLE status', async () => {
+    storage.get = jest.fn().mockResolvedValueOnce(MOCK_WEBHOOK_ID); // webhookId
+    storage.getSecret = jest.fn().mockResolvedValue(MOCK_GROUP_TOKEN); // groupToken
+
+    mockGetGroupWebhook.mockResolvedValue({ id: 456, alert_status: WebhookAlertStatus.EXECUTABLE });
+
+    const result = await getWebhookStatus(MOCK_GROUP_ID);
+    expect(result).toEqual(WebhookAlertStatus.EXECUTABLE);
+  });
+
+  it('should return webhook DISABLED status', async () => {
+    storage.get = jest.fn().mockResolvedValueOnce(MOCK_WEBHOOK_ID); // webhookId
+    storage.getSecret = jest.fn().mockResolvedValue(MOCK_GROUP_TOKEN); // groupToken
+
+    mockGetGroupWebhook.mockResolvedValue({ id: 456, alert_status: WebhookAlertStatus.DISABLED });
+
+    const result = await getWebhookStatus(MOCK_GROUP_ID);
+    expect(result).toEqual(WebhookAlertStatus.DISABLED);
+  });
+
+  it('should return webhook TEMPORARILY_DISABLED status', async () => {
+    storage.get = jest.fn().mockResolvedValueOnce(MOCK_WEBHOOK_ID); // webhookId
+    storage.getSecret = jest.fn().mockResolvedValue(MOCK_GROUP_TOKEN); // groupToken
+
+    mockGetGroupWebhook.mockResolvedValue({ id: 456, alert_status: WebhookAlertStatus.TEMPORARILY_DISABLED });
+
+    const result = await getWebhookStatus(MOCK_GROUP_ID);
+    expect(result).toEqual(WebhookAlertStatus.TEMPORARILY_DISABLED);
   });
 });

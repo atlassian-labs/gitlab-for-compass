@@ -1,6 +1,6 @@
 import { invoke as realInvoke, view } from '@forge/bridge';
 import { GitlabFeaturesEnum } from '../features';
-import { GitLabRoles } from '../types';
+import { GitLabRoles, WebhookAlertStatus } from '../types';
 
 export const invoke: jest.Mock = realInvoke as jest.Mock;
 const getContext: jest.Mock = view.getContext as jest.Mock;
@@ -32,6 +32,10 @@ export const defaultMocks: {
       webhookSetupInProgress: false,
       triggerUrl: '',
     },
+  },
+  'webhooks/getWebhookStatus': {
+    success: true,
+    data: WebhookAlertStatus.EXECUTABLE,
   },
 };
 

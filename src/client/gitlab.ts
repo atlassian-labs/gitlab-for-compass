@@ -20,6 +20,7 @@ import {
   GitLabAccessLevels,
   BlobFileSearchResult,
   SearchGroupFilesPayload,
+  WebhookAlertStatus,
 } from '../types';
 import { GitlabHttpMethodError, InvalidConfigFileError } from '../models/errors';
 import { INVALID_YAML_ERROR } from '../models/error-messages';
@@ -178,7 +179,7 @@ export const getGroupWebhook = async (
   groupId: number,
   hookId: number,
   groupToken: string,
-): Promise<{ id: number } | null> => {
+): Promise<{ id: number; alert_status: WebhookAlertStatus } | null> => {
   try {
     const { data: webhook } = await callGitlab('get webhook', `/api/v4/groups/${groupId}/hooks/${hookId}`, groupToken);
 
