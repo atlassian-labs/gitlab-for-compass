@@ -11,9 +11,15 @@ import {
 } from '../resolverTypes';
 import { listFeatures } from '../services/feature-flags';
 import { getAllExistingGroups, getConnectedGroups } from '../services/group';
-import { getWebhookSetupConfig, setupAndValidateWebhook } from '../services/webhooks';
+import { getWebhookSetupConfig, getWebhookStatus, setupAndValidateWebhook } from '../services/webhooks';
 import { getForgeAppId } from '../utils/get-forge-app-id';
-import { GitLabRoles, GroupProjectsResponse, ProjectImportResult, WebhookSetupConfig } from '../types';
+import {
+  GitLabRoles,
+  GroupProjectsResponse,
+  ProjectImportResult,
+  WebhookAlertStatus,
+  WebhookSetupConfig,
+} from '../types';
 import { getGroupProjects } from '../services/fetch-projects';
 import { getImportResult, ImportFailedError, importProjects } from '../services/import-projects';
 import { getAllComponentTypes as getAllCompassComponentTypes } from '../client/compass';
@@ -182,6 +188,24 @@ export const getRole = async (req: Request): Promise<ResolverResponse<GitLabRole
     return {
       success: true,
       data: role,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      errors: [{ message: e.message, errorType: DefaultErrorTypes.UNEXPECTED_ERROR }],
+    };
+  }
+};
+
+export const webhookStatus = async (req: Request): Promise<ResolverResponse<WebhookAlertStatus>> => {
+  const { groupId } = req.payload;
+
+  try {
+    const webhookAlertStatus = await getWebhookStatus(groupId);
+
+    return {
+      success: true,
+      data: webhookAlertStatus,
     };
   } catch (e) {
     return {

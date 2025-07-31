@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Spinner from '@atlaskit/spinner';
+import SectionMessage from '@atlaskit/section-message';
 
 import { FlagType, showFlag } from '@forge/bridge/out/flag/flag';
 import { getCallBridge } from '@forge/bridge/out/bridge';
@@ -19,6 +20,7 @@ import { ImportResult } from '../ImportResult';
 import { IncomingWebhookSectionMessage } from '../IncomingWebhookSectionMessage';
 import { isRenderingInOnboardingFlow } from '../onboarding-flow-context-helper';
 import { ROTATE_WEB_TRIGGER_MODAL } from '../../constants';
+import { WebhookAlertStatus } from '../../types';
 
 const showReSyncCaCFlag = (flagType: FlagType, groupName?: string, isResyncTimeLimitError?: boolean) => {
   if (flagType === 'success') {
@@ -65,7 +67,7 @@ export const ConnectedPage = () => {
   const [isRotatingWebtriggerLoading, setRotatingWebtriggerLoading] = useState(false);
 
   const navigate = useNavigate();
-  const { features, getConnectedInfo, clearGroup, appId, isOwnerRole } = useAppContext();
+  const { features, getConnectedInfo, clearGroup, appId, isOwnerRole, webhookStatus } = useAppContext();
   const { isImportInProgress } = useImportContext();
 
   const getIsInOnboarding = async () => {
@@ -115,6 +117,9 @@ export const ConnectedPage = () => {
       </CenterWrapper>
     );
   }
+
+  const shouldShowWebhookStatusWarningMessage =
+    webhookStatus === WebhookAlertStatus.DISABLED || webhookStatus === WebhookAlertStatus.TEMPORARILY_DISABLED;
 
   const handleCacResync = async (): Promise<void> => {
     const actionSubject = 'configAsCodeResync';
@@ -247,6 +252,17 @@ export const ConnectedPage = () => {
         <IncomingWebhookSectionMessage isMaintainerTokenEnabled={features.isGitlabMaintainerTokenEnabled} />
       )}
       <br />
+      {shouldShowWebhookStatusWarningMessage && (
+        <>
+          <SectionMessage appearance='warning' data-testid='disabled-webhook-warning-message'>
+            Your Group Webhook is disabled. Please check its status in GitLab (under <b>Settings</b> {'>'}{' '}
+            <b>Webhooks</b>) and re-enable it in order to continue sending events to Compass. If this webhook has been
+            disabled due to failure to process messages, please contact Compass support with the content of the
+            webhook's last failing deliveries.
+          </SectionMessage>
+          <br />
+        </>
+      )}
       <ConnectInfoPanel
         connectedGroup={groups[0]}
         handleDisconnectGroup={handleDisconnectGroup}

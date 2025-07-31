@@ -11,7 +11,7 @@ import {
   GroupProjectsResponse,
 } from '../resolverTypes';
 
-import { GitLabRoles, TeamsWithMembershipStatus, WebhookSetupConfig } from '../types';
+import { GitLabRoles, TeamsWithMembershipStatus, WebhookAlertStatus, WebhookSetupConfig } from '../types';
 
 export const disconnectGroup = (id: number): Promise<ResolverResponse> => {
   return invoke<ResolverResponse>('groups/disconnect', {
@@ -29,6 +29,12 @@ export const getAllExistingGroups = (): Promise<ResolverResponse<GitlabAPIGroup[
 
 export const getWebhookSetupConfig = (): Promise<ResolverResponse<WebhookSetupConfig>> => {
   return invoke<ResolverResponse<WebhookSetupConfig>>('webhooks/setupConfig');
+};
+
+export const getWebhookStatus = (groupId: number): Promise<ResolverResponse<WebhookAlertStatus>> => {
+  return invoke<ResolverResponse<WebhookAlertStatus>>('webhooks/getWebhookStatus', {
+    groupId,
+  });
 };
 
 export const resyncConfigAsCode = (groupId: number, page = 1): Promise<ResolverResponse<{ hasNextPage: boolean }>> => {

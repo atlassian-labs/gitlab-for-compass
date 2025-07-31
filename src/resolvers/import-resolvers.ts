@@ -2,7 +2,13 @@ import Resolver from '@forge/resolver';
 
 import { GitlabAPIGroup, ResolverResponse, ProjectImportResult, ImportStatus, FeaturesList } from '../resolverTypes';
 import { clearImportResult, getImportStatus } from '../services/import-projects';
-import { GitLabRoles, GroupProjectsResponse, TeamsWithMembershipStatus, WebhookSetupConfig } from '../types';
+import {
+  GitLabRoles,
+  GroupProjectsResponse,
+  TeamsWithMembershipStatus,
+  WebhookAlertStatus,
+  WebhookSetupConfig,
+} from '../types';
 
 import {
   appId,
@@ -15,6 +21,7 @@ import {
   groupsAllExisting,
   importProject,
   webhookSetupConfig,
+  webhookStatus,
 } from './shared-resolvers';
 import { getFirstPageOfTeamsWithMembershipStatus } from '../services/get-teams';
 import { getTeamOnboarding, setTeamOnboarding } from '../services/onboarding';
@@ -35,6 +42,10 @@ resolver.define('groups/allExisting', async (): Promise<ResolverResponse<GitlabA
 
 resolver.define('groups/projects', async (req): Promise<ResolverResponse<GroupProjectsResponse>> => {
   return getGroupsProjects(req);
+});
+
+resolver.define('webhooks/getWebhookStatus', async (req): Promise<ResolverResponse<WebhookAlertStatus>> => {
+  return webhookStatus(req);
 });
 
 resolver.define('project/import', async (req): Promise<ResolverResponse> => {

@@ -6,10 +6,10 @@ import { view } from '@forge/bridge';
 import { CenterWrapper } from '../components/styles';
 import { AuthErrorTypes, DefaultErrorTypes, ErrorTypes, FeaturesList, GitlabAPIGroup } from '../resolverTypes';
 import { ApplicationState } from '../routes';
-import { connectedInfo, getForgeAppId, getRole, getWebhookSetupConfig } from '../services/invokes';
+import { connectedInfo, getForgeAppId, getRole, getWebhookSetupConfig, getWebhookStatus } from '../services/invokes';
 import { DefaultErrorState } from '../components/DefaultErrorState';
 import { useFeatures } from '../hooks/useFeatures';
-import { GitLabRoles, WebhookSetupConfig } from '../types';
+import { GitLabRoles, WebhookAlertStatus, WebhookSetupConfig } from '../types';
 
 type AppContextProviderProps = {
   children: ReactNode;
@@ -25,6 +25,7 @@ export type AppContextProps = {
   webhookSetupConfig: WebhookSetupConfig;
   refreshWebhookConfig: () => Promise<void>;
   isOwnerRole: boolean | undefined;
+  webhookStatus: WebhookAlertStatus | undefined;
 };
 
 export const AppContext = createContext({} as AppContextProps);
@@ -43,6 +44,7 @@ export const AppContextProvider: FunctionComponent<AppContextProviderProps> = ({
     webhookSetupInProgress: false,
     triggerUrl: '',
   });
+  const [webhookStatus, setWebhookStatus] = useState<WebhookAlertStatus>();
   const [isOwnerRole, setIsOwnerRole] = useState<boolean>();
 
   useEffect(() => {
@@ -138,6 +140,20 @@ export const AppContextProvider: FunctionComponent<AppContextProviderProps> = ({
     return undefined;
   };
 
+  const getWebhooksAlertStatus = async (groupId: number): Promise<void> => {
+    const { success, data, errors } = await getWebhookStatus(groupId);
+
+    if (success && data) {
+      setWebhookStatus(data);
+
+      return;
+    }
+
+    if (errors && errors.length > 0) {
+      throw new Error(errors[0].message);
+    }
+  };
+
   useEffect(() => {
     if (groups?.length) {
       getRoles(groups[0].id)
@@ -149,6 +165,12 @@ export const AppContextProvider: FunctionComponent<AppContextProviderProps> = ({
         .catch((e) => console.error('Error while getting roles', e));
     }
   }, [groups]);
+
+  useEffect(() => {
+    if (groups?.length && isOwnerRole) {
+      getWebhooksAlertStatus(groups[0].id).catch((e) => console.error('Error while getting webhook status', e));
+    }
+  }, [groups, isOwnerRole]);
 
   const getConnectedInfo = async (): Promise<GitlabAPIGroup[] | undefined> => {
     if (groups && groups?.length > 0) {
@@ -219,6 +241,7 @@ export const AppContextProvider: FunctionComponent<AppContextProviderProps> = ({
         webhookSetupConfig,
         refreshWebhookConfig,
         isOwnerRole,
+        webhookStatus,
       }}
     >
       {children}

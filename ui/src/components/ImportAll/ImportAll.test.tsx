@@ -4,6 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import * as importAllhook from '../../hooks/useImportAll';
 import { ImportAllPage } from '.';
 import * as useAppContextHook from '../../hooks/useAppContext';
+import { WebhookAlertStatus } from '../../types';
 
 const mockProject = (
   importState: importAllhook.IMPORT_STATE = importAllhook.IMPORT_STATE.SUCCESS,
@@ -97,6 +98,7 @@ describe('ImportAll page', () => {
         webhookSetupInProgress: false,
       },
       isOwnerRole: true,
+      webhookStatus: WebhookAlertStatus.EXECUTABLE,
     }));
 
     const { queryByTestId } = render(
@@ -166,6 +168,7 @@ describe('ImportAll page', () => {
         webhookSetupInProgress: false,
       },
       isOwnerRole: true,
+      webhookStatus: WebhookAlertStatus.EXECUTABLE,
     }));
 
     const { queryByTestId } = render(
@@ -232,6 +235,7 @@ describe('ImportAll page', () => {
         webhookSetupInProgress: false,
       },
       isOwnerRole: true,
+      webhookStatus: WebhookAlertStatus.EXECUTABLE,
     }));
 
     const { queryByTestId } = render(

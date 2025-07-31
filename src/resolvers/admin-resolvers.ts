@@ -27,6 +27,7 @@ import {
   getRole,
   groupsAllExisting,
   webhookSetupConfig,
+  webhookStatus,
 } from './shared-resolvers';
 import {
   BlobFileSearchResult,
@@ -35,6 +36,7 @@ import {
   GitLabRoles,
   GroupProjectsResponse,
   ProjectImportResult,
+  WebhookAlertStatus,
   WebhookSetupConfig,
 } from '../types';
 import { createMRWithCompassYML } from '../services/create-mr-with-compass-yml';
@@ -156,6 +158,10 @@ resolver.define('webhooks/connectInProgress', async (req): Promise<ResolverRespo
       errors: [{ message: e.message, errorType: AuthErrorTypes.UNEXPECTED_ERROR }],
     };
   }
+});
+
+resolver.define('webhooks/getWebhookStatus', async (req): Promise<ResolverResponse<WebhookAlertStatus>> => {
+  return webhookStatus(req);
 });
 
 resolver.define('group/rotateWebhook', async (req): Promise<ResolverResponse<void>> => {
