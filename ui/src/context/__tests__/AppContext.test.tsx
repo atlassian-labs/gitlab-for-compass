@@ -11,6 +11,7 @@ import {
 import { defaultMocks, mockInvoke, mockGetContext } from '../../helpers/mockHelpers';
 import { ImportAllCaCProvider } from '../ImportAllCaCContext';
 import { GitLabRoles, WebhookAlertStatus } from '../../types';
+import { DefaultErrorTypes } from '../../resolverTypes';
 
 const MOCK_APP_ID = 'app-id';
 
@@ -209,6 +210,27 @@ describe('AppContext', () => {
     const webhookDisabledStatusMessage = queryByTestId('disabled-webhook-warning-message');
 
     expect(webhookDisabledStatusMessage).toBeDefined();
+  });
+
+  it('should not render a warning message about the disabled webhook status if request is failed', () => {
+    mockInvoke({
+      ...filledMocks,
+      'webhooks/getWebhookStatus': {
+        success: false,
+        errors: [{ message: 'Error', errorType: DefaultErrorTypes.UNEXPECTED_ERROR }],
+      },
+    });
+    mockGetContext('admin-page-ui');
+
+    const { queryByTestId } = render(
+      <AppContextProvider>
+        <AppRouter />
+      </AppContextProvider>,
+    );
+
+    const webhookDisabledStatusMessage = queryByTestId('disabled-webhook-warning-message');
+
+    expect(webhookDisabledStatusMessage).toBeNull();
   });
 
   it('should not render a warning message about the disabled webhook status if status executable', () => {

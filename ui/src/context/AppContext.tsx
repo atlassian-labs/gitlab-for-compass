@@ -141,21 +141,16 @@ export const AppContextProvider: FunctionComponent<AppContextProviderProps> = ({
   };
 
   const getWebhooksAlertStatus = async (groupId: number): Promise<void> => {
-    try {
-      const { success, data, errors } = await getWebhookStatus(groupId);
+    const { success, data, errors } = await getWebhookStatus(groupId);
 
-      if (success && data) {
-        setWebhookStatus(data);
+    if (success && data) {
+      setWebhookStatus(data);
 
-        return;
-      }
+      return;
+    }
 
-      if (errors && errors.length > 0) {
-        setErrorType((errors && errors[0].errorType) || DefaultErrorTypes.UNEXPECTED_ERROR);
-        return;
-      }
-    } catch {
-      setErrorType(DefaultErrorTypes.UNEXPECTED_ERROR);
+    if (errors && errors.length > 0) {
+      throw new Error(errors[0].message);
     }
   };
 
@@ -173,7 +168,7 @@ export const AppContextProvider: FunctionComponent<AppContextProviderProps> = ({
 
   useEffect(() => {
     if (groups?.length && isOwnerRole) {
-      getWebhooksAlertStatus(groups[0].id).catch((e) => console.error('Error while getting roles', e));
+      getWebhooksAlertStatus(groups[0].id).catch((e) => console.error('Error while getting webhook status', e));
     }
   }, [groups, isOwnerRole]);
 
