@@ -7,9 +7,10 @@ mockForgeApi();
 
 import { STORAGE_KEYS, STORAGE_SECRETS } from '../constants';
 import { getGroupAccessTokens, getGroupsData } from '../client/gitlab';
-import { connectGroup, getConnectedGroups, InvalidGroupTokenError } from './group';
-import { AuthErrorTypes, GitlabAPIGroup } from '../resolverTypes';
+import { connectGroup, getConnectedGroups, InvalidGroupTokenError, rotateGroupToken } from './group';
+import { AuthErrorTypes, GitlabAPIGroup, StoreTokenErrorTypes } from '../resolverTypes';
 import { ConnectGroupInput, GitLabRoles, GroupAccessToken } from '../types';
+import { StoreRotateTokenError } from '../models/errors';
 
 jest.mock('../client/gitlab');
 
@@ -264,6 +265,167 @@ describe('Group service', () => {
         `${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${MOCK_CONNECTED_GROUPS[1].id}`,
       );
       expect(result).toEqual([MOCK_GROUP_DATA]);
+    });
+  });
+
+  describe('rotateGroupToken', () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('should save group access token with token id and expires date if role is OWNER', async () => {
+      const mockGroupAccessToken = generateMockGroupAccessToken();
+      mockGetGroupsData.mockResolvedValue([MOCK_GROUP_DATA]);
+      mockGetGroupAccessTokens.mockResolvedValue([mockGroupAccessToken]);
+
+      const input = {
+        token: MOCK_TOKEN,
+        tokenName: mockGroupAccessToken.name,
+        tokenRole: GitLabRoles.OWNER,
+      };
+
+      await rotateGroupToken(input);
+
+      expect(storage.set).toHaveBeenNthCalledWith(
+        1,
+        `${STORAGE_KEYS.TOKEN_ROLE_PREFIX}${MOCK_GROUP_DATA.id}`,
+        GitLabRoles.OWNER,
+      );
+      expect(storage.setSecret).toHaveBeenCalledWith(
+        `${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${MOCK_GROUP_DATA.id}`,
+        MOCK_TOKEN,
+      );
+      expect(storage.set).toHaveBeenNthCalledWith(
+        2,
+        `${STORAGE_KEYS.TOKEN_ID_PREFIX}${MOCK_GROUP_DATA.id}`,
+        mockGroupAccessToken.id,
+      );
+      expect(storage.set).toHaveBeenNthCalledWith(
+        3,
+        `${STORAGE_KEYS.TOKEN_EXPIRATION_PREFIX}${MOCK_GROUP_DATA.id}`,
+        mockGroupAccessToken.expires_at,
+      );
+
+      // Verify total number of calls
+      expect(storage.set).toHaveBeenCalledTimes(3);
+      expect(storage.setSecret).toHaveBeenCalledTimes(1);
+    });
+
+    it('should save group access token if role is MAINTAINER', async () => {
+      mockGetGroupsData.mockResolvedValue([MOCK_GROUP_DATA, MOCK_ANOTHER_GROUP_DATA]);
+
+      const input = {
+        token: MOCK_TOKEN,
+        tokenName: 'mock-token-name',
+        tokenRole: GitLabRoles.MAINTAINER,
+        groupName: MOCK_ANOTHER_GROUP_DATA.name,
+      };
+
+      await rotateGroupToken(input);
+
+      expect(storage.set).toHaveBeenNthCalledWith(
+        1,
+        `${STORAGE_KEYS.TOKEN_ROLE_PREFIX}${MOCK_ANOTHER_GROUP_DATA.id}`,
+        GitLabRoles.MAINTAINER,
+      );
+      expect(storage.setSecret).toHaveBeenCalledWith(
+        `${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${MOCK_ANOTHER_GROUP_DATA.id}`,
+        MOCK_TOKEN,
+      );
+
+      expect(storage.set).not.toHaveBeenNthCalledWith(2, `${STORAGE_KEYS.TOKEN_ID_PREFIX}${MOCK_GROUP_DATA.id}`, '');
+      expect(storage.set).not.toHaveBeenNthCalledWith(
+        3,
+        `${STORAGE_KEYS.TOKEN_EXPIRATION_PREFIX}${MOCK_GROUP_DATA.id}`,
+        '',
+      );
+
+      // Verify total number of calls
+      expect(storage.set).toHaveBeenCalledTimes(1);
+      expect(storage.setSecret).toHaveBeenCalledTimes(1);
+    });
+
+    it('should throws error in case of invalid group token', async () => {
+      const mockGroupAccessToken = generateMockGroupAccessToken();
+      mockGetGroupsData.mockRejectedValue(undefined);
+
+      const input = {
+        token: MOCK_TOKEN,
+        tokenName: mockGroupAccessToken.name,
+        tokenRole: GitLabRoles.OWNER,
+      };
+
+      await expect(rotateGroupToken(input)).rejects.toThrow(
+        new InvalidGroupTokenError(AuthErrorTypes.INVALID_GROUP_TOKEN),
+      );
+      expect(storage.set).not.toHaveBeenCalled();
+    });
+
+    it('should throws error in case of invalid group token name', async () => {
+      const mockGroupAccessToken = generateMockGroupAccessToken();
+      mockGetGroupsData.mockResolvedValue([MOCK_GROUP_DATA]);
+      mockGetGroupAccessTokens.mockResolvedValue([mockGroupAccessToken]);
+
+      const input = {
+        token: MOCK_TOKEN,
+        tokenName: 'momo',
+        tokenRole: GitLabRoles.OWNER,
+      };
+
+      await expect(rotateGroupToken(input)).rejects.toThrow(
+        new InvalidGroupTokenError(AuthErrorTypes.INVALID_GROUP_TOKEN_NAME),
+      );
+      expect(storage.set).not.toHaveBeenCalled();
+    });
+
+    it('should throws error in case of invalid group token scopes', async () => {
+      const mockGroupAccessToken = generateMockGroupAccessToken({ scopes: ['api'] });
+      mockGetGroupsData.mockResolvedValue([MOCK_GROUP_DATA]);
+      mockGetGroupAccessTokens.mockResolvedValue([mockGroupAccessToken]);
+
+      const input = {
+        token: MOCK_TOKEN,
+        tokenName: mockGroupAccessToken.name,
+        tokenRole: GitLabRoles.OWNER,
+      };
+
+      await expect(rotateGroupToken(input)).rejects.toThrow(
+        new InvalidGroupTokenError(AuthErrorTypes.INCORRECT_GROUP_TOKEN_SCOPES),
+      );
+      expect(storage.set).not.toHaveBeenCalled();
+    });
+
+    it('should throws error in case of invalid group token and role is MAINTAINER', async () => {
+      mockGetGroupsData.mockRejectedValue(undefined);
+
+      const input: ConnectGroupInput = {
+        token: MOCK_TOKEN,
+        tokenName: 'mock-token-name',
+        tokenRole: GitLabRoles.MAINTAINER,
+        groupName: MOCK_ANOTHER_GROUP_DATA.name,
+      };
+
+      await expect(rotateGroupToken(input)).rejects.toThrow(
+        new InvalidGroupTokenError(AuthErrorTypes.INVALID_GROUP_TOKEN),
+      );
+      expect(storage.set).not.toHaveBeenCalled();
+    });
+
+    it('should throws error in case of storing token data is failed', async () => {
+      mockGetGroupsData.mockResolvedValue([MOCK_GROUP_DATA, MOCK_ANOTHER_GROUP_DATA]);
+
+      const input = {
+        token: MOCK_TOKEN,
+        tokenName: 'mock-token-name',
+        tokenRole: GitLabRoles.MAINTAINER,
+        groupName: MOCK_ANOTHER_GROUP_DATA.name,
+      };
+
+      storage.set.mockRejectedValue(new Error());
+
+      await expect(rotateGroupToken(input)).rejects.toThrow(
+        new StoreRotateTokenError(StoreTokenErrorTypes.STORE_ERROR),
+      );
     });
   });
 });

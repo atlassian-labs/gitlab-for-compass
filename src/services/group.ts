@@ -10,9 +10,10 @@ import {
 } from '../types';
 import { getGroupAccessTokens, getGroupsData } from '../client/gitlab';
 import { REQUIRED_SCOPES, STORAGE_KEYS, STORAGE_SECRETS } from '../constants';
-import { AuthErrorTypes } from '../resolverTypes';
+import { AuthErrorTypes, StoreTokenErrorTypes } from '../resolverTypes';
 import { deleteGroupDataFromStorage } from './clear-storage';
 import { ALL_SETTLED_STATUS, getFormattedErrors, hasRejections } from '../utils/promise-allsettled-helpers';
+import { StoreRotateTokenError } from '../models/errors';
 
 export class InvalidGroupTokenError extends Error {
   constructor(public errorType: AuthErrorTypes) {
@@ -77,7 +78,7 @@ export const connectGroupAsMaintainer = async (token: string, groupName: string)
 export const connectGroupAsOwner = async (
   token: string,
   tokenName: string,
-): Promise<{ groupName: string; groupId: number }> => {
+): Promise<{ groupName: string; groupId: number; tokenId: number; tokenExpirationDate: string }> => {
   let groupId;
   let groupName;
   try {
@@ -98,7 +99,7 @@ export const connectGroupAsOwner = async (
     throw new InvalidGroupTokenError(AuthErrorTypes.INCORRECT_GROUP_TOKEN_SCOPES);
   }
 
-  return { groupId, groupName };
+  return { groupId, groupName, tokenId: groupToken.id, tokenExpirationDate: groupToken.expires_at };
 };
 
 export const connectGroup = async (input: ConnectGroupInput): Promise<number> => {
@@ -121,6 +122,31 @@ export const connectGroup = async (input: ConnectGroupInput): Promise<number> =>
   }
 
   return groupId;
+};
+
+export const rotateGroupToken = async (input: ConnectGroupInput): Promise<void> => {
+  const { token, tokenName, tokenRole, groupName } = input;
+
+  let groupId;
+  let tokenId;
+  let tokenExpirationDate;
+  if (tokenRole === GitLabRoles.MAINTAINER) {
+    groupId = await connectGroupAsMaintainer(token, groupName);
+  } else {
+    ({ groupId, tokenId, tokenExpirationDate } = await connectGroupAsOwner(token, tokenName));
+  }
+
+  try {
+    await storage.setSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`, token);
+    await storage.set(`${STORAGE_KEYS.TOKEN_ROLE_PREFIX}${groupId}`, tokenRole);
+
+    if (tokenRole === GitLabRoles.OWNER) {
+      await storage.set(`${STORAGE_KEYS.TOKEN_ID_PREFIX}${groupId}`, tokenId);
+      await storage.set(`${STORAGE_KEYS.TOKEN_EXPIRATION_PREFIX}${groupId}`, tokenExpirationDate);
+    }
+  } catch {
+    throw new StoreRotateTokenError(StoreTokenErrorTypes.STORE_ERROR);
+  }
 };
 
 /**

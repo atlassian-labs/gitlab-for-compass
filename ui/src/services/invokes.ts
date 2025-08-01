@@ -67,6 +67,20 @@ export const connectGroup = (
   });
 };
 
+export const rotateToken = (
+  groupToken: string,
+  groupTokenName: string,
+  groupName?: string,
+  groupRole: string = GitLabRoles.OWNER,
+): Promise<ResolverResponse> => {
+  return invoke<ResolverResponse>('groups/rotateToken', {
+    groupToken,
+    groupTokenName,
+    groupRole,
+    groupName,
+  });
+};
+
 export const connectInProgressWebhook = (
   groupId: number,
   webhookId: string,

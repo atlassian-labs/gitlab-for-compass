@@ -1,5 +1,6 @@
-import { render, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import { getCallBridge as realGetCallBridge } from '@forge/bridge/out/bridge';
+import { showFlag as realShowFlag } from '@forge/bridge';
 import { AppContextProvider } from '../AppContext';
 import { AppRouter } from '../../AppRouter';
 import {
@@ -11,7 +12,7 @@ import {
 import { defaultMocks, mockInvoke, mockGetContext } from '../../helpers/mockHelpers';
 import { ImportAllCaCProvider } from '../ImportAllCaCContext';
 import { GitLabRoles, WebhookAlertStatus } from '../../types';
-import { DefaultErrorTypes } from '../../resolverTypes';
+import { AuthErrorTypes, DefaultErrorTypes, StoreTokenErrorTypes } from '../../resolverTypes';
 
 const MOCK_APP_ID = 'app-id';
 
@@ -20,6 +21,7 @@ jest.mock('@forge/bridge', () => ({
     getContext: jest.fn(),
   },
   invoke: jest.fn(),
+  showFlag: jest.fn(),
 }));
 
 jest.mock('escape-string-regexp', () => ({
@@ -39,6 +41,38 @@ const expectToSendAnalyticsEvent = (expectedAnalyticEvent: string) => {
 };
 
 const getCallBridge: jest.Mock = realGetCallBridge as jest.Mock;
+const showFlag: jest.Mock = realShowFlag as jest.Mock;
+
+const expectToShowSuccessTokenRotationFlag = () => {
+  expect(showFlag).toHaveBeenCalledWith({
+    id: 'success-token-rotation-flag',
+    title: 'Token successfully rotated',
+    type: 'success',
+    description: `Your GitLab group token was successfully rotated`,
+    actions: [],
+    isAutoDismiss: false,
+  });
+};
+
+const setupRotationForm = async () => {
+  const { findByTestId, getByTestId, queryByTestId } = render(
+    <AppContextProvider>
+      <AppRouter />
+    </AppContextProvider>,
+  );
+
+  await act(async () => {
+    fireEvent.change(await findByTestId('group-access-token'), { target: { value: 'koko' } });
+  });
+  await act(async () => {
+    fireEvent.change(await findByTestId('access-token-name'), { target: { value: 'momo' } });
+  });
+  await act(async () => {
+    fireEvent.click(await findByTestId('rotate-token-button'));
+  });
+
+  return { getByTestId, queryByTestId };
+};
 
 describe('AppContext', () => {
   beforeEach(() => {
@@ -248,6 +282,111 @@ describe('AppContext', () => {
     const webhookDisabledStatusMessage = queryByTestId('disabled-webhook-warning-message');
 
     expect(webhookDisabledStatusMessage).toBeNull();
+  });
+
+  it('should render rotation token form', async () => {
+    mockInvoke({
+      filledMocks,
+    });
+    mockGetContext('admin-page-ui');
+
+    const { queryByTestId } = render(
+      <AppContextProvider>
+        <AppRouter />
+      </AppContextProvider>,
+    );
+
+    const tokenRotationSection = queryByTestId('rotate-token-section');
+    expect(tokenRotationSection).toBeDefined();
+  });
+
+  it('should render validation error if rotation token is invalid', async () => {
+    mockInvoke({
+      ...filledMocks,
+      'groups/rotateToken': {
+        success: false,
+        errors: [{ message: 'Error', errorType: AuthErrorTypes.INVALID_GROUP_TOKEN }],
+      },
+    });
+    mockGetContext('admin-page-ui');
+
+    const { getByTestId } = await setupRotationForm();
+
+    expect(getByTestId('incorrect-token-message')).toBeDefined();
+  });
+
+  it('should render validation error if rotation token name is incorrect', async () => {
+    mockInvoke({
+      ...filledMocks,
+      'groups/rotateToken': {
+        success: false,
+        errors: [{ message: 'Error', errorType: AuthErrorTypes.INVALID_GROUP_TOKEN_NAME }],
+      },
+    });
+    mockGetContext('admin-page-ui');
+
+    const { getByTestId } = await setupRotationForm();
+
+    expect(getByTestId('incorrect-token-name-message')).toBeDefined();
+  });
+
+  it('should render validation error if rotation token scopes is incorrect', async () => {
+    mockInvoke({
+      ...filledMocks,
+      'groups/rotateToken': {
+        success: false,
+        errors: [{ message: 'Error', errorType: AuthErrorTypes.INCORRECT_GROUP_TOKEN_SCOPES }],
+      },
+    });
+    mockGetContext('admin-page-ui');
+
+    const { getByTestId } = await setupRotationForm();
+
+    expect(getByTestId('incorrect-token-scopes-message')).toBeDefined();
+  });
+
+  it('should render validation error if rotation token scopes is incorrect', async () => {
+    mockInvoke({
+      ...filledMocks,
+      'groups/rotateToken': {
+        success: false,
+        errors: [{ message: 'Error', errorType: AuthErrorTypes.INCORRECT_GROUP_TOKEN_SCOPES }],
+      },
+    });
+    mockGetContext('admin-page-ui');
+
+    const { getByTestId } = await setupRotationForm();
+
+    expect(getByTestId('incorrect-token-scopes-message')).toBeDefined();
+  });
+
+  it('should render validation error if storing rotation token is failed', async () => {
+    mockInvoke({
+      ...filledMocks,
+      'groups/rotateToken': {
+        success: false,
+        errors: [{ message: 'Error', errorType: StoreTokenErrorTypes.STORE_ERROR }],
+      },
+    });
+    mockGetContext('admin-page-ui');
+
+    const { getByTestId } = await setupRotationForm();
+
+    expect(getByTestId('store-token-failed-message')).toBeDefined();
+  });
+
+  it('should render success flag if token rotation is sucessfull', async () => {
+    mockInvoke({
+      ...filledMocks,
+      'groups/rotateToken': {
+        success: true,
+      },
+    });
+    mockGetContext('admin-page-ui');
+
+    await setupRotationForm();
+
+    expectToShowSuccessTokenRotationFlag();
   });
 
   it('setup config-as-code checkbox sends analytic event', async () => {
