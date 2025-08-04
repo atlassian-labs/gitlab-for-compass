@@ -107,15 +107,27 @@ export const connectGroup = async (input: ConnectGroupInput): Promise<number> =>
 
   let groupId;
   let fetchedGroupName;
+  let tokenId;
+  let tokenExpirationDate;
   if (tokenRole === GitLabRoles.MAINTAINER) {
     groupId = await connectGroupAsMaintainer(token, groupName);
   } else {
-    ({ groupId, groupName: fetchedGroupName } = await connectGroupAsOwner(token, tokenName));
+    ({
+      groupId,
+      groupName: fetchedGroupName,
+      tokenId,
+      tokenExpirationDate,
+    } = await connectGroupAsOwner(token, tokenName));
   }
 
   await storage.set(`${STORAGE_KEYS.GROUP_NAME_KEY_PREFIX}${groupId}`, fetchedGroupName ?? groupName);
   await storage.setSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`, token);
   await storage.set(`${STORAGE_KEYS.TOKEN_ROLE_PREFIX}${groupId}`, tokenRole);
+
+  if (tokenRole === GitLabRoles.OWNER) {
+    await storage.set(`${STORAGE_KEYS.TOKEN_ID_PREFIX}${groupId}`, tokenId);
+    await storage.set(`${STORAGE_KEYS.TOKEN_EXPIRATION_PREFIX}${groupId}`, tokenExpirationDate);
+  }
 
   if (tokenRole === GitLabRoles.MAINTAINER) {
     await storage.set(`${STORAGE_KEYS.WEBHOOK_SETUP_IN_PROGRESS}${groupId}`, groupId);

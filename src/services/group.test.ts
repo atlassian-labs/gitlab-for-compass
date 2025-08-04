@@ -105,13 +105,23 @@ describe('Group service', () => {
           `${STORAGE_KEYS.TOKEN_ROLE_PREFIX}${MOCK_GROUP_DATA.id}`,
           GitLabRoles.OWNER,
         );
+        expect(storage.set).toHaveBeenNthCalledWith(
+          3,
+          `${STORAGE_KEYS.TOKEN_ID_PREFIX}${MOCK_GROUP_DATA.id}`,
+          mockGroupAccessToken.id,
+        );
+        expect(storage.set).toHaveBeenNthCalledWith(
+          4,
+          `${STORAGE_KEYS.TOKEN_EXPIRATION_PREFIX}${MOCK_GROUP_DATA.id}`,
+          mockGroupAccessToken.expires_at,
+        );
         expect(storage.setSecret).toHaveBeenCalledWith(
           `${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${MOCK_GROUP_DATA.id}`,
           MOCK_TOKEN,
         );
 
         // Verify total number of calls
-        expect(storage.set).toHaveBeenCalledTimes(2);
+        expect(storage.set).toHaveBeenCalledTimes(4);
         expect(storage.setSecret).toHaveBeenCalledTimes(1);
 
         expect(result).toBe(MOCK_GROUP_DATA.id);
