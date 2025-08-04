@@ -17,6 +17,8 @@ export const STORAGE_KEYS = {
   TEAM_ONBOARDING: 'isTeamOnboardingCompleted',
   BACKFILL_PUSH_DATA_PROVIDER_VERSION: 'backfill-push-data-provider',
   CAC_MANUAL_SYNC_PREFIX: 'cac_manual_sync_',
+  TOKEN_ID_PREFIX: 'token-id-',
+  TOKEN_EXPIRATION_PREFIX: 'token-expiration-date-',
 };
 
 export const STORAGE_SECRETS = {

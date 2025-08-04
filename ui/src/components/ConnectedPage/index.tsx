@@ -21,6 +21,7 @@ import { IncomingWebhookSectionMessage } from '../IncomingWebhookSectionMessage'
 import { isRenderingInOnboardingFlow } from '../onboarding-flow-context-helper';
 import { ROTATE_WEB_TRIGGER_MODAL } from '../../constants';
 import { WebhookAlertStatus } from '../../types';
+import { RotateGroupAccessToken } from './RotateGroupAccessToken';
 
 const showReSyncCaCFlag = (flagType: FlagType, groupName?: string, isResyncTimeLimitError?: boolean) => {
   if (flagType === 'success') {
@@ -276,6 +277,8 @@ export const ConnectedPage = () => {
       />
 
       <ImportControls />
+
+      <RotateGroupAccessToken features={features} connectedGroup={groups[0]} />
 
       {!isImportInProgress ? <ImportResult /> : null}
     </div>

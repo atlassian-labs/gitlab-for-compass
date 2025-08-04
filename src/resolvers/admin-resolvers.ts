@@ -11,7 +11,7 @@ import {
   FeaturesList,
   ResyncErrorTypes,
 } from '../resolverTypes';
-import { connectGroup, getGroupById, InvalidGroupTokenError } from '../services/group';
+import { connectGroup, getGroupById, InvalidGroupTokenError, rotateGroupToken } from '../services/group';
 
 import { rotateWebhook, setupAndValidateWebhook } from '../services/webhooks';
 import { disconnectGroup } from '../services/disconnect-group';
@@ -46,6 +46,7 @@ import { minutesToMilliseconds } from '../utils/time-utils';
 import { getGroupCaCFiles } from '../services/files';
 import { checkCaCFilename } from '../utils/cac-filename-check';
 import { resyncConfigAsCode } from '../services/resync-cac';
+import { StoreRotateTokenError } from '../models/errors';
 
 const resolver = new Resolver();
 
@@ -73,6 +74,37 @@ resolver.define('groups/connectedInfo', async (): Promise<ResolverResponse<Gitla
 
 resolver.define('webhooks/setupConfig', async (): Promise<ResolverResponse<WebhookSetupConfig>> => {
   return webhookSetupConfig();
+});
+
+resolver.define('groups/rotateToken', async (req): Promise<ResolverResponse> => {
+  const {
+    payload: { groupToken, groupTokenName, groupRole, groupName },
+  } = req;
+
+  try {
+    const input: ConnectGroupInput = {
+      token: groupToken,
+      tokenName: groupTokenName,
+      tokenRole: groupRole,
+      groupName,
+    };
+
+    await rotateGroupToken(input);
+
+    return { success: true };
+  } catch (e) {
+    if (e instanceof InvalidGroupTokenError || e instanceof StoreRotateTokenError) {
+      return {
+        success: false,
+        errors: [{ message: e.message, errorType: e.errorType }],
+      };
+    }
+
+    return {
+      success: false,
+      errors: [{ message: e.message, errorType: AuthErrorTypes.UNEXPECTED_ERROR }],
+    };
+  }
 });
 
 resolver.define('groups/connect', async (req): Promise<ResolverResponse> => {

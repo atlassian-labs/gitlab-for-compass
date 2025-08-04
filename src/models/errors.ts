@@ -1,6 +1,7 @@
 /* eslint-disable max-classes-per-file */
 
 import { SdkError } from '@atlassian/forge-graphql-types';
+import { StoreTokenErrorTypes } from '../resolverTypes';
 
 export class AggClientError extends Error {
   errors: string[];
@@ -59,3 +60,10 @@ export class GitlabHttpMethodError extends Error {
 export class ValidateWebhookSignatureError extends Error {}
 
 export class ParseWebhookEventPayloadError extends Error {}
+
+export class StoreRotateTokenError extends Error {
+  constructor(public errorType: StoreTokenErrorTypes) {
+    super();
+    this.message = 'Store token data error.';
+  }
+}

@@ -19,6 +19,10 @@ export enum DefaultErrorTypes {
   NO_APP_ID_VARIABLE_DEFINED = 'NO_APP_ID_VARIABLE_DEFINED',
 }
 
+export enum StoreTokenErrorTypes {
+  STORE_ERROR = 'STORE_ERROR',
+}
+
 export enum AuthErrorTypes {
   INVALID_GROUP_TOKEN = 'INVALID_GROUP_TOKEN',
   INVALID_GROUP_TOKEN_NAME = 'INVALID_GROUP_TOKEN_NAME',
@@ -38,7 +42,7 @@ export enum ResyncErrorTypes {
   RESYNC_TIME_LIMIT = 'RESYNC_CAC_TIME_LIMIT',
 }
 
-type ErrorTypes = AuthErrorTypes | ImportErrorTypes | DefaultErrorTypes | ResyncErrorTypes;
+type ErrorTypes = AuthErrorTypes | ImportErrorTypes | DefaultErrorTypes | ResyncErrorTypes | StoreTokenErrorTypes;
 
 type ResponseError = { message: string; errorType?: ErrorTypes };
 
