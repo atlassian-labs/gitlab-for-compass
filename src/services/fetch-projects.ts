@@ -91,6 +91,17 @@ export const compareProjectWithExistingComponent = async (
       }),
     ]);
 
+    // TODO: DELETE AFTER DEBUGGING
+    if (
+      cloudId === '3fee7fa3-4663-4c14-9767-2308819c9e77' &&
+      mergeRequestsResults.status === ALL_SETTLED_STATUS.REJECTED
+    ) {
+      const errorReason = (mergeRequestsResults as PromiseRejectedResult).reason;
+      if (errorReason && typeof errorReason === 'string' && errorReason.includes('403')) {
+        console.error(`[DEBUG] 403 error on merge requests call for project ${projectId} ${errorReason} ${cloudId}`);
+      }
+    }
+
     if (
       componentByExtenalAliasResult.status === ALL_SETTLED_STATUS.REJECTED ||
       mergeRequestsResults.status === ALL_SETTLED_STATUS.REJECTED
