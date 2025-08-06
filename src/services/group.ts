@@ -14,6 +14,7 @@ import { AuthErrorTypes, StoreTokenErrorTypes } from '../resolverTypes';
 import { deleteGroupDataFromStorage } from './clear-storage';
 import { ALL_SETTLED_STATUS, getFormattedErrors, hasRejections } from '../utils/promise-allsettled-helpers';
 import { StoreRotateTokenError } from '../models/errors';
+import { getDifferenceBetweenDates } from '../utils/time-utils';
 
 export class InvalidGroupTokenError extends Error {
   constructor(public errorType: AuthErrorTypes) {
@@ -158,6 +159,23 @@ export const rotateGroupToken = async (input: ConnectGroupInput): Promise<void> 
     }
   } catch {
     throw new StoreRotateTokenError(StoreTokenErrorTypes.STORE_ERROR);
+  }
+};
+
+export const getTokenExpirationDays = async (groupId: number): Promise<number | null> => {
+  try {
+    const tokenExpirationDate = await storage.get(`${STORAGE_KEYS.TOKEN_EXPIRATION_PREFIX}${groupId}`);
+
+    if (tokenExpirationDate) {
+      const dateNow = new Date().toISOString();
+      const differenceBetweenDates = getDifferenceBetweenDates(dateNow, tokenExpirationDate);
+
+      return differenceBetweenDates;
+    }
+
+    return null;
+  } catch (e) {
+    throw new Error(`Error while getting token expiration date: ${e}`);
   }
 };
 

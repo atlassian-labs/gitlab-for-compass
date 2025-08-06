@@ -99,6 +99,7 @@ describe('ImportAll page', () => {
       },
       isOwnerRole: true,
       webhookStatus: WebhookAlertStatus.EXECUTABLE,
+      numOfTokenExpirationDays: 35,
     }));
 
     const { queryByTestId } = render(
@@ -169,6 +170,7 @@ describe('ImportAll page', () => {
       },
       isOwnerRole: true,
       webhookStatus: WebhookAlertStatus.EXECUTABLE,
+      numOfTokenExpirationDays: 35,
     }));
 
     const { queryByTestId } = render(
@@ -236,6 +238,7 @@ describe('ImportAll page', () => {
       },
       isOwnerRole: true,
       webhookStatus: WebhookAlertStatus.EXECUTABLE,
+      numOfTokenExpirationDays: 35,
     }));
 
     const { queryByTestId } = render(

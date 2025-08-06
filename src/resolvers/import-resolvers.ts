@@ -20,6 +20,7 @@ import {
   getRole,
   groupsAllExisting,
   importProject,
+  tokenExpirationDays,
   webhookSetupConfig,
   webhookStatus,
 } from './shared-resolvers';
@@ -38,6 +39,10 @@ resolver.define('group/getRole', async (req): Promise<ResolverResponse<GitLabRol
 
 resolver.define('groups/allExisting', async (): Promise<ResolverResponse<GitlabAPIGroup[]>> => {
   return groupsAllExisting();
+});
+
+resolver.define('group/tokenExpirationDays', async (req): Promise<ResolverResponse<number | null>> => {
+  return tokenExpirationDays(req);
 });
 
 resolver.define('groups/projects', async (req): Promise<ResolverResponse<GroupProjectsResponse>> => {

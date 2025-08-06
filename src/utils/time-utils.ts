@@ -15,3 +15,16 @@ export const minutesToMilliseconds = (minutes: number) => {
 
   return minutes * SECONDS_IN_MINUTES * MILLISECONDS_IN_SECOND;
 };
+
+export const getDifferenceBetweenDates = (firstDate: string, secondDate: string) => {
+  const DAY_IN_MS = 24 * 60 * 60 * 1000;
+
+  const firstDateInMs = new Date(firstDate).getTime();
+  const secondDateInMs = new Date(secondDate).getTime();
+
+  const differenceBtwDates = secondDateInMs - firstDateInMs;
+
+  const daysDiff = Math.round(differenceBtwDates / DAY_IN_MS);
+
+  return daysDiff;
+};

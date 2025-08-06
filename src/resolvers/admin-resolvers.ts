@@ -26,6 +26,7 @@ import {
   getProjectImportResult,
   getRole,
   groupsAllExisting,
+  tokenExpirationDays,
   webhookSetupConfig,
   webhookStatus,
 } from './shared-resolvers';
@@ -210,6 +211,10 @@ resolver.define('group/rotateWebhook', async (req): Promise<ResolverResponse<voi
       errors: [{ message: `rotateWebhook call could not complete: ${e.message}` }],
     };
   }
+});
+
+resolver.define('group/tokenExpirationDays', async (req): Promise<ResolverResponse<number | null>> => {
+  return tokenExpirationDays(req);
 });
 
 resolver.define('groups/allExisting', async (): Promise<ResolverResponse<GitlabAPIGroup[]>> => {

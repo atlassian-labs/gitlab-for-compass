@@ -59,6 +59,37 @@ const showReSyncCaCFlag = (flagType: FlagType, groupName?: string, isResyncTimeL
   }
 };
 
+const expirationTokenWarningMessage = (numOfTokenExpirationDays: number) => {
+  if (numOfTokenExpirationDays <= 30 && numOfTokenExpirationDays > 10) {
+    return (
+      <SectionMessage appearance='warning' testId='token-expires-within-30-days-message'>
+        Your group token will expire within <b>{numOfTokenExpirationDays} days</b>
+      </SectionMessage>
+    );
+  }
+
+  if (numOfTokenExpirationDays <= 10 && numOfTokenExpirationDays > 0) {
+    return (
+      <SectionMessage appearance='error' testId='token-expires-within-10-days-message'>
+        Your group token will expire within next{' '}
+        <b>
+          {numOfTokenExpirationDays} {numOfTokenExpirationDays > 1 ? 'days' : 'day'}
+        </b>
+      </SectionMessage>
+    );
+  }
+
+  if (numOfTokenExpirationDays <= 0) {
+    return (
+      <SectionMessage appearance='error' testId='token-expired-message'>
+        Your group token was expired
+      </SectionMessage>
+    );
+  }
+
+  return null;
+};
+
 export const ConnectedPage = () => {
   const [isDisconnectGroupInProgress, setDisconnectGroupInProgress] = useState(false);
   const [errorType, setErrorType] = useState<ErrorTypes>();
@@ -68,7 +99,8 @@ export const ConnectedPage = () => {
   const [isRotatingWebtriggerLoading, setRotatingWebtriggerLoading] = useState(false);
 
   const navigate = useNavigate();
-  const { features, getConnectedInfo, clearGroup, appId, isOwnerRole, webhookStatus } = useAppContext();
+  const { features, getConnectedInfo, clearGroup, appId, isOwnerRole, webhookStatus, numOfTokenExpirationDays } =
+    useAppContext();
   const { isImportInProgress } = useImportContext();
 
   const getIsInOnboarding = async () => {
@@ -264,6 +296,13 @@ export const ConnectedPage = () => {
           <br />
         </>
       )}
+
+      {numOfTokenExpirationDays && (
+        <>
+          {expirationTokenWarningMessage(numOfTokenExpirationDays)} <br />
+        </>
+      )}
+
       <ConnectInfoPanel
         connectedGroup={groups[0]}
         handleDisconnectGroup={handleDisconnectGroup}
