@@ -10,7 +10,7 @@ import {
   ResolverResponse,
 } from '../resolverTypes';
 import { listFeatures } from '../services/feature-flags';
-import { getAllExistingGroups, getConnectedGroups } from '../services/group';
+import { getAllExistingGroups, getConnectedGroups, getTokenExpirationDays } from '../services/group';
 import { getWebhookSetupConfig, getWebhookStatus, setupAndValidateWebhook } from '../services/webhooks';
 import { getForgeAppId } from '../utils/get-forge-app-id';
 import {
@@ -206,6 +206,24 @@ export const webhookStatus = async (req: Request): Promise<ResolverResponse<Webh
     return {
       success: true,
       data: webhookAlertStatus,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      errors: [{ message: e.message, errorType: DefaultErrorTypes.UNEXPECTED_ERROR }],
+    };
+  }
+};
+
+export const tokenExpirationDays = async (req: Request): Promise<ResolverResponse<number | null>> => {
+  const { groupId } = req.payload;
+
+  try {
+    const numOfExpirationDays = await getTokenExpirationDays(groupId);
+
+    return {
+      success: true,
+      data: numOfExpirationDays,
     };
   } catch (e) {
     return {
