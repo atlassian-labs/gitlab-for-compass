@@ -1,5 +1,6 @@
 /* eslint-disable import/first */
 import { mocked } from 'jest-mock';
+import { internalMetrics } from '@forge/metrics';
 import { storage, mockForgeApi } from '../../__tests__/helpers/forge-helper';
 
 mockForgeApi();
@@ -46,6 +47,15 @@ const mockHandlePipelineEvent = mocked(handlePipelineEvent);
 const mockHandleMergeRequestEvent = mocked(handleMergeRequestEvent);
 const mockDeploymentEvent = mocked(handleDeploymentEvent);
 
+const mockedIncr = jest.fn();
+jest.mock('@forge/metrics', () => ({
+  internalMetrics: {
+    counter: jest.fn(() => ({
+      incr: mockedIncr,
+    })),
+  },
+}));
+
 describe('processGitlabEvent', () => {
   const MOCK_PUSH_EVENT = generatePushEvent();
   const MOCK_PIPELINE_EVENT = generatePipelineEvent();
@@ -64,6 +74,7 @@ describe('processGitlabEvent', () => {
     await processGitlabEvent(webtriggerRequest);
 
     expect(mockHandlePushEvent).toHaveBeenCalledWith(MOCK_PUSH_EVENT, TEST_TOKEN, MOCK_CLOUD_ID);
+    expect(internalMetrics.counter).toHaveBeenCalledTimes(2);
     expect(serverResponse).toHaveBeenCalledWith('Processed webhook event of type PUSH');
   });
 
@@ -73,6 +84,7 @@ describe('processGitlabEvent', () => {
     await processGitlabEvent(webtriggerRequest);
 
     expect(mockHandlePushEvent).not.toHaveBeenCalled();
+    expect(internalMetrics.counter).toHaveBeenCalledTimes(2);
     expect(serverResponse).toHaveBeenCalledWith('Invalid webhook secret', 403);
   });
 
@@ -82,6 +94,7 @@ describe('processGitlabEvent', () => {
     await processGitlabEvent(webtriggerRequest);
 
     expect(mockHandlePushEvent).not.toHaveBeenCalled();
+    expect(internalMetrics.counter).toHaveBeenCalledTimes(2);
     expect(serverResponse).toHaveBeenCalledWith('Invalid event format', 400);
   });
 
@@ -94,6 +107,7 @@ describe('processGitlabEvent', () => {
 
     expect(mockHandlePushEvent).not.toHaveBeenCalled();
     expect(serverResponse).toHaveBeenCalledWith('The webhook could not be processed', 500);
+    expect(internalMetrics.counter).toHaveBeenCalledTimes(2);
   });
 
   it('handles pipeline event when FF is enabled', async () => {
@@ -102,6 +116,7 @@ describe('processGitlabEvent', () => {
     await processGitlabEvent(webtriggerRequest);
 
     expect(mockHandlePipelineEvent).toHaveBeenCalledWith(MOCK_PIPELINE_EVENT, TEST_TOKEN, MOCK_CLOUD_ID);
+    expect(internalMetrics.counter).toHaveBeenCalledTimes(2);
     expect(serverResponse).toHaveBeenCalledWith('Processed webhook event of type PIPELINE');
   });
 
@@ -120,6 +135,7 @@ describe('processGitlabEvent', () => {
     await processGitlabEvent(webtriggerRequest);
 
     expect(mockDeploymentEvent).toHaveBeenCalledWith(MOCK_DEPLOYMENT_EVENT, TEST_TOKEN, MOCK_CLOUD_ID);
+    expect(internalMetrics.counter).toHaveBeenCalledTimes(2);
     expect(serverResponse).toHaveBeenCalledWith('Processed webhook event of type DEPLOYMENT');
   });
 });
