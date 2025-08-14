@@ -10,7 +10,7 @@ import { useImportAllCaCContext } from './useImportAllCaCContext';
 
 const DELAY_BETWEEN_REPO_IMPORT_CALLS = 50;
 
-const MAX_PER_PAGE = 100;
+const MAX_PER_PAGE = 50;
 const DEFAULT_GROUP_ID = 0;
 
 export enum IMPORT_STATE {
