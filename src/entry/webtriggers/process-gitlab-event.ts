@@ -1,5 +1,6 @@
 import { storage } from '@forge/api';
 
+import { internalMetrics } from '@forge/metrics';
 import {
   DeploymentEvent,
   GitlabEvent,
@@ -36,6 +37,8 @@ const parseEventPayload = (eventPayload: string): GitlabEvent | never => {
 
 export const processGitlabEvent = async (event: WebtriggerRequest): Promise<WebtriggerResponse> => {
   try {
+    internalMetrics.counter('compass.gitlab.webtrigger.process.start').incr();
+
     const { cloudId } = event.context;
     const groupId = event.queryParameters.groupId[0];
     const groupToken = await storage.getSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`);
@@ -51,11 +54,15 @@ export const processGitlabEvent = async (event: WebtriggerRequest): Promise<Webt
     if (parsedEvent.object_kind === WebhookTypes.PUSH) {
       await handlePushEvent(parsedEvent as PushEvent, groupToken, cloudId);
 
+      internalMetrics.counter('compass.gitlab.webtrigger.event.push.end').incr();
+
       return serverResponse('Processed webhook event of type PUSH');
     }
 
     if (parsedEvent.object_kind === WebhookTypes.MERGE_REQUEST) {
       await handleMergeRequestEvent(parsedEvent as MergeRequestEvent, groupToken, cloudId);
+
+      internalMetrics.counter('compass.gitlab.webtrigger.event.mr.end').incr();
 
       return serverResponse('Processed webhook event of type MERGE_REQUEST');
     }
@@ -63,17 +70,25 @@ export const processGitlabEvent = async (event: WebtriggerRequest): Promise<Webt
     if (parsedEvent.object_kind === WebhookTypes.PIPELINE) {
       await handlePipelineEvent(parsedEvent as PipelineEvent, groupToken, cloudId);
 
+      internalMetrics.counter('compass.gitlab.webtrigger.event.pipeline.end').incr();
+
       return serverResponse('Processed webhook event of type PIPELINE');
     }
 
     if (parsedEvent.object_kind === WebhookTypes.DEPLOYMENT) {
       await handleDeploymentEvent(parsedEvent as DeploymentEvent, groupToken, cloudId);
 
+      internalMetrics.counter('compass.gitlab.webtrigger.event.deployment.end').incr();
+
       return serverResponse('Processed webhook event of type DEPLOYMENT');
     }
 
+    internalMetrics.counter('compass.gitlab.webtrigger.process.end').incr();
+
     return serverResponse('Processed webhook event');
   } catch (error) {
+    internalMetrics.counter('compass.gitlab.webtrigger.process.fail').incr();
+
     if (error instanceof ValidateWebhookSignatureError) {
       console.error({ message: 'Webhook event secret is invalid', error });
       return serverResponse('Invalid webhook secret', 403);
