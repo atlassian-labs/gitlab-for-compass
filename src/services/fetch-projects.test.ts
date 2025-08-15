@@ -26,6 +26,7 @@ const mockGetProjects = mocked(getProjects);
 const mockGetProjectLabels = mocked(getProjectLabels);
 const mockGetComponentByExternalAlias = mocked(getComponentByExternalAlias);
 const mockGetMergeRequests = mocked(getMergeRequests);
+const mockConsoleError = jest.spyOn(console, 'error');
 
 const MOCK_CLOUD_ID = '0a44684d-52c3-4c0c-99f8-9d89ec294759';
 const MOCK_GROUP_ID = 12443;
@@ -140,16 +141,24 @@ describe('Fetch Projects Service', () => {
     );
   });
 
-  it('returns error in case when getComponentByExternalAlias fails', async () => {
-    mockGetComponentByExternalAlias.mockRejectedValue(undefined);
+  it('should return projects without addtional comparing fields and log errors', async () => {
+    mockGetComponentByExternalAlias.mockRejectedValue(new Error('Error while getting repository additional fields.'));
 
-    const settledError = new Error(
-      `Error checking project with existing components: ${getFormattedErrors([RejectedPromiseSettled])}`,
-    );
+    const settledError = `Error getting component by external alias or merge requests: ${getFormattedErrors([
+      RejectedPromiseSettled,
+    ])}`;
 
-    await expect(getGroupProjects(MOCK_CLOUD_ID, MOCK_GROUP_ID, 1, 1)).rejects.toThrow(
-      `Error while getting group projects: ${settledError}`,
-    );
+    const result = await getGroupProjects(MOCK_CLOUD_ID, MOCK_GROUP_ID, 1, 1);
+    expect(mockConsoleError).toHaveBeenCalledWith(settledError);
+
+    expect(result).toEqual({
+      projects: generateProjectsWithStatuses(false, false, {
+        labels: MOCK_GET_PROJECT_LABELS,
+        componentId: undefined,
+        typeId: undefined,
+      }),
+      total: expect.anything(),
+    });
   });
 
   it('returns sorted projects', () => {
