@@ -106,7 +106,7 @@ export const compareProjectWithExistingComponent = async (
       componentByExtenalAliasResult.status === ALL_SETTLED_STATUS.REJECTED ||
       mergeRequestsResults.status === ALL_SETTLED_STATUS.REJECTED
     ) {
-      throw new Error(
+      console.error(
         `Error getting component by external alias or merge requests: ${getFormattedErrors([
           componentByExtenalAliasResult,
           mergeRequestsResults,
@@ -114,16 +114,21 @@ export const compareProjectWithExistingComponent = async (
       );
     }
 
-    const { component } = componentByExtenalAliasResult.value;
-    const { data: mergeRequestWithCompassYML } = mergeRequestsResults.value;
+    const componentByExtenalAliasResultValue =
+      componentByExtenalAliasResult.status === ALL_SETTLED_STATUS.FULFILLED
+        ? componentByExtenalAliasResult.value
+        : null;
+    const mergeRequestsResultsValue =
+      mergeRequestsResults.status === ALL_SETTLED_STATUS.FULFILLED ? mergeRequestsResults.value : null;
 
     return {
-      isManaged: Boolean(component?.dataManager),
-      hasComponent: Boolean(component?.id) || Boolean(mergeRequestWithCompassYML.length),
-      isCompassFilePrOpened: Boolean(mergeRequestWithCompassYML.length),
-      componentId: component?.id,
-      componentLinks: mapComponentLinks(component?.links),
-      typeId: component?.typeId,
+      isManaged: Boolean(componentByExtenalAliasResultValue?.component?.dataManager),
+      hasComponent:
+        Boolean(componentByExtenalAliasResultValue?.component?.id) || Boolean(mergeRequestsResultsValue?.data?.length),
+      isCompassFilePrOpened: Boolean(mergeRequestsResultsValue?.data?.length),
+      componentId: componentByExtenalAliasResultValue?.component?.id,
+      componentLinks: mapComponentLinks(componentByExtenalAliasResultValue?.component?.links) || [],
+      typeId: componentByExtenalAliasResultValue?.component?.typeId,
     };
   } catch (err) {
     const ERROR_MESSAGE = 'Error while getting repository additional fields.';
@@ -169,7 +174,7 @@ export const getGroupProjects = async (
     );
 
     if (hasRejections(checkedDataWithExistingComponentsResults)) {
-      throw new Error(
+      console.error(
         `Error checking project with existing components: ${getFormattedErrors(
           checkedDataWithExistingComponentsResults,
         )}`,
@@ -178,7 +183,10 @@ export const getGroupProjects = async (
 
     const checkedDataWithExistingComponents = checkedDataWithExistingComponentsResults.map(
       (checkedDataWithExistingComponentsResult) =>
-        (checkedDataWithExistingComponentsResult as PromiseFulfilledResult<CompareProjectWithExistingComponent>).value,
+        checkedDataWithExistingComponentsResult.status === ALL_SETTLED_STATUS.FULFILLED
+          ? (checkedDataWithExistingComponentsResult as PromiseFulfilledResult<CompareProjectWithExistingComponent>)
+              .value
+          : ({} as CompareProjectWithExistingComponent),
     );
 
     const resultProjects = projects.map((project, i) => {
