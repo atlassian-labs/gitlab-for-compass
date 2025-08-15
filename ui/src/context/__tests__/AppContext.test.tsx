@@ -389,6 +389,99 @@ describe('AppContext', () => {
     expectToShowSuccessTokenRotationFlag();
   });
 
+  it('should render a warning message if the token expires within the next 30 days', async () => {
+    mockInvoke({
+      ...filledMocks,
+      'group/tokenExpirationDays': {
+        success: true,
+        data: 30,
+      },
+    });
+    mockGetContext('admin-page-ui');
+
+    const { findByTestId } = render(
+      <AppContextProvider>
+        <ImportAllCaCProvider>
+          <AppRouter />
+        </ImportAllCaCProvider>
+      </AppContextProvider>,
+    );
+
+    const warningMessage = await findByTestId('token-expires-within-30-days-message');
+    expect(warningMessage).toBeDefined();
+  });
+
+  it('should render an error message if the token expires within the next 10 days', async () => {
+    mockInvoke({
+      ...filledMocks,
+      'group/tokenExpirationDays': {
+        success: true,
+        data: 10,
+      },
+    });
+    mockGetContext('admin-page-ui');
+
+    const { findByTestId } = render(
+      <AppContextProvider>
+        <ImportAllCaCProvider>
+          <AppRouter />
+        </ImportAllCaCProvider>
+      </AppContextProvider>,
+    );
+
+    const errorMessage = await findByTestId('token-expires-within-10-days-message');
+    expect(errorMessage).toBeDefined();
+  });
+
+  it('should render an error message if the token has expired', async () => {
+    mockInvoke({
+      ...filledMocks,
+      'group/tokenExpirationDays': {
+        success: true,
+        data: -1,
+      },
+    });
+    mockGetContext('admin-page-ui');
+
+    const { findByTestId } = render(
+      <AppContextProvider>
+        <ImportAllCaCProvider>
+          <AppRouter />
+        </ImportAllCaCProvider>
+      </AppContextProvider>,
+    );
+
+    const errorMessage = await findByTestId('token-expired-message');
+    expect(errorMessage).toBeDefined();
+  });
+
+  it('should not render an error message if the token is not expired', async () => {
+    mockInvoke({
+      ...filledMocks,
+      'group/tokenExpirationDays': {
+        success: true,
+        data: 35,
+      },
+    });
+    mockGetContext('admin-page-ui');
+
+    const { queryByTestId } = render(
+      <AppContextProvider>
+        <ImportAllCaCProvider>
+          <AppRouter />
+        </ImportAllCaCProvider>
+      </AppContextProvider>,
+    );
+
+    const tokenExpiredErrorMessage = queryByTestId('token-expired-message');
+    const expiresWithinTenDaysErrorMessage = queryByTestId('token-expires-within-10-days-message');
+    const expiresWithinThirtyDaysWarningMessage = queryByTestId('token-expires-within-30-days-message');
+
+    expect(tokenExpiredErrorMessage).toBeNull();
+    expect(expiresWithinTenDaysErrorMessage).toBeNull();
+    expect(expiresWithinThirtyDaysWarningMessage).toBeNull();
+  });
+
   it('setup config-as-code checkbox sends analytic event', async () => {
     mockInvoke(mockWithEnablindImportAllFF);
     mockGetContext('admin-page-ui');
