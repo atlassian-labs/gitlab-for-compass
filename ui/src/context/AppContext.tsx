@@ -6,7 +6,14 @@ import { view } from '@forge/bridge';
 import { CenterWrapper } from '../components/styles';
 import { AuthErrorTypes, DefaultErrorTypes, ErrorTypes, FeaturesList, GitlabAPIGroup } from '../resolverTypes';
 import { ApplicationState } from '../routes';
-import { connectedInfo, getForgeAppId, getRole, getWebhookSetupConfig, getWebhookStatus } from '../services/invokes';
+import {
+  connectedInfo,
+  getForgeAppId,
+  getRole,
+  getTokenExpirationDays,
+  getWebhookSetupConfig,
+  getWebhookStatus,
+} from '../services/invokes';
 import { DefaultErrorState } from '../components/DefaultErrorState';
 import { useFeatures } from '../hooks/useFeatures';
 import { GitLabRoles, WebhookAlertStatus, WebhookSetupConfig } from '../types';
@@ -26,6 +33,7 @@ export type AppContextProps = {
   refreshWebhookConfig: () => Promise<void>;
   isOwnerRole: boolean | undefined;
   webhookStatus: WebhookAlertStatus | undefined;
+  numOfTokenExpirationDays: number | null | undefined;
 };
 
 export const AppContext = createContext({} as AppContextProps);
@@ -45,6 +53,7 @@ export const AppContextProvider: FunctionComponent<AppContextProviderProps> = ({
     triggerUrl: '',
   });
   const [webhookStatus, setWebhookStatus] = useState<WebhookAlertStatus>();
+  const [numOfTokenExpirationDays, setNumOfTokenExpirationDays] = useState<number | null>();
   const [isOwnerRole, setIsOwnerRole] = useState<boolean>();
 
   useEffect(() => {
@@ -154,6 +163,20 @@ export const AppContextProvider: FunctionComponent<AppContextProviderProps> = ({
     }
   };
 
+  const getGroupTokenExpirationDays = async (groupId: number): Promise<void> => {
+    const { success, data, errors } = await getTokenExpirationDays(groupId);
+
+    if (success && data) {
+      setNumOfTokenExpirationDays(data);
+
+      return;
+    }
+
+    if (errors && errors.length > 0) {
+      throw new Error(errors[0].message);
+    }
+  };
+
   useEffect(() => {
     if (groups?.length) {
       getRoles(groups[0].id)
@@ -169,6 +192,9 @@ export const AppContextProvider: FunctionComponent<AppContextProviderProps> = ({
   useEffect(() => {
     if (groups?.length && isOwnerRole) {
       getWebhooksAlertStatus(groups[0].id).catch((e) => console.error('Error while getting webhook status', e));
+      getGroupTokenExpirationDays(groups[0].id).catch((e) =>
+        console.error('Error while getting group token expiration days', e),
+      );
     }
   }, [groups, isOwnerRole]);
 
@@ -242,6 +268,7 @@ export const AppContextProvider: FunctionComponent<AppContextProviderProps> = ({
         refreshWebhookConfig,
         isOwnerRole,
         webhookStatus,
+        numOfTokenExpirationDays,
       }}
     >
       {children}

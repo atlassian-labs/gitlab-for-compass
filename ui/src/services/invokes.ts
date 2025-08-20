@@ -81,6 +81,12 @@ export const rotateToken = (
   });
 };
 
+export const getTokenExpirationDays = (groupId: number): Promise<ResolverResponse<number | null>> => {
+  return invoke<ResolverResponse<number | null>>('group/tokenExpirationDays', {
+    groupId,
+  });
+};
+
 export const connectInProgressWebhook = (
   groupId: number,
   webhookId: string,

@@ -7,10 +7,17 @@ mockForgeApi();
 
 import { STORAGE_KEYS, STORAGE_SECRETS } from '../constants';
 import { getGroupAccessTokens, getGroupsData } from '../client/gitlab';
-import { connectGroup, getConnectedGroups, InvalidGroupTokenError, rotateGroupToken } from './group';
+import {
+  connectGroup,
+  getConnectedGroups,
+  getTokenExpirationDays,
+  InvalidGroupTokenError,
+  rotateGroupToken,
+} from './group';
 import { AuthErrorTypes, GitlabAPIGroup, StoreTokenErrorTypes } from '../resolverTypes';
 import { ConnectGroupInput, GitLabRoles, GroupAccessToken } from '../types';
 import { StoreRotateTokenError } from '../models/errors';
+import { MOCK_GROUP_ID } from '../resolvers/mocks';
 
 jest.mock('../client/gitlab');
 
@@ -435,6 +442,45 @@ describe('Group service', () => {
 
       await expect(rotateGroupToken(input)).rejects.toThrow(
         new StoreRotateTokenError(StoreTokenErrorTypes.STORE_ERROR),
+      );
+    });
+  });
+
+  describe('getTokenExpirationDays', () => {
+    const MOCK_DATE = Date.parse('2025-08-06T12:04:11.443Z');
+
+    beforeEach(() => {
+      jest.resetAllMocks();
+      const dateNowStub = jest.fn(() => MOCK_DATE);
+      global.Date.now = dateNowStub;
+    });
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+    it('should return token expiration 30 days', async () => {
+      const MOCK_STORED_DATE = '2025-09-05T12:04:11.443Z';
+      storage.get = jest.fn().mockImplementation(() => Promise.resolve(MOCK_STORED_DATE));
+
+      const result = await getTokenExpirationDays(MOCK_GROUP_ID);
+
+      expect(result).toEqual(30);
+    });
+
+    it('should return token expiration 10 days', async () => {
+      const MOCK_STORED_DATE = '2025-08-16T12:04:11.443Z';
+      storage.get = jest.fn().mockImplementation(() => Promise.resolve(MOCK_STORED_DATE));
+
+      const result = await getTokenExpirationDays(MOCK_GROUP_ID);
+
+      expect(result).toEqual(10);
+    });
+
+    it('should return an error if getting the token expiration date fails', async () => {
+      storage.get = jest.fn().mockImplementation(() => Promise.reject(new Error('error')));
+
+      await expect(getTokenExpirationDays(MOCK_GROUP_ID)).rejects.toThrow(
+        new Error(`Error while getting token expiration date: ${new Error('error')}`),
       );
     });
   });
