@@ -131,8 +131,6 @@ export const getGroupsData = async (
 
   const queryParams = queryParamsGenerator(params);
 
-  console.log(groupAccessToken, 'groupAccessToken');
-
   const { data } = await callGitlab(`getGroupsData`, `/api/v4/groups?${queryParams}`, groupAccessToken);
 
   console.log('Number of groups fetched:', data.length);
