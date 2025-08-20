@@ -1,4 +1,4 @@
-import Resolver from '@forge/resolver';
+import Resolver, { Request } from '@forge/resolver';
 
 import graphqlGateway from '@atlassian/forge-graphql';
 import { Component } from '@atlassian/forge-graphql-types';
@@ -36,6 +36,7 @@ import {
   FileData,
   GitLabRoles,
   GroupProjectsResponse,
+  ImportableProject,
   ProjectImportResult,
   WebhookAlertStatus,
   WebhookSetupConfig,
@@ -319,29 +320,32 @@ resolver.define('project/lastSyncTime', async (): Promise<ResolverResponse<strin
   }
 });
 
-resolver.define('createSingleComponent', async (req): Promise<ResolverResponse<Component>> => {
-  const {
-    payload: { projectToImport },
-    context: { cloudId },
-  } = req;
-  try {
-    const component = await createComponent(cloudId, projectToImport);
+resolver.define(
+  'createSingleComponent',
+  async (req: Request<{ projectToImport: ImportableProject }>): Promise<ResolverResponse<Component>> => {
+    const {
+      payload: { projectToImport },
+      context: { cloudId },
+    } = req;
+    try {
+      const component = await createComponent(cloudId, projectToImport);
 
-    if (component.id && projectToImport.name) {
-      await createComponentSlug(component.id, projectToImport.name);
+      if (component.id && projectToImport.name) {
+        await createComponentSlug(component.id, projectToImport.name);
+      }
+
+      return {
+        success: true,
+        data: component,
+      };
+    } catch (e) {
+      return {
+        success: false,
+        errors: [{ message: e.message, errorType: DefaultErrorTypes.UNEXPECTED_ERROR }],
+      };
     }
-
-    return {
-      success: true,
-      data: component,
-    };
-  } catch (e) {
-    return {
-      success: false,
-      errors: [{ message: e.message, errorType: DefaultErrorTypes.UNEXPECTED_ERROR }],
-    };
-  }
-});
+  },
+);
 
 resolver.define('features', (): ResolverResponse<FeaturesList> => {
   return getFeatures();
