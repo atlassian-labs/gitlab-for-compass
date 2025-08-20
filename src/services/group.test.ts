@@ -447,17 +447,15 @@ describe('Group service', () => {
   });
 
   describe('getTokenExpirationDays', () => {
-    const MOCK_DATE = Date.parse('2025-08-06T12:04:11.443Z');
-
-    beforeEach(() => {
-      jest.resetAllMocks();
-      const dateNowStub = jest.fn(() => MOCK_DATE);
-      global.Date.now = dateNowStub;
+    beforeAll(() => {
+      jest.useFakeTimers('modern');
+      jest.setSystemTime(new Date(2025, 7, 7));
     });
 
-    afterEach(() => {
-      jest.clearAllMocks();
+    afterAll(() => {
+      jest.useRealTimers();
     });
+
     it('should return token expiration 30 days', async () => {
       const MOCK_STORED_DATE = '2025-09-05T12:04:11.443Z';
       storage.get = jest.fn().mockImplementation(() => Promise.resolve(MOCK_STORED_DATE));
