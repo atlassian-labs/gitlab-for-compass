@@ -296,6 +296,7 @@ export const getProjects = async (
 ): Promise<{ data: GitlabAPIProject[]; headers: Headers }> => {
   const params = {
     include_subgroups: 'true',
+    archived: 'false',
     page: page.toString(),
     per_page: perPage.toString(),
     ...(orderBy ? { order_by: orderBy } : {}),
