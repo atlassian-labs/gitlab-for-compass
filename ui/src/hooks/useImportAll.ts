@@ -3,7 +3,7 @@ import { showFlag } from '@forge/bridge';
 import { useAppContext } from './useAppContext';
 import { createMRWithCompassYML, createSingleComponent, getGroupProjects } from '../services/invokes';
 import { getComponentTypeOptionForBuiltInType, sleep } from '../components/utils';
-import { ImportableProject } from '../types';
+import { ImportableProject, ProjectReadyForImport } from '../types';
 import { DEFAULT_COMPONENT_TYPE_ID } from '../constants';
 import { useComponentTypes } from './useComponentTypes';
 import { useImportAllCaCContext } from './useImportAllCaCContext';
@@ -121,7 +121,18 @@ export const useImportAll = (): {
         const { data, errors } = await getGroupProjects(groupId, page, locationGroupId, undefined, MAX_PER_PAGE);
 
         if (data && data.projects.length) {
-          const projectsToImport = data.projects.map((project) => {
+          const uniqueProjectsForImport = data.projects.reduce<ProjectReadyForImport[]>(
+            (uniqueProjects, currentProject) => {
+              const isUniqueProject = !uniqueProjects.some((uniqueProject) => uniqueProject.id === currentProject.id);
+              if (isUniqueProject) {
+                uniqueProjects.push(currentProject);
+              }
+              return uniqueProjects;
+            },
+            [],
+          );
+
+          const projectsToImport = uniqueProjectsForImport.map((project) => {
             const componentType = componentTypes.find((t) => t.id === project.typeId);
             const typeOption = componentType
               ? { label: componentType.name, value: componentType.id }
