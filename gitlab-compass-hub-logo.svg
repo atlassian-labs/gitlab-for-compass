@@ -1,0 +1,44 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <circle cx="60" cy="60" r="60" fill="linear-gradient(135deg, #f8f9fa 0%, #e1e5e9 100%)"/>
+  
+  <!-- Central hub -->
+  <circle cx="60" cy="60" r="18" fill="#0052cc" opacity="0.1"/>
+  <circle cx="60" cy="60" r="12" fill="none" stroke="#0052cc" stroke-width="2"/>
+  <circle cx="60" cy="60" r="4" fill="#0052cc"/>
+  
+  <!-- GitLab node (top-left) -->
+  <g transform="translate(35, 35)">
+    <circle cx="0" cy="0" r="8" fill="#fc6d26" opacity="0.9"/>
+    <path d="M-4 -2 L0 2 L4 -2 L0 -6 Z" fill="white" opacity="0.9"/>
+  </g>
+  
+  <!-- Component nodes -->
+  <circle cx="85" cy="35" r="6" fill="#36b37e" opacity="0.8"/>
+  <circle cx="85" cy="85" r="6" fill="#36b37e" opacity="0.8"/>
+  <circle cx="35" cy="85" r="6" fill="#36b37e" opacity="0.8"/>
+  
+  <!-- Connection lines -->
+  <path d="M43 43 L52 52" stroke="#0052cc" stroke-width="2" opacity="0.6"/>
+  <path d="M77 43 L68 52" stroke="#0052cc" stroke-width="2" opacity="0.6"/>
+  <path d="M77 77 L68 68" stroke="#0052cc" stroke-width="2" opacity="0.6"/>
+  <path d="M43 77 L52 68" stroke="#0052cc" stroke-width="2" opacity="0.6"/>
+  
+  <!-- Data flow particles -->
+  <circle cx="47" cy="47" r="1.5" fill="#36b37e" opacity="0.7">
+    <animateTransform attributeName="transform" type="translate" values="0,0; 13,13; 0,0" dur="3s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="73" cy="47" r="1.5" fill="#36b37e" opacity="0.7">
+    <animateTransform attributeName="transform" type="translate" values="0,0; -13,13; 0,0" dur="3s" repeatCount="indefinite" begin="1s"/>
+  </circle>
+  
+  <!-- Compass directions -->
+  <path d="M60 42 L60 46 M60 74 L60 78 M78 60 L74 60 M46 60 L42 60" stroke="#0052cc" stroke-width="1.5" opacity="0.4" stroke-linecap="round"/>
+  
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8f9fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e1e5e9;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>

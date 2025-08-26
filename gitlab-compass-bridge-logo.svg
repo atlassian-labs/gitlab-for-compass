@@ -1,0 +1,21 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="60" cy="60" r="58" fill="#f8f9fa" stroke="#e1e5e9" stroke-width="2"/>
+  
+  <!-- GitLab-inspired left element -->
+  <path d="M25 45 L35 65 L45 45 L35 35 Z" fill="#fc6d26" opacity="0.9"/>
+  
+  <!-- Compass-inspired right element -->
+  <circle cx="85" cy="60" r="12" fill="none" stroke="#0052cc" stroke-width="2.5"/>
+  <circle cx="85" cy="60" r="3" fill="#0052cc"/>
+  <path d="M85 48 L85 52 M85 68 L85 72 M97 60 L93 60 M77 60 L73 60" stroke="#0052cc" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Connection bridge -->
+  <path d="M47 55 Q60 45 73 55" fill="none" stroke="#36b37e" stroke-width="3" stroke-linecap="round"/>
+  <path d="M47 65 Q60 75 73 65" fill="none" stroke="#36b37e" stroke-width="3" stroke-linecap="round"/>
+  
+  <!-- Data flow dots -->
+  <circle cx="52" cy="58" r="2" fill="#36b37e" opacity="0.7"/>
+  <circle cx="60" cy="55" r="2" fill="#36b37e" opacity="0.5"/>
+  <circle cx="68" cy="58" r="2" fill="#36b37e" opacity="0.7"/>
+</svg>
