@@ -1,0 +1,40 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="60" cy="60" r="58" fill="#f8f9fa" stroke="#e1e5e9" stroke-width="2"/>
+  
+  <!-- GitLab side (left) - Orange geometric shape -->
+  <path d="M25 45 L35 35 L45 45 L35 55 Z" fill="#FC6D26"/>
+  <circle cx="35" cy="45" r="3" fill="#ffffff"/>
+  
+  <!-- Compass side (right) - Blue compass-like shape -->
+  <circle cx="85" cy="45" r="12" fill="#0052CC"/>
+  <path d="M85 37 L89 45 L85 53 L81 45 Z" fill="#ffffff"/>
+  <path d="M77 45 L85 41 L93 45 L85 49 Z" fill="#ffffff"/>
+  
+  <!-- Connection bridge - Gradient line with data flow -->
+  <defs>
+    <linearGradient id="bridgeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FC6D26;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0052CC;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Main bridge line -->
+  <line x1="47" y1="45" x2="73" y2="45" stroke="url(#bridgeGradient)" stroke-width="3"/>
+  
+  <!-- Data flow indicators -->
+  <circle cx="52" cy="45" r="2" fill="#FC6D26" opacity="0.8"/>
+  <circle cx="60" cy="45" r="2" fill="#6B7280" opacity="0.6"/>
+  <circle cx="68" cy="45" r="2" fill="#0052CC" opacity="0.8"/>
+  
+  <!-- Sync arrows -->
+  <path d="M55 40 L60 45 L55 50" stroke="#6B7280" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M65 50 L60 45 L65 40" stroke="#6B7280" stroke-width="2" fill="none" stroke-linecap="round"/>
+  
+  <!-- Bottom component indicators -->
+  <rect x="30" y="70" width="8" height="8" rx="2" fill="#FC6D26" opacity="0.6"/>
+  <rect x="42" y="70" width="8" height="8" rx="2" fill="#FC6D26" opacity="0.4"/>
+  <rect x="54" y="70" width="8" height="8" rx="2" fill="#6B7280" opacity="0.3"/>
+  <rect x="66" y="70" width="8" height="8" rx="2" fill="#0052CC" opacity="0.4"/>
+  <rect x="78" y="70" width="8" height="8" rx="2" fill="#0052CC" opacity="0.6"/>
+</svg>
