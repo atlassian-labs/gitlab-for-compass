@@ -67,7 +67,7 @@ export const ProgressScreen = ({
   useEffect(() => {
     if (!isImporting && importedProjects.length) {
       fireSuccessfullyImportedProjectsAnalytic().catch((error) => {
-        console.log(`Error while sending successfully imported repos: ${error}`);
+        console.error(`Error while sending successfully imported repos: ${error}`);
       });
     }
   }, [isImporting, importedProjects]);

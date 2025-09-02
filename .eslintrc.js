@@ -53,7 +53,7 @@ module.exports = {
     'react/jsx-filename-extension': 'off',
     'react/require-default-props': 'off',
     'import/prefer-default-export': 'off',
-    'no-console': 'off',
+    'no-console': ['error', { allow: ['warn', 'error'] }],
     'prettier/prettier': [
       'error',
       {

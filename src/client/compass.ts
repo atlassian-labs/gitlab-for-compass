@@ -113,7 +113,7 @@ export async function deleteExternalAlias(input: DeleteCompassComponentExternalA
   const { errors } = await graphqlGateway.compass.asApp().deleteExternalAlias(input);
 
   if (errors.length === 1 && errors[0].message === UNKNOWN_EXTERNAL_ALIAS_ERROR_MESSAGE) {
-    console.log('Could not find external alias to delete.');
+    console.warn('Could not find external alias to delete.');
     return;
   }
 

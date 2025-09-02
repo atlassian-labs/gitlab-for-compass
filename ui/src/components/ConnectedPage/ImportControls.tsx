@@ -77,7 +77,7 @@ export const ImportControls = () => {
 
   useEffect(() => {
     fetchLastSyncTime().catch((e) => {
-      console.log('Error while fetching last sync time', e);
+      console.error('Error while fetching last sync time', e);
     });
   }, []);
 

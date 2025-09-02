@@ -287,7 +287,7 @@ export const AuthPage = () => {
         }, 5000);
       })
       .catch(() => {
-        console.log('Error copying webhook URL');
+        console.error('Error copying webhook URL');
       });
   }, [webhookSetupConfig]);
 

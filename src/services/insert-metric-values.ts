@@ -6,6 +6,7 @@ export const insertMetricValues = async (metricsPayload: MetricsEventPayload, cl
   const startTime = Date.now();
   const { projectID, metrics } = metricsPayload;
 
+  // eslint-disable-next-line no-console
   console.log({
     message: 'Sending metrics to compass.',
     metricsCount: metrics.length,
@@ -23,6 +24,7 @@ export const insertMetricValues = async (metricsPayload: MetricsEventPayload, cl
     throw new Error(`Error inserting metric values: ${getFormattedErrors(settledResult)}`);
   }
 
+  // eslint-disable-next-line no-console
   console.log({
     message: 'insertMetricValues finished.',
     duration: Date.now() - startTime,

@@ -23,6 +23,7 @@ export const syncComponent = async (
 
   const startTime = Date.now();
   const externalSourceURL = getFileUrl(absoluteFilePath, event, trackingBranch);
+  // eslint-disable-next-line no-console
   console.log({ message: 'Syncing component with file' });
   let currentComponent: Component | null;
 
@@ -48,10 +49,11 @@ export const syncComponent = async (
       hasLastSyncEvent(currentComponent.dataManager) &&
       currentComponent.dataManager?.lastSyncEvent?.lastSyncErrors.length > 0
     ) {
-      console.log({ message: `Main sync with file failed for component ${currentComponent.id}` });
+      console.error({ message: `Main sync with file failed for component ${currentComponent.id}` });
       return;
     }
 
+    // eslint-disable-next-line no-console
     console.log({ message: `Main sync with file success for component ${currentComponent.id}` });
 
     const { topics } = await getProjectById(token, event.project.id);
@@ -78,6 +80,7 @@ export const syncComponent = async (
     return;
   }
 
+  // eslint-disable-next-line no-console
   console.log({
     message: 'syncComponentWithFile completed',
     duration: Date.now() - startTime,

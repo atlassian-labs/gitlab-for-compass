@@ -147,6 +147,7 @@ export const importRecentRepos = async ({
     const checkedDataWithExistingComponents = await checkForExistingImports(cloudId, groupToken, recentProjects.data);
     const projectsToImport = filterExistingProjects(recentProjects.data, checkedDataWithExistingComponents);
 
+    // eslint-disable-next-line no-console
     console.log(`Importing ${projectsToImport.length} recent repos that have not been imported yet`);
 
     const importResults = await importReposToCompass(cloudId, projectsToImport, groupToken);

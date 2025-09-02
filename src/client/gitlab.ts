@@ -79,6 +79,7 @@ export const callGitlab = async (
   const startTime = performance.now();
 
   try {
+    // eslint-disable-next-line no-console
     console.log(`Calling gitlab to ${apiOperation}`);
     const resp = await fetch(`${BASE_URL}${path}`, {
       method: config?.method || HttpMethod.GET,
@@ -90,6 +91,7 @@ export const callGitlab = async (
       body,
     });
 
+    // eslint-disable-next-line no-console
     console.log(`Gitlab response status: ${resp.status}`);
 
     if (resp.status === 204) {
@@ -111,6 +113,7 @@ export const callGitlab = async (
   } finally {
     const endTime = performance.now();
     const duration = endTime - startTime;
+    // eslint-disable-next-line no-console
     console.log(`GitLab API call to ${apiOperation} took ${duration.toFixed(2)} ms`);
   }
 };
@@ -133,6 +136,7 @@ export const getGroupsData = async (
 
   const { data } = await callGitlab(`getGroupsData`, `/api/v4/groups?${queryParams}`, groupAccessToken);
 
+  // eslint-disable-next-line no-console
   console.log('Number of groups fetched:', data.length);
 
   return data;
@@ -208,6 +212,7 @@ export const getGroupAccessTokens = async (
     groupToken,
   );
 
+  // eslint-disable-next-line no-console
   console.log('Number of active access tokens fetched:', groupAccessTokenList.length);
 
   return groupAccessTokenList;
@@ -475,6 +480,7 @@ export const getEnvironments = async (
     groupToken,
   );
 
+  // eslint-disable-next-line no-console
   console.log('Number of environments fetched:', data.length);
 
   return data;

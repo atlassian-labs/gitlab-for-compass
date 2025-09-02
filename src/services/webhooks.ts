@@ -16,11 +16,13 @@ const setupAndValidateForOwnerToken = async (
   existingWebhook: number,
   groupToken: string,
 ): Promise<number> => {
+  // eslint-disable-next-line no-console
   console.log('Setting up webhook for Owner token role');
 
   const isWebhookValid = existingWebhook && (await getGroupWebhook(groupId, existingWebhook, groupToken)) !== null;
 
   if (isWebhookValid) {
+    // eslint-disable-next-line no-console
     console.log('Using existing webhook');
     return existingWebhook;
   }
@@ -43,6 +45,7 @@ const setupAndValidateForOwnerToken = async (
     throw new Error(`Error setting webhookId or webhookSignature: ${getFormattedErrors(settledResult)}`);
   }
 
+  // eslint-disable-next-line no-console
   console.log('Successfully created webhook with owner token role');
   return webhookId;
 };
@@ -53,9 +56,11 @@ const setupAndValidateForMaintainerToken = async (
   isExistingWebhook?: boolean,
   webhookSignature?: string,
 ): Promise<number> => {
+  // eslint-disable-next-line no-console
   console.log('Setting up webhook for Maintainer token role');
 
   if (isExistingWebhook) {
+    // eslint-disable-next-line no-console
     console.log('Using existing webhook. Skipping webhook validation since Maintainer token role is not authorized');
     return webhookId;
   }
@@ -72,6 +77,7 @@ const setupAndValidateForMaintainerToken = async (
   // Mark in-progress webhook setup as completed.
   await storage.delete(`${STORAGE_KEYS.WEBHOOK_SETUP_IN_PROGRESS}${groupId}`);
 
+  // eslint-disable-next-line no-console
   console.log('Successfully created webhook with maintainer token role');
   return webhookId;
 };
@@ -81,6 +87,7 @@ export const setupAndValidateWebhook = async (
   webhookId?: number,
   webhookSecretToken?: string,
 ): Promise<number> => {
+  // eslint-disable-next-line no-console
   console.log('Setting up webhook');
   try {
     const [existingWebhookResult, tokenRoleResult, groupTokenResult] = await Promise.allSettled([
@@ -120,7 +127,7 @@ export const setupAndValidateWebhook = async (
       webhookSecretToken,
     );
   } catch (e) {
-    console.log('Error setting up webhook, ', e);
+    console.error('Error setting up webhook, ', e);
     return null;
   }
 };
@@ -144,6 +151,7 @@ export const deleteWebhook = async (groupId: number): Promise<void> => {
     }
 
     if (tokenRole.value === GitLabRoles.MAINTAINER) {
+      // eslint-disable-next-line no-console
       console.log('Skipping webhook deletion since Maintainer token role is not authorized');
       return;
     }
@@ -174,7 +182,7 @@ export const getWebhookSetupConfig = async (): Promise<WebhookSetupConfig> => {
 
   if (hasRejections(groupsResult)) {
     const errorMsg = `Error getting groupIds with in-progress webhooks setup: ${getFormattedErrors(groupsResult)}`;
-    console.log(errorMsg);
+    console.error(errorMsg);
     throw new Error(errorMsg);
   }
 
@@ -191,12 +199,14 @@ export const getWebhookSetupConfig = async (): Promise<WebhookSetupConfig> => {
 };
 
 export const rotateWebhook = async (groupId: number): Promise<void> => {
+  // eslint-disable-next-line no-console
   console.log('Start rotating webhook');
 
   try {
     const tokenRole = await storage.get(`${STORAGE_KEYS.TOKEN_ROLE_PREFIX}${groupId}`);
 
     if (tokenRole === GitLabRoles.MAINTAINER) {
+      // eslint-disable-next-line no-console
       console.log('Skipping webhook rotation since the Maintainer token role');
       return;
     }
@@ -208,6 +218,7 @@ export const rotateWebhook = async (groupId: number): Promise<void> => {
 
     await setupAndValidateWebhook(groupId);
 
+    // eslint-disable-next-line no-console
     console.log('Finish rotating webhook');
   } catch (e) {
     console.error('Error rotating webhook', e);

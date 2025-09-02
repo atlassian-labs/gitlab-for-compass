@@ -16,6 +16,7 @@ export const handlePipelineEvent = async (event: PipelineEvent, groupToken: stri
     const trackingBranch = await getTrackingBranchName(groupToken, projectId, defaultBranch);
 
     if (!isEventForTrackingBranch(event, trackingBranch)) {
+      // eslint-disable-next-line no-console
       console.log({
         message: 'Received push event for non-tracking branch. Ignoring event',
       });
@@ -23,6 +24,7 @@ export const handlePipelineEvent = async (event: PipelineEvent, groupToken: stri
     }
 
     await sendEventToCompass(webhookPipelineEventToCompassBuildEvent(event, cloudId));
+    // eslint-disable-next-line no-console
     console.log('Build event sent for pipeline.');
   } catch (e) {
     console.error('Error while sending pipeline event to Compass', e);

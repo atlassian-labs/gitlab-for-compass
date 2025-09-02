@@ -262,6 +262,7 @@ resolver.define('group/resyncCaC', async (req): Promise<ResolverResponse<{ hasNe
 
     let yamlFiles: BlobFileSearchResult[] = [];
 
+    // eslint-disable-next-line no-console
     console.log(`Fetching page ${page} of config-as-code files for group: ${groupId}.`);
 
     const { data, hasNextPage } = await getGroupCaCFiles({
@@ -272,6 +273,7 @@ resolver.define('group/resyncCaC', async (req): Promise<ResolverResponse<{ hasNe
 
     yamlFiles = data;
 
+    // eslint-disable-next-line no-console
     console.log(`Fetched ${yamlFiles.length} config-as-code-files for group: ${groupId}`);
 
     const yamlFilesData: FileData[] = [];

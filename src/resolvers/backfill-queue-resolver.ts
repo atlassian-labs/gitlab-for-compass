@@ -12,6 +12,7 @@ type ReqPayload = {
 
 resolver.define('dataProviderBackfill', async (req) => {
   const { cloudId } = req.payload as ReqPayload;
+  // eslint-disable-next-line no-console
   console.log({
     message: 'BACKFILL: dataProviderBackfill queue invocation',
     cloudId,
@@ -28,6 +29,7 @@ resolver.define('dataProviderBackfill', async (req) => {
 
   if (result.success) {
     await storage.set(STORAGE_KEYS.BACKFILL_PUSH_DATA_PROVIDER_VERSION, CURRENT_BACKFILL_VERSION);
+    // eslint-disable-next-line no-console
     console.log('BACKFILL: synchronize link associations success');
   } else {
     console.error('BACKFILL: synchronize link associations failure', result.errors);
