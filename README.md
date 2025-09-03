@@ -75,6 +75,9 @@ app:
 
 Documentation for the Compass GitLab integration can be found [here](https://developer.atlassian.com/cloud/compass/integrations/integrate-Compass-with-Gitlab/). For more information about building integrations on Compass, see [here](https://developer.atlassian.com/cloud/compass/integrations/get-started-integrating-with-Compass/).
 
+### Debugging
+
+To use console.log locally, you should use the debugLog method from the ./src/utils/debugLog.ts and set the forge variable APP_ENV to development
 
 ## Tests
 

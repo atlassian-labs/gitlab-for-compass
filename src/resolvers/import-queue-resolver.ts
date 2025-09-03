@@ -59,11 +59,13 @@ resolver.define('import', async (req) => {
     shouldOpenMR,
     ownerId,
   } = project;
+  // eslint-disable-next-line no-console
   console.log(`import queue: processing repository ${id}`);
 
   try {
     if (!hasComponent) {
       const component = await backOff(() => createComponent(cloudId, project), backOffConfig);
+      // eslint-disable-next-line no-console
       console.log(`GitLab project ${id} was imported. Compass component was created - ${component.id}.`);
 
       if (component.id && project.name) {
@@ -100,6 +102,7 @@ resolver.define('import', async (req) => {
         await setFailedRepositoriesToStore(project);
       } else {
         internalMetrics.counter('compass.gitlab.import.end.success').incr();
+        // eslint-disable-next-line no-console
         console.log(
           `GitLab project was imported.
         Compass component - ${updatedComponent.id} was updated.`,

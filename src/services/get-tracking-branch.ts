@@ -13,6 +13,7 @@ export const getTrackingBranchName = async (
 
     return branchName;
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.log('Non-default branch not found.', e.message);
     return defaultBranch;
   }
@@ -33,6 +34,7 @@ export const getProjectTrackingBranch = async (
   try {
     return await getProjectBranch(groupToken, projectId, branchName);
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.log('branch not found.', e.message);
     return null;
   }

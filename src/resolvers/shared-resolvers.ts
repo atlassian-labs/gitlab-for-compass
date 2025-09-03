@@ -54,6 +54,7 @@ export const groupsAllExisting = async (): Promise<ResolverResponse<GitlabAPIGro
 };
 
 export const connectedGroupsInfo = async (): Promise<ResolverResponse<GitlabAPIGroup[]>> => {
+  // eslint-disable-next-line no-console
   console.log('Fetching connected groups info');
   try {
     const connectedGroups = await getConnectedGroups();
@@ -65,7 +66,7 @@ export const connectedGroupsInfo = async (): Promise<ResolverResponse<GitlabAPIG
 
     return { success: true, data: connectedGroups };
   } catch (e) {
-    console.log('Error fetching connected groups info', e);
+    console.error('Error fetching connected groups info', e);
     return {
       success: false,
       errors: [{ message: 'Get connected groups failed.', errorType: AuthErrorTypes.UNEXPECTED_ERROR }],
@@ -89,6 +90,7 @@ export const appId = (): ResolverResponse<string> => {
 };
 
 export const webhookSetupConfig = async (): Promise<ResolverResponse<WebhookSetupConfig>> => {
+  // eslint-disable-next-line no-console
   console.log('Fetching webhook setup config');
   try {
     const config = await getWebhookSetupConfig();
@@ -97,7 +99,7 @@ export const webhookSetupConfig = async (): Promise<ResolverResponse<WebhookSetu
       data: config,
     };
   } catch (e) {
-    console.log('Error fetching webhook setup config', e);
+    console.error('Error fetching webhook setup config', e);
     return {
       success: false,
       errors: [{ message: e.message, errorType: DefaultErrorTypes.UNEXPECTED_ERROR }],
@@ -129,6 +131,7 @@ export const importProject = async (req: any): Promise<ResolverResponse> => {
     context: { cloudId },
   } = req;
 
+  // eslint-disable-next-line no-console
   console.log({
     message: 'Begin importing projects',
     count: projectsReadyToImport.length,

@@ -50,6 +50,7 @@ function gitlabCommitToCompassEvent(
 export const sendPushEventToCompass = async (pushEvent: PushEvent, cloudId: string): Promise<void> => {
   const startTime = Date.now();
 
+  // eslint-disable-next-line no-console
   console.log({
     message: 'Sending pushes to compass',
     pushCount: pushEvent.commits.length,
@@ -61,11 +62,13 @@ export const sendPushEventToCompass = async (pushEvent: PushEvent, cloudId: stri
   });
 
   if (events.length < 1) {
+    // eslint-disable-next-line no-console
     console.log({ message: 'No valid push events to send to Compass' });
     return;
   }
 
   await sendEventToCompass(events);
+  // eslint-disable-next-line no-console
   console.log({
     message: 'Push Event Web trigger finished',
     duration: Date.now() - startTime,

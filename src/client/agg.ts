@@ -5,6 +5,7 @@ import { AggOperation } from '../types';
 export const aggQuery = async (request: AggOperation) => {
   const response = await api.asApp().requestGraph(request.query, request.variables);
   const responseBody = await response.json();
+  // eslint-disable-next-line no-console
   console.log({
     message: 'AGG request',
     requestName: request.name,

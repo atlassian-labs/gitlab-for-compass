@@ -87,6 +87,7 @@ export const findMatchingFiles = async (payload: FindMatchingFilesPayload): Prom
       payload.fileName.equalsOneOf,
     );
     if (matchingTopLevelFiles.length > 0) {
+      // eslint-disable-next-line no-console
       console.log(`Found ${matchingTopLevelFiles.length} matching files in depth level 0`);
       foundMatchingFiles = [...foundMatchingFiles, ...matchingTopLevelFiles];
     }
@@ -94,10 +95,12 @@ export const findMatchingFiles = async (payload: FindMatchingFilesPayload): Prom
     nextLevelDirectoriesToCheck = getDirectories(allTopLevelFiles);
     for (let i = 0; i < LEVELS_TO_SEARCH - 1; i += 1) {
       let tempNextLevelDirectoriesToCheck: ProjectFile[] = [];
+      // eslint-disable-next-line no-console
       console.log(`Searching ${nextLevelDirectoriesToCheck.length} directories in depth level ${i + 1}`);
 
       for (const directory of nextLevelDirectoriesToCheck) {
         const allProjectFiles = await callListFiles(groupToken, project.id, directory.path);
+        // eslint-disable-next-line no-console
         console.log(`Found ${allProjectFiles.length} project files in depth level ${i + 1}`);
 
         const matchingFiles = getMatchingFiles(
@@ -106,6 +109,7 @@ export const findMatchingFiles = async (payload: FindMatchingFilesPayload): Prom
           payload.fileName.equalsOneOf,
         );
         if (matchingFiles.length > 0) {
+          // eslint-disable-next-line no-console
           console.log(`Found ${matchingFiles.length} matching files in depth level ${i + 1}`);
           foundMatchingFiles = [...foundMatchingFiles, ...matchingFiles];
         }
@@ -126,7 +130,7 @@ export const findMatchingFiles = async (payload: FindMatchingFilesPayload): Prom
       statusCode: 200,
     };
   } catch (e) {
-    console.log('Failed to find matching files', e.message);
+    console.error('Failed to find matching files', e.message);
     return {
       success: false,
       errorMessage: e.message,

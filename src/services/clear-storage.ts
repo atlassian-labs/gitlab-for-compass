@@ -13,12 +13,15 @@ const getLastFailedProjectsKeys = async (): Promise<string[]> => {
 };
 
 const clearStorageSecretsForGroup = async (groupId: string): Promise<void> => {
+  // eslint-disable-next-line no-console
   console.log('Clearing storage secrets start');
   await storage.deleteSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`);
+  // eslint-disable-next-line no-console
   console.log('Clearing storage secrets end');
 };
 
 const clearStorageEntriesForGroup = async (groupId: string): Promise<void> => {
+  // eslint-disable-next-line no-console
   console.log('Clearing storage entries start');
 
   const groupKeys = [
@@ -30,10 +33,12 @@ const clearStorageEntriesForGroup = async (groupId: string): Promise<void> => {
   ];
 
   await deleteKeysFromStorageByChunks(groupKeys, CLEAR_STORAGE_CHUNK_SIZE, CLEAR_STORAGE_DELAY);
+  // eslint-disable-next-line no-console
   console.log('Clearing storage entries end');
 };
 
 export const clearImportKeys = async (): Promise<void> => {
+  // eslint-disable-next-line no-console
   console.log('Clearing storage import keys start');
 
   const importKeys = [
@@ -44,6 +49,7 @@ export const clearImportKeys = async (): Promise<void> => {
   ];
 
   await deleteKeysFromStorageByChunks(importKeys, CLEAR_STORAGE_CHUNK_SIZE, CLEAR_STORAGE_DELAY);
+  // eslint-disable-next-line no-console
   console.log('Clearing storage import keys end');
 };
 

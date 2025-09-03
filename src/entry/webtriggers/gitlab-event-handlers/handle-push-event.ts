@@ -19,10 +19,12 @@ export const handlePushEvent = async (event: PushEvent, groupToken: string, clou
     const trackingBranch = await getTrackingBranchName(groupToken, event.project.id, event.project.default_branch);
 
     if (!isEventForTrackingBranch(event, trackingBranch)) {
+      // eslint-disable-next-line no-console
       console.log('Received push event for non-tracking branch. Ignoring event');
       return;
     }
 
+    // eslint-disable-next-line no-console
     console.log('Received push event for tracking branch. Processing event');
 
     let commitDiffs: CommitFileDiff[] = [];
@@ -43,8 +45,10 @@ export const handlePushEvent = async (event: PushEvent, groupToken: string, clou
     );
 
     if (componentsToCreate.length === 0 && componentsToUpdate.length === 0 && componentsToUnlink.length === 0) {
+      // eslint-disable-next-line no-console
       console.log('No config as code file updates in push event');
     } else {
+      // eslint-disable-next-line no-console
       console.log('Performing config as code file updates', {
         createdFiles: componentsToCreate.length,
         updatedFiles: componentsToUpdate.length,
@@ -105,6 +109,7 @@ export const handlePushEvent = async (event: PushEvent, groupToken: string, clou
 
     if (isPackageDependenciesM3Enabled()) {
       if (commitDiffs.length === 0) {
+        // eslint-disable-next-line no-console
         console.log('No changes in commit, skipping resync of repo files');
       } else {
         const changedFiles = commitDiffs.map((diff) => {
@@ -145,6 +150,7 @@ export const handlePushEvent = async (event: PushEvent, groupToken: string, clou
 
         const startTime = Date.now();
         await resyncRepoFiles(resyncRepoFilesInput);
+        // eslint-disable-next-line no-console
         console.log({
           message: 'Resyncing repo files finished',
           duration: Date.now() - startTime,

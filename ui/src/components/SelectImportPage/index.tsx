@@ -179,7 +179,7 @@ export const SelectImportPage = () => {
 
   useEffect(() => {
     fetchGroups().catch((e) => {
-      console.log('Error while fetching groups', e);
+      console.error('Error while fetching groups', e);
     });
     startOnboarding();
   }, []);

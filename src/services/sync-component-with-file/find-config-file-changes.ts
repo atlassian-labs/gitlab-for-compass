@@ -121,6 +121,7 @@ export const findConfigAsCodeFileChanges = async (
   const { added, removed, modified } = groupDiffsByChangeType(filesDiffs);
 
   if (added.length === 0 && removed.length === 0 && modified.length === 0) {
+    // eslint-disable-next-line no-console
     console.log('No file changes in push event. Returning.');
     return {
       componentsToCreate: [],
@@ -128,6 +129,7 @@ export const findConfigAsCodeFileChanges = async (
       componentsToUnlink: [],
     };
   }
+  // eslint-disable-next-line no-console
   console.log(
     `Found ${added.length} added diffs, ${removed.length} removed diffs, and ${modified.length} modified diffs in push event. Now processing what files might have been moved or renamed.`,
   );

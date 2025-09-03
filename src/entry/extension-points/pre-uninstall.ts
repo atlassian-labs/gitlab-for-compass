@@ -12,6 +12,7 @@ type PreUninstallPayload = {
 export default async function preUninstall(payload: PreUninstallPayload): Promise<void> {
   const { cloudId } = payload.context;
 
+  // eslint-disable-next-line no-console
   console.log(`Performing preUninstall for site ${cloudId}`);
 
   const forgeAppId = getForgeAppId();

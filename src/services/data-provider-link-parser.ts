@@ -83,7 +83,7 @@ export const getProjectDataFromUrl = async (
     }
     return { project, groupToken, groupId };
   } catch (e) {
-    console.log('Data provider link parser failed', e.message);
+    console.error('Data provider link parser failed', e.message);
     return null;
   }
 };

@@ -68,7 +68,7 @@ export const dataProvider = async (
     backfillData.metrics.mrCycleTime = mrCycleTime;
     backfillData.metrics.openMergeRequestsCount = openMergeRequestsCount;
   } catch (err) {
-    console.log(`data provider error: ${err.message}`);
+    console.error(`data provider error: ${err.message}`);
     const invocationErrorOptions = { backoffTimeInSeconds: 3600 };
 
     if (err instanceof GitlabHttpMethodError) {

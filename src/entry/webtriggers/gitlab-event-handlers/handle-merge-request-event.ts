@@ -10,6 +10,7 @@ export const handleMergeRequestEvent = async (
   groupToken: string,
   cloudId: string,
 ): Promise<void> => {
+  // eslint-disable-next-line no-console
   console.log('Merge request event received');
   const {
     project: { id, default_branch: defaultBranch },

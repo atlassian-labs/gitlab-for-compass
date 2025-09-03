@@ -14,12 +14,13 @@ export default async function dataProviderBackfill(req: WebtriggerRequest): Prom
   const queue = new Queue({ key: 'data-provider-backfill' });
 
   if (!isCompassPushEventEnabled()) {
-    console.log('Compass push event is not enabled');
+    console.warn('Compass push event is not enabled');
     return;
   }
 
   const backfillVersion = await getBackfillVersion();
   if (backfillVersion >= CURRENT_BACKFILL_VERSION) {
+    // eslint-disable-next-line no-console
     console.log(`Skipping backfill as it already has the latest version (v${backfillVersion})`);
     return;
   }
