@@ -57,22 +57,17 @@
     jsonpointer "^5.0.0"
     urijs "^1.19.10"
 
-"@atlassian/forge-graphql-types@4.2.0":
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/@atlassian/forge-graphql-types/-/forge-graphql-types-4.2.0.tgz#c5a3529fe3440d84fdc20977137b32e667776a51"
-  integrity sha512-VqOa/Qpb447q3rxch2NIKWd5a9RHOzi3+1tnSWJKQITTAbx2GDn32j1Q02ApKOi/bcDaWNyzKKVXrcRp4KyPog==
+"@atlassian/forge-graphql-types@4.2.2", "@atlassian/forge-graphql-types@^4.2.2":
+  version "4.2.2"
+  resolved "https://registry.yarnpkg.com/@atlassian/forge-graphql-types/-/forge-graphql-types-4.2.2.tgz#096713768290d13ca21f3c158702048689de3c1c"
+  integrity sha512-aPjg6jufwIihdNTPttyQHMy0pqtTCj8x0fmuGyS/Dg26mDyT5JO02PBhviW4PEod+bgWjBGWs5Hi7XsmnM06BQ==
 
-"@atlassian/forge-graphql-types@^4.2.1":
-  version "4.2.1"
-  resolved "https://registry.yarnpkg.com/@atlassian/forge-graphql-types/-/forge-graphql-types-4.2.1.tgz#4e6aa114af1f48d02b6d6c767f9e58905660c55d"
-  integrity sha512-bmYysBHv2zjXEXgcvXvAvPphjafW6xGuEkra5EOGVt7xa9Ta20E9ja93YSB20wOp3+xRBh2vPu2gUg+K2B9BXg==
-
-"@atlassian/forge-graphql@16.2.1":
-  version "16.2.1"
-  resolved "https://registry.yarnpkg.com/@atlassian/forge-graphql/-/forge-graphql-16.2.1.tgz#9f0783087e1bd91c0ee40001b753b58ae1c17c2a"
-  integrity sha512-bZL7Er+oQBoI+ffOqA4VV/pa82rqx5elc6Vl8tOa64fmVIfbox4EbwSruy9FRS2q2vl0t7VtLt3M9x/SLTqrlQ==
+"@atlassian/forge-graphql@16.2.3":
+  version "16.2.3"
+  resolved "https://registry.yarnpkg.com/@atlassian/forge-graphql/-/forge-graphql-16.2.3.tgz#076a1474e94c21f34a618966722a0c0850c4ae87"
+  integrity sha512-FEw9eq6r0PaUuxzfJxEfklmaK3qS6pbj/WOinH6Kz/vOiUScYV/gzkghNxSLVq7l9dL+1OFvtFMCQQvMQ2vxhg==
   dependencies:
-    "@atlassian/forge-graphql-types" "^4.2.1"
+    "@atlassian/forge-graphql-types" "^4.2.2"
     "@forge/api" "^5.0.0"
     "@forge/metrics" "0.2.25"
     fs "^0.0.1-security"
