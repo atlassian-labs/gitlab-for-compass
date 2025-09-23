@@ -25,11 +25,12 @@ resolver.define('resyncConfigAsCode', async ({ payload }) => {
   const groupToken = await storage.getSecret(`${STORAGE_SECRETS.GROUP_TOKEN_KEY_PREFIX}${groupId}`);
 
   const project = await getProjectById(groupToken, projectId);
+  const fileName = getFileNameFromPath(path);
 
   const fileContents = await getFileContent(groupToken, projectId, path, ref)
     .then((componentYaml) => ({
       componentYaml,
-      fileName: getFileNameFromPath(path),
+      fileName,
       filePath: `/${path}`,
     }))
     .catch((err) => {
@@ -55,6 +56,7 @@ resolver.define('resyncConfigAsCode', async ({ payload }) => {
       configFileMetadata: {
         configFileAction: ConfigFileActions.UPDATE,
         newPath: path,
+        oldPath: path,
         deduplicationId: projectId.toString(),
       },
       ...commonSyncParams,
