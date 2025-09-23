@@ -280,7 +280,7 @@ resolver.define('group/resyncCaC', async (req): Promise<ResolverResponse<{ hasNe
 
     if (yamlFiles.length > 0) {
       for (const yamlFile of yamlFiles) {
-        if (checkCaCFilename) {
+        if (checkCaCFilename(yamlFile.filename)) {
           yamlFilesData.push({
             path: yamlFile.path,
             projectId: yamlFile.project_id,
