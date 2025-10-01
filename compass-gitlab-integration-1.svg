@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Compass GitLab Integration logo variant 1">
+  <defs>
+    <style>
+      .blue{fill:none;stroke:#2684FF;stroke-width:12;stroke-linecap:round;stroke-linejoin:round}
+      .orange{fill:#FC6D26}
+      .orange-stroke{fill:none;stroke:#FC6D26;stroke-width:8;stroke-linecap:round;stroke-linejoin:round}
+    </style>
+  </defs>
+  <!-- Outer compass ring -->
+  <circle class="blue" cx="100" cy="100" r="70"/>
+  <!-- Compass needle: two minimal triangles forming a diamond, hinting at direction & dual-systems -->
+  <g transform="rotate(35 100 100)">
+    <polygon points="100,55 112,100 100,145 88,100" fill="#2684FF"/>
+    <polygon points="100,70 108,100 100,130 92,100" fill="#ffffff" opacity="0.8"/>
+  </g>
+  <!-- Link to an external node (GitLab) -->
+  <line class="orange-stroke" x1="118" y1="82" x2="155" y2="45"/>
+  <polygon class="orange" points="155,45 165,55 155,65 145,55"/>
+  <!-- Subtle center dot using negative space (no fill) achieved by overlaying a white circle to break the ring -->
+  <circle cx="100" cy="100" r="6" fill="#ffffff"/>
+</svg>

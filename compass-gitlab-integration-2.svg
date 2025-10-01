@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Compass GitLab Integration logo variant 2">
+  <defs>
+    <style>
+      .blue{fill:none;stroke:#2684FF;stroke-width:12;stroke-linecap:round;stroke-linejoin:round}
+      .orange{fill:none;stroke:#FC6D26;stroke-width:12;stroke-linecap:round;stroke-linejoin:round}
+    </style>
+  </defs>
+  <!-- Split orbit arcs symbolizing two systems circling a shared source of truth -->
+  <path class="blue" d="M30 100 A70 70 0 0 1 100 30"/>
+  <path class="orange" d="M170 100 A70 70 0 0 1 100 170"/>
+
+  <!-- Bi-directional compass needle (two simple triangles) -->
+  <g transform="rotate(35 100 100)">
+    <polygon points="100,55 112,100 100,145" fill="#2684FF"/>
+    <polygon points="100,55 88,100 100,145" fill="#FC6D26"/>
+  </g>
+
+  <!-- Subtle center cutout using negative space -->
+  <circle cx="100" cy="100" r="6" fill="#ffffff"/>
+
+  <!-- Small outer sync nodes -->
+  <circle cx="160" cy="60" r="5" fill="#FC6D26"/>
+  <circle cx="40" cy="140" r="5" fill="#2684FF"/>
+</svg>

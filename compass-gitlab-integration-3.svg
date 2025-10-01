@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Compass GitLab Integration logo variant 3">
+  <defs>
+    <style>
+      .blue{fill:none;stroke:#2684FF;stroke-width:12;stroke-linecap:round;stroke-linejoin:round}
+      .orange{fill:none;stroke:#FC6D26;stroke-width:12;stroke-linecap:round;stroke-linejoin:round}
+    </style>
+  </defs>
+  <!-- Interlocking rings to represent integration/connection -->
+  <circle class="blue" cx="85" cy="100" r="55"/>
+  <circle class="orange" cx="115" cy="100" r="55"/>
+
+  <!-- Minimal compass needle at center using negative space break with an overlay -->
+  <g transform="rotate(35 100 100)">
+    <polygon points="100,60 110,100 100,140 90,100" fill="#2684FF"/>
+    <polygon points="100,70 107,100 100,130 93,100" fill="#ffffff" opacity="0.9"/>
+  </g>
+
+  <!-- Tiny core dot -->
+  <circle cx="100" cy="100" r="5" fill="#ffffff"/>
+</svg>
