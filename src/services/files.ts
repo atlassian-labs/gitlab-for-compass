@@ -24,7 +24,7 @@ export const getGroupCaCFiles = async ({
       search: searchQuery,
     });
 
-    const hasNextPage = headers.get(GitLabHeaders.PAGINATION_NEXT_PAGE) !== undefined;
+    const hasNextPage = Boolean(headers.get(GitLabHeaders.PAGINATION_NEXT_PAGE));
 
     return {
       data,
