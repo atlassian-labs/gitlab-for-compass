@@ -240,14 +240,6 @@ resolver.define('group/resyncCaC', async (req): Promise<ResolverResponse<{ hasNe
 
     const dateNowInMs = Date.now();
 
-    if (!lastUpdate) {
-      await storage.set(`${STORAGE_KEYS.CAC_MANUAL_SYNC_PREFIX}${cloudId}_${groupId}`, dateNowInMs);
-    }
-
-    if (lastUpdate && dateNowInMs - lastUpdate > minutesToMilliseconds(MINUTES_LOCK)) {
-      await storage.set(`${STORAGE_KEYS.CAC_MANUAL_SYNC_PREFIX}${cloudId}_${groupId}`, dateNowInMs);
-    }
-
     if (lastUpdate && dateNowInMs - lastUpdate <= minutesToMilliseconds(MINUTES_LOCK)) {
       return {
         success: true,
@@ -291,6 +283,14 @@ resolver.define('group/resyncCaC', async (req): Promise<ResolverResponse<{ hasNe
       }
 
       await resyncConfigAsCode(cloudId, yamlFilesData);
+    }
+
+    if (!lastUpdate && !hasNextPage) {
+      await storage.set(`${STORAGE_KEYS.CAC_MANUAL_SYNC_PREFIX}${cloudId}_${groupId}`, dateNowInMs);
+    }
+
+    if (lastUpdate && dateNowInMs - lastUpdate > minutesToMilliseconds(MINUTES_LOCK) && !hasNextPage) {
+      await storage.set(`${STORAGE_KEYS.CAC_MANUAL_SYNC_PREFIX}${cloudId}_${groupId}`, dateNowInMs);
     }
 
     return {
