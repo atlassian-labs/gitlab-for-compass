@@ -1,0 +1,48 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Circular gradient background -->
+  <defs>
+    <radialGradient id="bgGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#F8FAFC;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F1F5F9;stop-opacity:1" />
+    </radialGradient>
+    <linearGradient id="bridgeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FC6D26;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#0052CC;stop-opacity:0.8" />
+    </linearGradient>
+  </defs>
+  
+  <circle cx="60" cy="60" r="55" fill="url(#bgGradient)" stroke="#CBD5E1" stroke-width="1"/>
+  
+  <!-- GitLab geometric form (left) -->
+  <g transform="translate(25, 45)">
+    <path d="M15 5 L25 15 L15 25 L5 15 Z" fill="#FC6D26"/>
+    <path d="M15 5 L20 10 L15 15 L10 10 Z" fill="#FFFFFF" opacity="0.3"/>
+  </g>
+  
+  <!-- Compass form (right) -->
+  <g transform="translate(75, 45)">
+    <circle cx="0" cy="15" r="12" fill="none" stroke="#0052CC" stroke-width="2"/>
+    <circle cx="0" cy="15" r="3" fill="#0052CC"/>
+    <path d="M0 6 L0 24 M-9 15 L9 15" stroke="#0052CC" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+    <!-- Cardinal points -->
+    <circle cx="0" cy="6" r="1" fill="#0052CC"/>
+    <circle cx="9" cy="15" r="1" fill="#0052CC"/>
+    <circle cx="0" cy="24" r="1" fill="#0052CC"/>
+    <circle cx="-9" cy="15" r="1" fill="#0052CC"/>
+  </g>
+  
+  <!-- Integration bridge with data flow -->
+  <rect x="45" y="58" width="30" height="4" fill="url(#bridgeGradient)" rx="2"/>
+  
+  <!-- Data sync indicators -->
+  <g transform="translate(60, 75)">
+    <circle cx="-15" cy="0" r="2" fill="#10B981"/>
+    <circle cx="-5" cy="0" r="2" fill="#10B981" opacity="0.7"/>
+    <circle cx="5" cy="0" r="2" fill="#10B981" opacity="0.5"/>
+    <circle cx="15" cy="0" r="2" fill="#10B981" opacity="0.3"/>
+  </g>
+  
+  <!-- Subtle accent elements -->
+  <path d="M30 30 Q35 25 40 30" stroke="#FC6D26" stroke-width="1.5" fill="none" opacity="0.4"/>
+  <path d="M80 85 Q85 80 90 85" stroke="#0052CC" stroke-width="1.5" fill="none" opacity="0.4"/>
+</svg>

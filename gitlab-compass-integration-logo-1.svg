@@ -1,0 +1,23 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="60" cy="60" r="56" fill="#F8F9FA" stroke="#E5E7EB" stroke-width="2"/>
+  
+  <!-- GitLab inspired geometric elements (left side) -->
+  <path d="M25 45 L35 35 L45 45 L35 55 Z" fill="#FC6D26" opacity="0.9"/>
+  <path d="M30 60 L40 50 L50 60 L40 70 Z" fill="#FC6D26" opacity="0.7"/>
+  
+  <!-- Compass inspired directional elements (right side) -->
+  <circle cx="85" cy="40" r="8" fill="#0052CC" opacity="0.9"/>
+  <path d="M85 32 L85 48 M77 40 L93 40" stroke="#0052CC" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Integration bridge/connection -->
+  <path d="M50 50 Q60 45 70 50" stroke="#6B7280" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <circle cx="50" cy="50" r="3" fill="#FC6D26"/>
+  <circle cx="70" cy="50" r="3" fill="#0052CC"/>
+  
+  <!-- Data flow indicators -->
+  <path d="M55 65 L65 65" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"/>
+  <path d="M55 75 L75 75" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="67" cy="65" r="1.5" fill="#9CA3AF"/>
+  <circle cx="77" cy="75" r="1.5" fill="#9CA3AF"/>
+</svg>

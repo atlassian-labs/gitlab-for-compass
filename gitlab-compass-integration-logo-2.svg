@@ -1,0 +1,26 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Hexagonal background inspired by GitLab -->
+  <path d="M60 10 L90 30 L90 70 L60 90 L30 70 L30 30 Z" fill="#FFFFFF" stroke="#E5E7EB" stroke-width="2"/>
+  
+  <!-- GitLab diamond pattern -->
+  <path d="M45 35 L55 25 L65 35 L55 45 Z" fill="#FC6D26"/>
+  <path d="M40 50 L50 40 L60 50 L50 60 Z" fill="#FC6D26" opacity="0.8"/>
+  
+  <!-- Compass navigation elements -->
+  <circle cx="75" cy="35" r="6" fill="none" stroke="#0052CC" stroke-width="2"/>
+  <circle cx="75" cy="35" r="2" fill="#0052CC"/>
+  <path d="M75 29 L75 41 M69 35 L81 35" stroke="#0052CC" stroke-width="1.5" stroke-linecap="round"/>
+  
+  <!-- Sync/integration arrows -->
+  <path d="M55 55 Q65 50 75 55" stroke="#6366F1" stroke-width="2.5" fill="none"/>
+  <path d="M72 52 L75 55 L72 58" stroke="#6366F1" stroke-width="2" fill="none" stroke-linecap="round"/>
+  
+  <!-- Metrics/data visualization -->
+  <rect x="35" y="70" width="4" height="8" fill="#10B981" rx="1"/>
+  <rect x="42" y="68" width="4" height="10" fill="#10B981" rx="1"/>
+  <rect x="49" y="65" width="4" height="13" fill="#10B981" rx="1"/>
+  
+  <!-- Connection nodes -->
+  <circle cx="60" cy="60" r="2" fill="#6366F1"/>
+  <circle cx="75" cy="65" r="2" fill="#0052CC"/>
+</svg>
