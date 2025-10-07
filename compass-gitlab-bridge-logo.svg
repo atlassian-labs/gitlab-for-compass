@@ -1,0 +1,26 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="60" cy="60" r="58" fill="none" stroke="#E1E8ED" stroke-width="2"/>
+  
+  <!-- GitLab-inspired left element (simplified fox/tanuki) -->
+  <path d="M25 45 L35 35 L45 45 L35 55 Z" fill="#FC6D26"/>
+  <path d="M25 45 L30 60 L40 60 L45 45" fill="#E24329"/>
+  
+  <!-- Compass-inspired right element (navigation/direction) -->
+  <circle cx="85" cy="45" r="15" fill="none" stroke="#0052CC" stroke-width="2"/>
+  <path d="M85 35 L85 55 M75 45 L95 45" stroke="#0052CC" stroke-width="2"/>
+  <circle cx="85" cy="45" r="3" fill="#0052CC"/>
+  
+  <!-- Connection bridge -->
+  <path d="M45 50 Q60 35 75 50" fill="none" stroke="#36B37E" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="45" cy="50" r="2" fill="#36B37E"/>
+  <circle cx="75" cy="50" r="2" fill="#36B37E"/>
+  
+  <!-- Data flow indicators -->
+  <circle cx="55" cy="42" r="1.5" fill="#36B37E" opacity="0.7"/>
+  <circle cx="65" cy="42" r="1.5" fill="#36B37E" opacity="0.9"/>
+  
+  <!-- Integration symbol at bottom -->
+  <rect x="50" y="75" width="20" height="3" rx="1.5" fill="#253858"/>
+  <rect x="55" y="82" width="10" height="2" rx="1" fill="#253858" opacity="0.6"/>
+</svg>
