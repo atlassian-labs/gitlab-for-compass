@@ -62,10 +62,10 @@
   resolved "https://registry.yarnpkg.com/@atlassian/forge-graphql-types/-/forge-graphql-types-4.2.2.tgz#096713768290d13ca21f3c158702048689de3c1c"
   integrity sha512-aPjg6jufwIihdNTPttyQHMy0pqtTCj8x0fmuGyS/Dg26mDyT5JO02PBhviW4PEod+bgWjBGWs5Hi7XsmnM06BQ==
 
-"@atlassian/forge-graphql@16.2.3":
-  version "16.2.3"
-  resolved "https://registry.yarnpkg.com/@atlassian/forge-graphql/-/forge-graphql-16.2.3.tgz#076a1474e94c21f34a618966722a0c0850c4ae87"
-  integrity sha512-FEw9eq6r0PaUuxzfJxEfklmaK3qS6pbj/WOinH6Kz/vOiUScYV/gzkghNxSLVq7l9dL+1OFvtFMCQQvMQ2vxhg==
+"@atlassian/forge-graphql@16.2.5":
+  version "16.2.5"
+  resolved "https://registry.yarnpkg.com/@atlassian/forge-graphql/-/forge-graphql-16.2.5.tgz#6b06536f3d31e38c716f1063e93bfc9e704a63d8"
+  integrity sha512-GvsNQVtzOVI841r6nZ76ko3HpUdeqqauTmB8GiQDuT8WtqsAx7PK3ftT0aKnHAy2ZW9oqGWzu08g3KUUtPfrRQ==
   dependencies:
     "@atlassian/forge-graphql-types" "^4.2.2"
     "@forge/api" "^5.0.0"

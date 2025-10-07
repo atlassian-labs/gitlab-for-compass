@@ -34,7 +34,7 @@
     "typescript": "~4.5.5"
   },
   "dependencies": {
-    "@atlassian/forge-graphql": "16.2.3",
+    "@atlassian/forge-graphql": "16.2.5",
     "@atlassian/forge-graphql-types": "4.2.2",
     "@forge/api": "^4.1.1",
     "@forge/bridge": "^3.5.0",
