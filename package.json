@@ -41,7 +41,6 @@
     "@forge/events": "^0.9.5",
     "@forge/metrics": "0.2.21",
     "@forge/resolver": "^1.6.2",
-    "@forge/ui": "^1.1.0",
     "exponential-backoff": "^3.1.0",
     "jest-mock": "^28.1.0",
     "js-yaml": "^4.1.0",
