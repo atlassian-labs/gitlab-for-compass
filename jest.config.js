@@ -4,6 +4,7 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   testPathIgnorePatterns: ['/node_modules/', '/typings/', '/support/', '/dist/', '/fixtures/', '/helpers/'],
+  coveragePathIgnorePatterns: ['/graphqlQuery/', '/models/', '/__snapshots__/', '/fixtures/'],
   collectCoverageFrom: ['src/**/*'],
   globals: {
     'ts-jest': {

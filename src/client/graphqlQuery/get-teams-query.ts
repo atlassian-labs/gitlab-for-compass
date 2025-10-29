@@ -1,4 +1,4 @@
-import { TEAMS_AMOUNT } from '../constants';
+import { TEAMS_AMOUNT } from '../../constants';
 
 export function getTeamsQuery(organizationId: string, siteId: string, accountId?: string, searchValue?: string) {
   const memberIds = accountId ? [accountId] : [];

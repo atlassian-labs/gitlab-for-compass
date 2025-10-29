@@ -54,3 +54,8 @@ Thumbs.db
 
 # Test reports
 test-results/
+
+# Sonarqube local scans
+.scannerwork/
+
+coverage/

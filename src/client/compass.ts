@@ -20,9 +20,9 @@ import { ImportableProject, COMPASS_GATEWAY_MESSAGES, Metric, Team } from '../ty
 import { EXTERNAL_SOURCE, IMPORT_LABEL, MAX_LABELS_LENGTH } from '../constants';
 import { UNKNOWN_EXTERNAL_ALIAS_ERROR_MESSAGE } from '../models/error-messages';
 import { AggClientError, GraphqlGatewayError } from '../models/errors';
-import { getTenantContextQuery } from './get-tenat-context-query';
+import { getTenantContextQuery } from './graphqlQuery/get-tenat-context-query';
 import { aggQuery } from './agg';
-import { getTeamsQuery } from './get-teams-query';
+import { getTeamsQuery } from './graphqlQuery/get-teams-query';
 import { formatLabels } from '../utils/labels-utils';
 import { convertToCompassSlug } from '../utils/component-slug';
 
