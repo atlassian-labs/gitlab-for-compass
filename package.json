@@ -63,9 +63,6 @@
     "ui:build": "cd ui && yarn build",
     "ui:test": "cd ui && yarn test --watchAll=false --passWithNoTests"
   },
-  "resolutions": {
-    "glob": "^11.1.0"
-  },
   "lint-staged": {
     "**/*.{tsx,js,ts}": [
       "yarn run fix:prettier:and:lint"
