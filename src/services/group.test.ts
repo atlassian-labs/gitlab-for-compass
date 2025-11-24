@@ -449,7 +449,7 @@ describe('Group service', () => {
   describe('getTokenExpirationDays', () => {
     beforeAll(() => {
       jest.useFakeTimers('modern');
-      jest.setSystemTime(new Date(2025, 7, 6));
+      jest.setSystemTime(new Date(2025, 7, 7));
     });
 
     afterAll(() => {
