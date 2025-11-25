@@ -47,6 +47,9 @@
     "lodash": "^4.17.21",
     "url-parse": "^1.5.10"
   },
+  "resolutions": {
+    "glob@10.3.10": "11.1.0"
+  },
   "scripts": {
     "compile": "tsc --noEmit",
     "prepare": "husky install",
