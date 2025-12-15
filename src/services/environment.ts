@@ -12,7 +12,7 @@ export const getEnvironmentTier = async (
   const foundEnvironment = environments.find((environment) => environment.name === environmentName);
 
   if (!foundEnvironment) {
-    throw new Error("Environment not found");
+    throw new Error(`Environment not found`);
   }
 
   return foundEnvironment.tier;
