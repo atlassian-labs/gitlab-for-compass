@@ -19,7 +19,7 @@ describe('Environment Service', () => {
 
   it('throws error in case when environment is not found', async () => {
     const invalidEnvironmentName = 'testing';
-    const errorMsg = `Environment with name "${invalidEnvironmentName}" not found`;
+    const errorMsg = `Environment not found`;
 
     await expect(getEnvironmentTier(ENVIRONMENTS_MOCK, invalidEnvironmentName)).rejects.toThrow(new Error(errorMsg));
   });
