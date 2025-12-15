@@ -118,7 +118,7 @@ describe('GitLab deployment event', () => {
 
     expect(console.error).toHaveBeenCalledWith(
       'Error while sending deployment event to Compass',
-      new Error('Environment with name "prd" not found'),
+      new Error('Environment not found'),
     );
   });
 
