@@ -11,12 +11,12 @@ import {
 } from '@atlassian/forge-graphql-types';
 import { generateDeploymentEvent, generateEnvironmentEvent } from '../../../__tests__/helpers/gitlab-helper';
 import { MOCK_CLOUD_ID, TEST_TOKEN } from '../../../__tests__/fixtures/gitlab-data';
-import { getEnvironments } from '../../../client/gitlab';
 import { getDeployment } from '../../../services/deployment';
 import { sendEventToCompass } from '../../../services/send-compass-events';
 import { handleDeploymentEvent } from './handle-deployment-event';
 import { EnvironmentTier } from '../../../types';
 import * as featureFlagService from '../../../services/feature-flags';
+import { getProjectEnvironments } from '../../../services/environment';
 
 jest.mock('../../../services/send-compass-events');
 jest.mock('../../../services/deployment', () => {
@@ -27,6 +27,11 @@ jest.mock('../../../services/deployment', () => {
     getRecentDeployments: jest.fn(),
   };
 });
+jest.mock('../../../services/environment', () => ({
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  ...(jest.requireActual('.../../../services/environment') as {}),
+  getProjectEnvironments: jest.fn(),
+}));
 jest.mock('../../../client/compass');
 jest.mock('../../../client/gitlab');
 jest.mock('../../../services/insert-metric-values');
@@ -34,7 +39,7 @@ jest.mock('../../../utils/has-deployment-after-28days');
 
 jest.spyOn(global.console, 'error').mockImplementation(() => ({}));
 
-const mockedGetEnvironments = mocked(getEnvironments);
+const mockedGetProjectEnvironments = mocked(getProjectEnvironments);
 const mockedGetDeployment = mocked(getDeployment);
 const mockedSendEventsToCompass = mocked(sendEventToCompass);
 
@@ -88,7 +93,7 @@ describe('GitLab deployment event', () => {
   it('sends deployment event successfully', async () => {
     const MOCK_DEPLOYMENT_EVENT_INPUT = generateMockDeploymentInput();
 
-    mockedGetEnvironments.mockResolvedValue([MOCK_ENVIRONMENTS_EVENT]);
+    mockedGetProjectEnvironments.mockResolvedValue([MOCK_ENVIRONMENTS_EVENT]);
     mockedGetDeployment.mockResolvedValue(MOCK_DEPLOYMENT_EVENT_INPUT);
 
     await handleDeploymentEvent(MOCK_DEPLOYMENT_EVENT, TEST_TOKEN, MOCK_CLOUD_ID);
@@ -100,7 +105,7 @@ describe('GitLab deployment event', () => {
     const MOCK_STAGING_ENVIRONMENTS_EVENT = generateEnvironmentEvent(EnvironmentTier.STAGING);
     const MOCK_DEPLOYMENT_EVENT_INPUT = generateMockDeploymentInput(CompassDeploymentEventEnvironmentCategory.Staging);
 
-    mockedGetEnvironments.mockResolvedValue([MOCK_STAGING_ENVIRONMENTS_EVENT]);
+    mockedGetProjectEnvironments.mockResolvedValue([MOCK_STAGING_ENVIRONMENTS_EVENT]);
     mockedGetDeployment.mockResolvedValue(MOCK_DEPLOYMENT_EVENT_INPUT);
 
     await handleDeploymentEvent(MOCK_DEPLOYMENT_EVENT, TEST_TOKEN, MOCK_CLOUD_ID);
@@ -112,7 +117,7 @@ describe('GitLab deployment event', () => {
     const MOCK_PRODUCTION_ENVIRONMENT_EVENT = generateEnvironmentEvent(EnvironmentTier.PRODUCTION, 'production');
     const MOCK_PRD_DEPLOYMENT_EVENT = generateDeploymentEvent({ environment: 'prd' });
 
-    mockedGetEnvironments.mockResolvedValue([MOCK_PRODUCTION_ENVIRONMENT_EVENT]);
+    mockedGetProjectEnvironments.mockResolvedValue([MOCK_PRODUCTION_ENVIRONMENT_EVENT]);
 
     await handleDeploymentEvent(MOCK_PRD_DEPLOYMENT_EVENT, TEST_TOKEN, MOCK_CLOUD_ID);
 
@@ -125,7 +130,7 @@ describe('GitLab deployment event', () => {
   it('failed sending deployment event', async () => {
     const MOCK_DEPLOYMENT_EVENT_INPUT = generateMockDeploymentInput();
 
-    mockedGetEnvironments.mockResolvedValue([MOCK_ENVIRONMENTS_EVENT]);
+    mockedGetProjectEnvironments.mockResolvedValue([MOCK_ENVIRONMENTS_EVENT]);
     mockedGetDeployment.mockResolvedValue(MOCK_DEPLOYMENT_EVENT_INPUT);
 
     mockedSendEventsToCompass.mockRejectedValue(MOCK_ERROR);
@@ -149,7 +154,7 @@ describe('GitLab deployment event', () => {
       const MOCK_STAGING_DEPLOYMENT_EVENT_INPUT = generateMockDeploymentInput(
         CompassDeploymentEventEnvironmentCategory.Staging,
       );
-      mockedGetEnvironments.mockResolvedValue([MOCK_STAGING_ENVIRONMENTS_EVENT]);
+      mockedGetProjectEnvironments.mockResolvedValue([MOCK_STAGING_ENVIRONMENTS_EVENT]);
       mockedGetDeployment.mockResolvedValue(MOCK_STAGING_DEPLOYMENT_EVENT_INPUT);
 
       await handleDeploymentEvent(MOCK_STAGING_DEPLOYMENT_EVENT, TEST_TOKEN, MOCK_CLOUD_ID);
@@ -163,7 +168,7 @@ describe('GitLab deployment event', () => {
       const MOCK_TESTING_DEPLOYMENT_EVENT_INPUT = generateMockDeploymentInput(
         CompassDeploymentEventEnvironmentCategory.Testing,
       );
-      mockedGetEnvironments.mockResolvedValue([MOCK_TESTING_ENVIRONMENTS_EVENT]);
+      mockedGetProjectEnvironments.mockResolvedValue([MOCK_TESTING_ENVIRONMENTS_EVENT]);
       mockedGetDeployment.mockResolvedValue(MOCK_TESTING_DEPLOYMENT_EVENT_INPUT);
 
       await handleDeploymentEvent(MOCK_TESTING_DEPLOYMENT_EVENT, TEST_TOKEN, MOCK_CLOUD_ID);

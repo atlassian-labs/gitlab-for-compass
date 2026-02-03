@@ -1,8 +1,9 @@
+import { fetchPaginatedData } from '../utils/fetchPaginatedData';
 import { getEnvironments } from '../client/gitlab';
 import { Environment, EnvironmentTier } from '../types';
 
 export const getProjectEnvironments = (projectId: number, groupToken: string): Promise<Environment[]> => {
-  return getEnvironments(projectId, groupToken);
+  return fetchPaginatedData(getEnvironments, { groupToken, projectId });
 };
 
 export const getEnvironmentTier = async (
