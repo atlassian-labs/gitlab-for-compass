@@ -464,26 +464,32 @@ export const getProjectDeploymentById = async (projectId: number, deploymentId: 
   return data;
 };
 
-export const getEnvironments = async (
-  projectId: number,
-  groupToken: string,
-  pageSize = 100,
-): Promise<Environment[]> => {
+export const getEnvironments: GitlabPaginatedFetch<
+  Environment,
+  {
+    groupToken: string;
+    projectId: number;
+  }
+> = async (page, perPage, fetchParameters) => {
+  const { groupToken, projectId } = fetchParameters;
+
   const params = {
-    ...(pageSize ? { per_page: pageSize.toString() } : {}),
+    page: page.toString(),
+    per_page: perPage.toString(),
   };
+
   const queryParams = queryParamsGenerator(params);
 
-  const { data } = await callGitlab(
+  const { data, headers } = await callGitlab(
     "get project's environments",
     `/api/v4/projects/${projectId}/environments?${queryParams}`,
     groupToken,
   );
 
   // eslint-disable-next-line no-console
-  console.log('Number of environments fetched:', data.length);
+  console.log('Number of environments fetched:', data.length, 'page:', page);
 
-  return data;
+  return { data, headers };
 };
 
 export const getProjectRecentPipelines: GitlabPaginatedFetch<

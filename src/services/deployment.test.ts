@@ -14,12 +14,19 @@ import {
 import { EnvironmentTier } from '../types';
 import { MOCK_CLOUD_ID } from '../__tests__/fixtures/gitlab-data';
 import { mocked } from 'jest-mock';
-import { getEnvironments, getProjectRecentDeployments } from '../client/gitlab';
+import { getProjectRecentDeployments } from '../client/gitlab';
 import { generateDeployment, generateEnvironmentEvent } from '../__tests__/helpers/gitlab-helper';
 import * as featureFlagService from './feature-flags';
+import { getProjectEnvironments } from './environment';
 
 jest.mock('../client/gitlab');
-const mockedGetEnvironments = mocked(getEnvironments);
+jest.mock('./environment', () => ({
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  ...(jest.requireActual('./environment') as {}),
+  getProjectEnvironments: jest.fn(),
+}));
+
+const mockedGetProjectEnvironments = mocked(getProjectEnvironments);
 const mockedGetProjectRecentDeployments = mocked(getProjectRecentDeployments);
 
 const mockDeployment = generateDeployment();
@@ -154,7 +161,7 @@ describe('getDeploymentAfter28Days', () => {
   });
 
   it('calls getProjectRecentDeployments for all production project environments and returns deployment data', async () => {
-    mockedGetEnvironments.mockResolvedValue([
+    mockedGetProjectEnvironments.mockResolvedValue([
       generateEnvironmentEvent(EnvironmentTier.PRODUCTION, 'prod'),
       generateEnvironmentEvent(EnvironmentTier.PRODUCTION, 'production'),
     ]);
@@ -177,7 +184,7 @@ describe('getDeploymentAfter28Days', () => {
   });
 
   it('process all non-production project environments', async () => {
-    mockedGetEnvironments.mockResolvedValue([
+    mockedGetProjectEnvironments.mockResolvedValue([
       generateEnvironmentEvent(EnvironmentTier.STAGING, 'staging'),
       generateEnvironmentEvent(EnvironmentTier.TESTING, 'testing'),
       generateEnvironmentEvent(EnvironmentTier.DEVELOPMENT, 'development'),
@@ -222,7 +229,7 @@ describe('getDeploymentAfter28Days', () => {
     });
 
     it('calls getProjectRecentDeployments for production and staging project environments and returns deployment data', async () => {
-      mockedGetEnvironments.mockResolvedValue([
+      mockedGetProjectEnvironments.mockResolvedValue([
         generateEnvironmentEvent(EnvironmentTier.PRODUCTION, 'production'),
         generateEnvironmentEvent(EnvironmentTier.STAGING, 'staging'),
         generateEnvironmentEvent(EnvironmentTier.STAGING, 'stg'),
@@ -258,7 +265,7 @@ describe('getDeploymentAfter28Days', () => {
     });
 
     it('process non-production, non-staging environments', async () => {
-      mockedGetEnvironments.mockResolvedValue([
+      mockedGetProjectEnvironments.mockResolvedValue([
         generateEnvironmentEvent(EnvironmentTier.DEVELOPMENT, 'development'),
         generateEnvironmentEvent(EnvironmentTier.TESTING, 'testing'),
         generateEnvironmentEvent(EnvironmentTier.OTHER, 'other'),
