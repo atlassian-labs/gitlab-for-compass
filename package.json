@@ -38,7 +38,7 @@
     "@atlassian/forge-graphql-types": "^4.3.0",
     "@forge/api": "^4.1.1",
     "@forge/bridge": "^3.5.0",
-    "@forge/events": "^0.9.5",
+    "@forge/events": "^2.1.5",
     "@forge/metrics": "0.3.22",
     "@forge/resolver": "^1.6.2",
     "exponential-backoff": "^3.1.0",
