@@ -43,7 +43,7 @@
     "@forge/resolver": "^1.6.2",
     "exponential-backoff": "^3.1.0",
     "jest-mock": "^28.1.0",
-    "js-yaml": "^4.2.0",
+    "js-yaml": "^4.3.0",
     "lodash": "^4.18.1",
     "url-parse": "^1.5.10"
   },
