@@ -578,17 +578,6 @@
     "@types/node-fetch" "^2.6.11"
     node-fetch "2.7.0"
 
-"@forge/api@5.1.0":
-  version "5.1.0"
-  resolved "https://packages.atlassian.com/api/npm/npm-remote/@forge/api/-/api-5.1.0.tgz#c71777b5314ca01852a545013f160c076c2f3ddb"
-  integrity sha512-0Hqwa7Rdtfg/u7kFJ27UJ7U6uzqUUk68W/LRoMZvLV2xTqc7a+DojT66FufphYpPhJclvHqLbjwWE8qu+jLoGA==
-  dependencies:
-    "@forge/auth" "0.0.7"
-    "@forge/egress" "1.4.0"
-    "@forge/storage" "1.7.3"
-    "@forge/util" "1.4.8"
-    headers-utils "^3.0.2"
-
 "@forge/api@7.1.0":
   version "7.1.0"
   resolved "https://packages.atlassian.com/api/npm/npm-remote/@forge/api/-/api-7.1.0.tgz#089920b56cbdba02dbd64c01b506be350df19a24"
@@ -601,17 +590,17 @@
     "@forge/storage" "2.0.3"
     headers-utils "^3.0.2"
 
-"@forge/api@^4.1.1":
-  version "4.3.0"
-  resolved "https://packages.atlassian.com/api/npm/npm-remote/@forge/api/-/api-4.3.0.tgz#bf6dcf30f66661618de35058fe58a654aa46a4fd"
-  integrity sha512-5NN4JfNrkK3XJiy30JPVNYxLqc9e11iYv+dhBfrFblM7ThGKzP5NaEInvHSNFlGlsncYN4vXbUebgwSAHxt10w==
+"@forge/api@7.2.2":
+  version "7.2.2"
+  resolved "https://registry.yarnpkg.com/@forge/api/-/api-7.2.2.tgz#55a61547f7807b2de0d790e172ddb36e7f0aab6c"
+  integrity sha512-q0TwkgzZqEbB1NNetQ9xRvNH6ICaX71QH884tduRzps+qnjuJYh0lJHKKxtwWMfZFdiILNRayhyAlvvuMskH3Q==
   dependencies:
-    "@forge/auth" "0.0.5"
-    "@forge/egress" "1.3.0"
-    "@forge/storage" "1.7.0"
-    "@forge/util" "1.4.6"
-    "@types/node-fetch" "^2.6.11"
-    node-fetch "2.7.0"
+    "@forge/auth" "0.0.9"
+    "@forge/egress" "2.3.2"
+    "@forge/i18n" "0.0.7"
+    "@forge/manifest" "^12.9.0"
+    "@forge/storage" "2.0.3"
+    headers-utils "^3.0.2"
 
 "@forge/api@^5.0.0":
   version "5.0.1"
@@ -625,6 +614,18 @@
     "@types/node-fetch" "^2.6.11"
     node-fetch "2.7.0"
 
+"@forge/api@^6.3.0":
+  version "6.4.3"
+  resolved "https://registry.yarnpkg.com/@forge/api/-/api-6.4.3.tgz#3acdc37ef7eee1fd796854a2968b4c59e28cca36"
+  integrity sha512-xwmJ+SWBur5LcxJ3dnN7Is4OidO4VV7lzPWkBhW73DtPQ8OLnMQqhi1W4dcQVeKwxDNoyVeoCDH+zdNg+3ZVrw==
+  dependencies:
+    "@forge/auth" "0.0.9"
+    "@forge/egress" "2.3.1"
+    "@forge/i18n" "0.0.7"
+    "@forge/manifest" "^11.3.2"
+    "@forge/storage" "2.0.3"
+    headers-utils "^3.0.2"
+
 "@forge/auth@0.0.5":
   version "0.0.5"
   resolved "https://registry.yarnpkg.com/@forge/auth/-/auth-0.0.5.tgz#d8df38fc55a7508121bef2508f494ee4a81e8072"
@@ -636,13 +637,6 @@
   version "0.0.6"
   resolved "https://packages.atlassian.com/api/npm/npm-remote/@forge/auth/-/auth-0.0.6.tgz#df85d13f040fbcbbb8a07dd9d98daa309a56911b"
   integrity sha512-Nqa34q6HErAKvHJneUsfhJIIyyVYYLKsRjZkJbFd2d+3JUEiaxEq6hPD/5qKO36FzsqJPWlenDypPQvuxJ5TVA==
-  dependencies:
-    tslib "^2.6.2"
-
-"@forge/auth@0.0.7":
-  version "0.0.7"
-  resolved "https://packages.atlassian.com/api/npm/npm-remote/@forge/auth/-/auth-0.0.7.tgz#b66115c9736f2d2041e983862d5de69836397cb5"
-  integrity sha512-9wzbl7FoaTZsVXuBI6F4O9TWRucpM76WILKoimGSK/1n6JMiai0QHBmBJLAon8jO/MmTJSHPxLE48UjR+J2s7Q==
   dependencies:
     tslib "^2.6.2"
 
@@ -799,25 +793,22 @@
   dependencies:
     minimatch "^9.0.3"
 
-"@forge/egress@1.4.0":
-  version "1.4.0"
-  resolved "https://packages.atlassian.com/api/npm/npm-remote/@forge/egress/-/egress-1.4.0.tgz#b4bd01c25b0813096370d1d2b9abd582d828fcf6"
-  integrity sha512-7Jrjq6kgF32yI4kqSmXz6z6ac9zOyrEn3NEq4jDUZ2eAq/qn0UugE/+9t7MlEd1jsz94hY9utezwjqkRc1qKwQ==
-  dependencies:
-    minimatch "^9.0.3"
-
 "@forge/egress@2.3.1":
   version "2.3.1"
   resolved "https://packages.atlassian.com/api/npm/npm-remote/@forge/egress/-/egress-2.3.1.tgz#e2c0b99ac6ade48468cf928af0808b875adf0652"
   integrity sha512-NoqQsoPj98F8yBJyUUy72PEdcqvJo7upGWTllZ6RN3ZAxvmq2jnCrJ+ipVBYqTIHJLhKNc2PKxRpBls7NQA20A==
 
-"@forge/events@^0.9.5":
-  version "0.9.11"
-  resolved "https://packages.atlassian.com/api/npm/npm-remote/@forge/events/-/events-0.9.11.tgz#daf5b8c800e25998f8e1a456fa531ec0472c4eac"
-  integrity sha512-Q94uOucO/26GaEpeCyDOPPr5+VzKzVY2ADLAUxVr5lerGnIJPe6UDQ1RoUH8MuasVmkZE5JnBT6ur+l9t490eg==
+"@forge/egress@2.3.2":
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/@forge/egress/-/egress-2.3.2.tgz#12ddd8001fd43660ec2e8cf6f67d2b5c8d469995"
+  integrity sha512-p8ioX4qnAlRFln+hyH9kO0MmVCSOUg0bsIG9RAYK8KM2YaJb6EnKqbCvPMBTwegiua3vixBsnZmWDgPegSZh9Q==
+
+"@forge/events@^2.0.11":
+  version "2.1.7"
+  resolved "https://registry.yarnpkg.com/@forge/events/-/events-2.1.7.tgz#90a42d8e741b810521c0d18139299c8980ea8d13"
+  integrity sha512-5PGstGtN/y49R5ZKkUbgaHQObQmxXAQ37jCjDRhFreodu1V8PluxPf0ndBo++CXWtHM6Jc6kxEb8QEJ+TaljEA==
   dependencies:
-    "@forge/api" "5.1.0"
-    uuid "^9.0.1"
+    "@forge/api" "7.2.2"
 
 "@forge/i18n@0.0.7":
   version "0.0.7"
@@ -852,6 +843,36 @@
     ajv-formats "2.1.1"
     cheerio "^1.1.0"
     glob "^11.1.0"
+    lodash "^4.17.21"
+    mime-types "^2.1.35"
+    yaml "^2.3.4"
+
+"@forge/manifest@^11.3.2":
+  version "11.3.2"
+  resolved "https://registry.yarnpkg.com/@forge/manifest/-/manifest-11.3.2.tgz#1af385566fa3dd7b0c7ca2719a42e8aaef492c90"
+  integrity sha512-TcUubVXxSPR0dvhc22wVdD0smvSlflqOAPYP8d8isyeXv6A4pVyCJAPH/HagHVu53Sv5TZjWL3P8mSkPq+kfqg==
+  dependencies:
+    "@forge/i18n" "0.0.7"
+    "@sentry/node" "7.106.0"
+    ajv "^8.12.0"
+    ajv-formats "2.1.1"
+    cheerio "^1.1.0"
+    glob "^11.1.0"
+    lodash "^4.17.21"
+    mime-types "^2.1.35"
+    yaml "^2.3.4"
+
+"@forge/manifest@^12.9.0":
+  version "12.9.0"
+  resolved "https://registry.yarnpkg.com/@forge/manifest/-/manifest-12.9.0.tgz#0223b8403472c00c71341b44345ee2cee2cc7c7d"
+  integrity sha512-7JZiXpAHa5SNSM4DsmaO1PfgZtHngKKwh1++RoYCS1QDuck1sJ2KXh3dq7FV+ajOKVtI54uyukUb7oYMGp7rPw==
+  dependencies:
+    "@forge/i18n" "0.0.7"
+    "@sentry/node" "7.106.0"
+    ajv "^8.18.0"
+    ajv-formats "2.1.1"
+    cheerio "^1.1.0"
+    glob "^13.0.0"
     lodash "^4.17.21"
     mime-types "^2.1.35"
     yaml "^2.3.4"
@@ -897,11 +918,6 @@
   resolved "https://packages.atlassian.com/api/npm/npm-remote/@forge/runtime/-/runtime-6.1.2.tgz#df30a63f5ab549eb6b27be288bf3a87ef41b58dd"
   integrity sha512-c18iHovJO4pqGf1PR/P2zNo2F6iajLMIrzSOLbui2Uw7KSPUAjddEsTMDhEj+DdNdXyQBYQJeiGXuxFyBkIUHA==
 
-"@forge/storage@1.7.0":
-  version "1.7.0"
-  resolved "https://packages.atlassian.com/api/npm/npm-remote/@forge/storage/-/storage-1.7.0.tgz#3ca03f17306da00eec1e2def59720eaf25e51879"
-  integrity sha512-sQIVq/SnkFiYm/ZKC445WavyOoa2QBT4RXm+EoIxGnfrQjhMI6mqwoxhZumoCRklF08TBEmMUsyxQyhhOc8erg==
-
 "@forge/storage@1.7.1":
   version "1.7.1"
   resolved "https://packages.atlassian.com/api/npm/npm-remote/@forge/storage/-/storage-1.7.1.tgz#2f1fd6fbca2de12ef01258f039ca6096fbd1756c"
@@ -911,11 +927,6 @@
   version "1.7.2"
   resolved "https://packages.atlassian.com/api/npm/npm-remote/@forge/storage/-/storage-1.7.2.tgz#d19770ed866486023c4f877b458ded7ce427c164"
   integrity sha512-LIxWBspMy2wJtFJffJ6l/HiHvVa0vtx6ZFMT4kc5l07baKc6CXIWWuF0GD6WSRs9dAq1QphjMxMjjpuhbhzrSg==
-
-"@forge/storage@1.7.3":
-  version "1.7.3"
-  resolved "https://packages.atlassian.com/api/npm/npm-remote/@forge/storage/-/storage-1.7.3.tgz#c44d5451a7740b44cd6c9b3e510fa0a3241a4428"
-  integrity sha512-i6tN5GlLleegMzpkT3nutxnVASwbSTxYAubKXA989zigF/ndaqqFiD5c6GYZb5jEgo7VT872OzxHAL3kEY0adQ==
 
 "@forge/storage@2.0.3":
   version "2.0.3"
@@ -956,11 +967,6 @@
   version "1.4.7"
   resolved "https://packages.atlassian.com/api/npm/npm-remote/@forge/util/-/util-1.4.7.tgz#75a9b0690f269eb8bbeeedd32f196ea57f50e972"
   integrity sha512-W5XKq0TrkVs2se0z8chx2y07r08dcOIViGY3vl8L7wHX64Ius6ERwVij0cQb4rnAXGko1g0Q+hmzsheX9vTZ/g==
-
-"@forge/util@1.4.8":
-  version "1.4.8"
-  resolved "https://packages.atlassian.com/api/npm/npm-remote/@forge/util/-/util-1.4.8.tgz#bd089b358b34ad639d3ef8139adecec197555146"
-  integrity sha512-5D3E2W6j4VzNet2X98It8GRfOJFAkAI/eyCz1VFOX2BzYBMFofuyHr4/PDDpan/I6MnYtSdamlC8P7Q/B3OJDg==
 
 "@forge/util@2.0.1", "@forge/util@^2.0.1":
   version "2.0.1"
@@ -2156,6 +2162,16 @@ ajv@^8.0.0, ajv@^8.12.0, ajv@^8.6.3, ajv@^8.9.0:
     require-from-string "^2.0.2"
     uri-js "^4.2.2"
 
+ajv@^8.18.0:
+  version "8.20.0"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.20.0.tgz#304b3636add88ba7d936760dd50ece006dea95f9"
+  integrity sha512-Thbli+OlOj+iMPYFBVBfJ3OmCAnaSyNn4M1vz9T6Gka5Jt9ba/HIR56joy65tY6kx/FCF5VXNB819Y7/GUrBGA==
+  dependencies:
+    fast-deep-equal "^3.1.3"
+    fast-uri "^3.0.1"
+    json-schema-traverse "^1.0.0"
+    require-from-string "^2.0.2"
+
 ansi-escapes@^4.2.1, ansi-escapes@^4.3.0:
   version "4.3.2"
   resolved "https://registry.yarnpkg.com/ansi-escapes/-/ansi-escapes-4.3.2.tgz#6b2291d1db7d98b6521d5f1efa42d0f3a9feb65e"
@@ -2542,6 +2558,11 @@ balanced-match@^1.0.0:
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.2.tgz#e83e3a7e3f300b34cb9d87f615fa0cbf357690ee"
   integrity sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==
 
+balanced-match@^4.0.2:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-4.0.4.tgz#bfb10662feed8196a2c62e7c68e17720c274179a"
+  integrity sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA==
+
 base64-js@^1.3.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
@@ -2621,6 +2642,13 @@ brace-expansion@^2.0.1:
   integrity sha512-Jt0vHyM+jmUBqojB7E1NIYadt0vI0Qxjxd2TErW94wDz+E2LAm5vKMXXwg6ZZBTHPuUlDgQHKXvjGBdfcF1ZDQ==
   dependencies:
     balanced-match "^1.0.0"
+
+brace-expansion@^5.0.5:
+  version "5.0.7"
+  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-5.0.7.tgz#1b0e46965b479dad65af737b4a02790a05498337"
+  integrity sha512-7oFy703dxfY3/NLxC1fh2SUCQ0H9rmAY+5EpDVfXjUTTs+HEwR2nYaqLv+GWcTsumwxPfiz6CzCNkwXwBUwqCA==
+  dependencies:
+    balanced-match "^4.0.2"
 
 braces@^3.0.2, braces@~3.0.2:
   version "3.0.3"
@@ -4372,6 +4400,11 @@ fast-levenshtein@^2.0.6, fast-levenshtein@~2.0.6:
   resolved "https://registry.yarnpkg.com/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz#3d8a5c66883a16a30ca8643e851f19baa7797917"
   integrity sha1-PYpcZog6FqMMqGQ+hR8Zuqd5eRc=
 
+fast-uri@^3.0.1:
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/fast-uri/-/fast-uri-3.1.3.tgz#f695a40f006aba505631573a0021ddb21194ad11"
+  integrity sha512-i70LwGWUduXqzicKXWshooq+sWL1K3WUU5rKZNG/0i3a1OSoX3HqhH5WbWwTmqWfor4urUakGPiRQcleRZTwOg==
+
 fastq@^1.6.0:
   version "1.13.0"
   resolved "https://registry.yarnpkg.com/fastq/-/fastq-1.13.0.tgz#616760f88a7526bdfc596b7cab8c18938c36b98c"
@@ -4761,6 +4794,15 @@ glob@^10.0.0:
     minipass "^7.1.2"
     package-json-from-dist "^1.0.0"
     path-scurry "^1.11.1"
+
+glob@^13.0.0:
+  version "13.0.6"
+  resolved "https://registry.yarnpkg.com/glob/-/glob-13.0.6.tgz#078666566a425147ccacfbd2e332deb66a2be71d"
+  integrity sha512-Wjlyrolmm8uDpm/ogGyXZXb1Z+Ca2B8NbJwqBVg0axK9GbBeoS7yGV6vjXnYdGm6X53iehEuxxbyiKp8QmN4Vw==
+  dependencies:
+    minimatch "^10.2.2"
+    minipass "^7.1.3"
+    path-scurry "^2.0.2"
 
 glob@^7.1.1, glob@^7.1.2, glob@^7.1.3, glob@^7.1.4:
   version "7.2.0"
@@ -6632,6 +6674,13 @@ minimatch@^10.1.1:
   dependencies:
     "@isaacs/brace-expansion" "^5.0.0"
 
+minimatch@^10.2.2:
+  version "10.2.5"
+  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-10.2.5.tgz#bd48687a0be38ed2961399105600f832095861d1"
+  integrity sha512-MULkVLfKGYDFYejP07QOurDLLQpcjk7Fw+7jXS2R2czRQzR56yHRveU5NDJEOviH+hETZKSkIk5c+T23GjFUMg==
+  dependencies:
+    brace-expansion "^5.0.5"
+
 minimatch@^3.0.4, minimatch@^3.0.5, minimatch@^3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-3.1.2.tgz#19cd194bfd3e428f049a70817c038d89ab4be35b"
@@ -6674,6 +6723,11 @@ minipass@^7.1.2:
   version "7.1.2"
   resolved "https://packages.atlassian.com/api/npm/npm-remote/minipass/-/minipass-7.1.2.tgz#93a9626ce5e5e66bd4db86849e7515e92340a707"
   integrity sha512-qOOzS1cBTWYF4BH8fVePDBOO9iptMnGUEZwNc/cMWnTV2nVLZ7VoNWEPHkYczZA0pdoA7dl6e7FL659nX9S2aw==
+
+minipass@^7.1.3:
+  version "7.1.3"
+  resolved "https://registry.yarnpkg.com/minipass/-/minipass-7.1.3.tgz#79389b4eb1bb2d003a9bba87d492f2bd37bdc65b"
+  integrity sha512-tEBHqDnIoM/1rXME1zgka9g6Q2lcoCkxHLuc7ODJ5BxbP5d4c2Z5cGgtXAku59200Cx7diuHTOYfSBD8n6mm8A==
 
 mkdirp-classic@^0.5.2, mkdirp-classic@^0.5.3:
   version "0.5.3"
@@ -7214,6 +7268,14 @@ path-scurry@^2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/path-scurry/-/path-scurry-2.0.1.tgz#4b6572376cfd8b811fca9cd1f5c24b3cbac0fe10"
   integrity sha512-oWyT4gICAu+kaA7QWk/jvCHWarMKNs6pXOGWKDTr7cw4IGcUbW+PeTfbaQiLGheFRpjo6O9J0PmyMfQPjH71oA==
+  dependencies:
+    lru-cache "^11.0.0"
+    minipass "^7.1.2"
+
+path-scurry@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/path-scurry/-/path-scurry-2.0.2.tgz#6be0d0ee02a10d9e0de7a98bae65e182c9061f85"
+  integrity sha512-3O/iVVsJAPsOnpwWIeD+d6z/7PmqApyQePUtCndjatj/9I5LylHvt5qluFaBT3I5h3r1ejfR056c+FCv+NnNXg==
   dependencies:
     lru-cache "^11.0.0"
     minipass "^7.1.2"
